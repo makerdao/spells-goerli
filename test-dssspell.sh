@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-# [[ "$ETH_RPC_URL" && "$(seth chain)" == "ethlive" ]] || { echo "Please set a mainnet ETH_RPC_URL"; exit 1; }
+[[ "$ETH_RPC_URL" && "$(seth chain)" == "kovan" ]] || { echo "Please set a kovan ETH_RPC_URL"; exit 1; }
 
-dapp --use solc:0.5.12 build
+SOLC_FLAGS=--optimize dapp --use solc:0.5.12 build
 
 # MkrAuthority
 export DAPP_TEST_ADDRESS=0xdB33dFD3D61308C33C63209845DaD3e6bfb2c674
