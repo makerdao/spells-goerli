@@ -6,7 +6,7 @@ set -e
 SOLC_FLAGS="--optimize --optimize-runs 1" dapp --use solc:0.5.12 build
 
 # MkrAuthority
-export DAPP_TEST_ADDRESS=0xdB33dFD3D61308C33C63209845DaD3e6bfb2c674
+# export DAPP_TEST_ADDRESS=0xdB33dFD3D61308C33C63209845DaD3e6bfb2c674
 export DAPP_TEST_TIMESTAMP=$(seth block latest timestamp)
 export DAPP_TEST_NUMBER=$(seth block latest number)
 
