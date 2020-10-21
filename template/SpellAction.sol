@@ -8,6 +8,7 @@ contract SpellAction {
     address constant FLIPPER_MOM = ;
     address constant OSM_MOM = ; // Only if PIP_TOKEN = Osm
     address constant ILK_REGISTRY = ;
+    address constant FAUCET = ;
 
     address constant TOKEN = ;
     address constant MCD_JOIN_TOKEN_LETTER = ;
@@ -106,5 +107,8 @@ contract SpellAction {
 
         // Add new ilk to the IlkRegistry
         IlkRegistryAbstract(ILK_REGISTRY).add(MCD_JOIN_TOKEN_LETTER);
+
+        // Set gulp amount in faucet on kovan (only use WAD for decimals = 18)
+        FaucetAbstract(FAUCET).setAmt(TOKEN, X * WAD);
     }
 }
