@@ -12,13 +12,11 @@ interface Hevm {
     function store(address,bytes32,bytes32) external;
 }
 
-interface MedianizerV1Abstract {
-    function authority() external view returns (address);
-}
-
 contract DssSpellTest is DSTest, DSMath {
     // populate with kovan spell if needed
-    address constant KOVAN_SPELL = address(0x0);
+    address constant KOVAN_SPELL = address(
+      0x0671d74ADA8FB610C68d744b97cc9c28E45E0F11
+    );
     // this needs to be updated
     uint256 constant SPELL_CREATED = 1604082804;
 
@@ -46,8 +44,6 @@ contract DssSpellTest is DSTest, DSMath {
         uint256 vow_hump;
         uint256 cat_box;
         uint256 ilk_count;
-        address osm_mom_authority;
-        address flipper_mom_authority;
         mapping (bytes32 => CollateralValues) collaterals;
     }
 
@@ -74,9 +70,43 @@ contract DssSpellTest is DSTest, DSMath {
     OsmMomAbstract      osmMom = OsmMomAbstract(     0x5dA9D1C3d4f1197E5c52Ff963916Fe84D2F5d8f3);
     FlipperMomAbstract flipMom = FlipperMomAbstract( 0x50dC6120c67E456AdA2059cfADFF0601499cf681);
 
+    // COMP-A specific
+    DSTokenAbstract       comp = DSTokenAbstract(    0x1dDe24ACE93F9F638Bfd6fCE1B38b842703Ea1Aa);
+    GemJoinAbstract  joinCOMPA = GemJoinAbstract(    0x16D567c1F6824ffFC460A11d48F61E010ae43766);
+    OsmAbstract        pipCOMP = OsmAbstract(        0xcc10b1C53f4BFFEE19d0Ad00C40D7E36a454D5c4);
+    FlipAbstract     flipCOMPA = FlipAbstract(       0x2917a962BC45ED48497de85821bddD065794DF6C);
+    MedianAbstract    medCOMPA = MedianAbstract(     0x18746A1CED49Ff06432400b8EdDcf77876EcA6f8);
+
+    // LRC-A specific
+    GemAbstract            lrc = GemAbstract(        0xF070662e48843934b5415f150a18C250d4D7B8aB);
+    GemJoinAbstract   joinLRCA = GemJoinAbstract(    0x436286788C5dB198d632F14A20890b0C4D236800);
+    OsmAbstract         pipLRC = OsmAbstract(        0xcEE47Bb8989f625b5005bC8b9f9A0B0892339721);
+    FlipAbstract      flipLRCA = FlipAbstract(       0xfC9496337538235669F4a19781234122c9455897);
+    MedianAbstract     medLRCA = MedianAbstract(     0x2aab6aDb9d202e411D2B29a6be1da80F648230f2);
+
+    // LINK-A specific
+    DSTokenAbstract       link = DSTokenAbstract(    0xa36085F69e2889c224210F603D836748e7dC0088);
+    GemJoinAbstract  joinLINKA = GemJoinAbstract(    0xF4Df626aE4fb446e2Dcce461338dEA54d2b9e09b);
+    OsmAbstract        pipLINK = OsmAbstract(        0x20D5A457e49D05fac9729983d9701E0C3079Efac);
+    FlipAbstract     flipLINKA = FlipAbstract(       0xfbDCDF5Bd98f68cEfc3f37829189b97B602eCFF2);
+    MedianAbstract    medLINKA = MedianAbstract(     0x7cb395DF9f1534cF528470e2F1AE2D1867d6253f);
+
+    // BAL-A specific
+    DSTokenAbstract       bal = DSTokenAbstract(     0x630D82Cbf82089B09F71f8d3aAaff2EBA6f47B15);
+    GemJoinAbstract  joinBALA = GemJoinAbstract(     0x8De5EA9251E0576e3726c8766C56E27fAb2B6597);
+    FlipAbstract     flipBALA = FlipAbstract(        0xF6d19CC05482Ef7F73f09c1031BA01567EF6ac0f);
+    MedianAbstract    medBALA = MedianAbstract(      0x0C472661dde5B08BEee6a7F8266720ea445830a3);
+
+    // YFI-A specific
+    DSTokenAbstract       yfi = DSTokenAbstract(     0x251F1c3077FEd1770cB248fB897100aaE1269FFC);
+    GemJoinAbstract  joinYFIA = GemJoinAbstract(     0x5b683137481F2FE683E2f2385792B1DeB018050F);
+    OsmAbstract        pipYFI = OsmAbstract(         0x9D8255dc4e25bB85e49c65B21D8e749F2293862a);
+    FlipAbstract     flipYFIA = FlipAbstract(        0x5eB5D3B028CD255d79019f7C44a502b31bFFde9d);
+    MedianAbstract    medYFIA = MedianAbstract(      0x67E681d202cf86287Bb088902B89CC66F1A075D4);
+
     // GUSD-A specific
     DSTokenAbstract       gusd = DSTokenAbstract(     0x31D8EdbF6F33ef858c80d68D06Ec83f33c2aA150);
-    GemJoinAbstract  joinGUSDA = GemJoinAbstract(     0x0c6B26e6AB583D2e4528034037F74842ea988909);
+    GemJoinAbstract  joinGUSDA = GemJoinAbstract(     0xC32fb81a573C1DAC509443e86759330f893dA8bD);
     FlipAbstract     flipGUSDA = FlipAbstract(        0xf6c0e36a76F2B9F7Bd568155F3fDc53ff1be1Aeb);
 
     // Faucet
@@ -153,18 +183,16 @@ contract DssSpellTest is DSTest, DSMath {
         // Test for all system configuration changes
         //
         afterSpell = SystemValues({
-            dsr_rate:              0,              // In basis points
-            vat_Line:              1232 * MILLION, // In whole Dai units
-            pause_delay:           60,             // In seconds
-            vow_wait:              3600,           // In seconds
-            vow_dump:              2,              // In whole Dai units
-            vow_sump:              50,             // In whole Dai units
-            vow_bump:              10,             // In whole Dai units
-            vow_hump:              500,            // In whole Dai units
-            cat_box:               10 * THOUSAND,  // In whole Dai units
-            ilk_count:             18,             // Num expected in system
-            osm_mom_authority:     address(0),     // OsmMom authority
-            flipper_mom_authority: address(0)      // FlipperMom authority
+            dsr_rate:     0,               // In basis points
+            vat_Line:     1232 * MILLION,  // In whole Dai units
+            pause_delay:  60,              // In seconds
+            vow_wait:     3600,            // In seconds
+            vow_dump:     2,               // In whole Dai units
+            vow_sump:     50,              // In whole Dai units
+            vow_bump:     10,              // In whole Dai units
+            vow_hump:     500,             // In whole Dai units
+            cat_box:      10 * THOUSAND,   // In whole Dai units
+            ilk_count:    18               // Num expected in system
         });
 
         //
@@ -493,11 +521,6 @@ contract DssSpellTest is DSTest, DSMath {
         // check number of ilks
         assertEq(reg.count(), values.ilk_count);
 
-        // check OsmMom authority
-        assertEq(osmMom.authority(), values.osm_mom_authority);
-
-        // check FlipperMom authority
-        assertEq(flipMom.authority(), values.flipper_mom_authority);
     }
 
     function checkCollateralValues(bytes32 ilk, SystemValues storage values) internal {
@@ -640,9 +663,9 @@ contract DssSpellTest is DSTest, DSMath {
         vat.frob("GUSD-A", address(this), address(this), address(this), int(faucetAmountWad), int(mul(faucetAmountWad, spotV) / RAY));
         hevm.warp(now + 1);
         jug.drip("GUSD-A");
-        // assertEq(flipGUSDA.kicks(), 0);
-        // cat.bite("GUSD-A", address(this));
-        // assertEq(flipGUSDA.kicks(), 1);
+        //assertEq(flipGUSDA.kicks(), 0);
+        //cat.bite("GUSD-A", address(this));
+        //assertEq(flipGUSDA.kicks(), 1);
     }
 
 }

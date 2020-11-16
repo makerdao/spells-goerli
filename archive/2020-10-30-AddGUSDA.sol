@@ -28,22 +28,28 @@ import "lib/dss-interfaces/src/dss/SpotAbstract.sol";
 import "lib/dss-interfaces/src/dss/VatAbstract.sol";
 import "lib/dss-interfaces/src/dss/FaucetAbstract.sol";
 import "lib/dss-interfaces/src/dss/FlipperMomAbstract.sol";
-import "lib/dss-interfaces/src/dss/ChainlogAbstract.sol";
-
 
 contract SpellAction {
     // KOVAN ADDRESSES
     //
     // The contracts in this list should correspond to MCD core contracts, verify
     //  against the current release list at:
-    //     https://changelog.makerdao.com/releases/kovan/1.1.4/contracts.json
+    //     https://changelog.makerdao.com/releases/kovan/1.1.3/contracts.json
 
-    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
+    address constant MCD_VAT      = 0xbA987bDB501d131f766fEe8180Da5d81b34b69d9;
+    address constant MCD_CAT      = 0xdDb5F7A3A5558b9a6a1f3382BD75E2268d1c6958;
+    address constant MCD_JUG      = 0xcbB7718c9F39d05aEEDE1c472ca8Bf804b2f1EaD;
+    address constant MCD_SPOT     = 0x3a042de6413eDB15F2784f2f97cC68C7E9750b2D;
+    address constant MCD_POT      = 0xEA190DBDC7adF265260ec4dA6e9675Fd4f5A78bb;
+    address constant MCD_END      = 0x24728AcF2E2C403F5d2db4Df6834B8998e56aA5F;
+    address constant FLIPPER_MOM  = 0x50dC6120c67E456AdA2059cfADFF0601499cf681;
+    address constant OSM_MOM      = 0x5dA9D1C3d4f1197E5c52Ff963916Fe84D2F5d8f3;
+    address constant ILK_REGISTRY = 0xedE45A0522CA19e979e217064629778d6Cc2d9Ea;
 
-    address constant FLIP_FAB        = 0x7c890e1e492FDDA9096353D155eE1B26C1656a62;
+    address constant FAUCET       = 0x57aAeAE905376a4B1899bA81364b4cE2519CBfB3;
 
     address constant GUSD            = 0x31D8EdbF6F33ef858c80d68D06Ec83f33c2aA150;
-    address constant MCD_JOIN_GUSD_A = 0x0c6B26e6AB583D2e4528034037F74842ea988909;
+    address constant MCD_JOIN_GUSD_A = 0xC32fb81a573C1DAC509443e86759330f893dA8bD;
     address constant MCD_FLIP_GUSD_A = 0xf6c0e36a76F2B9F7Bd568155F3fDc53ff1be1Aeb;
     address constant PIP_GUSD        = 0xb6630DE6Eda0f3f3d96Db4639914565d6b82CfEF;
 
@@ -62,25 +68,6 @@ contract SpellAction {
     uint256 constant FOUR_PERCENT_RATE = 1000000001243680656318820312;
 
     function execute() external {
-        address MCD_VAT      = CHANGELOG.getAddress("MCD_VAT");
-        address MCD_CAT      = CHANGELOG.getAddress("MCD_CAT");
-        address MCD_JUG      = CHANGELOG.getAddress("MCD_JUG");
-        address MCD_SPOT     = CHANGELOG.getAddress("MCD_SPOT");
-        address MCD_END      = CHANGELOG.getAddress("MCD_END");
-        address FLIPPER_MOM  = CHANGELOG.getAddress("FLIPPER_MOM");
-        //address OSM_MOM      = CHANGELOG.getAddress("OSM_MOM");
-        address ILK_REGISTRY = CHANGELOG.getAddress("ILK_REGISTRY");
-        address FAUCET       = CHANGELOG.getAddress("FAUCET");
-
-        // Add the flipper factory to the changelog
-        CHANGELOG.setAddress("FLIP_FAB", FLIP_FAB);
-
-        // Add GUSD contracts to the changelog
-        CHANGELOG.setAddress("GUSD", GUSD);
-        CHANGELOG.setAddress("MCD_JOIN_GUSD_A", MCD_JOIN_GUSD_A);
-        CHANGELOG.setAddress("MCD_FLIP_GUSD_A", MCD_FLIP_GUSD_A);
-        CHANGELOG.setAddress("PIP_GUSD", PIP_GUSD);
-
         bytes32 ilk = "GUSD-A";
 
         // Sanity checks
@@ -165,9 +152,8 @@ contract SpellAction {
 }
 
 contract DssSpell {
-    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
     DSPauseAbstract public pause =
-        DSPauseAbstract(CHANGELOG.getAddress("MCD_PAUSE"));
+        DSPauseAbstract(0x8754E6ecb4fe68DaA5132c2886aB39297a5c7189);
     address         public action;
     bytes32         public tag;
     uint256         public eta;
