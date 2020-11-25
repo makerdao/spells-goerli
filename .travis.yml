@@ -1,10 +1,10 @@
-sudo: required
-language: python
-python:
-- 3.6
-services:
-- docker
+os:
+  - linux
+language: nix
+nix: 2.3.6
 before_install:
-- git submodule update --init --recursive
+  - nix-env -iA nixpkgs.cachix
+  - echo "trusted-users = root travis" | sudo tee -a /etc/nix/nix.conf && sudo pkill nix-daemon
+  - cachix use maker
 script:
--  bash docker_test.sh
+  - nix-shell --pure --argstr url ${ETH_RPC_URL} --run './test-dssspell.sh'
