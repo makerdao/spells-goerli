@@ -45,10 +45,10 @@ contract DssSpellTest is DSTest, DSMath {
         uint256 vow_bump;
         uint256 vow_hump;
         uint256 cat_box;
+        uint256 ilk_count;
         address pause_authority;
         address osm_mom_authority;
         address flipper_mom_authority;
-        uint256 ilk_count;
         mapping (bytes32 => CollateralValues) collaterals;
     }
 
@@ -174,10 +174,10 @@ contract DssSpellTest is DSTest, DSMath {
             vow_bump:              10,                  // In whole Dai units
             vow_hump:              500,                 // In whole Dai units
             cat_box:               10 * THOUSAND,       // In whole Dai units
+            ilk_count:             20,                  // Num expected in system
             pause_authority:       address(chief),      // Pause authority
             osm_mom_authority:     address(chief),      // OsmMom authority
-            flipper_mom_authority: address(chief),      // FlipperMom authority
-            ilk_count:             20                   // Num expected in system
+            flipper_mom_authority: address(chief)       // FlipperMom authority
         });
 
         //
@@ -637,6 +637,9 @@ contract DssSpellTest is DSTest, DSMath {
             assertEq(cat.box(), normalizedBox);
         }
 
+        // check number of ilks
+        assertEq(reg.count(), values.ilk_count);
+
         // check Pause authority
         assertEq(pause.authority(), values.pause_authority);
 
@@ -645,9 +648,6 @@ contract DssSpellTest is DSTest, DSMath {
 
         // check FlipperMom authority
         assertEq(flipMom.authority(), values.flipper_mom_authority);
-
-        // check number of ilks
-        assertEq(reg.count(), values.ilk_count);
     }
 
     function checkCollateralValues(SystemValues storage values) internal {

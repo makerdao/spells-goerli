@@ -276,7 +276,7 @@ contract SpellAction {
             "ETH-B", 50_000_000 * RAD, 5_000_000 * RAD, 12 hours
         );
 
-        // Add MCD_IAM_AUTO_LINE
+        // add MCD_IAM_AUTO_LINE
         CHANGELOG.setAddress("MCD_IAM_AUTO_LINE", MCD_IAM_AUTO_LINE);
 
         // Bump version
