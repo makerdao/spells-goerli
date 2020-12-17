@@ -3,7 +3,7 @@ set -e
 
 [[ "$ETH_RPC_URL" && "$(seth chain)" == "kovan" ]] || { echo "Please set a kovan ETH_RPC_URL"; exit 1; }
 
-SOLC_FLAGS="--optimize --optimize-runs 1" dapp --use solc:0.5.12 build
+SOLC_FLAGS="--optimize --optimize-runs 1" dapp --use solc:0.6.11 build
 
 # MkrAuthority
 # export DAPP_TEST_ADDRESS=0xdB33dFD3D61308C33C63209845DaD3e6bfb2c674

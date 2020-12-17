@@ -17,7 +17,7 @@ COB Team Name or Author(s):
 - [ ] Verify expiration (`4 days + 2 hours` monthly and `30 days` for the rest)
 - [ ] Verify hash in the description matches [here](https://emn178.github.io/online-tools/keccak_256.html)
 - [ ] Validate all addresses used are in Kovan changelog
-- [ ] Deploy spell to kovan `SOLC_FLAGS="--optimize --optimize-runs=1" dapp --use solc:0.5.12 build --extract && dapp create DssSpell --gas=5000000 --gas-price="$(seth --to-wei 3 "gwei")"`
+- [ ] Deploy spell to kovan `SOLC_FLAGS="--optimize --optimize-runs=1" dapp --use solc:0.6.11 build --extract && dapp create DssSpell --gas=5000000 --gas-price="$(seth --to-wei 3 "gwei")"`
 - [ ] Ensure contract is verified on `kovan` etherscan
 - [ ] Change test to use kovan spell address and deploy timestamp
 - [ ] Keep `Kovan-DssSpell.sol` and `Kovan-DssSpell.t.sol` the same, but make a copy in `archive`
