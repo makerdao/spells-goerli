@@ -3,11 +3,11 @@ set -e
 
 [[ "$ETH_RPC_URL" && "$(seth chain)" == "kovan" ]] || { echo "Please set a kovan ETH_RPC_URL"; exit 1; }
 
-SOLC_FLAGS="--optimize --optimize-runs 1" dapp --use solc:0.6.11 build
+export DAPP_LIBRARIES=' lib/dss-exec-lib/src/DssExecLib.sol:DssExecLib:0xd2406b8A710517fBe1A2218A72271D4Dc43A9D08'
+export DAPP_LINK_TEST_LIBRARIES=0
 
-# MkrAuthority
-# export DAPP_TEST_ADDRESS=0xdB33dFD3D61308C33C63209845DaD3e6bfb2c674
-export DAPP_TEST_TIMESTAMP=$(seth block latest timestamp)
-export DAPP_TEST_NUMBER=$(seth block latest number)
-
-LANG=C.UTF-8 hevm dapp-test --rpc="$ETH_RPC_URL" --json-file=out/dapp.sol.json --dapp-root=. --verbose 1
+if [[ -z "$1" ]]; then
+  dapp --use solc:0.6.11 test --rpc-url="$ETH_RPC_URL" -v
+else
+  dapp --use solc:0.6.11 test --rpc-url="$ETH_RPC_URL" --match "$1" -vv
+fi

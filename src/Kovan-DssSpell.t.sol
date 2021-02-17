@@ -5,7 +5,7 @@ import "ds-test/test.sol";
 import "lib/dss-interfaces/src/Interfaces.sol";
 import "./test/rates.sol";
 
-import {DssSpell, SpellAction, PsmAbstract, LerpAbstract} from "./Kovan-DssSpell.sol";
+import {DssSpell, SpellAction} from "./Kovan-DssSpell.sol";
 
 interface Hevm {
     function warp(uint) external;
@@ -14,7 +14,7 @@ interface Hevm {
 
 contract DssSpellTest is DSTest, DSMath {
     // populate with kovan spell if needed
-    address constant KOVAN_SPELL = address(0x141aE0745C903d586c4106Bf6fb3525B3c9BE60A);
+    address constant KOVAN_SPELL = address(0x0);
     // this needs to be updated
     uint256 constant SPELL_CREATED = 1608240960;
 
@@ -80,13 +80,6 @@ contract DssSpellTest is DSTest, DSMath {
 
     // Faucet
     FaucetAbstract      faucet   = FaucetAbstract(     0x57aAeAE905376a4B1899bA81364b4cE2519CBfB3);
-
-    // PSM-USDC-A specific
-    DSTokenAbstract         usdc = DSTokenAbstract(  0xBD84be3C303f6821ab297b840a99Bd0d4c4da6b5);
-    GemJoinAbstract  joinUSDCPSM = GemJoinAbstract(  0x4BA159Ad37FD80D235b4a948A8682747c74fDc0E);
-    FlipAbstract     flipUSDCPSM = FlipAbstract(     0xe9eef655494F63802e9C7A7F1006547c4De3e713);
-    PsmAbstract       psmUSDCPSM = PsmAbstract(      0xe4dC42e438879987e287A6d9519379936d7b065A);
-    LerpAbstract     lerpUSDCPSM = LerpAbstract(     0x489f89E54a807BE8fe531C1663FA9A39Bbdde4F4);
 
     DssSpell spell;
 
@@ -658,9 +651,8 @@ contract DssSpellTest is DSTest, DSMath {
         {
             uint normalizedBox = values.cat_box * RAD;
             assertEq(cat.box(), normalizedBox);
-            assertTrue(
-                cat.box() >= MILLION * RAD && cat.box() < 50 * MILLION * RAD
-            );
+            assertTrue(cat.box() >= THOUSAND * RAD);
+            assertTrue(cat.box() < 50 * MILLION * RAD);
         }
 
         // check Pause authority
@@ -677,6 +669,7 @@ contract DssSpellTest is DSTest, DSMath {
     }
 
     function checkCollateralValues(SystemValues storage values) internal {
+        uint256 sumlines;
         bytes32[] memory ilks = reg.list();
         for(uint256 i = 0; i < ilks.length; i++) {
             bytes32 ilk = ilks[i];
@@ -693,6 +686,7 @@ contract DssSpellTest is DSTest, DSMath {
             (,,, uint256 line, uint256 dust) = vat.ilks(ilk);
             // Convert whole Dai units to expected RAD
             uint256 normalizedTestLine = values.collaterals[ilk].line * RAD;
+            sumlines += line;
             (uint256 aL_line, uint256 aL_gap, uint256 aL_ttl,,) = autoLine.ilks(ilk);
             if (!values.collaterals[ilk].aL_enabled) {
                 assertTrue(aL_line == 0);
@@ -751,6 +745,7 @@ contract DssSpellTest is DSTest, DSMath {
             assertEq(join.wards(address(pauseProxy)), 1); // Check pause_proxy ward
             }
         }
+        assertTrue(sumlines <= vat.Line());
     }
 
     function testSpellIsCast() public {
@@ -773,87 +768,6 @@ contract DssSpellTest is DSTest, DSMath {
         checkSystemValues(afterSpell);
 
         checkCollateralValues(afterSpell);
-    }
-
-    function testSpellIsCast_PSM_USDC_A_INTEGRATION() public {
-        vote();
-        scheduleWaitAndCast();
-        assertTrue(spell.done());
-
-        spot.poke("PSM-USDC-A");
-
-        // Check faucet amount
-        uint256 faucetAmount = faucet.amt(address(usdc));
-        uint256 faucetAmountWad = faucetAmount * (10 ** (18 - usdc.decimals()));
-        uint256 oneUsdc = 10 ** usdc.decimals();
-        assertTrue(faucetAmount > 0);
-        faucet.gulp(address(usdc));
-        assertEq(usdc.balanceOf(address(this)), faucetAmount);
-
-        // Authorization
-        assertEq(joinUSDCPSM.wards(pauseProxy), 1);
-        assertEq(joinUSDCPSM.wards(address(psmUSDCPSM)), 1);
-        assertEq(psmUSDCPSM.wards(address(lerpUSDCPSM)), 1);
-        assertEq(psmUSDCPSM.wards(pauseProxy), 1);
-        assertEq(lerpUSDCPSM.wards(pauseProxy), 1);
-        assertEq(vat.wards(address(joinUSDCPSM)), 1);
-        assertEq(flipUSDCPSM.wards(address(end)), 1);
-        assertEq(flipUSDCPSM.wards(address(flipMom)), 1);
-
-        // Check psm + lerp is set up correctly
-        assertEq(psmUSDCPSM.tin(), WAD * 1 / 100);
-        assertEq(psmUSDCPSM.tout(), WAD * 1 / 1000);
-        assertTrue(lerpUSDCPSM.started());
-        assertEq(lerpUSDCPSM.startTime(), now);
-        assertTrue(!lerpUSDCPSM.done());
-
-        // Convert all USDC to DAI with a 1% fee
-        usdc.approve(address(joinUSDCPSM), faucetAmount);
-        psmUSDCPSM.sellGem(address(this), faucetAmount);
-        faucetAmount = faucetAmount * 99 / 100;
-        faucetAmountWad = faucetAmount * (10 ** (18 - usdc.decimals()));
-        assertEq(usdc.balanceOf(address(this)), 0);
-        assertEq(dai.balanceOf(address(this)), faucetAmountWad);
-
-        // Convert 50 DAI to USDC with a 0.1% fee
-        faucetAmount = 50 * oneUsdc;
-        dai.approve(address(psmUSDCPSM), uint256(-1));
-        psmUSDCPSM.buyGem(address(this), faucetAmount);
-        dai.transfer(address(0), dai.balanceOf(address(this)));     // Throw away extra
-        assertEq(usdc.balanceOf(address(this)), faucetAmount);
-
-        // Convert 50 USDC to DAI with a 0.55% fee (halfway through lerp)
-        hevm.warp(now + 3.5 days);
-        lerpUSDCPSM.tick();
-        assertTrue(!lerpUSDCPSM.done());
-        assertEq(psmUSDCPSM.tin(), WAD * 55 / 10000);
-        assertEq(psmUSDCPSM.tout(), WAD * 1 / 1000);
-        usdc.approve(address(joinUSDCPSM), faucetAmount);
-        psmUSDCPSM.sellGem(address(this), faucetAmount);
-        faucetAmount = faucetAmount * 9945 / 10000;
-        faucetAmountWad = faucetAmount * (10 ** (18 - usdc.decimals()));
-        assertEq(usdc.balanceOf(address(this)), 0);
-        assertEq(dai.balanceOf(address(this)), faucetAmountWad);
-
-        // Convert 20 DAI to USDC with a 1% fee
-        faucetAmount = 20 * oneUsdc;
-        psmUSDCPSM.buyGem(address(this), faucetAmount);
-        dai.transfer(address(0), dai.balanceOf(address(this)));     // Throw away extra
-        assertEq(usdc.balanceOf(address(this)), faucetAmount);
-
-        // Convert 20 USDC to DAI with a 0.1% fee (lerp is done)
-        hevm.warp(now + 4 days);
-        lerpUSDCPSM.tick();
-        assertTrue(lerpUSDCPSM.done());
-        assertEq(psmUSDCPSM.wards(address(lerpUSDCPSM)), 0);    // Lerp de-auths itself
-        assertEq(psmUSDCPSM.tin(), WAD * 1 / 1000);
-        assertEq(psmUSDCPSM.tout(), WAD * 1 / 1000);
-        usdc.approve(address(joinUSDCPSM), faucetAmount);
-        psmUSDCPSM.sellGem(address(this), faucetAmount);
-        faucetAmount = faucetAmount * 999 / 1000;
-        faucetAmountWad = faucetAmount * (10 ** (18 - usdc.decimals()));
-        assertEq(usdc.balanceOf(address(this)), 0);
-        assertEq(dai.balanceOf(address(this)), faucetAmountWad);
     }
 
 }
