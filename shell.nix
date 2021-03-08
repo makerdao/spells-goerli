@@ -1,14 +1,21 @@
 { url
   , dappPkgs ? (
     import (fetchTarball "https://github.com/makerdao/makerpkgs/tarball/master") {}
-  ).dappPkgsVersions.hevm-0_43_1
+  ).dappPkgsVersions.master-20200217
 }: with dappPkgs;
 
 mkShell {
+  DAPP_SOLC = solc-static-versions.solc_0_6_11 + "/bin/solc-0.6.11";
+  DAPP_BUILD_OPTIMIZE = 1;
+  DAPP_BUILD_OPTIMIZE_RUNS = 1;
+  DAPP_LIBRARIES = " lib/dss-exec-lib/src/DssExecLib.sol:DssExecLib:0x40E718b252c65a4abF2C9897d63b086eb0e139b1";
+  DAPP_LINK_TEST_LIBRARIES = 0;
   buildInputs = [
     dapp
     hevm
     seth
+    jq
+    curl
   ];
 
   shellHook = ''
