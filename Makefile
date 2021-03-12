@@ -4,3 +4,4 @@ all    :; DAPP_LIBRARIES=' lib/dss-exec-lib/src/DssExecLib.sol:DssExecLib:0x40E7
 clean  :; dapp clean
 test   :; ./test-dssspell.sh
 deploy :; make && dapp create DssSpell
+flatten :; hevm flatten --source-file "src/Kovan-DssSpell.sol" > out/flat.sol

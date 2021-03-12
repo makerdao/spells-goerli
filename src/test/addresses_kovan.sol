@@ -49,6 +49,8 @@ contract Addresses {
         addr["MCD_FLIP_ETH_A"]         = 0x750295A8db0580F32355f97de7918fF538c818F1;
         addr["MCD_JOIN_ETH_B"]         = 0xd19A770F00F89e6Dd1F12E6D6E6839b95C084D85;
         addr["MCD_FLIP_ETH_B"]         = 0x360e15d419c14f6060c88Ac0741323C37fBfDa2D;
+        addr["MCD_JOIN_ETH_C"]         = 0xD166b57355BaCE25e5dEa5995009E68584f60767;
+        addr["MCD_FLIP_ETH_C"]         = 0x6EB1922EbfC357bAe88B4aa5aB377A8C4DFfB4e9;
         addr["BAT"]                    = 0x9f8cFB61D3B2aF62864408DD703F9C3BEB55dff7;
         addr["PIP_BAT"]                = 0x5C40C9Eb35c76069fA4C3A00EA59fAc6fFA9c113;
         addr["MCD_JOIN_BAT_A"]         = 0x2a4C485B1B8dFb46acCfbeCaF75b6188A59dBd0a;
