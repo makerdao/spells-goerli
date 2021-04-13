@@ -1,6 +1,6 @@
 
 // SPDX-License-Identifier: GPL-3.0-or-later
-pragma solidity 0.6.11;
+pragma solidity ^0.6.12;
 
 contract Addresses {
 
@@ -19,6 +19,7 @@ contract Addresses {
         addr["MCD_VAT"]                = 0xbA987bDB501d131f766fEe8180Da5d81b34b69d9;
         addr["MCD_JUG"]                = 0xcbB7718c9F39d05aEEDE1c472ca8Bf804b2f1EaD;
         addr["MCD_CAT"]                = 0xdDb5F7A3A5558b9a6a1f3382BD75E2268d1c6958;
+        addr["MCD_DOG"]                = 0x121D0953683F74e9a338D40d9b4659C0EBb539a0;
         addr["MCD_VOW"]                = 0x0F4Cbe6CBA918b7488C26E29d9ECd7368F38EA3b;
         addr["MCD_JOIN_DAI"]           = 0x5AA71a3ae1C0bd6ac27A1f28e1415fFFB6F15B8c;
         addr["MCD_FLAP"]               = 0xc6d3C83A080e2Ef16E4d7d4450A869d0891024F5;
@@ -29,17 +30,19 @@ contract Addresses {
         addr["MCD_DAI"]                = 0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa;
         addr["MCD_SPOT"]               = 0x3a042de6413eDB15F2784f2f97cC68C7E9750b2D;
         addr["MCD_POT"]                = 0xEA190DBDC7adF265260ec4dA6e9675Fd4f5A78bb;
-        addr["MCD_END"]                = 0x24728AcF2E2C403F5d2db4Df6834B8998e56aA5F;
-        addr["MCD_ESM"]                = 0x0C376764F585828ffB52471c1c35f855e312a06c;
+        addr["MCD_END"]                = 0x0D1a98E93d9cE32E44bC035e8C6E4209fdB70C27;
+        addr["MCD_ESM_BUG"]            = 0x0798603b8AE1f76D2823aDbc2E15d047Eac1Efd7;
+        addr["MCD_ESM_ATTACK"]         = 0x23Aa7cbeb266413f968D284acce3a3f9EEFFC2Ec;
         addr["PROXY_ACTIONS"]          = 0xD8b9702755E91Aa792656966aE6bAF32F4C394Ba;
         addr["PROXY_ACTIONS_END"]      = 0x7c3f28f174F2b0539C202a5307Ff48efa61De982;
         addr["PROXY_ACTIONS_DSR"]      = 0xc5CC1Dfb64A62B9C7Bb6Cbf53C2A579E2856bf92;
         addr["CDP_MANAGER"]            = 0x1476483dD8C35F25e568113C5f70249D3976ba21;
         addr["DSR_MANAGER"]            = 0x7f5d60432DE4840a3E7AE7218f7D6b7A2412683a;
         addr["GET_CDPS"]               = 0x592301a23d37c591C5856f28726AF820AF8e7014;
-        addr["ILK_REGISTRY"]           = 0xedE45A0522CA19e979e217064629778d6Cc2d9Ea;
+        addr["ILK_REGISTRY"]           = 0xB3fBb13b831F254DbBB9a1abdb81d8D91589B3B4;
         addr["OSM_MOM"]                = 0x5dA9D1C3d4f1197E5c52Ff963916Fe84D2F5d8f3;
         addr["FLIPPER_MOM"]            = 0x50dC6120c67E456AdA2059cfADFF0601499cf681;
+        addr["CLIPPER_MOM"]            = 0x96E9a19Be6EA91d1C0908e5E207f944dc2E7B878;
         addr["MCD_IAM_AUTO_LINE"]      = 0xe7D7d61c0ed9306B6c93E7C65F6C9DDF38b9320b;
         addr["PROXY_FACTORY"]          = 0xe11E3b391F7E8bC47247866aF32AF67Dd58Dc800;
         addr["PROXY_REGISTRY"]         = 0x64A436ae831C1672AE81F674CAb8B6775df3475C;
@@ -101,6 +104,8 @@ contract Addresses {
         addr["PIP_LINK"]               = 0x20D5A457e49D05fac9729983d9701E0C3079Efac;
         addr["MCD_JOIN_LINK_A"]        = 0xF4Df626aE4fb446e2Dcce461338dEA54d2b9e09b;
         addr["MCD_FLIP_LINK_A"]        = 0xfbDCDF5Bd98f68cEfc3f37829189b97B602eCFF2;
+        addr["MCD_CLIP_LINK_A"]        = 0x1eB71cC879960606F8ab0E02b3668EEf92CE6D98;
+        addr["MCD_CLIP_CALC_LINK_A"]   = 0xbd586d6352Fcf0C45f77FC9348F4Ee7539F6e2bD;
         addr["BAL"]                    = 0x630D82Cbf82089B09F71f8d3aAaff2EBA6f47B15;
         addr["PIP_BAL"]                = 0x4fd34872F3AbC07ea6C45c7907f87041C0801DdE;
         addr["MCD_JOIN_BAL_A"]         = 0x8De5EA9251E0576e3726c8766C56E27fAb2B6597;
@@ -132,12 +137,19 @@ contract Addresses {
         addr["MCD_FLIP_UNIV2DAIETH_A"] = 0x0B6C3512C8D4300d566b286FC4a554dAC217AaA6;
         addr["PROXY_PAUSE_ACTIONS"]    = 0x7c52826c1efEAE3199BDBe68e3916CC3eA222E29;
         addr["PROXY_DEPLOYER"]         = 0xA9fCcB07DD3f774d5b9d02e99DE1a27f47F91189;
+        addr["MIP21_LIQUIDATION_ORACLE"] = 0x2881c5dF65A8D81e38f7636122aFb456514804CC;
         addr["RWA001"]                   = 0x8F9A8cbBdfb93b72d646c8DEd6B4Fe4D86B315cB;
+        addr["PIP_RWA001"]               = 0x09710C9440e5FF5c473efe61d5a2f14cA05A6752;
         addr["MCD_JOIN_RWA001_A"]        = 0x029A554f252373e146f76Fa1a7455f73aBF4d38e;
         addr["RWA001_A_URN"]             = 0x3Ba90D86f7E3218C48b7E0FCa959EcF43d9A30F4;
         addr["RWA001_A_INPUT_CONDUIT"]   = 0xB944B07EC3B680b2cEA753125667F7663d424DC3;
         addr["RWA001_A_OUTPUT_CONDUIT"]  = 0xc54fEee07421EAB8000AC8c921c0De9DbfbE780B;
-        addr["MIP21_LIQUIDATION_ORACLE"] = 0x2881c5dF65A8D81e38f7636122aFb456514804CC;
+        addr["NS2DRP"]                   = 0x1C3765c94aF9b7eB3fdEC69Eddb7Ddf27f2BcFf4;
+        addr["PIP_NS2DRP"]               = 0x82a561D6f5013766203776a26123ce5B9389109b;
+        addr["MCD_JOIN_NS2DRP_A"]        = 0x4B8C10da2B70dE45f7Ea106A961F2Fb79f5bC2bE;
+        addr["NS2DRP_A_URN"]             = 0xdFb4E887D89Ac14b0337C9dC05d8f5e492B9847C;
+        addr["NS2DRP_A_INPUT_CONDUIT"]   = 0x8905C7066807793bf9c7cd1d236DEF0eE2692B9a;
+        addr["NS2DRP_A_OUTPUT_CONDUIT"]  = 0x8905C7066807793bf9c7cd1d236DEF0eE2692B9a;
         addr["PAXG"]                   = 0x52403FCEfcf3A810e58868fF19c34725B426473A;
         addr["PIP_PAXG"]               = 0x31CceDBc45179f17CfD34967680C6560b6509C1A;
         addr["MCD_JOIN_PAXG_A"]        = 0x822248F31bd899DE327A760a78B6C84889aF180D;
