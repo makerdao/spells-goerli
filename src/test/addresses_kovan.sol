@@ -30,15 +30,15 @@ contract Addresses {
         addr["MCD_DAI"]                = 0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa;
         addr["MCD_SPOT"]               = 0x3a042de6413eDB15F2784f2f97cC68C7E9750b2D;
         addr["MCD_POT"]                = 0xEA190DBDC7adF265260ec4dA6e9675Fd4f5A78bb;
-        addr["MCD_END"]                = 0x0D1a98E93d9cE32E44bC035e8C6E4209fdB70C27;
-        addr["MCD_ESM"]                = 0x23Aa7cbeb266413f968D284acce3a3f9EEFFC2Ec;
+        addr["MCD_END"]                = 0x3d9603037FF096af03B83725dFdB1CDA9EA02CE4;
+        addr["MCD_ESM"]                = 0xD5D728446275B0A12E4a4038527974b92353B4a9;
         addr["PROXY_ACTIONS"]          = 0xD8b9702755E91Aa792656966aE6bAF32F4C394Ba;
         addr["PROXY_ACTIONS_END"]      = 0x7c3f28f174F2b0539C202a5307Ff48efa61De982;
         addr["PROXY_ACTIONS_DSR"]      = 0xc5CC1Dfb64A62B9C7Bb6Cbf53C2A579E2856bf92;
         addr["CDP_MANAGER"]            = 0x1476483dD8C35F25e568113C5f70249D3976ba21;
         addr["DSR_MANAGER"]            = 0x7f5d60432DE4840a3E7AE7218f7D6b7A2412683a;
         addr["GET_CDPS"]               = 0x592301a23d37c591C5856f28726AF820AF8e7014;
-        addr["ILK_REGISTRY"]           = 0xB3fBb13b831F254DbBB9a1abdb81d8D91589B3B4;
+        addr["ILK_REGISTRY"]           = 0xc3F42deABc0C506e8Ae9356F2d4fc1505196DCDB;
         addr["OSM_MOM"]                = 0x5dA9D1C3d4f1197E5c52Ff963916Fe84D2F5d8f3;
         addr["FLIPPER_MOM"]            = 0x50dC6120c67E456AdA2059cfADFF0601499cf681;
         addr["CLIPPER_MOM"]            = 0x96E9a19Be6EA91d1C0908e5E207f944dc2E7B878;
@@ -147,7 +147,7 @@ contract Addresses {
         addr["RWA001_A_INPUT_CONDUIT"]   = 0xB944B07EC3B680b2cEA753125667F7663d424DC3;
         addr["RWA001_A_OUTPUT_CONDUIT"]  = 0xc54fEee07421EAB8000AC8c921c0De9DbfbE780B;
         addr["RWA002"]                   = 0xea8a2f6DC9236edb3f53744f5019a444e24F4379;
-        addr["PIP_RWA002"]               = 0x0000000000000000000000000000000000000000;
+        addr["PIP_RWA002"]               = 0xaD6495E5918C5F66650EDf291C97b31aBaf5Cd7B;
         addr["MCD_JOIN_RWA002_A"]        = 0x3B3fAD77D6977a19cc7B156143056a3E9C6Ca329;
         addr["RWA002_A_URN"]             = 0xc615F4188C255445290fB9E6dB5E021fe4CA8ECf;
         addr["RWA002_A_INPUT_CONDUIT"]   = 0x2CfADbd094a4D650049C53832B15842a3c59Db34;
