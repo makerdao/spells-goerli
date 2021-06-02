@@ -1188,7 +1188,7 @@ contract DssSpellTest is DSTest, DSMath {
         {
             uint256 normalizedHole = values.dog_Hole * RAD;
             assertEq(dog.Hole(), normalizedHole, "TestError/dog-Hole");
-            assertTrue(dog.Hole() >= THOUSAND * RAD && dog.Hole() <= 50 * MILLION * RAD, "TestError/dog-Hole-range");
+            assertTrue(dog.Hole() >= THOUSAND * RAD && dog.Hole() <= 200 * MILLION * RAD, "TestError/dog-Hole-range");
         }
 
         // check Pause authority
@@ -1698,7 +1698,7 @@ contract DssSpellTest is DSTest, DSMath {
             assertEq(getExtcodesize(depl_spell), getExtcodesize(code_spell), "TestError/spell-codesize");
         }
 
-        assertTrue(spell.officeHours() == spellValues.office_hours_enabled);
+        assertTrue(spell.officeHours() == spellValues.office_hours_enabled, "TestError/spell-office-hours");
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
