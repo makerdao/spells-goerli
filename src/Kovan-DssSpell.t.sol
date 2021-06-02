@@ -1252,11 +1252,11 @@ contract DssSpellTest is DSTest, DSMath {
                 assertEq(aL_line, values.collaterals[ilk].aL_line * RAD, string(abi.encodePacked("TestError/al-line-", ilk)));
                 assertEq(aL_gap, values.collaterals[ilk].aL_gap * RAD, string(abi.encodePacked("TestError/al-gap-", ilk)));
                 assertEq(aL_ttl, values.collaterals[ilk].aL_ttl, string(abi.encodePacked("TestError/al-ttl-", ilk)));
-                assertTrue((aL_line >= RAD && aL_line < 10 * BILLION * RAD) || aL_line == 0, string(abi.encodePacked("TestError/al-line-range-", ilk))); // eq 0 or gt eq 1 RAD and lt 10B
+                assertTrue((aL_line >= RAD && aL_line < 20 * BILLION * RAD) || aL_line == 0, string(abi.encodePacked("TestError/al-line-range-", ilk))); // eq 0 or gt eq 1 RAD and lt 10B
             }
             uint256 normalizedTestDust = values.collaterals[ilk].dust * RAD;
             assertEq(dust, normalizedTestDust, string(abi.encodePacked("TestError/vat-dust-", ilk)));
-            assertTrue((dust >= RAD && dust < 10 * THOUSAND * RAD) || dust == 0, string(abi.encodePacked("TestError/vat-dust-range-", ilk))); // eq 0 or gt eq 1 and lt 10k
+            assertTrue((dust >= RAD && dust < 20 * THOUSAND * RAD) || dust == 0, string(abi.encodePacked("TestError/vat-dust-range-", ilk))); // eq 0 or gt eq 1 and lt 10k
             }
 
             {
@@ -1339,7 +1339,7 @@ contract DssSpellTest is DSTest, DSMath {
                 assertTrue(rmul(clip.buf(), clip.cusp()) <= RAY, string(abi.encodePacked("TestError/clip-buf-cusp-limit-", ilk)));
                 uint256 normalizedTestChip = (values.collaterals[ilk].clip_chip)  * 10**14;
                 assertEq(uint256(clip.chip()), normalizedTestChip, string(abi.encodePacked("TestError/clip-chip-", ilk)));
-                assertTrue(clip.chip() < 1 * WAD / 100, string(abi.encodePacked("TestError/clip-chip-range-", ilk))); // lt 13% (typical liquidation penalty)
+                assertTrue(clip.chip() < 1 * WAD / 100, string(abi.encodePacked("TestError/clip-chip-range-", ilk))); // lt 1%
                 uint256 normalizedTestTip = values.collaterals[ilk].clip_tip * RAD;
                 assertEq(uint256(clip.tip()), normalizedTestTip, string(abi.encodePacked("TestError/clip-tip-", ilk)));
                 assertTrue(clip.tip() == 0 || clip.tip() >= RAD && clip.tip() <= 300 * RAD, string(abi.encodePacked("TestError/clip-tip-range-", ilk)));
@@ -1697,6 +1697,8 @@ contract DssSpellTest is DSTest, DSMath {
             address code_spell = address(new DssSpell());
             assertEq(getExtcodesize(depl_spell), getExtcodesize(code_spell), "TestError/spell-codesize");
         }
+
+        assertTrue(spell.officeHours() == spellValues.office_hours_enabled);
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
