@@ -203,5 +203,6 @@ contract Addresses {
         addr["MCD_JOIN_PAXG_A"]                 = 0x822248F31bd899DE327A760a78B6C84889aF180D;
         addr["MCD_FLIP_PAXG_A"]                 = 0x0b2e32151041641Fa37a1F54D7eD526989eF9B73;
         addr["LERP_FAB"]                        = 0xa6766Ed3574bAFc6114618E74035C7bb5e9a6aa9;
+        addr["MCD_FLASH"]                       = 0x5aA1323f61D679E52a90120DFDA2ed1A76E4475A;
     }
 }
