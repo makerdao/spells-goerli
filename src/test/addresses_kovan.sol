@@ -204,5 +204,26 @@ contract Addresses {
         addr["MCD_FLIP_PAXG_A"]                 = 0x0b2e32151041641Fa37a1F54D7eD526989eF9B73;
         addr["LERP_FAB"]                        = 0xa6766Ed3574bAFc6114618E74035C7bb5e9a6aa9;
         addr["MCD_FLASH"]                       = 0x5aA1323f61D679E52a90120DFDA2ed1A76E4475A;
+        addr["RWA003"]                          = 0xDBC559F5058E593981C48f4f09fA34323df42d51;
+        addr["PIP_RWA002"]                      = 0xaD6495E5918C5F66650EDf291C97b31aBaf5Cd7B;
+        addr["MCD_JOIN_RWA003_A"]               = 0x4CCc7fED3912A32B6Cf7Db2FdA1554a9FF574099;
+        addr["RWA003_A_URN"]                    = 0x993c239179D6858769996bcAb5989ab2DF75913F;
+        addr["RWA003_A_INPUT_CONDUIT"]          = 0x45e17E350279a2f28243983053B634897BA03b64;
+        addr["RWA003_A_OUTPUT_CONDUIT"]         = 0x45e17E350279a2f28243983053B634897BA03b64;
+        addr["RWA004"]                          = 0x146b0abaB80a60Bfa3b4fDDb5056bBcFa4f1fec1;
+        addr["MCD_JOIN_RWA004_A"]               = 0xa92D4082BabF785Ba02f9C419509B7d08f2ef271;
+        addr["RWA004_A_URN"]                    = 0xf22C7F5A2AecE1E85263e3cec522BDCD3e392B59;
+        addr["RWA004_A_INPUT_CONDUIT"]          = 0x303dFE04Be5731207c5213FbB54488B3aD9B9FE3;
+        addr["RWA004_A_OUTPUT_CONDUIT"]         = 0x303dFE04Be5731207c5213FbB54488B3aD9B9FE3;
+        addr["RWA005"]                          = 0xcB2A48D26970eE7193d66BAc6F1b3090f2E8f82B;
+        addr["MCD_JOIN_RWA005_A"]               = 0x1233d0DBb55A4Bb41D711d4B584f8DDB15A2Ff88;
+        addr["RWA005_A_URN"]                    = 0xdB9f0700EbBac596CCeF5b14D5e23664Db2A184f;
+        addr["RWA005_A_INPUT_CONDUIT"]          = 0x17E5954Cdd3611Dd84e444F0ed555CC3a06cB319;
+        addr["RWA005_A_OUTPUT_CONDUIT"]         = 0x17E5954Cdd3611Dd84e444F0ed555CC3a06cB319;
+        addr["RWA006"]                          = 0x4E65F06574F1630B4fF756C898Fe02f276D53E86;
+        addr["MCD_JOIN_RWA006_A"]               = 0x039B74bD0Adc35046B67E88509900D41b9D95430;
+        addr["RWA006_A_URN"]                    = 0x6fa6F9C11f5F129f6ECA4B391D9d32038A9666cD;
+        addr["RWA006_A_INPUT_CONDUIT"]          = 0x652A3B3b91459504A8D1d785B0c923A34D638218;
+        addr["RWA006_A_OUTPUT_CONDUIT"]         = 0x652A3B3b91459504A8D1d785B0c923A34D638218;
     }
 }
