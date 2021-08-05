@@ -16,39 +16,25 @@
 
 pragma solidity 0.6.12;
 
-import {Fileable, Authorizable} from "dss-exec-lib/DssExecLib.sol";
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
 contract DssSpellAction is DssAction {
 
-    string public constant description = "Kovan Spell";
+    // Provides a descriptive tag for bot consumption
+    // This should be modified weekly to provide a summary of the actions
+    // Hash: seth keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/TODO -q -O - 2>/dev/null)"
+    string public constant override description = "Goerli Spell";
 
     // Turn off office hours
     function officeHours() public override returns (bool) {
         return false;
     }
 
-    uint256 constant WAD = 10**18;
-    uint256 constant RAY = 10**27;
-    uint256 constant RAD = 10**45;
-
-    address constant MCD_FLASH = 0x5aA1323f61D679E52a90120DFDA2ed1A76E4475A;
-
     function actions() public override {
-        // ---------------------------- Add MCD_FLASH ----------------------------
-        address MCD_VAT = DssExecLib.vat();
-        Fileable(MCD_FLASH).file("max", 500_000_000 * WAD);
-        Fileable(MCD_FLASH).file("toll", 5 * WAD / 10000);
-        DssExecLib.authorize(MCD_VAT, MCD_FLASH);
-        DssExecLib.setChangelogAddress("MCD_FLASH", MCD_FLASH);
-
-        // ---------------------------- Update Chainlog version ----------------------------
-        DssExecLib.setChangelogVersion("1.9.1");
     }
 }
 
 contract DssSpell is DssExec {
-    DssSpellAction internal action_ = new DssSpellAction();
-    constructor() DssExec(action_.description(), block.timestamp + 30 days, address(action_)) public {}
+    constructor() DssExec(block.timestamp + 30 days, address(new DssSpellAction())) public {}
 }

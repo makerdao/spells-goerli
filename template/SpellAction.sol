@@ -15,11 +15,11 @@ import "lib/dss-interfaces/src/dss/MedianAbstract.sol";
 import "lib/dss-interfaces/src/dss/DssAutoLineAbstract.sol";
 
 contract SpellAction {
-    // KOVAN ADDRESSES
+    // Goerli ADDRESSES
     //
     // The contracts in this list should correspond to MCD core contracts, verify
     //  against the current release list at:
-    //     https://changelog.makerdao.com/releases/kovan/active/contracts.json
+    //     https://changelog.makerdao.com/releases/goerli/active/contracts.json
     ChainlogAbstract constant CHANGELOG =
         ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
 
@@ -135,7 +135,7 @@ contract SpellAction {
         // Add new ilk to the IlkRegistry
         IlkRegistryAbstract(ILK_REGISTRY).add(MCD_JOIN_TOKEN_LETTER);
 
-        // Set gulp amount in faucet on kovan (only use WAD for decimals = 18)
+        // Set gulp amount in faucet on Goerli (only use WAD for decimals = 18)
         FaucetAbstract(FAUCET).setAmt(TOKEN, X * WAD);
 
         CHANGELOG.setAddress("TOKEN", TOKEN);

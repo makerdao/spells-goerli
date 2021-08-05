@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
-[[ "$ETH_RPC_URL" && "$(seth chain)" == "kovan" ]] || { echo "Please set a kovan ETH_RPC_URL"; exit 1; }
+[[ "$ETH_RPC_URL" && "$(seth chain)" == "goerli" ]] || { echo "Please set a Goerli ETH_RPC_URL"; exit 1; }
 
 export DAPP_BUILD_OPTIMIZE=1
 export DAPP_BUILD_OPTIMIZE_RUNS=1
-export DAPP_LIBRARIES=' lib/dss-exec-lib/src/DssExecLib.sol:DssExecLib:0x3644A28AA8204d09A1A0E423F7aC2ACaFf5b8bb3'
+export DAPP_LIBRARIES=' lib/dss-exec-lib/src/DssExecLib.sol:DssExecLib:0x0aAcC3bd8852a51538C57918b9E94952A8acE5Da'
 export DAPP_LINK_TEST_LIBRARIES=0
 
 if [[ -z "$1" ]]; then
