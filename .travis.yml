@@ -8,4 +8,4 @@ before_install:
   - cachix use maker
   - cachix use dapp
 script:
-  - nix-shell --pure --argstr url ${ETH_RPC_URL} --run 'dapp test -v --rpc'
+  - travis_wait 30 nix-shell --pure --argstr url ${ETH_RPC_URL} --run 'dapp test -v --rpc'
