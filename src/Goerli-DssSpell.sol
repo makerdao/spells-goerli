@@ -15,14 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
+pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
-import "dss-interfaces/dss/ClipAbstract.sol";
-import "dss-interfaces/dss/IlkRegistryAbstract.sol";
+import "dss-interfaces/dapp/DSValueAbstract.sol";
+import "dss-interfaces/dss/SpotAbstract.sol";
+import "dss-interfaces/dss/DssAutoLineAbstract.sol";
 
 interface Fileable {
-    function file(bytes32,bytes32,address) external;
+    function file(bytes32,uint256) external;
 }
 
 contract DssSpellAction is DssAction {
@@ -37,31 +39,72 @@ contract DssSpellAction is DssAction {
         return false;
     }
 
+    address constant MCD_JOIN_PSM_USDC_A       = 0xF2f86B76d1027f3777c522406faD710419C80bbB;
+    address constant MCD_CLIP_PSM_USDC_A       = 0x8f570B146655Cd52173B0db2DDeb40B7b32c5A9C;
+    address constant MCD_CLIP_CALC_PSM_USDC_A  = 0x6eB7f16842b13A1Fbb270Fc952Fb9a73D7c90a0e;
+    address constant MCD_PSM_USDC_A            = 0xb480B8dD5A232Cb7B227989Eacda728D1F247dB6;
+    bytes32 constant ILK_PSM_USDC_A            = "PSM-USDC-A";
+
+    uint256 constant BILLION = 10 ** 9;
+    uint256 constant WAD     = 10 ** 18;
+    uint256 constant RAY     = 10 ** 27;
+    uint256 constant RAD     = 10 ** 45;
+
     function actions() public override {
-        // Use PIP_WBTC for PIP_RENBTC
-        address PIP_RENBTC = DssExecLib.getChangelogAddress("PIP_WBTC");
-        Fileable(DssExecLib.getChangelogAddress("MCD_SPOT")).file("RENBTC-A", "pip", PIP_RENBTC);
-        IlkRegistryAbstract(DssExecLib.reg()).update("RENBTC-A");
-        DssExecLib.setChangelogAddress("PIP_RENBTC", PIP_RENBTC);
+        address USDC = DssExecLib.getChangelogAddress("USDC");
+        address PIP_USDC = DssExecLib.getChangelogAddress("PIP_USDC");
 
-        // Turn off liquidations of stables
-        ClipAbstract(DssExecLib.getChangelogAddress("MCD_CLIP_USDC_A")).file("stopped", 3);
-        ClipAbstract(DssExecLib.getChangelogAddress("MCD_CLIP_USDC_B")).file("stopped", 3);
-        ClipAbstract(DssExecLib.getChangelogAddress("MCD_CLIP_TUSD_A")).file("stopped", 3);
-        ClipAbstract(DssExecLib.getChangelogAddress("MCD_CLIP_USDT_A")).file("stopped", 3);
-        ClipAbstract(DssExecLib.getChangelogAddress("MCD_CLIP_PAXUSD_A")).file("stopped", 3);
-        ClipAbstract(DssExecLib.getChangelogAddress("MCD_CLIP_GUSD_A")).file("stopped", 3);
+        // Fix price stables
+        DSValueAbstract(PIP_USDC).poke(bytes32(WAD));
+        DSValueAbstract(DssExecLib.getChangelogAddress("PIP_TUSD")).poke(bytes32(WAD));
+        DSValueAbstract(DssExecLib.getChangelogAddress("PIP_PAXUSD")).poke(bytes32(WAD));
+        DSValueAbstract(DssExecLib.getChangelogAddress("PIP_GUSD")).poke(bytes32(WAD));
 
-        address CLIPPER_MOM = DssExecLib.getChangelogAddress("CLIPPER_MOM");
-        ClipAbstract(DssExecLib.getChangelogAddress("MCD_CLIP_USDC_A")).deny(CLIPPER_MOM);
-        ClipAbstract(DssExecLib.getChangelogAddress("MCD_CLIP_USDC_B")).deny(CLIPPER_MOM);
-        ClipAbstract(DssExecLib.getChangelogAddress("MCD_CLIP_TUSD_A")).deny(CLIPPER_MOM);
-        ClipAbstract(DssExecLib.getChangelogAddress("MCD_CLIP_USDT_A")).deny(CLIPPER_MOM);
-        ClipAbstract(DssExecLib.getChangelogAddress("MCD_CLIP_PAXUSD_A")).deny(CLIPPER_MOM);
-        ClipAbstract(DssExecLib.getChangelogAddress("MCD_CLIP_GUSD_A")).deny(CLIPPER_MOM);
+        DssExecLib.updateCollateralPrice("USDC-A");
+        DssExecLib.updateCollateralPrice("USDC-B");
+        DssExecLib.updateCollateralPrice("TUSD-A");
+        DssExecLib.updateCollateralPrice("PAXUSD-A");
+        DssExecLib.updateCollateralPrice("GUSD-A");
+        //
 
-        // Fix DSR value
-        DssExecLib.setDSR(1000000000003170820659990704, true);
+        // Add PSM_USDC_A
+        DssExecLib.authorize(MCD_JOIN_PSM_USDC_A, MCD_PSM_USDC_A);
+
+        DssExecLib.addNewCollateral(CollateralOpts({
+            ilk: ILK_PSM_USDC_A,
+            gem: USDC,
+            join: MCD_JOIN_PSM_USDC_A,
+            clip: MCD_CLIP_PSM_USDC_A,
+            calc: MCD_CLIP_CALC_PSM_USDC_A,
+            pip: PIP_USDC,
+            isLiquidatable: false,
+            isOSM: false,
+            whitelistOSM: false,
+            ilkDebtCeiling: 0,
+            minVaultAmount: 0,
+            maxLiquidationAmount: 0,
+            liquidationPenalty: 1300,
+            ilkStabilityFee: RAY,
+            startingPriceFactor: 10500,
+            breakerTolerance: 9500,
+            auctionDuration: 220 minutes,
+            permittedDrop: 9000,
+            liquidationRatio: 10000,
+            kprFlatReward: 300,
+            kprPctReward: 10
+        }));
+
+        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_PSM_USDC_A, 120 seconds, 9990);
+        Fileable(MCD_PSM_USDC_A).file("tin", WAD / 1000);
+
+        DssExecLib.setIlkAutoLineParameters(ILK_PSM_USDC_A, 10 * BILLION, 1 * BILLION, 24 hours);
+        DssAutoLineAbstract(DssExecLib.autoLine()).exec(ILK_PSM_USDC_A);
+
+        DssExecLib.setChangelogAddress("MCD_JOIN_PSM_USDC_A", MCD_JOIN_PSM_USDC_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_PSM_USDC_A", MCD_CLIP_PSM_USDC_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_PSM_USDC_A", MCD_CLIP_CALC_PSM_USDC_A);
+        DssExecLib.setChangelogAddress("MCD_PSM_USDC_A", MCD_PSM_USDC_A);
+        //
     }
 }
 

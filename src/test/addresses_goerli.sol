@@ -70,6 +70,10 @@ contract Addresses {
         addr["MCD_JOIN_USDC_B"]                 = 0x0Dc70CC4505c1952e719C9C740608A75Ca9e299e;
         addr["MCD_CLIP_USDC_B"]                 = 0x71e44e17359fFbC3626893D13A133870FEc9Fee6;
         addr["MCD_CLIP_CALC_USDC_B"]            = 0xae3c77F36436Ac242bf2BC3E1A271058529F207A;
+        addr["MCD_JOIN_PSM_USDC_A"]             = 0xF2f86B76d1027f3777c522406faD710419C80bbB;
+        addr["MCD_CLIP_PSM_USDC_A"]             = 0x8f570B146655Cd52173B0db2DDeb40B7b32c5A9C;
+        addr["MCD_CLIP_CALC_PSM_USDC_A"]        = 0x6eB7f16842b13A1Fbb270Fc952Fb9a73D7c90a0e;
+        addr["MCD_PSM_USDC_A"]                  = 0xb480B8dD5A232Cb7B227989Eacda728D1F247dB6;
         addr["TUSD"]                            = 0xe0B3D300E2e09c1Fd01252287dDbC70A7730ffB0;
         addr["PIP_TUSD"]                        = 0x0ce19eA2C568890e63083652f205554C927a0caa;
         addr["MCD_JOIN_TUSD_A"]                 = 0x5BC597f00d74fAcEE53Be784f0B7Ace63b4e2EBe;
