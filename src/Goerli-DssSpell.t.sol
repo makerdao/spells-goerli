@@ -1463,6 +1463,41 @@ contract DssSpellTest is DSTest, DSMath {
         checkCollateralValues(afterSpell);
     }
 
+    function testRwaDrawUpToDebtCeiling() public {
+        giveAuth(address(vat), address(this));
+        vat.file("Line", uint256(-1));  // ensure the global debt ceiling doesn't interfere with draws
+        bytes32[] memory ilks = reg.list();
+        for(uint256 i = 0; i < ilks.length; i++) {
+            bytes32 ilk = ilks[i];
+            if (reg.class(ilk) != 3) continue;
+
+            // XXXXXXX-X=> XXXXXX_X_URN 
+            bytes32 urnId = ilk & bytes32(bytes8(0xFFFFFFFFFFFF00FF));
+            urnId = urnId | bytes32(bytes12(0x0000000000005f005f55524e));
+            address urn = ChainlogAbstract(addr.addr("CHANGELOG")).getAddress(urnId);
+            giveAuth(urn, address(this));
+            RwaUrnLike(urn).hope(address(this));  // become operator
+
+            (uint256 ink,) = vat.urns(ilk, urn);
+            if (ink == 0) {
+                // Quick way to encumber collateral for the urn.
+                vat.slip(ilk, address(this), int256(WAD));
+                vat.frob(ilk, address(urn), address(this), address(this), int256(WAD), 0);
+            }
+
+            jug.drip(ilk);
+            (uint256 Art, uint256 rate,, uint256 line,) = vat.ilks(ilk);
+            uint256 room = sub(line, mul(Art, rate));
+            uint256 drawAmt = room / RAY;
+            if (mul(divup(mul(drawAmt, RAY), rate), rate) > room) {
+                drawAmt = sub(room, rate) / RAY;
+            }
+            RwaUrnLike(urn).draw(drawAmt);
+            (Art,,,,) = vat.ilks(ilk);
+            assertTrue(sub(line, mul(Art, rate)) < mul(2, rate));  // got very close to line
+        }
+    }
+
     function testNewIlkRegistryValues() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
