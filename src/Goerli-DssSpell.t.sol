@@ -248,7 +248,7 @@ contract DssSpellTest is DSTest, DSMath {
         // Test for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0x5836983985F34D842fFe93D095e6215240bCBC74),        // populate with deployed spell if deployed
+            deployed_spell:                 address(0),        // populate with deployed spell if deployed
             deployed_spell_created:         1628884736,                 // use get-created-timestamp.sh if deployed
             previous_spell:                 address(0),        // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           false,              // true if officehours is expected to be enabled in the spell
@@ -279,7 +279,7 @@ contract DssSpellTest is DSTest, DSMath {
             osm_mom_authority:     address(chief),          // OsmMom authority
             flipper_mom_authority: address(chief),          // FlipperMom authority
             clipper_mom_authority: address(chief),          // ClipperMom authority
-            ilk_count:             23                       // Num expected in system
+            ilk_count:             24                       // Num expected in system
         });
 
         afterSpell.collaterals["ETH-A"] = CollateralValues({
@@ -949,6 +949,35 @@ contract DssSpellTest is DSTest, DSMath {
             calc_step:    120,
             calc_cut:     9990
         });
+        afterSpell.collaterals["MATIC-A"] = CollateralValues({
+            aL_enabled:   true,
+            aL_line:      10 * MILLION,
+            aL_gap:       3 * MILLION,
+            aL_ttl:       8 hours,
+            line:         0,
+            dust:         10 * THOUSAND,
+            pct:          300,
+            mat:          17500,
+            liqType:      "clip",
+            liqOn:        true,
+            chop:         1300,
+            cat_dunk:     0,
+            flip_beg:     0,
+            flip_ttl:     0,
+            flip_tau:     0,
+            flipper_mom:  0,
+            dog_hole:     3 * MILLION,
+            clip_buf:     13000,
+            clip_tail:    140 minutes,
+            clip_cusp:    4000,
+            clip_chip:    10,
+            clip_tip:     300,
+            clipper_mom:  1,
+            cm_tolerance: 5000,
+            calc_tau:     0,
+            calc_step:    90,
+            calc_cut:     9900
+        });
     }
 
     function scheduleWaitAndCastFailDay() public {
@@ -1458,10 +1487,14 @@ contract DssSpellTest is DSTest, DSMath {
 
         ChainlogAbstract chainLog = ChainlogAbstract(addr.addr("CHANGELOG"));
 
-        assertEq(chainLog.getAddress("MCD_JOIN_PSM_USDC_A"), addr.addr("MCD_JOIN_PSM_USDC_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_PSM_USDC_A"), addr.addr("MCD_CLIP_PSM_USDC_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_PSM_USDC_A"), addr.addr("MCD_CLIP_CALC_PSM_USDC_A"));
-        assertEq(chainLog.getAddress("MCD_PSM_USDC_A"), addr.addr("MCD_PSM_USDC_A"));
+        assertEq(chainLog.getAddress("MATIC"), addr.addr("MATIC"));
+        assertEq(chainLog.getAddress("PIP_MATIC"), addr.addr("PIP_MATIC"));
+
+        assertEq(chainLog.getAddress("MCD_JOIN_MATIC_A"), addr.addr("MCD_JOIN_MATIC_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_MATIC_A"), addr.addr("MCD_CLIP_MATIC_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_MATIC_A"), addr.addr("MCD_CLIP_CALC_MATIC_A"));
+
+        assertEq(chainLog.getAddress("VOTE_DELEGATE_PROXY_FACTORY"), addr.addr("VOTE_DELEGATE_PROXY_FACTORY"));
     }
 
     function testFailWrongDay() public {
@@ -1516,71 +1549,110 @@ contract DssSpellTest is DSTest, DSMath {
         assertTrue(totalGas <= 10 * MILLION);
     }
 
-    function testSpellIsCast_Fix_DSValue_prices() public {
-        assertEq(DSValueAbstract(addr.addr("PIP_USDC")).read(), bytes32(0));
-        assertEq(DSValueAbstract(addr.addr("PIP_TUSD")).read(), bytes32(0));
-        assertEq(DSValueAbstract(addr.addr("PIP_PAXUSD")).read(), bytes32(0));
-        assertEq(DSValueAbstract(addr.addr("PIP_GUSD")).read(), bytes32(0));
+    function checkIlkIntegration(
+        bytes32 _ilk,
+        GemJoinAbstract join,
+        ClipAbstract clip,
+        address pip,
+        bool _isOSM,
+        bool _checkLiquidations,
+        bool _transferFee
+    ) public {
+        DSTokenAbstract token = DSTokenAbstract(join.gem());
 
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        assertEq(DSValueAbstract(addr.addr("PIP_USDC")).read(), bytes32(WAD));
-        assertEq(DSValueAbstract(addr.addr("PIP_TUSD")).read(), bytes32(WAD));
-        assertEq(DSValueAbstract(addr.addr("PIP_PAXUSD")).read(), bytes32(WAD));
-        assertEq(DSValueAbstract(addr.addr("PIP_GUSD")).read(), bytes32(WAD));
-    }
-
-    function testSpellIsCast_PSM_USDC_A_INTEGRATION() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        DSTokenAbstract usdc = DSTokenAbstract(addr.addr("USDC"));
-        AuthGemJoinAbstract joinPSMUSDCA = AuthGemJoinAbstract(addr.addr("MCD_JOIN_PSM_USDC_A"));
-        DssPsmLike psmPSMUSDCA = DssPsmLike(addr.addr("MCD_PSM_USDC_A"));
-        ClipAbstract clipPSMUSDCA = ClipAbstract(addr.addr("MCD_CLIP_PSM_USDC_A"));
-
-        // Add balance to the test address
-        uint256 oneUsdc = 10 ** usdc.decimals();
-        uint256 oneDai = 10 ** 18;
-
-        giveTokens(usdc, 1 * THOUSAND * oneUsdc);
-
-        assertEq(usdc.balanceOf(address(this)), 1 * THOUSAND * oneUsdc);
-        assertEq(dai.balanceOf(address(this)), 0);
+        if (_isOSM) OsmAbstract(pip).poke();
+        hevm.warp(block.timestamp + 3601);
+        if (_isOSM) OsmAbstract(pip).poke();
+        spotter.poke(_ilk);
 
         // Authorization
-        assertEq(joinPSMUSDCA.wards(pauseProxy), 1);
-        assertEq(joinPSMUSDCA.wards(address(psmPSMUSDCA)), 1);
-        assertEq(psmPSMUSDCA.wards(pauseProxy), 1);
-        assertEq(vat.wards(address(joinPSMUSDCA)), 1);
-        assertEq(clipPSMUSDCA.wards(address(end)), 1);
-        assertEq(clipPSMUSDCA.wards(address(clipMom)), 0);
+        assertEq(join.wards(pauseProxy), 1);
+        assertEq(vat.wards(address(join)), 1);
+        assertEq(clip.wards(address(end)), 1);
+        assertEq(clip.wards(address(clipMom)), 1);
+        if (_isOSM) {
+            assertEq(OsmAbstract(pip).wards(address(osmMom)), 1);
+            assertEq(OsmAbstract(pip).bud(address(spotter)), 1);
+            assertEq(OsmAbstract(pip).bud(address(end)), 1);
+            assertEq(MedianAbstract(OsmAbstract(pip).src()).bud(pip), 1);
+        }
 
-        // Check psm set up correctly
-        assertEq(psmPSMUSDCA.tin(), 1000000000000000);
-        assertEq(psmPSMUSDCA.tout(), 0);
+        (,,,, uint256 dust) = vat.ilks(_ilk);
+        dust /= RAY;
+        uint256 amount = 2 * dust * WAD / (_isOSM ? getOSMPrice(pip) : uint256(DSValueAbstract(pip).read()));
+        giveTokens(token, amount);
 
-        // Convert all USDC to DAI with a 0.1% fee
-        usdc.approve(address(joinPSMUSDCA), 1 * THOUSAND * oneUsdc);
-        psmPSMUSDCA.sellGem(address(this), 1 * THOUSAND * oneUsdc);
-        assertEq(usdc.balanceOf(address(this)), 0);
-        assertEq(dai.balanceOf(address(this)), 1 * THOUSAND * oneDai * 999 / 1000);
+        assertEq(token.balanceOf(address(this)), amount);
+        assertEq(vat.gem(_ilk, address(this)), 0);
+        token.approve(address(join), amount);
+        join.join(address(this), amount);
+        assertEq(token.balanceOf(address(this)), 0);
+        if (_transferFee) {
+            amount = vat.gem(_ilk, address(this));
+            assertTrue(amount > 0);
+        }
+        assertEq(vat.gem(_ilk, address(this)), amount);
 
-        // Convert 50 DAI to USDC with a 0% fee
-        dai.approve(address(psmPSMUSDCA), uint256(-1));
-        psmPSMUSDCA.buyGem(address(this), 50 * oneUsdc);
-        assertEq(usdc.balanceOf(address(this)), 50 * oneUsdc);
-        assertEq(dai.balanceOf(address(this)), 1 * THOUSAND * oneDai * 999 / 1000 - 50 * oneDai);
+        // Tick the fees forward so that art != dai in wad units
+        hevm.warp(block.timestamp + 1);
+        jug.drip(_ilk);
+
+        // Deposit collateral, generate DAI
+        (,uint256 rate,,,) = vat.ilks(_ilk);
+        assertEq(vat.dai(address(this)), 0);
+        vat.frob(_ilk, address(this), address(this), address(this), int256(amount), int256(divup(mul(RAY, dust), rate)));
+        assertEq(vat.gem(_ilk, address(this)), 0);
+        assertTrue(vat.dai(address(this)) >= dust * RAY);
+        assertTrue(vat.dai(address(this)) <= (dust + 1) * RAY);
+
+        // Payback DAI, withdraw collateral
+        vat.frob(_ilk, address(this), address(this), address(this), -int256(amount), -int256(divup(mul(RAY, dust), rate)));
+        assertEq(vat.gem(_ilk, address(this)), amount);
+        assertEq(vat.dai(address(this)), 0);
+
+        // Withdraw from adapter
+        join.exit(address(this), amount);
+        if (_transferFee) {
+            amount = token.balanceOf(address(this));
+        }
+        assertEq(token.balanceOf(address(this)), amount);
+        assertEq(vat.gem(_ilk, address(this)), 0);
+
+        // Generate new DAI to force a liquidation
+        token.approve(address(join), amount);
+        join.join(address(this), amount);
+        if (_transferFee) {
+            amount = vat.gem(_ilk, address(this));
+        }
+        // dart max amount of DAI
+        (,,uint256 spot,,) = vat.ilks(_ilk);
+        vat.frob(_ilk, address(this), address(this), address(this), int256(amount), int256(mul(amount, spot) / rate));
+        hevm.warp(block.timestamp + 1);
+        jug.drip(_ilk);
+        assertEq(clip.kicks(), 0);
+        if (_checkLiquidations) {
+            dog.bark(_ilk, address(this), address(this));
+            assertEq(clip.kicks(), 1);
+        }
+
+        // Dump all dai for next run
+        vat.move(address(this), address(0x0), vat.dai(address(this)));
     }
-}
 
-interface DssPsmLike {
-    function wards(address) external view returns (uint256);
-    function tin() external view returns (uint256);
-    function tout() external view returns (uint256);
-    function sellGem(address, uint256) external;
-    function buyGem(address, uint256) external;
+    function testCollateralIntegrations() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // Insert new collateral tests here
+        checkIlkIntegration(
+            "MATIC-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_MATIC_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_MATIC_A")),
+            addr.addr("PIP_MATIC"),
+            true,
+            true,
+            true
+        );
+    }
 }

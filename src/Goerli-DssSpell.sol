@@ -19,12 +19,10 @@ pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
-import "dss-interfaces/dapp/DSValueAbstract.sol";
-import "dss-interfaces/dss/SpotAbstract.sol";
-import "dss-interfaces/dss/DssAutoLineAbstract.sol";
+import "dss-interfaces/dss/IlkRegistryAbstract.sol";
 
-interface Fileable {
-    function file(bytes32,uint256) external;
+interface FaucetLike {
+    function setAmt(address,uint256) external;
 }
 
 contract DssSpellAction is DssAction {
@@ -39,72 +37,62 @@ contract DssSpellAction is DssAction {
         return false;
     }
 
-    address constant MCD_JOIN_PSM_USDC_A       = 0xF2f86B76d1027f3777c522406faD710419C80bbB;
-    address constant MCD_CLIP_PSM_USDC_A       = 0x8f570B146655Cd52173B0db2DDeb40B7b32c5A9C;
-    address constant MCD_CLIP_CALC_PSM_USDC_A  = 0x6eB7f16842b13A1Fbb270Fc952Fb9a73D7c90a0e;
-    address constant MCD_PSM_USDC_A            = 0xb480B8dD5A232Cb7B227989Eacda728D1F247dB6;
-    bytes32 constant ILK_PSM_USDC_A            = "PSM-USDC-A";
+    address constant MATIC                 = 0x5B3b6CF665Cc7B4552F4347623a2A9E00600CBB5;
+    address constant MCD_JOIN_MATIC_A      = 0xeb680839564F0F9bFB96fE2dF47a31cE31689e63;
+    address constant MCD_CLIP_MATIC_A      = 0x2082c825b5311A2612c12e6DaF7EFa3Fb37BACbD;
+    address constant MCD_CLIP_CALC_MATIC_A = 0xB2dF4Ed2f6a665656CE3405E8f75b9DE8A6E24e9;
+    address constant PIP_MATIC             = 0xDe112F61b823e776B3439f2F39AfF41f57993045;
+    uint256 constant FAUCET_AMT            = 100 * THOUSAND * WAD;
 
-    uint256 constant BILLION = 10 ** 9;
-    uint256 constant WAD     = 10 ** 18;
-    uint256 constant RAY     = 10 ** 27;
-    uint256 constant RAD     = 10 ** 45;
+    address constant VOTE_DELEGATE_PROXY_FACTORY = 0xE2d249AE3c156b132C40D07bd4d34e73c1712947;
+
+    uint256 constant THOUSAND   = 10**3;
+    uint256 constant MILLION    = 10**6;
+    uint256 constant WAD        = 10**18;
 
     function actions() public override {
-        address USDC = DssExecLib.getChangelogAddress("USDC");
-        address PIP_USDC = DssExecLib.getChangelogAddress("PIP_USDC");
-
-        // Fix price stables
-        DSValueAbstract(PIP_USDC).poke(bytes32(WAD));
-        DSValueAbstract(DssExecLib.getChangelogAddress("PIP_TUSD")).poke(bytes32(WAD));
-        DSValueAbstract(DssExecLib.getChangelogAddress("PIP_PAXUSD")).poke(bytes32(WAD));
-        DSValueAbstract(DssExecLib.getChangelogAddress("PIP_GUSD")).poke(bytes32(WAD));
-
-        DssExecLib.updateCollateralPrice("USDC-A");
-        DssExecLib.updateCollateralPrice("USDC-B");
-        DssExecLib.updateCollateralPrice("TUSD-A");
-        DssExecLib.updateCollateralPrice("PAXUSD-A");
-        DssExecLib.updateCollateralPrice("GUSD-A");
-        //
-
-        // Add PSM_USDC_A
-        DssExecLib.authorize(MCD_JOIN_PSM_USDC_A, MCD_PSM_USDC_A);
-
+        // Add MATIC-A
+        // values taken from https://forum.makerdao.com/t/matic-collateral-onboarding-risk-evaluation/9069
         DssExecLib.addNewCollateral(CollateralOpts({
-            ilk: ILK_PSM_USDC_A,
-            gem: USDC,
-            join: MCD_JOIN_PSM_USDC_A,
-            clip: MCD_CLIP_PSM_USDC_A,
-            calc: MCD_CLIP_CALC_PSM_USDC_A,
-            pip: PIP_USDC,
-            isLiquidatable: false,
-            isOSM: false,
-            whitelistOSM: false,
-            ilkDebtCeiling: 0,
-            minVaultAmount: 0,
-            maxLiquidationAmount: 0,
-            liquidationPenalty: 1300,
-            ilkStabilityFee: RAY,
-            startingPriceFactor: 10500,
-            breakerTolerance: 9500,
-            auctionDuration: 220 minutes,
-            permittedDrop: 9000,
-            liquidationRatio: 10000,
-            kprFlatReward: 300,
-            kprPctReward: 10
+            ilk:                   "MATIC-A",
+            gem:                   MATIC,
+            join:                  MCD_JOIN_MATIC_A,
+            clip:                  MCD_CLIP_MATIC_A,
+            calc:                  MCD_CLIP_CALC_MATIC_A,
+            pip:                   PIP_MATIC,
+            isLiquidatable:        true,
+            isOSM:                 true,
+            whitelistOSM:          true,
+            ilkDebtCeiling:        3 * MILLION,
+            minVaultAmount:        10 * THOUSAND,
+            maxLiquidationAmount:  3 * MILLION,
+            liquidationPenalty:    1300,
+            ilkStabilityFee:       1000000000937303470807876289,
+            startingPriceFactor:   13000,
+            breakerTolerance:      5000, // Allows for a 50% hourly price drop before disabling liquidations
+            auctionDuration:       140 minutes,
+            permittedDrop:         4000,
+            liquidationRatio:      17500,
+            kprFlatReward:         300,
+            kprPctReward:          10 // 0.1%
         }));
 
-        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_PSM_USDC_A, 120 seconds, 9990);
-        Fileable(MCD_PSM_USDC_A).file("tin", WAD / 1000);
+        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_MATIC_A, 90 seconds, 9900);
 
-        DssExecLib.setIlkAutoLineParameters(ILK_PSM_USDC_A, 10 * BILLION, 1 * BILLION, 24 hours);
-        DssAutoLineAbstract(DssExecLib.autoLine()).exec(ILK_PSM_USDC_A);
+        DssExecLib.setIlkAutoLineParameters("MATIC-A", 10 * MILLION, 3 * MILLION, 8 hours);
 
-        DssExecLib.setChangelogAddress("MCD_JOIN_PSM_USDC_A", MCD_JOIN_PSM_USDC_A);
-        DssExecLib.setChangelogAddress("MCD_CLIP_PSM_USDC_A", MCD_CLIP_PSM_USDC_A);
-        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_PSM_USDC_A", MCD_CLIP_CALC_PSM_USDC_A);
-        DssExecLib.setChangelogAddress("MCD_PSM_USDC_A", MCD_PSM_USDC_A);
-        //
+        IlkRegistryAbstract(DssExecLib.reg()).update("MATIC-A");
+
+        FaucetLike(DssExecLib.getChangelogAddress("FAUCET")).setAmt(MATIC, FAUCET_AMT);
+
+        DssExecLib.setChangelogAddress("MATIC", MATIC);
+        DssExecLib.setChangelogAddress("PIP_MATIC", PIP_MATIC);
+        DssExecLib.setChangelogAddress("MCD_JOIN_MATIC_A", MCD_JOIN_MATIC_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_MATIC_A", MCD_CLIP_MATIC_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_MATIC_A", MCD_CLIP_CALC_MATIC_A);
+
+        // Add VOTE_DELEGATE_PROXY_FACTORY to chainlog
+        DssExecLib.setChangelogAddress("VOTE_DELEGATE_PROXY_FACTORY", VOTE_DELEGATE_PROXY_FACTORY);
     }
 }
 
