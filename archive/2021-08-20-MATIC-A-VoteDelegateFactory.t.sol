@@ -248,8 +248,8 @@ contract DssSpellTest is DSTest, DSMath {
         // Test for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0xC9d0EE751D2dA974713f2Fe06dc3de369F3b12C3),        // populate with deployed spell if deployed
-            deployed_spell_created:         1629745607,                 // use get-created-timestamp.sh if deployed
+            deployed_spell:                 address(0xf9E943e1c9fbE01d7Ad2eB9B987a49c5de8FD9ce),        // populate with deployed spell if deployed
+            deployed_spell_created:         1629458121,                 // use get-created-timestamp.sh if deployed
             previous_spell:                 address(0),        // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           false,              // true if officehours is expected to be enabled in the spell
             expiration_threshold:           weekly_expiration  // (weekly_expiration,monthly_expiration) if weekly or monthly spell
@@ -279,7 +279,7 @@ contract DssSpellTest is DSTest, DSMath {
             osm_mom_authority:     address(chief),          // OsmMom authority
             flipper_mom_authority: address(chief),          // FlipperMom authority
             clipper_mom_authority: address(chief),          // ClipperMom authority
-            ilk_count:             34                       // Num expected in system
+            ilk_count:             24                       // Num expected in system
         });
 
         afterSpell.collaterals["ETH-A"] = CollateralValues({
@@ -978,296 +978,6 @@ contract DssSpellTest is DSTest, DSMath {
             calc_step:    90,
             calc_cut:     9900
         });
-        afterSpell.collaterals["UNIV2DAIETH-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      50 * MILLION,
-            aL_gap:       5 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          150,
-            mat:          12500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     5 * MILLION,
-            clip_buf:     11500,
-            clip_tail:    215 minutes,
-            clip_cusp:    6000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 7000,
-            calc_tau:     0,
-            calc_step:    125,
-            calc_cut:     9950
-        });
-        afterSpell.collaterals["UNIV2WBTCETH-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      20 * MILLION,
-            aL_gap:       3 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          200,
-            mat:          15000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     5 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    200 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    130,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["UNIV2USDCETH-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      50 * MILLION,
-            aL_gap:       5 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          200,
-            mat:          12500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     5 * MILLION,
-            clip_buf:     11500,
-            clip_tail:    215 minutes,
-            clip_cusp:    6000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 7000,
-            calc_tau:     0,
-            calc_step:    125,
-            calc_cut:     9950
-        });
-        afterSpell.collaterals["UNIV2DAIUSDC-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      250 * MILLION,
-            aL_gap:       10 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          0,
-            mat:          10200,
-            liqType:      "clip",
-            liqOn:        false,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     10500,
-            clip_tail:    220 minutes,
-            clip_cusp:    9000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  0,
-            cm_tolerance: 9500,
-            calc_tau:     0,
-            calc_step:    120,
-            calc_cut:     9990
-        });
-        afterSpell.collaterals["UNIV2ETHUSDT-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          200,
-            mat:          14000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     5 * MILLION,
-            clip_buf:     11500,
-            clip_tail:    215 minutes,
-            clip_cusp:    6000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 7000,
-            calc_tau:     0,
-            calc_step:    125,
-            calc_cut:     9950
-        });
-        afterSpell.collaterals["UNIV2LINKETH-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      20 * MILLION,
-            aL_gap:       2 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          300,
-            mat:          16500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     3 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    200 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    130,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["UNIV2UNIETH-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      20 * MILLION,
-            aL_gap:       3 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          200,
-            mat:          16500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     3 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    200 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    130,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["UNIV2WBTCDAI-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      20 * MILLION,
-            aL_gap:       3 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          0,
-            mat:          12500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     5 * MILLION,
-            clip_buf:     11500,
-            clip_tail:    215 minutes,
-            clip_cusp:    6000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 7000,
-            calc_tau:     0,
-            calc_step:    125,
-            calc_cut:     9950
-        });
-        afterSpell.collaterals["UNIV2AAVEETH-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      20 * MILLION,
-            aL_gap:       2 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          300,
-            mat:          16500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     3 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    200 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    130,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["UNIV2DAIUSDT-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          200,
-            mat:          12500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     5 * MILLION,
-            clip_buf:     10500,
-            clip_tail:    220 minutes,
-            clip_cusp:    9000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 9500,
-            calc_tau:     0,
-            calc_step:    120,
-            calc_cut:     9990
-        });
     }
 
     function scheduleWaitAndCastFailDay() public {
@@ -1639,7 +1349,7 @@ contract DssSpellTest is DSTest, DSMath {
         // hevm.load is to pull the price from the LP Oracle storage bypassing the whitelist
         uint256 price = uint256(hevm.load(
             pip,
-            bytes32(uint256(3))
+            bytes32(uint256(6))
         )) & uint128(-1);   // Price is in the second half of the 32-byte storage slot
 
         // Price is bounded in the spot by around 10^23
@@ -1753,41 +1463,6 @@ contract DssSpellTest is DSTest, DSMath {
         checkCollateralValues(afterSpell);
     }
 
-    function testRwaDrawUpToDebtCeiling() public {
-        giveAuth(address(vat), address(this));
-        vat.file("Line", uint256(-1));  // ensure the global debt ceiling doesn't interfere with draws
-        bytes32[] memory ilks = reg.list();
-        for(uint256 i = 0; i < ilks.length; i++) {
-            bytes32 ilk = ilks[i];
-            if (reg.class(ilk) != 3) continue;
-
-            // XXXXXXX-X=> XXXXXX_X_URN 
-            bytes32 urnId = ilk & bytes32(bytes8(0xFFFFFFFFFFFF00FF));
-            urnId = urnId | bytes32(bytes12(0x0000000000005f005f55524e));
-            address urn = ChainlogAbstract(addr.addr("CHANGELOG")).getAddress(urnId);
-            giveAuth(urn, address(this));
-            RwaUrnLike(urn).hope(address(this));  // become operator
-
-            (uint256 ink,) = vat.urns(ilk, urn);
-            if (ink == 0) {
-                // Quick way to encumber collateral for the urn.
-                vat.slip(ilk, address(this), int256(WAD));
-                vat.frob(ilk, address(urn), address(this), address(this), int256(WAD), 0);
-            }
-
-            jug.drip(ilk);
-            (uint256 Art, uint256 rate,, uint256 line,) = vat.ilks(ilk);
-            uint256 room = sub(line, mul(Art, rate));
-            uint256 drawAmt = room / RAY;
-            if (mul(divup(mul(drawAmt, RAY), rate), rate) > room) {
-                drawAmt = sub(room, rate) / RAY;
-            }
-            RwaUrnLike(urn).draw(drawAmt);
-            (Art,,,,) = vat.ilks(ilk);
-            assertTrue(sub(line, mul(Art, rate)) < mul(2, rate));  // got very close to line
-        }
-    }
-
     function testNewIlkRegistryValues() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
@@ -1812,57 +1487,14 @@ contract DssSpellTest is DSTest, DSMath {
 
         ChainlogAbstract chainLog = ChainlogAbstract(addr.addr("CHANGELOG"));
 
-        // assertEq(chainLog.getAddress(""), addr.addr(""));
-        assertEq(chainLog.getAddress("UNIV2DAIETH"), addr.addr("UNIV2DAIETH"));
-        assertEq(chainLog.getAddress("PIP_UNIV2DAIETH"), addr.addr("PIP_UNIV2DAIETH"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2DAIETH_A"), addr.addr("MCD_JOIN_UNIV2DAIETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2DAIETH_A"), addr.addr("MCD_CLIP_UNIV2DAIETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2DAIETH_A"), addr.addr("MCD_CLIP_CALC_UNIV2DAIETH_A"));
-        assertEq(chainLog.getAddress("UNIV2WBTCETH"), addr.addr("UNIV2WBTCETH"));
-        assertEq(chainLog.getAddress("PIP_UNIV2WBTCETH"), addr.addr("PIP_UNIV2WBTCETH"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2WBTCETH_A"), addr.addr("MCD_JOIN_UNIV2WBTCETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2WBTCETH_A"), addr.addr("MCD_CLIP_UNIV2WBTCETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2WBTCETH_A"), addr.addr("MCD_CLIP_CALC_UNIV2WBTCETH_A"));
-        assertEq(chainLog.getAddress("UNIV2USDCETH"), addr.addr("UNIV2USDCETH"));
-        assertEq(chainLog.getAddress("PIP_UNIV2USDCETH"), addr.addr("PIP_UNIV2USDCETH"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2USDCETH_A"), addr.addr("MCD_JOIN_UNIV2USDCETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2USDCETH_A"), addr.addr("MCD_CLIP_UNIV2USDCETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2USDCETH_A"), addr.addr("MCD_CLIP_CALC_UNIV2USDCETH_A"));
-        assertEq(chainLog.getAddress("UNIV2DAIUSDC"), addr.addr("UNIV2DAIUSDC"));
-        assertEq(chainLog.getAddress("PIP_UNIV2DAIUSDC"), addr.addr("PIP_UNIV2DAIUSDC"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2DAIUSDC_A"), addr.addr("MCD_JOIN_UNIV2DAIUSDC_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2DAIUSDC_A"), addr.addr("MCD_CLIP_UNIV2DAIUSDC_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2DAIUSDC_A"), addr.addr("MCD_CLIP_CALC_UNIV2DAIUSDC_A"));
-        assertEq(chainLog.getAddress("UNIV2ETHUSDT"), addr.addr("UNIV2ETHUSDT"));
-        assertEq(chainLog.getAddress("PIP_UNIV2ETHUSDT"), addr.addr("PIP_UNIV2ETHUSDT"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2ETHUSDT_A"), addr.addr("MCD_JOIN_UNIV2ETHUSDT_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2ETHUSDT_A"), addr.addr("MCD_CLIP_UNIV2ETHUSDT_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2ETHUSDT_A"), addr.addr("MCD_CLIP_CALC_UNIV2ETHUSDT_A"));
-        assertEq(chainLog.getAddress("UNIV2LINKETH"), addr.addr("UNIV2LINKETH"));
-        assertEq(chainLog.getAddress("PIP_UNIV2LINKETH"), addr.addr("PIP_UNIV2LINKETH"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2LINKETH_A"), addr.addr("MCD_JOIN_UNIV2LINKETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2LINKETH_A"), addr.addr("MCD_CLIP_UNIV2LINKETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2LINKETH_A"), addr.addr("MCD_CLIP_CALC_UNIV2LINKETH_A"));
-        assertEq(chainLog.getAddress("UNIV2UNIETH"), addr.addr("UNIV2UNIETH"));
-        assertEq(chainLog.getAddress("PIP_UNIV2UNIETH"), addr.addr("PIP_UNIV2UNIETH"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2UNIETH_A"), addr.addr("MCD_JOIN_UNIV2UNIETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2UNIETH_A"), addr.addr("MCD_CLIP_UNIV2UNIETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2UNIETH_A"), addr.addr("MCD_CLIP_CALC_UNIV2UNIETH_A"));
-        assertEq(chainLog.getAddress("UNIV2WBTCDAI"), addr.addr("UNIV2WBTCDAI"));
-        assertEq(chainLog.getAddress("PIP_UNIV2WBTCDAI"), addr.addr("PIP_UNIV2WBTCDAI"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2WBTCDAI_A"), addr.addr("MCD_JOIN_UNIV2WBTCDAI_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2WBTCDAI_A"), addr.addr("MCD_CLIP_UNIV2WBTCDAI_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2WBTCDAI_A"), addr.addr("MCD_CLIP_CALC_UNIV2WBTCDAI_A"));
-        assertEq(chainLog.getAddress("UNIV2AAVEETH"), addr.addr("UNIV2AAVEETH"));
-        assertEq(chainLog.getAddress("PIP_UNIV2AAVEETH"), addr.addr("PIP_UNIV2AAVEETH"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2AAVEETH_A"), addr.addr("MCD_JOIN_UNIV2AAVEETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2AAVEETH_A"), addr.addr("MCD_CLIP_UNIV2AAVEETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2AAVEETH_A"), addr.addr("MCD_CLIP_CALC_UNIV2AAVEETH_A"));
-        assertEq(chainLog.getAddress("UNIV2DAIUSDT"), addr.addr("UNIV2DAIUSDT"));
-        assertEq(chainLog.getAddress("PIP_UNIV2DAIUSDT"), addr.addr("PIP_UNIV2DAIUSDT"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2DAIUSDT_A"), addr.addr("MCD_JOIN_UNIV2DAIUSDT_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2DAIUSDT_A"), addr.addr("MCD_CLIP_UNIV2DAIUSDT_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2DAIUSDT_A"), addr.addr("MCD_CLIP_CALC_UNIV2DAIUSDT_A"));
+        assertEq(chainLog.getAddress("MATIC"), addr.addr("MATIC"));
+        assertEq(chainLog.getAddress("PIP_MATIC"), addr.addr("PIP_MATIC"));
+
+        assertEq(chainLog.getAddress("MCD_JOIN_MATIC_A"), addr.addr("MCD_JOIN_MATIC_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_MATIC_A"), addr.addr("MCD_CLIP_MATIC_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_MATIC_A"), addr.addr("MCD_CLIP_CALC_MATIC_A"));
+
+        assertEq(chainLog.getAddress("VOTE_DELEGATE_PROXY_FACTORY"), addr.addr("VOTE_DELEGATE_PROXY_FACTORY"));
     }
 
     function testFailWrongDay() public {
@@ -2007,200 +1639,19 @@ contract DssSpellTest is DSTest, DSMath {
         vat.move(address(this), address(0x0), vat.dai(address(this)));
     }
 
-    function checkUNIV2LPIntegration(
-        bytes32 _ilk,
-        GemJoinAbstract join,
-        ClipAbstract clip,
-        LPOsmAbstract pip,
-        address _feed0,
-        address _feed1,
-        bool _checkLiquidations
-    ) public {
-        DSTokenAbstract token = DSTokenAbstract(join.gem());
-
-        pip.poke();
-        hevm.warp(block.timestamp + 3601);
-        pip.poke();
-        spotter.poke(_ilk);
-
-        // Check medianizer sources
-        assertEq(pip.src(), address(token));
-        assertEq(pip.orb0(), _feed0);
-        assertEq(pip.orb1(), _feed1);
-
-        // Authorization
-        assertEq(join.wards(pauseProxy), 1);
-        assertEq(vat.wards(address(join)), 1);
-        assertEq(clip.wards(address(end)), 1);
-        assertEq(clip.wards(address(clipMom)), _checkLiquidations ? 1 : 0);
-        assertEq(pip.wards(address(osmMom)), 1);
-        assertEq(pip.bud(address(clip)), 1);
-        assertEq(pip.bud(address(clipMom)), 1);
-        assertEq(pip.bud(address(spotter)), 1);
-        assertEq(pip.bud(address(end)), 1);
-        (bool ok, bytes memory val) = _feed0.call(abi.encodeWithSignature("bud(address)", pip));
-        if (ok) { assertEq(abi.decode(val, (uint256)), 1); }
-        (ok, val) = _feed1.call(abi.encodeWithSignature("bud(address)", pip));
-        if (ok) { assertEq(abi.decode(val, (uint256)), 1); }
-
-        (,,,, uint256 dust) = vat.ilks(_ilk);
-        dust /= RAY;
-        uint256 amount = 2 * dust * WAD / getUNIV2LPPrice(address(pip));
-        giveTokens(token, amount);
-
-        assertEq(token.balanceOf(address(this)), amount);
-        assertEq(vat.gem(_ilk, address(this)), 0);
-        token.approve(address(join), amount);
-        join.join(address(this), amount);
-        assertEq(token.balanceOf(address(this)), 0);
-        assertEq(vat.gem(_ilk, address(this)), amount);
-
-        // Tick the fees forward so that art != dai in wad units
-        hevm.warp(block.timestamp + 1);
-        jug.drip(_ilk);
-
-        // Force debt ceiling of the ilk (so even those ilks with 0 debt ceiling can pass this test)
-        hevm.store(
-            address(vat),
-            bytes32(uint256(keccak256(abi.encode(bytes32(_ilk), uint256(2)))) + 3),
-            bytes32(uint256(-1))
-        );
-
-        // Deposit collateral, generate DAI
-        (,uint256 rate,,,) = vat.ilks(_ilk);
-        assertEq(vat.dai(address(this)), 0);
-        vat.frob(_ilk, address(this), address(this), address(this), int(amount), int(divup(mul(RAY, dust), rate)));
-        assertEq(vat.gem(_ilk, address(this)), 0);
-        assertTrue(vat.dai(address(this)) >= dust * RAY && vat.dai(address(this)) <= (dust + 1) * RAY);
-
-        // Payback DAI, withdraw collateral
-        vat.frob(_ilk, address(this), address(this), address(this), -int(amount), -int(divup(mul(RAY, dust), rate)));
-        assertEq(vat.gem(_ilk, address(this)), amount);
-        assertEq(vat.dai(address(this)), 0);
-
-        // Withdraw from adapter
-        join.exit(address(this), amount);
-        assertEq(token.balanceOf(address(this)), amount);
-        assertEq(vat.gem(_ilk, address(this)), 0);
-
-        // Generate new DAI to force a liquidation
-        token.approve(address(join), amount);
-        join.join(address(this), amount);
-        // dart max amount of DAI
-        (,,uint256 spot,,) = vat.ilks(_ilk);
-        vat.frob(_ilk, address(this), address(this), address(this), int(amount), int(mul(amount, spot) / rate));
-        hevm.warp(block.timestamp + 1);
-        jug.drip(_ilk);
-        assertEq(clip.kicks(), 0);
-        if (_checkLiquidations) {
-            dog.bark(_ilk, address(this), address(this));
-            assertEq(clip.kicks(), 1);
-        }
-
-        // Dump all dai for next run
-        vat.move(address(this), address(0x0), vat.dai(address(this)));
-    }
-
     function testCollateralIntegrations() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done(), "TestError/spell-not-done");
+        assertTrue(spell.done());
 
-        checkUNIV2LPIntegration(
-            "UNIV2DAIETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2DAIETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2DAIETH_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2DAIETH")),
-            0xe7A915f8Db97f0dE219e0cEf60fF7886305a14ef, // DAI DSValue
-            OsmAbstract(addr.addr("PIP_ETH")).src(),
-            true
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2WBTCETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2WBTCETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2WBTCETH_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2WBTCETH")),
-            OsmAbstract(addr.addr("PIP_WBTC")).src(),
-            OsmAbstract(addr.addr("PIP_ETH")).src(),
-            true
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2USDCETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2USDCETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2USDCETH_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2USDCETH")),
-            addr.addr("PIP_USDC"),
-            OsmAbstract(addr.addr("PIP_ETH")).src(),
-            true
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2DAIUSDC-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2DAIUSDC_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2DAIUSDC_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2DAIUSDC")),
-            0xe7A915f8Db97f0dE219e0cEf60fF7886305a14ef, // DAI DSValue
-            addr.addr("PIP_USDC"),
-            false
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2ETHUSDT-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2ETHUSDT_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2ETHUSDT_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2ETHUSDT")),
-            OsmAbstract(addr.addr("PIP_USDT")).src(),
-            OsmAbstract(addr.addr("PIP_ETH")).src(),
-            true
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2LINKETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2LINKETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2LINKETH_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2LINKETH")),
-            OsmAbstract(addr.addr("PIP_LINK")).src(),
-            OsmAbstract(addr.addr("PIP_ETH")).src(),
-            true
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2UNIETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2UNIETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2UNIETH_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2UNIETH")),
-            OsmAbstract(addr.addr("PIP_UNI")).src(),
-            OsmAbstract(addr.addr("PIP_ETH")).src(),
-            true
-        );
-        // Force some fee on UNIV2WBTCDAI-A to be able to test liquidation
-        jug.drip("UNIV2WBTCDAI-A");
-        hevm.store(
-            address(jug),
-            keccak256(abi.encode(bytes32("UNIV2WBTCDAI-A"), uint256(1))),
-            bytes32(uint256(1000000001243680656318820312))
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2WBTCDAI-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2WBTCDAI_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2WBTCDAI_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2WBTCDAI")),
-            0xe7A915f8Db97f0dE219e0cEf60fF7886305a14ef, // DAI DSValue
-            OsmAbstract(addr.addr("PIP_WBTC")).src(),
-            true
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2AAVEETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2AAVEETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2AAVEETH_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2AAVEETH")),
-            OsmAbstract(addr.addr("PIP_AAVE")).src(),
-            OsmAbstract(addr.addr("PIP_ETH")).src(),
-            true
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2DAIUSDT-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2DAIUSDT_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2DAIUSDT_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2DAIUSDT")),
-            0xe7A915f8Db97f0dE219e0cEf60fF7886305a14ef, // DAI DSValue
-            OsmAbstract(addr.addr("PIP_USDT")).src(),
+        // Insert new collateral tests here
+        checkIlkIntegration(
+            "MATIC-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_MATIC_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_MATIC_A")),
+            addr.addr("PIP_MATIC"),
+            true,
+            true,
             true
         );
     }
