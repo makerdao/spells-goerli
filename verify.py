@@ -171,14 +171,12 @@ def get_stubs(block):
     original_lines = block.split('\n')
     lines = []
     level = 0
-    for original_line in original_lines:
-        line = original_line
-        if 'function' in original_line:
-            line = re.sub('{.*', '{}', original_line)
+    for line in original_lines:
         if level == 0:
-            lines.append(line)
-        level += original_line.count('{')
-        level -= original_line.count('}')
+            difference = line.count('{') - line.count('}')
+            lines.append(line + '}' * difference)
+        level += line.count('{')
+        level -= line.count('}')
     return '\n'.join(lines)
 
 for signature, block in libraries.items():
