@@ -248,7 +248,7 @@ contract DssSpellTest is DSTest, DSMath {
         // Test for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0xC9d0EE751D2dA974713f2Fe06dc3de369F3b12C3),        // populate with deployed spell if deployed
+            deployed_spell:                 address(0),        // populate with deployed spell if deployed
             deployed_spell_created:         1629745607,                 // use get-created-timestamp.sh if deployed
             previous_spell:                 address(0),        // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           false,              // true if officehours is expected to be enabled in the spell
@@ -279,7 +279,7 @@ contract DssSpellTest is DSTest, DSMath {
             osm_mom_authority:     address(chief),          // OsmMom authority
             flipper_mom_authority: address(chief),          // FlipperMom authority
             clipper_mom_authority: address(chief),          // ClipperMom authority
-            ilk_count:             34                       // Num expected in system
+            ilk_count:             35                       // Num expected in system
         });
 
         afterSpell.collaterals["ETH-A"] = CollateralValues({
@@ -1268,6 +1268,35 @@ contract DssSpellTest is DSTest, DSMath {
             calc_step:    120,
             calc_cut:     9990
         });
+        afterSpell.collaterals["PSM-PAX-A"] = CollateralValues({
+            aL_enabled:   false,
+            aL_line:      0,
+            aL_gap:       0,
+            aL_ttl:       0,
+            line:         50 * MILLION,
+            dust:         0,
+            pct:          0,
+            mat:          10000,
+            liqType:      "clip",
+            liqOn:        false,
+            chop:         1300,
+            cat_dunk:     0,
+            flip_beg:     0,
+            flip_ttl:     0,
+            flip_tau:     0,
+            flipper_mom:  0,
+            dog_hole:     0,
+            clip_buf:     10500,
+            clip_tail:    220 minutes,
+            clip_cusp:    9000,
+            clip_chip:    10,
+            clip_tip:     300,
+            clipper_mom:  0,
+            cm_tolerance: 9500,
+            calc_tau:     0,
+            calc_step:    120,
+            calc_cut:     9990
+        });
     }
 
     function scheduleWaitAndCastFailDay() public {
@@ -1760,14 +1789,14 @@ contract DssSpellTest is DSTest, DSMath {
 
         IlkRegistryAbstract ilkRegistry = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
 
-        assertEq(ilkRegistry.join("PSM-USDC-A"), addr.addr("MCD_JOIN_PSM_USDC_A"));
-        assertEq(ilkRegistry.gem("PSM-USDC-A"), addr.addr("USDC"));
-        assertEq(ilkRegistry.dec("PSM-USDC-A"), DSTokenAbstract(addr.addr("USDC")).decimals());
-        assertEq(ilkRegistry.class("PSM-USDC-A"), 1);
-        assertEq(ilkRegistry.pip("PSM-USDC-A"), addr.addr("PIP_USDC"));
-        assertEq(ilkRegistry.xlip("PSM-USDC-A"), addr.addr("MCD_CLIP_PSM_USDC_A"));
-        // assertEq(ilkRegistry.name("PSM-USDC-A"), "USDC");
-        assertEq(ilkRegistry.symbol("PSM-USDC-A"), "USDC");
+        assertEq(ilkRegistry.join("PSM-PAX-A"), addr.addr("MCD_JOIN_PSM_PAX_A"));
+        assertEq(ilkRegistry.gem("PSM-PAX-A"), addr.addr("PAX"));
+        assertEq(ilkRegistry.dec("PSM-PAX-A"), DSTokenAbstract(addr.addr("PAX")).decimals());
+        assertEq(ilkRegistry.class("PSM-PAX-A"), 1);
+        assertEq(ilkRegistry.pip("PSM-PAX-A"), addr.addr("PIP_PAX"));
+        assertEq(ilkRegistry.xlip("PSM-PAX-A"), addr.addr("MCD_CLIP_PSM_PAX_A"));
+        // assertEq(ilkRegistry.name("PSM-PAX-A"), "PAX");
+        assertEq(ilkRegistry.symbol("PSM-PAX-A"), "PAX");
     }
 
     function testNewChainlogValues() public {
@@ -1777,57 +1806,16 @@ contract DssSpellTest is DSTest, DSMath {
 
         ChainlogAbstract chainLog = ChainlogAbstract(addr.addr("CHANGELOG"));
 
-        // assertEq(chainLog.getAddress(""), addr.addr(""));
-        assertEq(chainLog.getAddress("UNIV2DAIETH"), addr.addr("UNIV2DAIETH"));
-        assertEq(chainLog.getAddress("PIP_UNIV2DAIETH"), addr.addr("PIP_UNIV2DAIETH"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2DAIETH_A"), addr.addr("MCD_JOIN_UNIV2DAIETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2DAIETH_A"), addr.addr("MCD_CLIP_UNIV2DAIETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2DAIETH_A"), addr.addr("MCD_CLIP_CALC_UNIV2DAIETH_A"));
-        assertEq(chainLog.getAddress("UNIV2WBTCETH"), addr.addr("UNIV2WBTCETH"));
-        assertEq(chainLog.getAddress("PIP_UNIV2WBTCETH"), addr.addr("PIP_UNIV2WBTCETH"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2WBTCETH_A"), addr.addr("MCD_JOIN_UNIV2WBTCETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2WBTCETH_A"), addr.addr("MCD_CLIP_UNIV2WBTCETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2WBTCETH_A"), addr.addr("MCD_CLIP_CALC_UNIV2WBTCETH_A"));
-        assertEq(chainLog.getAddress("UNIV2USDCETH"), addr.addr("UNIV2USDCETH"));
-        assertEq(chainLog.getAddress("PIP_UNIV2USDCETH"), addr.addr("PIP_UNIV2USDCETH"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2USDCETH_A"), addr.addr("MCD_JOIN_UNIV2USDCETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2USDCETH_A"), addr.addr("MCD_CLIP_UNIV2USDCETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2USDCETH_A"), addr.addr("MCD_CLIP_CALC_UNIV2USDCETH_A"));
-        assertEq(chainLog.getAddress("UNIV2DAIUSDC"), addr.addr("UNIV2DAIUSDC"));
-        assertEq(chainLog.getAddress("PIP_UNIV2DAIUSDC"), addr.addr("PIP_UNIV2DAIUSDC"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2DAIUSDC_A"), addr.addr("MCD_JOIN_UNIV2DAIUSDC_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2DAIUSDC_A"), addr.addr("MCD_CLIP_UNIV2DAIUSDC_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2DAIUSDC_A"), addr.addr("MCD_CLIP_CALC_UNIV2DAIUSDC_A"));
-        assertEq(chainLog.getAddress("UNIV2ETHUSDT"), addr.addr("UNIV2ETHUSDT"));
-        assertEq(chainLog.getAddress("PIP_UNIV2ETHUSDT"), addr.addr("PIP_UNIV2ETHUSDT"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2ETHUSDT_A"), addr.addr("MCD_JOIN_UNIV2ETHUSDT_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2ETHUSDT_A"), addr.addr("MCD_CLIP_UNIV2ETHUSDT_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2ETHUSDT_A"), addr.addr("MCD_CLIP_CALC_UNIV2ETHUSDT_A"));
-        assertEq(chainLog.getAddress("UNIV2LINKETH"), addr.addr("UNIV2LINKETH"));
-        assertEq(chainLog.getAddress("PIP_UNIV2LINKETH"), addr.addr("PIP_UNIV2LINKETH"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2LINKETH_A"), addr.addr("MCD_JOIN_UNIV2LINKETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2LINKETH_A"), addr.addr("MCD_CLIP_UNIV2LINKETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2LINKETH_A"), addr.addr("MCD_CLIP_CALC_UNIV2LINKETH_A"));
-        assertEq(chainLog.getAddress("UNIV2UNIETH"), addr.addr("UNIV2UNIETH"));
-        assertEq(chainLog.getAddress("PIP_UNIV2UNIETH"), addr.addr("PIP_UNIV2UNIETH"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2UNIETH_A"), addr.addr("MCD_JOIN_UNIV2UNIETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2UNIETH_A"), addr.addr("MCD_CLIP_UNIV2UNIETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2UNIETH_A"), addr.addr("MCD_CLIP_CALC_UNIV2UNIETH_A"));
-        assertEq(chainLog.getAddress("UNIV2WBTCDAI"), addr.addr("UNIV2WBTCDAI"));
-        assertEq(chainLog.getAddress("PIP_UNIV2WBTCDAI"), addr.addr("PIP_UNIV2WBTCDAI"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2WBTCDAI_A"), addr.addr("MCD_JOIN_UNIV2WBTCDAI_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2WBTCDAI_A"), addr.addr("MCD_CLIP_UNIV2WBTCDAI_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2WBTCDAI_A"), addr.addr("MCD_CLIP_CALC_UNIV2WBTCDAI_A"));
-        assertEq(chainLog.getAddress("UNIV2AAVEETH"), addr.addr("UNIV2AAVEETH"));
-        assertEq(chainLog.getAddress("PIP_UNIV2AAVEETH"), addr.addr("PIP_UNIV2AAVEETH"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2AAVEETH_A"), addr.addr("MCD_JOIN_UNIV2AAVEETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2AAVEETH_A"), addr.addr("MCD_CLIP_UNIV2AAVEETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2AAVEETH_A"), addr.addr("MCD_CLIP_CALC_UNIV2AAVEETH_A"));
-        assertEq(chainLog.getAddress("UNIV2DAIUSDT"), addr.addr("UNIV2DAIUSDT"));
-        assertEq(chainLog.getAddress("PIP_UNIV2DAIUSDT"), addr.addr("PIP_UNIV2DAIUSDT"));
-        assertEq(chainLog.getAddress("MCD_JOIN_UNIV2DAIUSDT_A"), addr.addr("MCD_JOIN_UNIV2DAIUSDT_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_UNIV2DAIUSDT_A"), addr.addr("MCD_CLIP_UNIV2DAIUSDT_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_UNIV2DAIUSDT_A"), addr.addr("MCD_CLIP_CALC_UNIV2DAIUSDT_A"));
+        assertEq(chainLog.getAddress("PAX"), addr.addr("PAX"));
+        assertEq(chainLog.getAddress("PIP_PAX"), addr.addr("PIP_PAX"));
+        assertEq(chainLog.getAddress("MCD_JOIN_PSM_PAX_A"), addr.addr("MCD_JOIN_PSM_PAX_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_PSM_PAX_A"), addr.addr("MCD_CLIP_PSM_PAX_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_PSM_PAX_A"), addr.addr("MCD_CLIP_CALC_PSM_PAX_A"));
+        assertEq(chainLog.getAddress("MCD_PSM_PAX_A"), addr.addr("MCD_PSM_PAX_A"));
+
+        assertEq(chainLog.getAddress("FLIP_FAB"), addr.addr("FLIP_FAB"));
+        assertEq(chainLog.getAddress("CLIP_FAB"), addr.addr("CLIP_FAB"));
+        assertEq(chainLog.getAddress("CALC_FAB"), addr.addr("CALC_FAB"));
     }
 
     function testFailWrongDay() public {
@@ -2066,107 +2054,99 @@ contract DssSpellTest is DSTest, DSMath {
         vat.move(address(this), address(0x0), vat.dai(address(this)));
     }
 
-    function testCollateralIntegrations() public {
+    function testSpellIsCast_PSM_USDC_A_INTEGRATION() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done(), "TestError/spell-not-done");
+        assertTrue(spell.done());
 
-        checkUNIV2LPIntegration(
-            "UNIV2DAIETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2DAIETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2DAIETH_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2DAIETH")),
-            0xe7A915f8Db97f0dE219e0cEf60fF7886305a14ef, // DAI DSValue
-            OsmAbstract(addr.addr("PIP_ETH")).src(),
-            true
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2WBTCETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2WBTCETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2WBTCETH_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2WBTCETH")),
-            OsmAbstract(addr.addr("PIP_WBTC")).src(),
-            OsmAbstract(addr.addr("PIP_ETH")).src(),
-            true
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2USDCETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2USDCETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2USDCETH_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2USDCETH")),
-            addr.addr("PIP_USDC"),
-            OsmAbstract(addr.addr("PIP_ETH")).src(),
-            true
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2DAIUSDC-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2DAIUSDC_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2DAIUSDC_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2DAIUSDC")),
-            0xe7A915f8Db97f0dE219e0cEf60fF7886305a14ef, // DAI DSValue
-            addr.addr("PIP_USDC"),
-            false
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2ETHUSDT-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2ETHUSDT_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2ETHUSDT_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2ETHUSDT")),
-            OsmAbstract(addr.addr("PIP_USDT")).src(),
-            OsmAbstract(addr.addr("PIP_ETH")).src(),
-            true
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2LINKETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2LINKETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2LINKETH_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2LINKETH")),
-            OsmAbstract(addr.addr("PIP_LINK")).src(),
-            OsmAbstract(addr.addr("PIP_ETH")).src(),
-            true
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2UNIETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2UNIETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2UNIETH_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2UNIETH")),
-            OsmAbstract(addr.addr("PIP_UNI")).src(),
-            OsmAbstract(addr.addr("PIP_ETH")).src(),
-            true
-        );
-        // Force some fee on UNIV2WBTCDAI-A to be able to test liquidation
-        jug.drip("UNIV2WBTCDAI-A");
-        hevm.store(
-            address(jug),
-            keccak256(abi.encode(bytes32("UNIV2WBTCDAI-A"), uint256(1))),
-            bytes32(uint256(1000000001243680656318820312))
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2WBTCDAI-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2WBTCDAI_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2WBTCDAI_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2WBTCDAI")),
-            0xe7A915f8Db97f0dE219e0cEf60fF7886305a14ef, // DAI DSValue
-            OsmAbstract(addr.addr("PIP_WBTC")).src(),
-            true
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2AAVEETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2AAVEETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2AAVEETH_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2AAVEETH")),
-            OsmAbstract(addr.addr("PIP_AAVE")).src(),
-            OsmAbstract(addr.addr("PIP_ETH")).src(),
-            true
-        );
-        checkUNIV2LPIntegration(
-            "UNIV2DAIUSDT-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2DAIUSDT_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_UNIV2DAIUSDT_A")),
-            LPOsmAbstract(addr.addr("PIP_UNIV2DAIUSDT")),
-            0xe7A915f8Db97f0dE219e0cEf60fF7886305a14ef, // DAI DSValue
-            OsmAbstract(addr.addr("PIP_USDT")).src(),
-            true
-        );
+        DSTokenAbstract usdc = DSTokenAbstract(addr.addr("USDC"));
+        AuthGemJoinAbstract joinPSMUSDCA = AuthGemJoinAbstract(addr.addr("MCD_JOIN_PSM_USDC_A"));
+        DssPsmLike psmPSMUSDCA = DssPsmLike(addr.addr("MCD_PSM_USDC_A"));
+        ClipAbstract clipPSMUSDCA = ClipAbstract(addr.addr("MCD_CLIP_PSM_USDC_A"));
+
+        // Add balance to the test address
+        uint256 oneUsdc = 10 ** usdc.decimals();
+        uint256 oneDai = 10 ** 18;
+
+        giveTokens(usdc, 1 * THOUSAND * oneUsdc);
+
+        assertEq(usdc.balanceOf(address(this)), 1 * THOUSAND * oneUsdc);
+        assertEq(dai.balanceOf(address(this)), 0);
+
+        // Authorization
+        assertEq(joinPSMUSDCA.wards(pauseProxy), 1);
+        assertEq(joinPSMUSDCA.wards(address(psmPSMUSDCA)), 1);
+        assertEq(psmPSMUSDCA.wards(pauseProxy), 1);
+        assertEq(vat.wards(address(joinPSMUSDCA)), 1);
+        assertEq(clipPSMUSDCA.wards(address(end)), 1);
+        assertEq(clipPSMUSDCA.wards(address(clipMom)), 0);
+
+        // Check psm set up correctly
+        assertEq(psmPSMUSDCA.tin(), 2000000000000000);
+        assertEq(psmPSMUSDCA.tout(), 0);
+
+        // Convert all USDC to DAI with a 0.2% fee
+        usdc.approve(address(joinPSMUSDCA), 1 * THOUSAND * oneUsdc);
+        psmPSMUSDCA.sellGem(address(this), 1 * THOUSAND * oneUsdc);
+        assertEq(usdc.balanceOf(address(this)), 0);
+        assertEq(dai.balanceOf(address(this)), 1 * THOUSAND * oneDai * 998 / 1000);
+
+        // Convert 50 DAI to USDC with a 0% fee
+        dai.approve(address(psmPSMUSDCA), uint256(-1));
+        psmPSMUSDCA.buyGem(address(this), 50 * oneUsdc);
+        assertEq(usdc.balanceOf(address(this)), 50 * oneUsdc);
+        assertEq(dai.balanceOf(address(this)), 1 * THOUSAND * oneDai * 998 / 1000 - 50 * oneDai);
     }
+
+    function testSpellIsCast_PSM_PAX_A_INTEGRATION() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        DSTokenAbstract pax = DSTokenAbstract(addr.addr("PAX"));
+        AuthGemJoinAbstract joinPSMPAXA = AuthGemJoinAbstract(addr.addr("MCD_JOIN_PSM_PAX_A"));
+        DssPsmLike psmPSMPAXA = DssPsmLike(addr.addr("MCD_PSM_PAX_A"));
+        ClipAbstract clipPSMPAXA = ClipAbstract(addr.addr("MCD_CLIP_PSM_PAX_A"));
+
+        // Add balance to the test address
+        uint256 oneUsdc = 10 ** pax.decimals();
+        uint256 oneDai = 10 ** 18;
+
+        giveTokens(pax, 1 * THOUSAND * oneUsdc);
+
+        assertEq(pax.balanceOf(address(this)), 1 * THOUSAND * oneUsdc);
+        assertEq(dai.balanceOf(address(this)), 0);
+
+        // Authorization
+        assertEq(joinPSMPAXA.wards(pauseProxy), 1);
+        assertEq(joinPSMPAXA.wards(address(psmPSMPAXA)), 1);
+        assertEq(psmPSMPAXA.wards(pauseProxy), 1);
+        assertEq(vat.wards(address(joinPSMPAXA)), 1);
+        assertEq(clipPSMPAXA.wards(address(end)), 1);
+        assertEq(clipPSMPAXA.wards(address(clipMom)), 0);
+
+        // Check psm set up correctly
+        assertEq(psmPSMPAXA.tin(), 1000000000000000);
+        assertEq(psmPSMPAXA.tout(), 0);
+
+        // Convert all PAX to DAI with a 0.1% fee
+        pax.approve(address(joinPSMPAXA), 1 * THOUSAND * oneUsdc);
+        psmPSMPAXA.sellGem(address(this), 1 * THOUSAND * oneUsdc);
+        assertEq(pax.balanceOf(address(this)), 0);
+        assertEq(dai.balanceOf(address(this)), 1 * THOUSAND * oneDai * 999 / 1000);
+
+        // Convert 50 DAI to PAX with a 0% fee
+        dai.approve(address(psmPSMPAXA), uint256(-1));
+        psmPSMPAXA.buyGem(address(this), 50 * oneUsdc);
+        assertEq(pax.balanceOf(address(this)), 50 * oneUsdc);
+        assertEq(dai.balanceOf(address(this)), 1 * THOUSAND * oneDai * 999 / 1000 - 50 * oneDai);
+    }
+}
+
+interface DssPsmLike {
+    function wards(address) external view returns (uint256);
+    function tin() external view returns (uint256);
+    function tout() external view returns (uint256);
+    function sellGem(address, uint256) external;
+    function buyGem(address, uint256) external;
 }
