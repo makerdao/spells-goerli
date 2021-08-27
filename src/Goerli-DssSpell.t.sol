@@ -54,11 +54,6 @@ interface RwaUrnLike {
     function outputConduit() external view returns (address);
 }
 
-interface TinlakeManagerLike {
-    function lock(uint256 wad) external;
-    function file(bytes32 what, address data) external;
-}
-
 contract DssSpellTest is DSTest, DSMath {
 
     struct SpellValues {
@@ -248,7 +243,7 @@ contract DssSpellTest is DSTest, DSMath {
         // Test for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0x15725BA881A85465FbEFF541794290538e49f725),        // populate with deployed spell if deployed
+            deployed_spell:                 address(0),        // populate with deployed spell if deployed
             deployed_spell_created:         1630089483,                 // use get-created-timestamp.sh if deployed
             previous_spell:                 address(0),        // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           false,              // true if officehours is expected to be enabled in the spell
@@ -279,7 +274,7 @@ contract DssSpellTest is DSTest, DSMath {
             osm_mom_authority:     address(chief),          // OsmMom authority
             flipper_mom_authority: address(chief),          // FlipperMom authority
             clipper_mom_authority: address(chief),          // ClipperMom authority
-            ilk_count:             35                       // Num expected in system
+            ilk_count:             36                       // Num expected in system
         });
 
         afterSpell.collaterals["ETH-A"] = CollateralValues({
@@ -1297,6 +1292,35 @@ contract DssSpellTest is DSTest, DSMath {
             calc_step:    120,
             calc_cut:     9990
         });
+        afterSpell.collaterals["RWA001-A"] = CollateralValues({
+            aL_enabled:   false,
+            aL_line:      0,
+            aL_gap:       0,
+            aL_ttl:       0,
+            line:         15 * MILLION,
+            dust:         0,
+            pct:          300,
+            mat:          10000,
+            liqType:      "",
+            liqOn:        false,
+            chop:         0,
+            cat_dunk:     0,
+            flip_beg:     0,
+            flip_ttl:     0,
+            flip_tau:     0,
+            flipper_mom:  0,
+            dog_hole:     0,
+            clip_buf:     0,
+            clip_tail:    0,
+            clip_cusp:    0,
+            clip_chip:    0,
+            clip_tip:     0,
+            clipper_mom:  0,
+            cm_tolerance: 0,
+            calc_tau:     0,
+            calc_step:    0,
+            calc_cut:     0
+        });
     }
 
     function scheduleWaitAndCastFailDay() public {
@@ -1824,14 +1848,25 @@ contract DssSpellTest is DSTest, DSMath {
 
         IlkRegistryAbstract ilkRegistry = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
 
-        assertEq(ilkRegistry.join("PSM-PAX-A"), addr.addr("MCD_JOIN_PSM_PAX_A"));
-        assertEq(ilkRegistry.gem("PSM-PAX-A"), addr.addr("PAX"));
-        assertEq(ilkRegistry.dec("PSM-PAX-A"), DSTokenAbstract(addr.addr("PAX")).decimals());
-        assertEq(ilkRegistry.class("PSM-PAX-A"), 1);
-        assertEq(ilkRegistry.pip("PSM-PAX-A"), addr.addr("PIP_PAX"));
-        assertEq(ilkRegistry.xlip("PSM-PAX-A"), addr.addr("MCD_CLIP_PSM_PAX_A"));
-        // assertEq(ilkRegistry.name("PSM-PAX-A"), "PAX");
-        assertEq(ilkRegistry.symbol("PSM-PAX-A"), "PAX");
+        // assertEq(ilkRegistry.join("-A"), addr.addr("MCD_JOIN__A"));
+        // assertEq(ilkRegistry.gem("-A"), addr.addr(""));
+        // assertEq(ilkRegistry.dec("-A"), DSTokenAbstract(addr.addr("")).decimals());
+        // assertEq(ilkRegistry.class("-A"), 1);
+        // assertEq(ilkRegistry.pip("-A"), addr.addr("PIP_"));
+        // assertEq(ilkRegistry.xlip("-A"), addr.addr("MCD_CLIP__A"));
+        // // assertEq(ilkRegistry.name("-A"), "");
+        // assertEq(ilkRegistry.symbol("-A"), "");
+
+        assertEq(ilkRegistry.join("RWA001-A"), addr.addr("MCD_JOIN_RWA001_A"));
+        assertEq(ilkRegistry.gem("RWA001-A"), addr.addr("RWA001"));
+        assertEq(ilkRegistry.dec("RWA001-A"), DSTokenAbstract(addr.addr("RWA001")).decimals());
+        assertEq(ilkRegistry.class("RWA001-A"), 3);
+        RwaLiquidationLike RwaLiqOracle = RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
+        (,address pip,,) = RwaLiqOracle.ilks("RWA001-A");
+        assertEq(ilkRegistry.pip("RWA001-A"), pip);
+        assertEq(ilkRegistry.xlip("RWA001-A"), address(0));
+        assertEq(ilkRegistry.name("RWA001-A"), "RWA001-A: 6s Capital");
+        assertEq(ilkRegistry.symbol("RWA001-A"), "RWA001");
     }
 
     function testNewChainlogValues() public {
@@ -1841,16 +1876,12 @@ contract DssSpellTest is DSTest, DSMath {
 
         ChainlogAbstract chainLog = ChainlogAbstract(addr.addr("CHANGELOG"));
 
-        assertEq(chainLog.getAddress("PAX"), addr.addr("PAX"));
-        assertEq(chainLog.getAddress("PIP_PAX"), addr.addr("PIP_PAX"));
-        assertEq(chainLog.getAddress("MCD_JOIN_PSM_PAX_A"), addr.addr("MCD_JOIN_PSM_PAX_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_PSM_PAX_A"), addr.addr("MCD_CLIP_PSM_PAX_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_PSM_PAX_A"), addr.addr("MCD_CLIP_CALC_PSM_PAX_A"));
-        assertEq(chainLog.getAddress("MCD_PSM_PAX_A"), addr.addr("MCD_PSM_PAX_A"));
-
-        assertEq(chainLog.getAddress("FLIP_FAB"), addr.addr("FLIP_FAB"));
-        assertEq(chainLog.getAddress("CLIP_FAB"), addr.addr("CLIP_FAB"));
-        assertEq(chainLog.getAddress("CALC_FAB"), addr.addr("CALC_FAB"));
+        assertEq(chainLog.getAddress("MIP21_LIQUIDATION_ORACLE"), addr.addr("MIP21_LIQUIDATION_ORACLE"));
+        assertEq(chainLog.getAddress("RWA001"), addr.addr("RWA001"));
+        assertEq(chainLog.getAddress("MCD_JOIN_RWA001_A"), addr.addr("MCD_JOIN_RWA001_A"));
+        assertEq(chainLog.getAddress("RWA001_A_URN"), addr.addr("RWA001_A_URN"));
+        assertEq(chainLog.getAddress("RWA001_A_INPUT_CONDUIT"), addr.addr("RWA001_A_INPUT_CONDUIT"));
+        assertEq(chainLog.getAddress("RWA001_A_OUTPUT_CONDUIT"), addr.addr("RWA001_A_OUTPUT_CONDUIT"));
     }
 
     function testFailWrongDay() public {
@@ -2089,99 +2120,85 @@ contract DssSpellTest is DSTest, DSMath {
         vat.move(address(this), address(0x0), vat.dai(address(this)));
     }
 
-    function testSpellIsCast_PSM_USDC_A_INTEGRATION() public {
+    function testRWA001A() public {
+        ChainlogAbstract chainLog = ChainlogAbstract(addr.addr("CHANGELOG"));
+        address GENESIS_6S = 0xE5C35757c296FD19faA2bFF85e66C6B25AC8b978;
+
+        RwaOutputConduitLike conduit = RwaOutputConduitLike(
+            addr.addr("RWA001_A_OUTPUT_CONDUIT")
+        );
+        // test that the new Genesis broker/dealer isn't added yet
+        assertEq(conduit.bud(GENESIS_6S), 0);
+
         vote(address(spell));
-        scheduleWaitAndCast(address(spell));
+        spell.schedule();
+        hevm.warp(spell.nextCastTime());
+        spell.cast();
         assertTrue(spell.done());
 
-        DSTokenAbstract usdc = DSTokenAbstract(addr.addr("USDC"));
-        AuthGemJoinAbstract joinPSMUSDCA = AuthGemJoinAbstract(addr.addr("MCD_JOIN_PSM_USDC_A"));
-        DssPsmLike psmPSMUSDCA = DssPsmLike(addr.addr("MCD_PSM_USDC_A"));
-        ClipAbstract clipPSMUSDCA = ClipAbstract(addr.addr("MCD_CLIP_PSM_USDC_A"));
+        // test that the new Genesis broker/dealer is added
+        assertEq(conduit.bud(GENESIS_6S), 1);
 
-        // Add balance to the test address
-        uint256 oneUsdc = 10 ** usdc.decimals();
-        uint256 oneDai = 10 ** 18;
+        // test that the PIP returns the correct price
+        bytes32 ilk = bytes32("RWA001-A");
+        jug.drip(ilk);
 
-        giveTokens(usdc, 1 * THOUSAND * oneUsdc);
+        // Confirm pip value.
+        DSValueAbstract pip = DSValueAbstract(chainLog.getAddress("PIP_RWA001"));
+        assertEq(uint256(pip.read()), 15_913_500 * WAD);
 
-        assertEq(usdc.balanceOf(address(this)), 1 * THOUSAND * oneUsdc);
-        assertEq(dai.balanceOf(address(this)), 0);
+        // Confirm Vat.ilk.spot value.
+        (uint256 Art, uint256 rate, uint256 spot, uint256 line,) = vat.ilks(ilk);
+        assertEq(spot, 15_913_500 * RAY);
 
-        // Authorization
-        assertEq(joinPSMUSDCA.wards(pauseProxy), 1);
-        assertEq(joinPSMUSDCA.wards(address(psmPSMUSDCA)), 1);
-        assertEq(psmPSMUSDCA.wards(pauseProxy), 1);
-        assertEq(vat.wards(address(joinPSMUSDCA)), 1);
-        assertEq(clipPSMUSDCA.wards(address(end)), 1);
-        assertEq(clipPSMUSDCA.wards(address(clipMom)), 0);
+        // Test that a draw can be performed.
+        assertEq(dai.balanceOf(address(conduit)), 0); // conduit before
 
-        // Check psm set up correctly
-        assertEq(psmPSMUSDCA.tin(), 2000000000000000);
-        assertEq(psmPSMUSDCA.tout(), 0);
+        address urn = addr.addr("RWA001_A_URN");
+        giveAuth(urn, address(this));
 
-        // Convert all USDC to DAI with a 0.2% fee
-        usdc.approve(address(joinPSMUSDCA), 1 * THOUSAND * oneUsdc);
-        psmPSMUSDCA.sellGem(address(this), 1 * THOUSAND * oneUsdc);
-        assertEq(usdc.balanceOf(address(this)), 0);
-        assertEq(dai.balanceOf(address(this)), 1 * THOUSAND * oneDai * 998 / 1000);
+        DSTokenAbstract rwa001 = DSTokenAbstract(addr.addr("RWA001"));
+        giveTokens(rwa001, 1 * WAD); // give 1 token to testing address
+        RwaUrnLike(urn).hope(address(this));  // become operator
+        uint256 room = sub(line, mul(Art, rate));
+        uint256 drawAmt = room / RAY;
+        if (mul(divup(mul(drawAmt, RAY), rate), rate) > room) {
+            drawAmt = sub(room, rate) / RAY;
+        }
+        rwa001.approve(urn, 1 * WAD);
+        RwaUrnLike(urn).lock(1 * WAD);
+        RwaUrnLike(urn).draw(drawAmt);
+        (Art,,,,) = vat.ilks(ilk);
 
-        // Convert 50 DAI to USDC with a 0% fee
-        dai.approve(address(psmPSMUSDCA), uint256(-1));
-        psmPSMUSDCA.buyGem(address(this), 50 * oneUsdc);
-        assertEq(usdc.balanceOf(address(this)), 50 * oneUsdc);
-        assertEq(dai.balanceOf(address(this)), 1 * THOUSAND * oneDai * 998 / 1000 - 50 * oneDai);
-    }
+        // got very close to line
+        assertTrue(sub(line, mul(Art, rate)) < mul(2, rate));
+        assertEq(dai.balanceOf(address(conduit)), drawAmt); // conduit after
 
-    function testSpellIsCast_PSM_PAX_A_INTEGRATION() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertEq(dai.balanceOf(address(GENESIS_6S)), 0); // genesis before
 
-        DSTokenAbstract pax = DSTokenAbstract(addr.addr("PAX"));
-        AuthGemJoinAbstract joinPSMPAXA = AuthGemJoinAbstract(addr.addr("MCD_JOIN_PSM_PAX_A"));
-        DssPsmLike psmPSMPAXA = DssPsmLike(addr.addr("MCD_PSM_PAX_A"));
-        ClipAbstract clipPSMPAXA = ClipAbstract(addr.addr("MCD_CLIP_PSM_PAX_A"));
+        // become a ward on the conduit
+        hevm.store(
+            address(conduit),
+            keccak256(abi.encode(address(this), uint256(0))),
+            bytes32(uint256(1))
+        );
+        conduit.hope(address(this));  // become operator
+        conduit.pick(GENESIS_6S);     // set broker dealer
 
-        // Add balance to the test address
-        uint256 oneUsdc = 10 ** pax.decimals();
-        uint256 oneDai = 10 ** 18;
+        // magic up 1 conti of MKR so we can call push()
+        giveTokens(gov, 1);
 
-        giveTokens(pax, 1 * THOUSAND * oneUsdc);
+        // Test that an MKR holder can bump the DAI along to the broker/dealer
+        conduit.push();
 
-        assertEq(pax.balanceOf(address(this)), 1 * THOUSAND * oneUsdc);
-        assertEq(dai.balanceOf(address(this)), 0);
-
-        // Authorization
-        assertEq(joinPSMPAXA.wards(pauseProxy), 1);
-        assertEq(joinPSMPAXA.wards(address(psmPSMPAXA)), 1);
-        assertEq(psmPSMPAXA.wards(pauseProxy), 1);
-        assertEq(vat.wards(address(joinPSMPAXA)), 1);
-        assertEq(clipPSMPAXA.wards(address(end)), 1);
-        assertEq(clipPSMPAXA.wards(address(clipMom)), 0);
-
-        // Check psm set up correctly
-        assertEq(psmPSMPAXA.tin(), 1000000000000000);
-        assertEq(psmPSMPAXA.tout(), 0);
-
-        // Convert all PAX to DAI with a 0.1% fee
-        pax.approve(address(joinPSMPAXA), 1 * THOUSAND * oneUsdc);
-        psmPSMPAXA.sellGem(address(this), 1 * THOUSAND * oneUsdc);
-        assertEq(pax.balanceOf(address(this)), 0);
-        assertEq(dai.balanceOf(address(this)), 1 * THOUSAND * oneDai * 999 / 1000);
-
-        // Convert 50 DAI to PAX with a 0% fee
-        dai.approve(address(psmPSMPAXA), uint256(-1));
-        psmPSMPAXA.buyGem(address(this), 50 * oneUsdc);
-        assertEq(pax.balanceOf(address(this)), 50 * oneUsdc);
-        assertEq(dai.balanceOf(address(this)), 1 * THOUSAND * oneDai * 999 / 1000 - 50 * oneDai);
+        // // conduit has DAI
+        // assertEq(dai.balanceOf(address(GENESIS_6S)), drawAmt); // genesis after
     }
 }
 
-interface DssPsmLike {
-    function wards(address) external view returns (uint256);
-    function tin() external view returns (uint256);
-    function tout() external view returns (uint256);
-    function sellGem(address, uint256) external;
-    function buyGem(address, uint256) external;
+interface RwaOutputConduitLike {
+    function hope(address) external;
+    function bud(address) external view returns (uint256);
+    function pick(address) external;
+    function push() external;
 }
