@@ -7,8 +7,7 @@ try:
     api_key = os.environ['ETHERSCAN_API_KEY']
 except KeyError:
     print('''  You need an Etherscan Api Key to verify contracts.
-  Create one at https://etherscan.io/myapikey
-
+  Create one at https://etherscan.io/myapikey\n
   Then export it with `export ETHERSCAN_API_KEY=xxxxxxxx'
 ''')
     exit()
@@ -18,11 +17,13 @@ try:
     document = open('out/dapp.sol.json')
 except FileNotFoundError:
     exit('run dapp build first')
-content = json.load(document)
+try:
+    content = json.load(document)
+except json.decoder.JSONDecodeError:
+    exit('run dapp build again')
 
 if len(sys.argv) not in [3, 4]:
-    print('''usage:
-
+    print('''usage:\n
 ./verify.py <contractname> <address> [constructorArgs]
 ''')
     exit()
@@ -39,12 +40,14 @@ if len(contract_address) !=  42:
 constructor_arguments = ''
 if len(sys.argv) == 4:
     constructor_arguments = sys.argv[3]
-contract_path = ''
 
+contract_path = ''
 for path in content['contracts'].keys():
-    for name in content['contracts'][path].keys():
-        if name == contract_name:
-            contract_path = path
+    try:
+        content['contracts'][path][contract_name]
+        contract_path = path
+    except KeyError:
+        continue
 if contract_path == '':
     exit('contract name not found.')
 
@@ -55,28 +58,18 @@ print(chain)
 
 text_metadata = content['contracts'][contract_path][contract_name]['metadata']
 metadata = json.loads(text_metadata)
-
 compiler_version = 'v' + metadata['compiler']['version']
-
 evm_version = metadata['settings']['evmVersion']
-
 optimizer_enabled = metadata['settings']['optimizer']['enabled']
-
 optimizer_runs = metadata['settings']['optimizer']['runs']
-
 license_name = metadata['sources'][contract_path]['license']
-
 license_numbers = {
     'GPL-3.0-or-later': 5,
     'AGPL-3.0-or-later': 13
 }
-
 license_number = license_numbers[license_name]
-
 module = 'contract'
-
 action = 'verifysourcecode'
-
 code_format = 'solidity-single-file'
 
 flatten = subprocess.run([
@@ -85,7 +78,6 @@ flatten = subprocess.run([
     '--source-file',
     contract_path
 ], capture_output=True)
-
 code = flatten.stdout.decode('utf-8')
 
 def get_block(signature, code, with_frame=False):
@@ -205,6 +197,8 @@ def get_library_info():
         if len(libraries_flags) == 0:
             raise ValueError('No library flags found in Makefile')
         libraries_flag = libraries_flags[0].strip().split(' ')
+        if len(libraries_flag) > 1:
+            exit('Only one library supported.')
         library_flag = libraries_flag[0]
         library_components = library_flag.split(':')
         if len(library_components) != 3:
