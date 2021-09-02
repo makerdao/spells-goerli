@@ -2191,8 +2191,8 @@ contract DssSpellTest is DSTest, DSMath {
         // Test that an MKR holder can bump the DAI along to the broker/dealer
         conduit.push();
 
-        // // conduit has DAI
-        // assertEq(dai.balanceOf(address(GENESIS_6S)), drawAmt); // genesis after
+        // conduit has DAI
+        assertEq(dai.balanceOf(address(GENESIS_6S)), drawAmt); // genesis after
     }
 }
 
