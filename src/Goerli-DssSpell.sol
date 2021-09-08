@@ -20,6 +20,7 @@ pragma experimental ABIEncoderV2;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 import "dss-interfaces/dss/GemJoinAbstract.sol";
+import "dss-interfaces/dss/OsmAbstract.sol";
 import "dss-interfaces/dss/IlkRegistryAbstract.sol";
 import "dss-interfaces/dapp/DSTokenAbstract.sol";
 
@@ -91,6 +92,7 @@ contract DssSpellAction is DssAction {
     uint256 constant TWO_PCT            = 1000000000627937192491029810;
     uint256 constant THREE_PT_FIVE_PCT  = 1000000001090862085746321732;
     uint256 constant FOUR_PT_FIVE_PCT   = 1000000001395766281313196627;
+    uint256 constant FIVE_PCT           = 1000000001547125957863212448;
     uint256 constant SIX_PCT            = 1000000001847694957439350562;
     uint256 constant SEVEN_PCT          = 1000000002145441671308778766;
 
@@ -238,6 +240,50 @@ contract DssSpellAction is DssAction {
         for (uint i = 0; i < collaterals.length; i++) {
             integrateCentrifugeCollateral(collaterals[i]);
         }
+
+        // Other minor stuff done in mainnet
+        DssExecLib.setIlkStabilityFee("ETH-B", FIVE_PCT, true);
+
+        DssExecLib.setIlkAutoLineDebtCeiling("LRC-A", 1 * MILLION);
+
+        DssExecLib.setValue(DssExecLib.getChangelogAddress("MCD_PSM_USDC_A"), "tin", 2 * WAD / 1000);
+
+        DssExecLib.setIlkLiquidationRatio("ETH-A", 14500);
+        DssExecLib.setIlkLiquidationRatio("WBTC-A", 14500);
+        DssExecLib.setIlkLiquidationRatio("ETH-C", 17000);
+        DssExecLib.setIlkLiquidationRatio("LINK-A", 16500);
+        DssExecLib.setIlkLiquidationRatio("UNIV2DAIETH-A", 12000);
+        DssExecLib.setIlkLiquidationRatio("YFI-A", 16500);
+        DssExecLib.setIlkLiquidationRatio("UNIV2WBTCETH-A", 14500);
+        DssExecLib.setIlkLiquidationRatio("UNIV2UNIETH-A", 16000);
+        DssExecLib.setIlkLiquidationRatio("UNIV2USDCETH-A", 12000);
+        DssExecLib.setIlkLiquidationRatio("RENBTC-A", 16500);
+        DssExecLib.setIlkLiquidationRatio("UNI-A", 16500);
+        DssExecLib.setIlkLiquidationRatio("AAVE-A", 16500);
+        DssExecLib.setIlkLiquidationRatio("UNIV2WBTCDAI-A", 12000);
+        DssExecLib.setIlkLiquidationRatio("BAL-A", 16500);
+        DssExecLib.setIlkLiquidationRatio("COMP-A", 16500);
+
+        DssExecLib.increaseIlkDebtCeiling("PSM-PAX-A", 450 * MILLION, true);
+
+        DssExecLib.setValue(DssExecLib.getChangelogAddress("MCD_FLASH"), "toll", 0);
+        //
+
+        // Rely Oracles team address in all the medians except MATIC that was created by them
+        DssExecLib.authorize(OsmAbstract(DssExecLib.getChangelogAddress("PIP_ETH")).src(),  0x1f42e41A34B71606FcC60b4e624243b365D99745);
+        DssExecLib.authorize(OsmAbstract(DssExecLib.getChangelogAddress("PIP_BAT")).src(),  0x1f42e41A34B71606FcC60b4e624243b365D99745);
+        DssExecLib.authorize(OsmAbstract(DssExecLib.getChangelogAddress("PIP_WBTC")).src(), 0x1f42e41A34B71606FcC60b4e624243b365D99745);
+        DssExecLib.authorize(OsmAbstract(DssExecLib.getChangelogAddress("PIP_ZRX")).src(),  0x1f42e41A34B71606FcC60b4e624243b365D99745);
+        DssExecLib.authorize(OsmAbstract(DssExecLib.getChangelogAddress("PIP_KNC")).src(),  0x1f42e41A34B71606FcC60b4e624243b365D99745);
+        DssExecLib.authorize(OsmAbstract(DssExecLib.getChangelogAddress("PIP_MANA")).src(), 0x1f42e41A34B71606FcC60b4e624243b365D99745);
+        DssExecLib.authorize(OsmAbstract(DssExecLib.getChangelogAddress("PIP_USDT")).src(), 0x1f42e41A34B71606FcC60b4e624243b365D99745);
+        DssExecLib.authorize(OsmAbstract(DssExecLib.getChangelogAddress("PIP_COMP")).src(), 0x1f42e41A34B71606FcC60b4e624243b365D99745);
+        DssExecLib.authorize(OsmAbstract(DssExecLib.getChangelogAddress("PIP_LRC")).src(),  0x1f42e41A34B71606FcC60b4e624243b365D99745);
+        DssExecLib.authorize(OsmAbstract(DssExecLib.getChangelogAddress("PIP_LINK")).src(), 0x1f42e41A34B71606FcC60b4e624243b365D99745);
+        DssExecLib.authorize(OsmAbstract(DssExecLib.getChangelogAddress("PIP_BAL")).src(),  0x1f42e41A34B71606FcC60b4e624243b365D99745);
+        DssExecLib.authorize(OsmAbstract(DssExecLib.getChangelogAddress("PIP_YFI")).src(),  0x1f42e41A34B71606FcC60b4e624243b365D99745);
+        DssExecLib.authorize(OsmAbstract(DssExecLib.getChangelogAddress("PIP_UNI")).src(),  0x1f42e41A34B71606FcC60b4e624243b365D99745);
+        DssExecLib.authorize(OsmAbstract(DssExecLib.getChangelogAddress("PIP_AAVE")).src(), 0x1f42e41A34B71606FcC60b4e624243b365D99745);
 
         // Bump changelog version
         DssExecLib.setChangelogVersion("1.9.5");

@@ -285,7 +285,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,               // In whole Dai units  // Not checked here as there is auto line
             dust:         10 * THOUSAND,   // In whole Dai units
             pct:          200,             // In basis points
-            mat:          15000,           // In basis points
+            mat:          14500,           // In basis points
             liqType:      "clip",          // "" or "flip" or "clip"
             liqOn:        true,            // If liquidations are enabled
             chop:         1300,            // In basis points
@@ -313,7 +313,7 @@ contract DssSpellTest is DSTest, DSMath {
             aL_ttl:       8 hours,
             line:         0,
             dust:         30 * THOUSAND,
-            pct:          600,
+            pct:          500,
             mat:          13000,
             liqType:      "clip",
             liqOn:        true,
@@ -343,7 +343,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         5 * THOUSAND,
             pct:          50,
-            mat:          17500,
+            mat:          17000,
             liqType:      "clip",
             liqOn:        true,
             chop:         1300,
@@ -459,7 +459,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          200,
-            mat:          15000,
+            mat:          14500,
             liqType:      "clip",
             liqOn:        true,
             chop:         1300,
@@ -662,7 +662,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          100,
-            mat:          17500,
+            mat:          16500,
             liqType:      "clip",
             liqOn:        true,
             chop:         1300,
@@ -685,7 +685,7 @@ contract DssSpellTest is DSTest, DSMath {
         });
         afterSpell.collaterals["LRC-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      3 * MILLION,
+            aL_line:      1 * MILLION,
             aL_gap:       500 * THOUSAND,
             aL_ttl:       8 hours,
             line:         0,
@@ -720,7 +720,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          100,
-            mat:          17500,
+            mat:          16500,
             liqType:      "clip",
             liqOn:        true,
             chop:         1300,
@@ -749,7 +749,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          100,
-            mat:          17500,
+            mat:          16500,
             liqType:      "clip",
             liqOn:        true,
             chop:         1300,
@@ -778,7 +778,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          100,
-            mat:          17500,
+            mat:          16500,
             liqType:      "clip",
             liqOn:        true,
             chop:         1300,
@@ -836,7 +836,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          100,
-            mat:          17500,
+            mat:          16500,
             liqType:      "clip",
             liqOn:        true,
             chop:         1300,
@@ -865,7 +865,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          200,
-            mat:          17500,
+            mat:          16500,
             liqType:      "clip",
             liqOn:        true,
             chop:         1300,
@@ -894,7 +894,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          100,
-            mat:          17500,
+            mat:          16500,
             liqType:      "clip",
             liqOn:        true,
             chop:         1300,
@@ -981,7 +981,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          150,
-            mat:          12500,
+            mat:          12000,
             liqType:      "clip",
             liqOn:        true,
             chop:         1300,
@@ -1010,7 +1010,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          200,
-            mat:          15000,
+            mat:          14500,
             liqType:      "clip",
             liqOn:        true,
             chop:         1300,
@@ -1039,7 +1039,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          200,
-            mat:          12500,
+            mat:          12000,
             liqType:      "clip",
             liqOn:        true,
             chop:         1300,
@@ -1155,7 +1155,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          200,
-            mat:          16500,
+            mat:          16000,
             liqType:      "clip",
             liqOn:        true,
             chop:         1300,
@@ -1184,7 +1184,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          0,
-            mat:          12500,
+            mat:          12000,
             liqType:      "clip",
             liqOn:        true,
             chop:         1300,
@@ -1268,7 +1268,7 @@ contract DssSpellTest is DSTest, DSMath {
             aL_line:      0,
             aL_gap:       0,
             aL_ttl:       0,
-            line:         50 * MILLION,
+            line:         500 * MILLION,
             dust:         0,
             pct:          0,
             mat:          10000,
@@ -2437,8 +2437,8 @@ contract DssSpellTest is DSTest, DSMath {
         assertTrue(isWard(RWA006_MGR, RWA006_CLERK));
     }
 
-    function isWard(address addr, address user) internal returns (bool) {
-        return AuthLike(addr).wards(user) == 1;
+    function isWard(address addr_, address user) internal returns (bool) {
+        return AuthLike(addr_).wards(user) == 1;
     }
 }
 
