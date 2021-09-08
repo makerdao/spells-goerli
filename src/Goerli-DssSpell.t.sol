@@ -1442,7 +1442,7 @@ contract DssSpellTest is DSTest, DSMath {
             aL_line:      0 * MILLION,
             aL_gap:       0 * MILLION,
             aL_ttl:       0,
-            line:         0 * MILLION,
+            line:         20 * MILLION,
             dust:         0,
             pct:          200,
             mat:          10000,
