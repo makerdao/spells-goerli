@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
-pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
@@ -29,6 +28,9 @@ contract DssSpellAction is DssAction {
 
     uint256 constant MILLION = 10 ** 6;
     uint256 constant WAD     = 10 ** 18;
+    uint256 constant RAY     = 10 ** 27;
+
+    address constant LERP_FAB = 0xbBD821c291c492c40Db2577D9b6E5B1bdAEBD207;
 
     // Turn off office hours
     function officeHours() public override returns (bool) {
@@ -36,8 +38,24 @@ contract DssSpellAction is DssAction {
     }
 
     function actions() public override {
-        // Add GUNIV3DAIUSDC1 as a new Vault Type
+
+        // Add LerpFactory to ChainLog
+        DssExecLib.setChangelogAddress("LERP_FAB", LERP_FAB);
+
         // Offboard KNC Legacy Token
+        // https://vote.makerdao.com/polling/QmQ4Jotm?network=mainnet#poll-detail
+        DssExecLib.setIlkLiquidationPenalty("KNC-A", 0);
+        DssExecLib.linearInterpolation({
+            _name: "KNC Offboarding",
+            _target: DssExecLib.spotter(),
+            _ilk: "KNC-A",
+            _what: "mat",
+            _startTime: block.timestamp,
+            _start: 175 * RAY / 100,
+            _end: 5000 * RAY / 100,
+            _duration: 60 days
+        });
+
         // Adopt the Debt Ceiling Instant Access Module (DC-IAM) for PSM-PAX-A
     }
 

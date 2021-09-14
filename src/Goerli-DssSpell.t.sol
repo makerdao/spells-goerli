@@ -120,6 +120,7 @@ contract DssSpellTest is DSTest, DSMath {
     FlipperMomAbstract   flipMom = FlipperMomAbstract( addr.addr("FLIPPER_MOM"));
     ClipperMomAbstract   clipMom = ClipperMomAbstract( addr.addr("CLIPPER_MOM"));
     DssAutoLineAbstract autoLine = DssAutoLineAbstract(addr.addr("MCD_IAM_AUTO_LINE"));
+    LerpFactoryAbstract lerpFactory = LerpFactoryAbstract(addr.addr("LERP_FAB"));
 
     DssSpell spell;
 
@@ -493,7 +494,7 @@ contract DssSpellTest is DSTest, DSMath {
             mat:          17500,
             liqType:      "clip",
             liqOn:        true,
-            chop:         1300,
+            chop:         0,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -1790,38 +1791,6 @@ contract DssSpellTest is DSTest, DSMath {
         assertEq(sumlines + values.line_offset * RAD, vat.Line(), "TestError/vat-Line");
     }
 
-    function getOSMPrice(address pip) internal returns (uint256) {
-        // hevm.load is to pull the price from the LP Oracle storage bypassing the whitelist
-        uint256 price = uint256(hevm.load(
-            pip,
-            bytes32(uint256(3))
-        )) & uint128(-1);   // Price is in the second half of the 32-byte storage slot
-
-        // Price is bounded in the spot by around 10^23
-        // Give a 10^9 buffer for price appreciation over time
-        // Note: This currently can't be hit due to the uint112, but we want to backstop
-        //       once the PIP uint256 size is increased
-        assertTrue(price <= (10 ** 14) * WAD);
-
-        return price;
-    }
-
-    function getUNIV2LPPrice(address pip) internal returns (uint256) {
-        // hevm.load is to pull the price from the LP Oracle storage bypassing the whitelist
-        uint256 price = uint256(hevm.load(
-            pip,
-            bytes32(uint256(3))
-        )) & uint128(-1);   // Price is in the second half of the 32-byte storage slot
-
-        // Price is bounded in the spot by around 10^23
-        // Give a 10^9 buffer for price appreciation over time
-        // Note: This currently can't be hit due to the uint112, but we want to backstop
-        //       once the PIP uint256 size is increased
-        assertTrue(price <= (10 ** 14) * WAD);
-
-        return price;
-    }
-
     function giveTokens(DSTokenAbstract token, uint256 amount) internal {
         // Edge case - balance is already set for some reason
         if (token.balanceOf(address(this)) == amount) return;
@@ -1845,40 +1814,6 @@ contract DssSpellTest is DSTest, DSMath {
                 hevm.store(
                     address(token),
                     keccak256(abi.encode(address(this), uint256(i))),
-                    prevValue
-                );
-            }
-        }
-
-        // We have failed if we reach here
-        assertTrue(false);
-    }
-
-    function giveAuth(address _base, address target) internal {
-        AuthLike base = AuthLike(_base);
-
-        // Edge case - ward is already set
-        if (base.wards(target) == 1) return;
-
-        for (int i = 0; i < 100; i++) {
-            // Scan the storage for the ward storage slot
-            bytes32 prevValue = hevm.load(
-                address(base),
-                keccak256(abi.encode(target, uint256(i)))
-            );
-            hevm.store(
-                address(base),
-                keccak256(abi.encode(target, uint256(i))),
-                bytes32(uint256(1))
-            );
-            if (base.wards(target) == 1) {
-                // Found it
-                return;
-            } else {
-                // Keep going after restoring the original value
-                hevm.store(
-                    address(base),
-                    keccak256(abi.encode(target, uint256(i))),
                     prevValue
                 );
             }
@@ -1930,35 +1865,7 @@ contract DssSpellTest is DSTest, DSMath {
         assertTrue(spell.done());
 
         ChainlogAbstract chainLog = ChainlogAbstract(addr.addr("CHANGELOG"));
-
-        assertEq(chainLog.getAddress("MCD_VEST_DAI"), addr.addr("MCD_VEST_DAI"));
-        assertEq(chainLog.getAddress("MCD_VEST_MKR"), addr.addr("MCD_VEST_MKR"));
-
-        assertEq(chainLog.getAddress("RWA002"), addr.addr("RWA002"));
-        assertEq(chainLog.getAddress("MCD_JOIN_RWA002_A"), addr.addr("MCD_JOIN_RWA002_A"));
-        assertEq(chainLog.getAddress("RWA002_A_URN"), addr.addr("RWA002_A_URN"));
-        assertEq(chainLog.getAddress("RWA002_A_INPUT_CONDUIT"), addr.addr("RWA002_A_INPUT_CONDUIT"));
-        assertEq(chainLog.getAddress("RWA002_A_OUTPUT_CONDUIT"), addr.addr("RWA002_A_OUTPUT_CONDUIT"));
-        assertEq(chainLog.getAddress("RWA003"), addr.addr("RWA003"));
-        assertEq(chainLog.getAddress("MCD_JOIN_RWA003_A"), addr.addr("MCD_JOIN_RWA003_A"));
-        assertEq(chainLog.getAddress("RWA003_A_URN"), addr.addr("RWA003_A_URN"));
-        assertEq(chainLog.getAddress("RWA003_A_INPUT_CONDUIT"), addr.addr("RWA003_A_INPUT_CONDUIT"));
-        assertEq(chainLog.getAddress("RWA003_A_OUTPUT_CONDUIT"), addr.addr("RWA003_A_OUTPUT_CONDUIT"));
-        assertEq(chainLog.getAddress("RWA004"), addr.addr("RWA004"));
-        assertEq(chainLog.getAddress("MCD_JOIN_RWA004_A"), addr.addr("MCD_JOIN_RWA004_A"));
-        assertEq(chainLog.getAddress("RWA004_A_URN"), addr.addr("RWA004_A_URN"));
-        assertEq(chainLog.getAddress("RWA004_A_INPUT_CONDUIT"), addr.addr("RWA004_A_INPUT_CONDUIT"));
-        assertEq(chainLog.getAddress("RWA004_A_OUTPUT_CONDUIT"), addr.addr("RWA004_A_OUTPUT_CONDUIT"));
-        assertEq(chainLog.getAddress("RWA005"), addr.addr("RWA005"));
-        assertEq(chainLog.getAddress("MCD_JOIN_RWA005_A"), addr.addr("MCD_JOIN_RWA005_A"));
-        assertEq(chainLog.getAddress("RWA005_A_URN"), addr.addr("RWA005_A_URN"));
-        assertEq(chainLog.getAddress("RWA005_A_INPUT_CONDUIT"), addr.addr("RWA005_A_INPUT_CONDUIT"));
-        assertEq(chainLog.getAddress("RWA005_A_OUTPUT_CONDUIT"), addr.addr("RWA005_A_OUTPUT_CONDUIT"));
-        assertEq(chainLog.getAddress("RWA006"), addr.addr("RWA006"));
-        assertEq(chainLog.getAddress("MCD_JOIN_RWA006_A"), addr.addr("MCD_JOIN_RWA006_A"));
-        assertEq(chainLog.getAddress("RWA006_A_URN"), addr.addr("RWA006_A_URN"));
-        assertEq(chainLog.getAddress("RWA006_A_INPUT_CONDUIT"), addr.addr("RWA006_A_INPUT_CONDUIT"));
-        assertEq(chainLog.getAddress("RWA006_A_OUTPUT_CONDUIT"), addr.addr("RWA006_A_OUTPUT_CONDUIT"));
+        assertEq(chainLog.getAddress("LERP_FAB"), addr.addr("LERP_FAB"));
     }
 
     function testFailWrongDay() public {
@@ -2013,188 +1920,23 @@ contract DssSpellTest is DSTest, DSMath {
         assertTrue(totalGas <= 10 * MILLION);
     }
 
-    function checkIlkIntegration(
-        bytes32 _ilk,
-        GemJoinAbstract join,
-        ClipAbstract clip,
-        address pip,
-        bool _isOSM,
-        bool _checkLiquidations,
-        bool _transferFee
-    ) public {
-        DSTokenAbstract token = DSTokenAbstract(join.gem());
-
-        if (_isOSM) OsmAbstract(pip).poke();
-        hevm.warp(block.timestamp + 3601);
-        if (_isOSM) OsmAbstract(pip).poke();
-        spotter.poke(_ilk);
-
-        // Authorization
-        assertEq(join.wards(pauseProxy), 1);
-        assertEq(vat.wards(address(join)), 1);
-        assertEq(clip.wards(address(end)), 1);
-        assertEq(clip.wards(address(clipMom)), 1);
-        if (_isOSM) {
-            assertEq(OsmAbstract(pip).wards(address(osmMom)), 1);
-            assertEq(OsmAbstract(pip).bud(address(spotter)), 1);
-            assertEq(OsmAbstract(pip).bud(address(end)), 1);
-            assertEq(MedianAbstract(OsmAbstract(pip).src()).bud(pip), 1);
-        }
-
-        (,,,, uint256 dust) = vat.ilks(_ilk);
-        dust /= RAY;
-        uint256 amount = 2 * dust * WAD / (_isOSM ? getOSMPrice(pip) : uint256(DSValueAbstract(pip).read()));
-        giveTokens(token, amount);
-
-        assertEq(token.balanceOf(address(this)), amount);
-        assertEq(vat.gem(_ilk, address(this)), 0);
-        token.approve(address(join), amount);
-        join.join(address(this), amount);
-        assertEq(token.balanceOf(address(this)), 0);
-        if (_transferFee) {
-            amount = vat.gem(_ilk, address(this));
-            assertTrue(amount > 0);
-        }
-        assertEq(vat.gem(_ilk, address(this)), amount);
-
-        // Tick the fees forward so that art != dai in wad units
-        hevm.warp(block.timestamp + 1);
-        jug.drip(_ilk);
-
-        // Deposit collateral, generate DAI
-        (,uint256 rate,,,) = vat.ilks(_ilk);
-        assertEq(vat.dai(address(this)), 0);
-        vat.frob(_ilk, address(this), address(this), address(this), int256(amount), int256(divup(mul(RAY, dust), rate)));
-        assertEq(vat.gem(_ilk, address(this)), 0);
-        assertTrue(vat.dai(address(this)) >= dust * RAY);
-        assertTrue(vat.dai(address(this)) <= (dust + 1) * RAY);
-
-        // Payback DAI, withdraw collateral
-        vat.frob(_ilk, address(this), address(this), address(this), -int256(amount), -int256(divup(mul(RAY, dust), rate)));
-        assertEq(vat.gem(_ilk, address(this)), amount);
-        assertEq(vat.dai(address(this)), 0);
-
-        // Withdraw from adapter
-        join.exit(address(this), amount);
-        if (_transferFee) {
-            amount = token.balanceOf(address(this));
-        }
-        assertEq(token.balanceOf(address(this)), amount);
-        assertEq(vat.gem(_ilk, address(this)), 0);
-
-        // Generate new DAI to force a liquidation
-        token.approve(address(join), amount);
-        join.join(address(this), amount);
-        if (_transferFee) {
-            amount = vat.gem(_ilk, address(this));
-        }
-        // dart max amount of DAI
-        (,,uint256 spot,,) = vat.ilks(_ilk);
-        vat.frob(_ilk, address(this), address(this), address(this), int256(amount), int256(mul(amount, spot) / rate));
-        hevm.warp(block.timestamp + 1);
-        jug.drip(_ilk);
-        assertEq(clip.kicks(), 0);
-        if (_checkLiquidations) {
-            dog.bark(_ilk, address(this), address(this));
-            assertEq(clip.kicks(), 1);
-        }
-
-        // Dump all dai for next run
-        vat.move(address(this), address(0x0), vat.dai(address(this)));
+    function getKNCMat() internal returns (uint256 mat) {
+        (, mat) = spotter.ilks("KNC-A");
     }
 
-    function checkUNIV2LPIntegration(
-        bytes32 _ilk,
-        GemJoinAbstract join,
-        ClipAbstract clip,
-        LPOsmAbstract pip,
-        address _feed0,
-        address _feed1,
-        bool _checkLiquidations
-    ) public {
-        DSTokenAbstract token = DSTokenAbstract(join.gem());
+    function testKNCOffboarding() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        LerpAbstract lerp = LerpAbstract(lerpFactory.lerps("KNC Offboarding"));
 
-        pip.poke();
-        hevm.warp(block.timestamp + 3601);
-        pip.poke();
-        spotter.poke(_ilk);
+        hevm.warp(block.timestamp + 30 days);
+        assertEq(getKNCMat(), 175 * RAY / 100);
+        lerp.tick();
+        assertGt(getKNCMat(), 2000 * RAY / 100);
+        assertLt(getKNCMat(), 3000 * RAY / 100);
 
-        // Check medianizer sources
-        assertEq(pip.src(), address(token));
-        assertEq(pip.orb0(), _feed0);
-        assertEq(pip.orb1(), _feed1);
-
-        // Authorization
-        assertEq(join.wards(pauseProxy), 1);
-        assertEq(vat.wards(address(join)), 1);
-        assertEq(clip.wards(address(end)), 1);
-        assertEq(clip.wards(address(clipMom)), _checkLiquidations ? 1 : 0);
-        assertEq(pip.wards(address(osmMom)), 1);
-        assertEq(pip.bud(address(clip)), 1);
-        assertEq(pip.bud(address(clipMom)), 1);
-        assertEq(pip.bud(address(spotter)), 1);
-        assertEq(pip.bud(address(end)), 1);
-        (bool ok, bytes memory val) = _feed0.call(abi.encodeWithSignature("bud(address)", pip));
-        if (ok) { assertEq(abi.decode(val, (uint256)), 1); }
-        (ok, val) = _feed1.call(abi.encodeWithSignature("bud(address)", pip));
-        if (ok) { assertEq(abi.decode(val, (uint256)), 1); }
-
-        (,,,, uint256 dust) = vat.ilks(_ilk);
-        dust /= RAY;
-        uint256 amount = 2 * dust * WAD / getUNIV2LPPrice(address(pip));
-        giveTokens(token, amount);
-
-        assertEq(token.balanceOf(address(this)), amount);
-        assertEq(vat.gem(_ilk, address(this)), 0);
-        token.approve(address(join), amount);
-        join.join(address(this), amount);
-        assertEq(token.balanceOf(address(this)), 0);
-        assertEq(vat.gem(_ilk, address(this)), amount);
-
-        // Tick the fees forward so that art != dai in wad units
-        hevm.warp(block.timestamp + 1);
-        jug.drip(_ilk);
-
-        // Force debt ceiling of the ilk (so even those ilks with 0 debt ceiling can pass this test)
-        hevm.store(
-            address(vat),
-            bytes32(uint256(keccak256(abi.encode(bytes32(_ilk), uint256(2)))) + 3),
-            bytes32(uint256(-1))
-        );
-
-        // Deposit collateral, generate DAI
-        (,uint256 rate,,,) = vat.ilks(_ilk);
-        assertEq(vat.dai(address(this)), 0);
-        vat.frob(_ilk, address(this), address(this), address(this), int(amount), int(divup(mul(RAY, dust), rate)));
-        assertEq(vat.gem(_ilk, address(this)), 0);
-        assertTrue(vat.dai(address(this)) >= dust * RAY && vat.dai(address(this)) <= (dust + 1) * RAY);
-
-        // Payback DAI, withdraw collateral
-        vat.frob(_ilk, address(this), address(this), address(this), -int(amount), -int(divup(mul(RAY, dust), rate)));
-        assertEq(vat.gem(_ilk, address(this)), amount);
-        assertEq(vat.dai(address(this)), 0);
-
-        // Withdraw from adapter
-        join.exit(address(this), amount);
-        assertEq(token.balanceOf(address(this)), amount);
-        assertEq(vat.gem(_ilk, address(this)), 0);
-
-        // Generate new DAI to force a liquidation
-        token.approve(address(join), amount);
-        join.join(address(this), amount);
-        // dart max amount of DAI
-        (,,uint256 spot,,) = vat.ilks(_ilk);
-        vat.frob(_ilk, address(this), address(this), address(this), int(amount), int(mul(amount, spot) / rate));
-        hevm.warp(block.timestamp + 1);
-        jug.drip(_ilk);
-        assertEq(clip.kicks(), 0);
-        if (_checkLiquidations) {
-            dog.bark(_ilk, address(this), address(this));
-            assertEq(clip.kicks(), 1);
-        }
-
-        // Dump all dai for next run
-        vat.move(address(this), address(0x0), vat.dai(address(this)));
+        hevm.warp(block.timestamp + 60 days);
+        lerp.tick();
+        assertEq(getKNCMat(), 5000 * RAY / 100);
     }
-
 }

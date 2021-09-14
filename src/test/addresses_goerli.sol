@@ -260,5 +260,6 @@ contract Addresses {
         addr["RWA006_A_OUTPUT_CONDUIT"]         = 0xd2Ef07535267D17d2314894f7821A43e9700A02e;
         addr["PROXY_PAUSE_ACTIONS"]             = 0x8D1187FCa9A104211bd25c689C08718AD8730C83;
         addr["PROXY_DEPLOYER"]                  = 0xc9476Fd378de5b0de5C4280D4323f6F89f723c15;
+        addr["LERP_FAB"]                        = 0xbBD821c291c492c40Db2577D9b6E5B1bdAEBD207;
     }
 }
