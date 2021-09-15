@@ -44,9 +44,7 @@ contract DssSpellAction is DssAction {
     uint256 constant THOUSAND = 10 ** 3;
     uint256 constant MILLION  = 10 ** 6;
     uint256 constant BILLION  = 10 ** 9;
-    uint256 constant WAD      = 10 ** 18;
     uint256 constant RAY      = 10 ** 27;
-    uint256 constant RAD      = 10 ** 45;
 
     address constant GUNI                   = 0xc5D83e829Ecdce4d67645EE1a1317451e0b4c68d;
     address constant MCD_JOIN_GUNI_A        = 0xFBF4e3bB9B86d24F91Da185E6F4C8D903Fb63C86;
