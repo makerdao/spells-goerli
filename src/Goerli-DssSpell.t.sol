@@ -131,10 +131,10 @@ contract DssSpellTest is DSTest, DSMath {
     IlkRegistryAbstract      reg = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
     FlapAbstract            flap = FlapAbstract(       addr.addr("MCD_FLAP"));
 
-    OsmMomAbstract        osmMom = OsmMomAbstract(     addr.addr("OSM_MOM"));
-    FlipperMomAbstract   flipMom = FlipperMomAbstract( addr.addr("FLIPPER_MOM"));
-    ClipperMomAbstract   clipMom = ClipperMomAbstract( addr.addr("CLIPPER_MOM"));
-    DssAutoLineAbstract autoLine = DssAutoLineAbstract(addr.addr("MCD_IAM_AUTO_LINE"));
+    OsmMomAbstract           osmMom = OsmMomAbstract(     addr.addr("OSM_MOM"));
+    FlipperMomAbstract      flipMom = FlipperMomAbstract( addr.addr("FLIPPER_MOM"));
+    ClipperMomAbstract      clipMom = ClipperMomAbstract( addr.addr("CLIPPER_MOM"));
+    DssAutoLineAbstract    autoLine = DssAutoLineAbstract(addr.addr("MCD_IAM_AUTO_LINE"));
     LerpFactoryAbstract lerpFactory = LerpFactoryAbstract(addr.addr("LERP_FAB"));
 
     DssSpell spell;
@@ -907,7 +907,7 @@ contract DssSpellTest is DSTest, DSMath {
         afterSpell.collaterals["PSM-USDC-A"] = CollateralValues({
             aL_enabled:   true,
             aL_line:      10 * BILLION,
-            aL_gap:       1 * BILLION,
+            aL_gap:       950 * MILLION,
             aL_ttl:       24 hours,
             line:         0,
             dust:         0,
@@ -1253,10 +1253,10 @@ contract DssSpellTest is DSTest, DSMath {
             calc_cut:     9990
         });
         afterSpell.collaterals["PSM-PAX-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
+            aL_enabled:   true,
+            aL_line:      500 * MILLION,
+            aL_gap:       50 * MILLION,
+            aL_ttl:       24 hours,
             line:         500 * MILLION,
             dust:         0,
             pct:          0,
@@ -1855,7 +1855,7 @@ contract DssSpellTest is DSTest, DSMath {
         // hevm.load is to pull the price from the LP Oracle storage bypassing the whitelist
         uint256 price = uint256(hevm.load(
             pip,
-            bytes32(uint256(6))
+            bytes32(uint256(3))
         )) & uint128(-1);   // Price is in the second half of the 32-byte storage slot
 
         // Price is bounded in the spot by around 10^23
@@ -2050,7 +2050,7 @@ contract DssSpellTest is DSTest, DSMath {
         assertEq(join.wards(pauseProxy), 1);
         assertEq(vat.wards(address(join)), 1);
         assertEq(clip.wards(address(end)), 1);
-        assertEq(clip.wards(address(clipMom)), 1);
+        if (_checkLiquidations) assertEq(clip.wards(address(clipMom)), 1);
         assertEq(pip.wards(address(osmMom)), 1);
         assertEq(pip.bud(address(spotter)), 1);
         assertEq(pip.bud(address(end)), 1);
@@ -2168,7 +2168,7 @@ contract DssSpellTest is DSTest, DSMath {
             GemJoinAbstract(addr.addr("MCD_JOIN_GUNIV3DAIUSDC1_A")),
             ClipAbstract(addr.addr("MCD_CLIP_GUNIV3DAIUSDC1_A")),
             LPOsmAbstract(addr.addr("PIP_GUNIV3DAIUSDC1")),
-            addr.addr("PIP_DAI"),
+            0xe7A915f8Db97f0dE219e0cEf60fF7886305a14ef,     // PIP_DAI
             addr.addr("PIP_USDC"),
             false,
             false,
