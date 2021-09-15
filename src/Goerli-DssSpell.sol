@@ -94,7 +94,7 @@ contract DssSpellAction is DssAction {
         });
 
         // G-UNI DAI/USDC
-        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_GUNI_A, 90 seconds, 9900);
+        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_GUNI_A, 120 seconds, 9990);
 
         CollateralOpts memory GUNI_A = CollateralOpts({
             ilk:                   "GUNIV3DAIUSDC1-A",
