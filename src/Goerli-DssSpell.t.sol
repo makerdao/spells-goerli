@@ -116,10 +116,10 @@ contract DssSpellTest is DSTest, DSMath {
     IlkRegistryAbstract      reg = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
     FlapAbstract            flap = FlapAbstract(       addr.addr("MCD_FLAP"));
 
-    OsmMomAbstract        osmMom = OsmMomAbstract(     addr.addr("OSM_MOM"));
-    FlipperMomAbstract   flipMom = FlipperMomAbstract( addr.addr("FLIPPER_MOM"));
-    ClipperMomAbstract   clipMom = ClipperMomAbstract( addr.addr("CLIPPER_MOM"));
-    DssAutoLineAbstract autoLine = DssAutoLineAbstract(addr.addr("MCD_IAM_AUTO_LINE"));
+    OsmMomAbstract           osmMom = OsmMomAbstract(     addr.addr("OSM_MOM"));
+    FlipperMomAbstract      flipMom = FlipperMomAbstract( addr.addr("FLIPPER_MOM"));
+    ClipperMomAbstract      clipMom = ClipperMomAbstract( addr.addr("CLIPPER_MOM"));
+    DssAutoLineAbstract    autoLine = DssAutoLineAbstract(addr.addr("MCD_IAM_AUTO_LINE"));
     LerpFactoryAbstract lerpFactory = LerpFactoryAbstract(addr.addr("LERP_FAB"));
 
     DssSpell spell;
