@@ -27,6 +27,7 @@ contract DssSpellAction is DssAction {
     string public constant override description = "Goerli Spell";
 
     uint256 constant MILLION = 10 ** 6;
+    uint256 constant BILLION = 10 ** 9;
     uint256 constant WAD     = 10 ** 18;
     uint256 constant RAY     = 10 ** 27;
 
@@ -46,17 +47,30 @@ contract DssSpellAction is DssAction {
         // https://vote.makerdao.com/polling/QmQ4Jotm?network=mainnet#poll-detail
         DssExecLib.setIlkLiquidationPenalty("KNC-A", 0);
         DssExecLib.linearInterpolation({
-            _name: "KNC Offboarding",
-            _target: DssExecLib.spotter(),
-            _ilk: "KNC-A",
-            _what: "mat",
+            _name:      "KNC Offboarding",
+            _target:    DssExecLib.spotter(),
+            _ilk:       "KNC-A",
+            _what:      "mat",
             _startTime: block.timestamp,
-            _start: 175 * RAY / 100,
-            _end: 5000 * RAY / 100,
-            _duration: 60 days
+            _start:       175 * RAY / 100,
+            _end:       5_000 * RAY / 100,
+            _duration:  60 days
         });
 
         // Adopt the Debt Ceiling Instant Access Module (DC-IAM) for PSM-PAX-A
+        // https://vote.makerdao.com/polling/QmbGPgxo?network=mainnet#poll-detail
+        DssExecLib.setIlkAutoLineParameters({
+            _ilk:    "PSM-PAX-A",
+            _amount: 500 * MILLION,
+            _gap:     50 * MILLION,
+            _ttl:    24 hours
+        });
+        DssExecLib.setIlkAutoLineParameters({
+            _ilk:    "PSM-USDC-A",
+            _amount:  10 * BILLION,
+            _gap:    950 * MILLION,
+            _ttl:    24 hours
+        });
     }
 
 }

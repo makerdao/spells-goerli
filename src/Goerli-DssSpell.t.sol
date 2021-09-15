@@ -892,7 +892,7 @@ contract DssSpellTest is DSTest, DSMath {
         afterSpell.collaterals["PSM-USDC-A"] = CollateralValues({
             aL_enabled:   true,
             aL_line:      10 * BILLION,
-            aL_gap:       1 * BILLION,
+            aL_gap:       950 * MILLION,
             aL_ttl:       24 hours,
             line:         0,
             dust:         0,
@@ -1238,10 +1238,10 @@ contract DssSpellTest is DSTest, DSMath {
             calc_cut:     9990
         });
         afterSpell.collaterals["PSM-PAX-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
+            aL_enabled:   true,
+            aL_line:      500 * MILLION,
+            aL_gap:       50 * MILLION,
+            aL_ttl:       24 hours,
             line:         500 * MILLION,
             dust:         0,
             pct:          0,
