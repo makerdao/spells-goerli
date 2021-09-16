@@ -50,7 +50,7 @@ contract DssSpellAction is DssAction {
     address constant MCD_JOIN_GUNI_A        = 0xFBF4e3bB9B86d24F91Da185E6F4C8D903Fb63C86;
     address constant MCD_CLIP_GUNI_A        = 0xFb98C5A49eDd0888e85f6d2CCc7695b5202A6B32;
     address constant MCD_CLIP_CALC_GUNI_A   = 0x4652E3a6b4850a0fE50E60B0ac72aBd74199D973;
-    address constant PIP_GUNI               = 0x7B3a8452eED8Af27EE2c8a9b826CCfd3b7760461;
+    address constant PIP_GUNI               = 0xF953cdebbbf63607EeBc556438d86F2e1d47C8aA;
 
     // Turn off office hours
     function officeHours() public override returns (bool) {
@@ -104,7 +104,7 @@ contract DssSpellAction is DssAction {
             isLiquidatable:        false,
             isOSM:                 true,
             whitelistOSM:          false,
-            ilkDebtCeiling:        3 * MILLION,
+            ilkDebtCeiling:        10 * MILLION,
             minVaultAmount:        10 * THOUSAND,
             maxLiquidationAmount:  5 * MILLION,
             liquidationPenalty:    1300,
