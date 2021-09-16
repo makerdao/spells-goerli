@@ -2036,7 +2036,7 @@ contract DssSpellTest is DSTest, DSMath {
     ) public {
         DSTokenAbstract token = DSTokenAbstract(join.gem());
 
-        pip.poke();
+        // pip.poke();
         hevm.warp(block.timestamp + 3601);
         pip.poke();
         spotter.poke(_ilk);
