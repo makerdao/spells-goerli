@@ -2023,7 +2023,7 @@ contract DssSpellTest is DSTest, DSMath {
         vat.move(address(this), address(0x0), vat.dai(address(this)));
     }
 
-    function checkUNIV2LPIntegration(
+    function checkUNIV3LPIntegration(
         bytes32 _ilk,
         GemJoinAbstract join,
         ClipAbstract clip,
@@ -2100,7 +2100,7 @@ contract DssSpellTest is DSTest, DSMath {
         jug.drip(_ilk);
         assertEq(clip.kicks(), 0);
         if (_checkLiquidations) {
-            cat.bite(_ilk, address(this));
+            dog.bark(_ilk, address(this), address(this));
             assertEq(clip.kicks(), 1);
         }
 
@@ -2163,7 +2163,7 @@ contract DssSpellTest is DSTest, DSMath {
         assertTrue(spell.done());
 
         // Insert new collateral tests here
-        checkUNIV2LPIntegration(
+        checkUNIV3LPIntegration(
             "GUNIV3DAIUSDC1-A",
             GemJoinAbstract(addr.addr("MCD_JOIN_GUNIV3DAIUSDC1_A")),
             ClipAbstract(addr.addr("MCD_CLIP_GUNIV3DAIUSDC1_A")),
