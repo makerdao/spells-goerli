@@ -2050,7 +2050,7 @@ contract DssSpellTest is DSTest, DSMath {
         assertEq(join.wards(pauseProxy), 1);
         assertEq(vat.wards(address(join)), 1);
         assertEq(clip.wards(address(end)), 1);
-        if (_checkLiquidations) assertEq(clip.wards(address(clipMom)), 1);
+        assertEq(clip.wards(address(clipMom)), _checkLiquidations ? 1 : 0);
         assertEq(pip.wards(address(osmMom)), 1);
         assertEq(pip.bud(address(spotter)), 1);
         assertEq(pip.bud(address(end)), 1);
