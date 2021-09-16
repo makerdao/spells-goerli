@@ -126,6 +126,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.setChangelogAddress("MCD_CLIP_GUNIV3DAIUSDC1_A", MCD_CLIP_GUNI_A);
         DssExecLib.setChangelogAddress("MCD_CLIP_CALC_GUNIV3DAIUSDC1_A", MCD_CLIP_CALC_GUNI_A);
         DssExecLib.setChangelogAddress("PIP_GUNIV3DAIUSDC1", PIP_GUNI);
+        DssExecLib.setChangelogVersion("1.9.6");
     }
 
 }
