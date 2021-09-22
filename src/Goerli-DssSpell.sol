@@ -53,6 +53,10 @@ contract DssSpellAction is DssAction {
         // Increase the System Surplus Buffer from 60 Million DAI to 100 Million DAI
         // https://vote.makerdao.com/polling/QmXcVy9R?network=mainnet#poll-detail
         DssExecLib.setSurplusBuffer(100 * MILLION);
+
+        // ----------- Housekeeping -----------
+        // Increase Global Debt Ceiling by 500 Million (line_offset)
+        DssExecLib.increaseGlobalDebtCeiling(500 * MILLION);
     }
 }
 

@@ -252,7 +252,7 @@ contract DssSpellTest is DSTest, DSMath {
         // Test for all system configuration changes
         //
         afterSpell = SystemValues({
-            line_offset:           0,                       // Offset between the global line against the sum of local lines
+            line_offset:           500 * MILLION,           // Offset between the global line against the sum of local lines
             pot_dsr:               1,                       // In basis points
             pause_delay:           60 seconds,              // In seconds
             vow_wait:              156 hours,               // In seconds
