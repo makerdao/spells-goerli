@@ -2407,14 +2407,10 @@ contract DssSpellTest is DSTest, DSMath {
     // }
 
     address[] deployerAddresses = [
-        0xdDb108893104dE4E1C6d0E47c42237dB4E617ACc,
-        0xDa0FaB05039809e63C5D068c897c3e602fA97457,
         0xda0fab060e6cc7b1C0AA105d29Bd50D71f036711,
         0xDA0FaB0700A4389F6E6679aBAb1692B4601ce9bf,
-        0x0048d6225D1F3eA4385627eFDC5B4709Cab4A21c,
-        0xd200790f62c8da69973e61d4936cfE4f356ccD07,
         0xdA0C0de01d90A5933692Edf03c7cE946C7c50445,
-        0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3
+        0xdB33dFD3D61308C33C63209845DaD3e6bfb2c674
     ];
 
     function checkWards(address _addr, string memory contractName) internal {
