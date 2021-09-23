@@ -59,10 +59,6 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkMaxLiquidationAmount("ETH-C",  30 * MILLION); //  from 20 Million DAI to 30 Million DAI
         DssExecLib.setIlkMaxLiquidationAmount("WBTC-A", 25 * MILLION); //  from 15 Million DAI to 25 Million DAI
 
-        // Increase the System Surplus Buffer from 60 Million DAI to 100 Million DAI
-        // https://vote.makerdao.com/polling/QmXcVy9R?network=mainnet#poll-detail
-        DssExecLib.setSurplusBuffer(100 * MILLION);
-
         // ----------- Housekeeping -----------
         // Increase Global Debt Ceiling by 500 Million (line_offset)
         DssExecLib.increaseGlobalDebtCeiling(500 * MILLION);

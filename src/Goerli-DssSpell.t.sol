@@ -277,8 +277,8 @@ contract DssSpellTest is DSTest, DSMath {
             vow_dump:              250,                     // In whole Dai units
             vow_sump:              50 * THOUSAND,           // In whole Dai units
             vow_bump:              30 * THOUSAND,           // In whole Dai units
-            vow_hump_min:          100 * MILLION,           // In whole Dai units
-            vow_hump_max:          100 * MILLION,           // In whole Dai units
+            vow_hump_min:          60 * MILLION,            // In whole Dai units
+            vow_hump_max:          60 * MILLION,            // In whole Dai units
             flap_beg:              400,                     // in basis points
             flap_ttl:              30 minutes,              // in seconds
             flap_tau:              72 hours,                // in seconds
@@ -1652,7 +1652,7 @@ contract DssSpellTest is DSTest, DSMath {
         uint256 normalizedHumpMax = values.vow_hump_max * RAD;
         assertTrue(vow.hump() >= normalizedHumpMin && vow.hump() <= normalizedHumpMax, "TestError/vow-hump-min-max");
         assertTrue(
-            (vow.hump() >= RAD && vow.hump() < 2 * HUNDRED * MILLION * RAD) ||
+            (vow.hump() >= RAD && vow.hump() < HUNDRED * MILLION * RAD) ||
             vow.hump() == 0,
             "TestError/vow-hump-range"
         );
@@ -2554,16 +2554,6 @@ contract DssSpellTest is DSTest, DSMath {
         LerpAbstract lerp = LerpAbstract(lerpFactory.lerps(""));
 
         // Insert ilk offboarding tests here
-    }
-
-    function testIncreaseSystemSurplusBuffer() public {
-        assertEq(vow.hump(), 60 * MILLION * RAD);
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        assertEq(vow.hump(), 100 * MILLION * RAD);
     }
 
     function testVestDAI() public {
