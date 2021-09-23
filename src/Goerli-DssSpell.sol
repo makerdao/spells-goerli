@@ -21,7 +21,6 @@ import "dss-exec-lib/DssAction.sol";
 
 interface DssVestLike {
     function create(address, uint256, uint256, uint256, uint256, address) external returns (uint256);
-    function file(bytes32, uint256) external;
     function restrict(uint256) external;
 }
 
