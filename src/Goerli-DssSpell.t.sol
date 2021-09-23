@@ -42,6 +42,21 @@ interface PsmAbstract {
     function buyGem(address usr, uint256 gemAmt) external;
 }
 
+interface DssVestLike {
+    function cap() external returns (uint256);
+    function ids() external returns (uint256);
+    function usr(uint256) external view returns (address);
+    function bgn(uint256) external view returns (uint256);
+    function clf(uint256) external view returns (uint256);
+    function fin(uint256) external view returns (uint256);
+    function mgr(uint256) external view returns (address);
+    function res(uint256) external view returns (uint256);
+    function tot(uint256) external view returns (uint256);
+    function rxd(uint256) external view returns (uint256);
+    function unrestrict(uint256) external;
+    function vest(uint256) external;
+}
+
 contract DssSpellTest is DSTest, DSMath {
 
     struct SpellValues {
@@ -136,6 +151,9 @@ contract DssSpellTest is DSTest, DSMath {
     ClipperMomAbstract      clipMom = ClipperMomAbstract( addr.addr("CLIPPER_MOM"));
     DssAutoLineAbstract    autoLine = DssAutoLineAbstract(addr.addr("MCD_IAM_AUTO_LINE"));
     LerpFactoryAbstract lerpFactory = LerpFactoryAbstract(addr.addr("LERP_FAB"));
+
+    address constant TOP_UP1 = 0xB77827FabA70185D1EaD053648f665d2C41f7906;
+    address constant TOP_UP2 = 0xbe77Cd403Be3F2C7EEBC3427360D3f9e5d528F43;
 
     DssSpell spell;
 
@@ -2546,5 +2564,36 @@ contract DssSpellTest is DSTest, DSMath {
         assertTrue(spell.done());
 
         assertEq(vow.hump(), 100 * MILLION * RAD);
+    }
+
+    function testVestDAI() public {
+        DssVestLike vest = DssVestLike(addr.addr("MCD_VEST_DAI"));
+
+        assertEq(vest.ids(), 1);
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(vest.ids(), 3);
+
+        // -----
+        assertEq(vest.usr(2), TOP_UP1);
+        assertEq(vest.bgn(2), block.timestamp);
+        assertEq(vest.clf(2), block.timestamp);
+        assertEq(vest.fin(2), block.timestamp + 20 * 365 days);
+        assertEq(vest.mgr(2), address(0));
+        assertEq(vest.res(2), 1);
+        assertEq(vest.tot(2), 73_000.00 * 10**18);
+        assertEq(vest.rxd(2), 0);
+        // -----
+        assertEq(vest.usr(3), TOP_UP2);
+        assertEq(vest.bgn(3), block.timestamp);
+        assertEq(vest.clf(3), block.timestamp);
+        assertEq(vest.fin(3), block.timestamp + 20 * 365 days);
+        assertEq(vest.mgr(3), address(0));
+        assertEq(vest.res(3), 1);
+        assertEq(vest.tot(3), 73_000.00 * 10**18);
+        assertEq(vest.rxd(3), 0);
     }
 }

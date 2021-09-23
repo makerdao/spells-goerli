@@ -19,12 +19,22 @@ pragma solidity 0.6.12;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
+interface DssVestLike {
+    function create(address, uint256, uint256, uint256, uint256, address) external returns (uint256);
+    function file(bytes32, uint256) external;
+    function restrict(uint256) external;
+}
+
 contract DssSpellAction is DssAction {
 
     // Provides a descriptive tag for bot consumption
     // This should be modified weekly to provide a summary of the actions
     // Hash: seth keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/TODO -q -O - 2>/dev/null)"
     string public constant override description = "Goerli Spell";
+
+    // Gelato Keeper Testing Contracts
+    address constant TOP_UP1 = 0xB77827FabA70185D1EaD053648f665d2C41f7906;
+    address constant TOP_UP2 = 0xbe77Cd403Be3F2C7EEBC3427360D3f9e5d528F43;
 
     // Math
     uint256 constant MILLION  = 10 ** 6;
@@ -57,6 +67,16 @@ contract DssSpellAction is DssAction {
         // ----------- Housekeeping -----------
         // Increase Global Debt Ceiling by 500 Million (line_offset)
         DssExecLib.increaseGlobalDebtCeiling(500 * MILLION);
+
+        // Add test DAI streams for Gelato Keeper Network at 10 DAI / day
+        address MCD_VEST_DAI = DssExecLib.getChangelogAddress("MCD_VEST_DAI");
+        uint256 duration = 20 * 365 days;
+        DssVestLike(MCD_VEST_DAI).restrict(
+            DssVestLike(MCD_VEST_DAI).create(TOP_UP1, 10.00 * 10**18 * duration / 1 days, block.timestamp, duration, 0, address(0))
+        );
+        DssVestLike(MCD_VEST_DAI).restrict(
+            DssVestLike(MCD_VEST_DAI).create(TOP_UP2, 10.00 * 10**18 * duration / 1 days, block.timestamp, duration, 0, address(0))
+        );
     }
 }
 
