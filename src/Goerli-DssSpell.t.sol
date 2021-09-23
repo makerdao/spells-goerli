@@ -57,7 +57,6 @@ interface DssVestLike {
     function vest(uint256) external;
 }
 
-
 contract DssSpellTest is DSTest, DSMath {
 
     struct SpellValues {
