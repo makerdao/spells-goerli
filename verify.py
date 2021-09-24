@@ -157,10 +157,13 @@ def select(library_name, block, external_code):
 
 def get_warning(library_name):
     return '''/* WARNING
+
 The following library code acts as an interface to the actual {}
 library, which can be found in its own deployed contract. Only trust the actual
 library's implementation.
+
     */
+
 '''.format(library_name)
 
 def get_stubs(block):
