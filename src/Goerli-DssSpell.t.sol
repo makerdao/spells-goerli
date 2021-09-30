@@ -258,7 +258,7 @@ contract DssSpellTest is DSTest, DSMath {
             deployed_spell:                 address(0),        // populate with deployed spell if deployed
             deployed_spell_created:         1632428847,        // use get-created-timestamp.sh if deployed
             previous_spell:                 address(0), // supply if there is a need to test prior to its cast() function being called on-chain.
-            office_hours_enabled:           false,              // true if officehours is expected to be enabled in the spell
+            office_hours_enabled:           true,              // true if officehours is expected to be enabled in the spell
             expiration_threshold:           weekly_expiration  // (weekly_expiration,monthly_expiration) if weekly or monthly spell
         });
         spellValues.deployed_spell_created = spellValues.deployed_spell != address(0) ? spellValues.deployed_spell_created : block.timestamp;
@@ -621,22 +621,22 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          800,
-            mat:          15000,
+            mat:          30000,
             liqType:      "clip",
-            liqOn:        false,
-            chop:         1300,
+            liqOn:        true,
+            chop:         0,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
             flip_tau:     0,
             flipper_mom:  0,
-            dog_hole:     0,
+            dog_hole:     1_000,
             clip_buf:     10500,
             clip_tail:    220 minutes,
             clip_cusp:    9000,
             clip_chip:    10,
             clip_tip:     300,
-            clipper_mom:  0,
+            clipper_mom:  1,
             cm_tolerance: 9500,
             calc_tau:     0,
             calc_step:    120,
@@ -1794,6 +1794,7 @@ contract DssSpellTest is DSTest, DSMath {
                 assertEq(abi.decode(val, (address)), address(dog), string(abi.encodePacked("TestError/reg-xlip-dog-", ilk)));
                 }
                 {
+
                 (, uint256 chop, uint256 hole,) = dog.ilks(ilk);
                 // Convert BP to system expected value
                 uint256 normalizedTestChop = (values.collaterals[ilk].chop * 10**14) + WAD;
@@ -2556,34 +2557,34 @@ contract DssSpellTest is DSTest, DSMath {
         // Insert ilk offboarding tests here
     }
 
-    function testVestDAI() public {
-        DssVestLike vest = DssVestLike(addr.addr("MCD_VEST_DAI"));
+    // function testVestDAI() public {
+    //     DssVestLike vest = DssVestLike(addr.addr("MCD_VEST_DAI"));
 
-        assertEq(vest.ids(), 1);
+    //     assertEq(vest.ids(), 1);
 
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+    //     vote(address(spell));
+    //     scheduleWaitAndCast(address(spell));
+    //     assertTrue(spell.done());
 
-        assertEq(vest.ids(), 3);
+    //     assertEq(vest.ids(), 3);
 
-        // -----
-        assertEq(vest.usr(2), TOP_UP1);
-        assertEq(vest.bgn(2), block.timestamp);
-        assertEq(vest.clf(2), block.timestamp);
-        assertEq(vest.fin(2), block.timestamp + 20 * 365 days);
-        assertEq(vest.mgr(2), address(0));
-        assertEq(vest.res(2), 1);
-        assertEq(vest.tot(2), 73_000.00 * 10**18);
-        assertEq(vest.rxd(2), 0);
-        // -----
-        assertEq(vest.usr(3), TOP_UP2);
-        assertEq(vest.bgn(3), block.timestamp);
-        assertEq(vest.clf(3), block.timestamp);
-        assertEq(vest.fin(3), block.timestamp + 20 * 365 days);
-        assertEq(vest.mgr(3), address(0));
-        assertEq(vest.res(3), 1);
-        assertEq(vest.tot(3), 73_000.00 * 10**18);
-        assertEq(vest.rxd(3), 0);
-    }
+    //     // -----
+    //     assertEq(vest.usr(2), TOP_UP1);
+    //     assertEq(vest.bgn(2), block.timestamp);
+    //     assertEq(vest.clf(2), block.timestamp);
+    //     assertEq(vest.fin(2), block.timestamp + 20 * 365 days);
+    //     assertEq(vest.mgr(2), address(0));
+    //     assertEq(vest.res(2), 1);
+    //     assertEq(vest.tot(2), 73_000.00 * 10**18);
+    //     assertEq(vest.rxd(2), 0);
+    //     // -----
+    //     assertEq(vest.usr(3), TOP_UP2);
+    //     assertEq(vest.bgn(3), block.timestamp);
+    //     assertEq(vest.clf(3), block.timestamp);
+    //     assertEq(vest.fin(3), block.timestamp + 20 * 365 days);
+    //     assertEq(vest.mgr(3), address(0));
+    //     assertEq(vest.res(3), 1);
+    //     assertEq(vest.tot(3), 73_000.00 * 10**18);
+    //     assertEq(vest.rxd(3), 0);
+    // }
 }

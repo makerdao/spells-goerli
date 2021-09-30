@@ -31,47 +31,34 @@ contract DssSpellAction is DssAction {
     // Hash: seth keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/TODO -q -O - 2>/dev/null)"
     string public constant override description = "Goerli Spell";
 
-    // Gelato Keeper Testing Contracts
-    address constant TOP_UP1 = 0xB77827FabA70185D1EaD053648f665d2C41f7906;
-    address constant TOP_UP2 = 0xbe77Cd403Be3F2C7EEBC3427360D3f9e5d528F43;
-
-    // Math
-    uint256 constant MILLION  = 10 ** 6;
-
     // Turn off office hours
     function officeHours() public override returns (bool) {
-        return false;
+        return true;
     }
 
     function actions() public override {
+        address MCD_CLIP_USDT_A = DssExecLib.getChangelogAddress("MCD_CLIP_USDT_A");
 
-        // Adjusting Auction Parameters for ETH-A, ETH-B, ETH-C, and WBTC-A
-        // https://vote.makerdao.com/polling/QmfGk3Dm?network=mainnet#poll-detail
+        // Offboard USDT-A
+        // https://vote.makerdao.com/polling/QmRNwrTy?network=mainnet#vote-breakdown
 
-        // Decrease the Auction Price Multiplier (buf) for ETH-A, ETH-C, and WBTC-A vaults from 1.3 to 1.2
-        DssExecLib.setStartingPriceMultiplicativeFactor("ETH-A",  12000);
-        DssExecLib.setStartingPriceMultiplicativeFactor("ETH-C",  12000);
-        DssExecLib.setStartingPriceMultiplicativeFactor("WBTC-A", 12000);
+        // 1 milliuon DAI maximum liquidation amount
+        DssExecLib.setIlkMaxLiquidationAmount("USDT-A", 1_000);
 
-        // Increase the Local Liquidation Limit (ilk.hole)
-        DssExecLib.setIlkMaxLiquidationAmount("ETH-A",  40 * MILLION); //  from 30 Million DAI to 40 Million DAI
-        DssExecLib.setIlkMaxLiquidationAmount("ETH-B",  25 * MILLION); //  from 15 Million DAI to 25 Million DAI
-        DssExecLib.setIlkMaxLiquidationAmount("ETH-C",  30 * MILLION); //  from 20 Million DAI to 30 Million DAI
-        DssExecLib.setIlkMaxLiquidationAmount("WBTC-A", 25 * MILLION); //  from 15 Million DAI to 25 Million DAI
+        // flip breaker to enable liquidations
+        DssExecLib.setValue(MCD_CLIP_USDT_A, "stopped", 0);
 
-        // ----------- Housekeeping -----------
-        // Increase Global Debt Ceiling by 500 Million (line_offset)
-        DssExecLib.increaseGlobalDebtCeiling(500 * MILLION);
-        
-        // Add test DAI streams for Gelato Keeper Network at 10 DAI / day
-        address MCD_VEST_DAI = DssExecLib.getChangelogAddress("MCD_VEST_DAI");
-        uint256 duration = 20 * 365 days;
-        DssVestLike(MCD_VEST_DAI).restrict(
-            DssVestLike(MCD_VEST_DAI).create(TOP_UP1, 10.00 * 10**18 * duration / 1 days, block.timestamp, duration, 0, address(0))
-        );
-        DssVestLike(MCD_VEST_DAI).restrict(
-            DssVestLike(MCD_VEST_DAI).create(TOP_UP2, 10.00 * 10**18 * duration / 1 days, block.timestamp, duration, 0, address(0))
-        );
+        // authorize breaker
+        DssExecLib.authorize(MCD_CLIP_USDT_A, DssExecLib.clipperMom());
+
+        // breaker at a 5% drop
+        DssExecLib.setLiquidationBreakerPriceTolerance(MCD_CLIP_USDT_A, 9500);
+
+        // set liquidation ratio to 300%
+        DssExecLib.setIlkLiquidationRatio("USDT-A", 30000);
+
+        // remove liquidation penalty
+        DssExecLib.setIlkLiquidationPenalty("USDT-A", 0);
     }
 }
 
