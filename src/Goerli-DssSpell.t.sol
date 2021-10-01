@@ -654,7 +654,7 @@ contract DssSpellTest is DSTest, DSMath {
             flip_ttl:     0,
             flip_tau:     0,
             flipper_mom:  0,
-            dog_hole:     1_000_000,
+            dog_hole:     15_000,
             clip_buf:     10500,
             clip_tail:    220 minutes,
             clip_cusp:    9000,
@@ -2857,7 +2857,7 @@ contract DssSpellTest is DSTest, DSMath {
             ClipAbstract(addr.addr("MCD_CLIP_USDT_A")),
             addr.addr("MCD_CLIP_CALC_USDT_A"),
             OsmAbstract(addr.addr("PIP_USDT")),
-            50_000 * WAD
+            20_000 * WAD
         );
     }
 }
