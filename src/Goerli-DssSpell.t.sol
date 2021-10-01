@@ -2586,4 +2586,214 @@ contract DssSpellTest is DSTest, DSMath {
     //     assertEq(vest.tot(3), 73_000.00 * 10**18);
     //     assertEq(vest.rxd(3), 0);
     // }
+
+    function checkIlkClipper(bytes32 ilk, GemJoinAbstract join, ClipAbstract clipper, address calc, OsmAbstract pip, uint256 ilkAmt) internal {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // Contracts set
+        assertEq(dog.vat(), address(vat));
+        assertEq(dog.vow(), address(vow));
+        {
+        (address clip,,,) = dog.ilks(ilk);
+        assertEq(clip, address(clipper));
+        }
+        assertEq(clipper.ilk(), ilk);
+        assertEq(clipper.vat(), address(vat));
+        assertEq(clipper.vow(), address(vow));
+        assertEq(clipper.dog(), address(dog));
+        assertEq(clipper.spotter(), address(spotter));
+        assertEq(clipper.calc(), calc);
+
+        // Authorization
+        assertEq(vat.wards(address(clipper))    , 1);
+        assertEq(dog.wards(address(clipper))    , 1);
+        assertEq(clipper.wards(address(dog))    , 1);
+        assertEq(clipper.wards(address(end))    , 1);
+        assertEq(clipper.wards(address(clipMom)), 1);
+        assertEq(clipper.wards(address(esm)), 1);
+
+        assertEq(pip.bud(address(clipper)), 1);
+        assertEq(pip.bud(address(clipMom)), 1);
+
+        // Force max Hole
+        hevm.store(
+            address(dog),
+            bytes32(uint256(4)),
+            bytes32(uint256(-1))
+        );
+        // Force max debt ceiling for ilk
+        hevm.store(
+            address(vat),
+            bytes32(uint256(keccak256(abi.encode(bytes32(ilk), uint256(2)))) + 3),
+            bytes32(uint256(-1))
+        );
+
+        // ----------------------- Check Clipper works and bids can be made -----------------------
+
+        {
+        DSTokenAbstract token = DSTokenAbstract(join.gem());
+        uint256 tknAmt =  ilkAmt / 10 ** (18 - join.dec());
+        giveTokens(token, tknAmt);
+        assertEq(token.balanceOf(address(this)), tknAmt);
+
+        // Join to adapter
+        assertEq(vat.gem(ilk, address(this)), 0);
+        token.approve(address(join), tknAmt);
+        join.join(address(this), tknAmt);
+        assertEq(token.balanceOf(address(this)), 0);
+        assertEq(vat.gem(ilk, address(this)), ilkAmt);
+        }
+
+        {
+        // Generate new DAI to force a liquidation
+        uint256 rate;
+        int256 art;
+        {
+        uint256 spot;
+        (,rate, spot,,) = vat.ilks(ilk);
+        art = int256(mul(ilkAmt, spot) / rate);
+        }
+
+        // dart max amount of DAI
+        vat.frob(ilk, address(this), address(this), address(this), int256(ilkAmt), art);
+        hevm.warp(block.timestamp + 1);
+        jug.drip(ilk);
+        assertEq(clipper.kicks(), 0);
+        dog.bark(ilk, address(this), address(this));
+        assertEq(clipper.kicks(), 1);
+
+        (, rate,,,) = vat.ilks(ilk);
+        uint256 debt = mul(mul(rate, uint256(art)), dog.chop(ilk)) / WAD;
+        hevm.store(
+            address(vat),
+            keccak256(abi.encode(address(this), uint256(5))),
+            bytes32(debt)
+        );
+        assertEq(vat.dai(address(this)), debt);
+        assertEq(vat.gem(ilk, address(this)), 0);
+
+        hevm.warp(block.timestamp + 20 minutes);
+        (, uint256 tab, uint256 lot, address usr,, uint256 top) = clipper.sales(1);
+
+        assertEq(usr, address(this));
+        assertEq(tab, debt);
+        assertEq(lot, ilkAmt);
+        assertTrue(mul(lot, top) > tab); // There is enough collateral to cover the debt at current price
+
+        vat.hope(address(clipper));
+        clipper.take(1, lot, top, address(this), bytes(""));
+        }
+
+        {
+        (, uint256 tab, uint256 lot, address usr,,) = clipper.sales(1);
+        assertEq(usr, address(0));
+        assertEq(tab, 0);
+        assertEq(lot, 0);
+        assertEq(vat.dai(address(this)), 0);
+        assertEq(vat.gem(ilk, address(this)), ilkAmt); // What was purchased + returned back as it is the owner of the vault
+        }
+
+        // ----------------------- Check ClipperMom works in both modalities -----------------------
+
+        // clipperMom is an authority-based contract, so here we set the Chieftain's hat
+        //  to the current contract to simulate governance authority.
+        hevm.store(
+            address(chief),
+            bytes32(uint256(12)),
+            bytes32(uint256(address(this)))
+        );
+
+        assertEq(clipper.stopped(), 0);
+        clipMom.setBreaker(address(clipper), 1, 0);
+        assertEq(clipper.stopped(), 1);
+        clipMom.setBreaker(address(clipper), 2, 0);
+        assertEq(clipper.stopped(), 2);
+        clipMom.setBreaker(address(clipper), 3, 0);
+        assertEq(clipper.stopped(), 3);
+        clipMom.setBreaker(address(clipper), 0, 0);
+        assertEq(clipper.stopped(), 0);
+
+        hevm.warp(clipMom.locked(address(clipper)) + 1);
+
+        // Hacking nxt price to 0x123 (and making it valid)
+        bytes32 hackedValue = 0x0000000000000000000000000000000100000000000000000000000000000123;
+
+        hevm.store(address(pip), bytes32(uint256(4)), hackedValue);
+        assertEq(clipMom.tolerance(address(clipper)), (RAY / 2)); // (RAY / 2) for 50%
+        // Price is hacked, anyone can trip the breaker
+        clipMom.tripBreaker(address(clipper));
+        assertEq(clipper.stopped(), 2);
+
+        clipMom.setBreaker(address(clipper), 0, 0);
+        assertEq(clipper.stopped(), 0);
+
+        // ----------------------- Check End works with the Clipper -----------------------
+        {
+        uint256 rate;
+        int256 art;
+        {
+        uint256 spot;
+        (,rate, spot,,) = vat.ilks(ilk);
+        art = int256(mul(ilkAmt, spot) / rate);
+        }
+
+        vat.frob(ilk, address(this), address(this), address(this), int256(ilkAmt), art);
+        hevm.warp(block.timestamp + 1);
+        jug.drip(ilk);
+
+        dog.bark(ilk, address(this), address(this));
+        assertEq(clipper.kicks(), 2);
+
+        // Give authority to cage the system
+        giveAuth(address(end), address(this));
+        assertEq(end.wards(address(this)), 1);
+
+        end.cage();
+        end.cage(ilk);
+
+        (,,, address usr,,) = clipper.sales(2);
+        assertTrue(usr != address(0));
+
+        end.snip(ilk, 2);
+        (,,, usr,,) = clipper.sales(2);
+        assertTrue(usr == address(0));
+
+        end.skim(ilk, address(this));
+        end.free(ilk);
+
+        hevm.warp(block.timestamp + end.wait());
+        vow.heal(min(vat.dai(address(vow)), sub(sub(vat.sin(address(vow)), vow.Sin()), vow.Ash())));
+
+        // Removing the surplus to allow continuing the execution.
+        hevm.store(
+            address(vat),
+            keccak256(abi.encode(address(vow), uint256(5))),
+            bytes32(uint256(0))
+        );
+
+        end.thaw();
+        end.flow(ilk);
+
+        uint256 daiToRedeem = vat.dai(address(this)) / RAY;
+        assertTrue(daiToRedeem > 0);
+
+        vat.hope(address(end));
+        end.pack(daiToRedeem);
+
+        end.cash(ilk, daiToRedeem);
+        }
+    }
+
+    function testSpellIsCast_USDT_A_clip() public {
+        checkIlkClipper(
+            "USDT-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_USDT_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_USDT_A")),
+            addr.addr("MCD_CLIP_CALC_USDT_A"),
+            OsmAbstract(addr.addr("PIP_USDT")),
+            50_000 * WAD
+        );
+    }
 }
