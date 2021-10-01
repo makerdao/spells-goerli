@@ -42,7 +42,7 @@ contract DssSpellAction is DssAction {
         // Offboard USDT-A
         // https://vote.makerdao.com/polling/QmRNwrTy?network=mainnet#vote-breakdown
 
-        // 1 milliuon DAI maximum liquidation amount
+        // 1 thousand DAI maximum liquidation amount
         DssExecLib.setIlkMaxLiquidationAmount("USDT-A", 1_000);
 
         // flip breaker to enable liquidations
