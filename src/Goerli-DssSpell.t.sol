@@ -1794,7 +1794,6 @@ contract DssSpellTest is DSTest, DSMath {
                 assertEq(abi.decode(val, (address)), address(dog), string(abi.encodePacked("TestError/reg-xlip-dog-", ilk)));
                 }
                 {
-
                 (, uint256 chop, uint256 hole,) = dog.ilks(ilk);
                 // Convert BP to system expected value
                 uint256 normalizedTestChop = (values.collaterals[ilk].chop * 10**14) + WAD;
