@@ -19,10 +19,10 @@ pragma solidity 0.6.12;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-interface DssVestLike {
-    function create(address, uint256, uint256, uint256, uint256, address) external returns (uint256);
-    function restrict(uint256) external;
-}
+// interface DssVestLike {
+//     function create(address, uint256, uint256, uint256, uint256, address) external returns (uint256);
+//     function restrict(uint256) external;
+// }
 
 contract DssSpellAction is DssAction {
 
@@ -31,7 +31,7 @@ contract DssSpellAction is DssAction {
     // Hash: seth keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/TODO -q -O - 2>/dev/null)"
     string public constant override description = "Goerli Spell";
 
-    // Turn off office hours
+    // Turn on office hours
     function officeHours() public override returns (bool) {
         return true;
     }
