@@ -56,6 +56,30 @@ interface DssVestLike {
     function unrestrict(uint256) external;
     function vest(uint256) external;
 }
+interface BrokeTokenAbstract {
+    function name() external view returns (bytes32);
+    function symbol() external view returns (bytes32);
+    function decimals() external view returns (uint256);
+    function totalSupply() external view returns (uint256);
+    function balanceOf(address) external view returns (uint256);
+    function transfer(address, uint256) external;
+    function allowance(address, address) external view returns (uint256);
+    function approve(address, uint256) external;
+    function approve(address) external;
+    function transferFrom(address, address, uint256) external;
+    function push(address, uint256) external;
+    function pull(address, uint256) external;
+    function move(address, address, uint256) external;
+    function mint(uint256) external;
+    function mint(address,uint) external;
+    function burn(uint256) external;
+    function burn(address,uint) external;
+    function setName(bytes32) external;
+    function authority() external view returns (address);
+    function owner() external view returns (address);
+    function setOwner(address) external;
+    function setAuthority(address) external;
+}
 
 contract DssSpellTest is DSTest, DSMath {
 
@@ -630,7 +654,7 @@ contract DssSpellTest is DSTest, DSMath {
             flip_ttl:     0,
             flip_tau:     0,
             flipper_mom:  0,
-            dog_hole:     1_000,
+            dog_hole:     1_000_000,
             clip_buf:     10500,
             clip_tail:    220 minutes,
             clip_cusp:    9000,
@@ -1898,6 +1922,38 @@ contract DssSpellTest is DSTest, DSMath {
         return price;
     }
 
+    function giveBrokeTokens(BrokeTokenAbstract token, uint256 amount) internal {
+        // Edge case - balance is already set for some reason
+        if (token.balanceOf(address(this)) == amount) return;
+
+        for (uint256 i = 0; i < 200; i++) {
+            // Scan the storage for the balance storage slot
+            bytes32 prevValue = hevm.load(
+                address(token),
+                keccak256(abi.encode(address(this), uint256(i)))
+            );
+            hevm.store(
+                address(token),
+                keccak256(abi.encode(address(this), uint256(i))),
+                bytes32(amount)
+            );
+            if (token.balanceOf(address(this)) == amount) {
+                // Found it
+                return;
+            } else {
+                // Keep going after restoring the original value
+                hevm.store(
+                    address(token),
+                    keccak256(abi.encode(address(this), uint256(i))),
+                    prevValue
+                );
+            }
+        }
+
+        // We have failed if we reach here
+        assertTrue(false, "TestError/GiveTokens-slot-not-found");
+    }
+
     function giveTokens(DSTokenAbstract token, uint256 amount) internal {
         // Edge case - balance is already set for some reason
         if (token.balanceOf(address(this)) == amount) return;
@@ -2587,7 +2643,14 @@ contract DssSpellTest is DSTest, DSMath {
     //     assertEq(vest.rxd(3), 0);
     // }
 
-    function checkIlkClipper(bytes32 ilk, GemJoinAbstract join, ClipAbstract clipper, address calc, OsmAbstract pip, uint256 ilkAmt) internal {
+    function checkIlkClipper(
+        bytes32 ilk,
+        GemJoinAbstract join,
+        ClipAbstract clipper,
+        address calc,
+        OsmAbstract pip,
+        uint256 ilkAmt
+    ) internal {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -2633,13 +2696,14 @@ contract DssSpellTest is DSTest, DSMath {
         // ----------------------- Check Clipper works and bids can be made -----------------------
 
         {
-        DSTokenAbstract token = DSTokenAbstract(join.gem());
+        BrokeTokenAbstract token = BrokeTokenAbstract(join.gem());
         uint256 tknAmt =  ilkAmt / 10 ** (18 - join.dec());
-        giveTokens(token, tknAmt);
+        giveBrokeTokens(token, tknAmt);
         assertEq(token.balanceOf(address(this)), tknAmt);
 
         // Join to adapter
         assertEq(vat.gem(ilk, address(this)), 0);
+        assertEq(token.allowance(address(this), address(join)), 0);
         token.approve(address(join), tknAmt);
         join.join(address(this), tknAmt);
         assertEq(token.balanceOf(address(this)), 0);
@@ -2721,7 +2785,7 @@ contract DssSpellTest is DSTest, DSMath {
         bytes32 hackedValue = 0x0000000000000000000000000000000100000000000000000000000000000123;
 
         hevm.store(address(pip), bytes32(uint256(4)), hackedValue);
-        assertEq(clipMom.tolerance(address(clipper)), (RAY / 2)); // (RAY / 2) for 50%
+        assertEq(clipMom.tolerance(address(clipper)), 950000000000000000000000000); // for 95%
         // Price is hacked, anyone can trip the breaker
         clipMom.tripBreaker(address(clipper));
         assertEq(clipper.stopped(), 2);
@@ -2786,7 +2850,7 @@ contract DssSpellTest is DSTest, DSMath {
         }
     }
 
-    function testSpellIsCast_USDT_A_clip() public {
+    function testIsWorking_USDT_A_clip() public {
         checkIlkClipper(
             "USDT-A",
             GemJoinAbstract(addr.addr("MCD_JOIN_USDT_A")),
