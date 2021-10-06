@@ -2603,6 +2603,72 @@ contract DssSpellTest is DSTest, DSMath {
         assertEq(expectedHash, actualHash);
     }
 
+    // address constant CES_WALLET      = 0x25307aB59Cd5d8b4E2C01218262Ddf6a89Ff86da
+    // address constant RISK_WALLET     = 0x5d67d5B1fC7EF4bfF31967bE2D2d7b9323c1521c; // used on mainnet
+    address constant DEPLOYER_WALLET = 0xdA0C0de01d90A5933692Edf03c7cE946C7c50445; // used on goerli instead of RISK_WALLET
+
+    address constant MCD_VEST_MKR_TREASURY = 0xd1B8dFF41F3268fAC524869f4C7dA27232044916;
+
+    uint256 constant APR_01_2021 = 1617235200;
+
+    // function testOneTimeDaiDistribution() public {
+    //     uint256 prevSin         = vat.sin(address(vow));
+    //     uint256 prevDaiCes      = dai.balanceOf(CES_WALLET);
+    //     uint256 amountDaiCes =   1_223_552;
+
+    //     assertEq(vat.can(address(pauseProxy), address(daiJoin)), 1);
+
+    //     vote(address(spell));
+    //     spell.schedule();
+    //     hevm.warp(spell.nextCastTime());
+    //     spell.cast();
+    //     assertTrue(spell.done());
+
+    //     assertEq(vat.can(address(pauseProxy), address(daiJoin)), 1);
+
+    //     assertEq(vat.sin(address(vow)) - prevSin, amountDaiCes * RAD);
+    //     assertEq(dai.balanceOf(CES_WALLET) - prevDaiCes, amountDaiSes * WAD);
+    // }
+
+    function testVestMKR() public {
+        DssVestLike vest = DssVestLike(MCD_VEST_MKR_TREASURY);
+        assertEq(vest.ids(), 0);
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(vest.cap(), 700 * WAD / 365 days);
+        assertEq(vest.ids(), 1);
+
+        // assertEq(vest.usr(1), RISK_WALLET);
+        assertEq(vest.usr(1), DEPLOYER_WALLET);
+        assertEq(vest.bgn(1), APR_01_2021);
+        assertEq(vest.clf(1), APR_01_2021 + 365 days);
+        assertEq(vest.fin(1), APR_01_2021 + 365 days);
+        assertEq(vest.mgr(1), address(0));
+        assertEq(vest.res(1), 1);
+        assertEq(vest.tot(1), 700 * WAD);
+        assertEq(vest.rxd(1), 0);
+
+        // Give admin powers to Test contract address and make the vesting unrestricted for testing
+        hevm.store(
+            address(vest),
+            keccak256(abi.encode(address(this), uint256(1))),
+            bytes32(uint256(1))
+        );
+        vest.unrestrict(1);
+        //
+
+        // uint256 prevRecipientBalance = gov.balanceOf(RISK_WALLET);
+        uint256 prevRecipientBalance = gov.balanceOf(DEPLOYER_WALLET);
+        uint256 prevPauseBalance = gov.balanceOf(pauseProxy);
+        hevm.warp(APR_01_2021 + 365 days);
+        vest.vest(1);
+        assertEq(gov.balanceOf(DEPLOYER_WALLET), prevRecipientBalance + 700 * WAD, "recipient wallet should have 700 MKR more");
+        assertEq(gov.balanceOf(pauseProxy), prevPauseBalance - 700 * WAD, "pauseProxy should have 700 MKR less");
+    }
+
     function getMat(bytes32 _ilk) internal returns (uint256 mat) {
         (, mat) = spotter.ilks(_ilk);
     }
