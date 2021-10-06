@@ -18,8 +18,7 @@ pragma solidity 0.6.12;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
-import "lib/dss-interfaces/src/dapp/DSTokenAbstract.sol";
-import "lib/dss-interfaces/src/dss/VatAbstract.sol";
+import { DSTokenAbstract, VatAbstract } from "dss-interfaces/Interfaces.sol";
 
 interface DssVestLike {
     function file(bytes32, uint256) external;
