@@ -221,7 +221,7 @@ contract DssSpellAction is DssAction {
         vat.file("Line", sub(vat.Line(), totalLineReduction));
 
         //
-        // Update ChangeLog
+        // Update Changelog
         //
 
         DssExecLib.setChangelogAddress("MCD_VEST_MKR_TREASURY", MCD_VEST_MKR_TREASURY);

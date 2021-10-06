@@ -2287,15 +2287,14 @@ contract DssSpellTest is DSTest, DSMath {
         checkCollateralValues(afterSpell);
     }
 
-    // function testNewChainlogValues() public {
-    //     vote(address(spell));
-    //     scheduleWaitAndCast(address(spell));
-    //     assertTrue(spell.done());
+    function testNewChainlogValues() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
 
-    //     ChainlogAbstract chainLog = ChainlogAbstract(addr.addr("CHANGELOG"));
-
-    //     // Insert new changelog values tests here
-    // }
+        ChainlogAbstract chainLog = ChainlogAbstract(addr.addr("CHANGELOG"));
+        assertEq(chainLog.getAddress("MCD_VEST_MKR_TREASURY"), addr.addr("MCD_VEST_MKR_TREASURY"));
+    }
 
     // function testNewIlkRegistryValues() public {
     //     vote(address(spell));
@@ -2607,8 +2606,6 @@ contract DssSpellTest is DSTest, DSMath {
     // address constant RISK_WALLET     = 0x5d67d5B1fC7EF4bfF31967bE2D2d7b9323c1521c; // used on mainnet
     address constant DEPLOYER_WALLET = 0xdA0C0de01d90A5933692Edf03c7cE946C7c50445; // used on goerli instead of RISK_WALLET
 
-    address constant MCD_VEST_MKR_TREASURY = 0xd1B8dFF41F3268fAC524869f4C7dA27232044916;
-
     uint256 constant APR_01_2021 = 1617235200;
 
     // function testOneTimeDaiDistribution() public {
@@ -2631,7 +2628,7 @@ contract DssSpellTest is DSTest, DSMath {
     // }
 
     function testVestMKR() public {
-        DssVestLike vest = DssVestLike(MCD_VEST_MKR_TREASURY);
+        DssVestLike vest = DssVestLike(addr.addr("MCD_VEST_MKR_TREASURY"));
         assertEq(vest.ids(), 0);
 
         vote(address(spell));
