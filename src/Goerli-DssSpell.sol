@@ -219,6 +219,13 @@ contract DssSpellAction is DssAction {
 
         // Decrease global debt ceiling in accordance with offboarded ilks
         vat.file("Line", sub(vat.Line(), totalLineReduction));
+
+        //
+        // Update ChangeLog
+        //
+
+        DssExecLib.setChangelogAddress("MCD_VEST_MKR_TREASURY", MCD_VEST_MKR_TREASURY);
+        DssExecLib.setChangelogVersion("1.9.7");
     }
 }
 
