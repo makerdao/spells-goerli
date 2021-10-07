@@ -16,8 +16,8 @@
 
 pragma solidity 0.6.12;
 
-import "dss-exec-lib/DssExec.sol";
-import "dss-exec-lib/DssAction.sol";
+import "lib/dss-exec-lib/src/DssExec.sol";
+import "lib/dss-exec-lib/src/DssAction.sol";
 
 interface VatLike {
     function ilks(bytes32) external view returns (uint256, uint256, uint256, uint256, uint256);
