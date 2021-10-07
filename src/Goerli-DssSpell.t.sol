@@ -2488,9 +2488,10 @@ contract DssSpellTest is DSTest, DSMath {
         0xDA0111100cb6080b43926253AB88bE719C60Be13
     ];
 
+    // ONLY ON GOERLI
     function skipWards(address target, address deployer) internal returns (bool ok) {
         if (
-            target == address(chainLog)      &&
+            target   == address(chainLog)    &&
             deployer == deployerAddresses[2] ||
             deployer == deployerAddresses[3] ||
             deployer == deployerAddresses[4]
