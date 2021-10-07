@@ -2,9 +2,9 @@
 
 pragma solidity 0.6.12;
 
-import "lib/ds-math/src/math.sol";
-import "lib/ds-test/src/test.sol";
-import "lib/dss-interfaces/src/Interfaces.sol";
+import "ds-math/math.sol";
+import "ds-test/test.sol";
+import "dss-interfaces/Interfaces.sol";
 import "./test/rates.sol";
 import "./test/addresses_goerli.sol";
 
@@ -42,6 +42,20 @@ interface PsmAbstract {
     function buyGem(address usr, uint256 gemAmt) external;
 }
 
+interface DssVestLike {
+    function cap() external returns (uint256);
+    function ids() external returns (uint256);
+    function usr(uint256) external view returns (address);
+    function bgn(uint256) external view returns (uint256);
+    function clf(uint256) external view returns (uint256);
+    function fin(uint256) external view returns (uint256);
+    function mgr(uint256) external view returns (address);
+    function res(uint256) external view returns (uint256);
+    function tot(uint256) external view returns (uint256);
+    function rxd(uint256) external view returns (uint256);
+    function unrestrict(uint256) external;
+    function vest(uint256) external;
+}
 interface BrokeTokenAbstract {
     function name() external view returns (bytes32);
     function symbol() external view returns (bytes32);
@@ -2611,7 +2625,7 @@ contract DssSpellTest is DSTest, DSMath {
     // }
 
     function testVestMKR() public {
-        VestAbstract vest = VestAbstract(addr.addr("MCD_VEST_MKR_TREASURY"));
+        DssVestLike vest = DssVestLike(addr.addr("MCD_VEST_MKR_TREASURY"));
         assertEq(vest.ids(), 0);
 
         vote(address(spell));
