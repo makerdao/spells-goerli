@@ -18,7 +18,16 @@ pragma solidity 0.6.12;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
-import { DSTokenAbstract, VatAbstract } from "dss-interfaces/Interfaces.sol";
+
+interface VatLike {
+    function ilks(bytes32) external view returns (uint256, uint256, uint256, uint256, uint256);
+    function Line() external view returns (uint256);
+    function file(bytes32, uint256) external;
+}
+
+interface TokenLike {
+    function approve(address, uint256) external returns (bool);
+}
 
 interface DssVestLike {
     function file(bytes32, uint256) external;
@@ -84,7 +93,7 @@ contract DssSpellAction is DssAction {
         // MKR vesting
         //
 
-        DSTokenAbstract(DssExecLib.getChangelogAddress("MCD_GOV")).approve(MCD_VEST_MKR_TREASURY, 700 * WAD);
+        TokenLike(DssExecLib.getChangelogAddress("MCD_GOV")).approve(MCD_VEST_MKR_TREASURY, 700 * WAD);
         DssVestLike(MCD_VEST_MKR_TREASURY).file("cap", 700 * WAD / 365 days);
 
         // DssVestLike(VEST).restrict( Only recipient can request funds
@@ -119,7 +128,7 @@ contract DssSpellAction is DssAction {
 
         uint256 totalLineReduction;
         uint256 line;
-        VatAbstract vat = VatAbstract(DssExecLib.vat());
+        VatLike vat = VatLike(DssExecLib.vat());
 
         // Offboard BAT-A
         // https://vote.makerdao.com/polling/QmWJfX8U?network=mainnet#vote-breakdown
