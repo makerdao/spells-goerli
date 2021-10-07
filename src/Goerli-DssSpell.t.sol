@@ -2490,13 +2490,12 @@ contract DssSpellTest is DSTest, DSMath {
 
     // ONLY ON GOERLI
     function skipWards(address target, address deployer) internal returns (bool ok) {
-        if (
+        ok = (
             target   == address(chainLog)    &&
             deployer == deployerAddresses[2] ||
             deployer == deployerAddresses[3] ||
             deployer == deployerAddresses[4]
-        ) ok = true;
-        ok = false;
+        );
     }
 
     function checkWards(address _addr, string memory contractName) internal {
