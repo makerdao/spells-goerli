@@ -2,8 +2,8 @@
 
 pragma solidity 0.6.12;
 
-import "ds-math/math.sol";
-import "ds-test/test.sol";
+import "lib/ds-math/src/math.sol";
+import "lib/ds-test/src/test.sol";
 import "lib/dss-interfaces/src/Interfaces.sol";
 import "./test/rates.sol";
 import "./test/addresses_goerli.sol";
