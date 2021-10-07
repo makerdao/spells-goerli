@@ -152,6 +152,7 @@ contract DssSpellTest is DSTest, DSMath {
     Addresses addr  = new Addresses();
 
     // GOERLI ADDRESSES
+    ChainlogAbstract    chainLog = ChainlogAbstract(   addr.addr("CHANGELOG"));
     DSPauseAbstract        pause = DSPauseAbstract(    addr.addr("MCD_PAUSE"));
     address           pauseProxy =                     addr.addr("MCD_PAUSE_PROXY");
     DSChiefAbstract        chief = DSChiefAbstract(    addr.addr("MCD_ADM"));
@@ -2291,7 +2292,6 @@ contract DssSpellTest is DSTest, DSMath {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        ChainlogAbstract chainLog = ChainlogAbstract(addr.addr("CHANGELOG"));
         assertEq(chainLog.getAddress("MCD_VEST_MKR_TREASURY"), addr.addr("MCD_VEST_MKR_TREASURY"));
     }
 
@@ -2482,8 +2482,20 @@ contract DssSpellTest is DSTest, DSMath {
         0xda0fab060e6cc7b1C0AA105d29Bd50D71f036711,
         0xDA0FaB0700A4389F6E6679aBAb1692B4601ce9bf,
         0xdA0C0de01d90A5933692Edf03c7cE946C7c50445,
-        0xdB33dFD3D61308C33C63209845DaD3e6bfb2c674
+        0xdB33dFD3D61308C33C63209845DaD3e6bfb2c674,
+        0xDA01018eA05D98aBb66cb21a85d6019a311570eE,
+        0xDA0111100cb6080b43926253AB88bE719C60Be13
     ];
+
+    // ONLY ON GOERLI
+    function skipWards(address target, address deployer) internal returns (bool ok) {
+        ok = (
+            target   == address(chainLog)    &&
+            deployer == deployerAddresses[2] ||
+            deployer == deployerAddresses[3] ||
+            deployer == deployerAddresses[4]
+        );
+    }
 
     function checkWards(address _addr, string memory contractName) internal {
         for (uint256 i = 0; i < deployerAddresses.length; i ++) {
@@ -2493,6 +2505,7 @@ contract DssSpellTest is DSTest, DSMath {
             if (!ok || data.length != 32) return;
             uint256 ward = abi.decode(data, (uint256));
             if (ward > 0) {
+                if (skipWards(_addr, deployerAddresses[i])) continue; // ONLY ON GOERLI
                 emit Log("Bad auth", deployerAddresses[i], contractName);
                 fail();
             }
@@ -2516,7 +2529,7 @@ contract DssSpellTest is DSTest, DSMath {
         hevm.warp(spell.nextCastTime());
         spell.cast();
         assertTrue(spell.done());
-        ChainlogAbstract chainLog = ChainlogAbstract(addr.addr("CHANGELOG"));
+
         bytes32[] memory contractNames = chainLog.list();
         for(uint256 i = 0; i < contractNames.length; i++) {
             address _addr = chainLog.getAddress(contractNames[i]);
@@ -2528,16 +2541,13 @@ contract DssSpellTest is DSTest, DSMath {
         }
     }
 
-    // TODO: Fix Changelog Wards
-    // Log("Bad auth", @0xdA0C0de01d90A5933692Edf03c7cE946C7c50445, "CHANGELOG")
-    //
-    // function test_auth() public {
-    //   checkAuth(false);
-    // }
-    //
-    // function test_auth_in_sources() public {
-    //   checkAuth(true);
-    // }
+    function test_auth() public {
+        checkAuth(false);
+    }
+
+    function test_auth_in_sources() public {
+        checkAuth(true);
+    }
 
     function getBytecodeMetadataLength(address a) internal view returns (uint256 length) {
         // The Solidity compiler encodes the metadata length in the last two bytes of the contract bytecode.
