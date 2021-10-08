@@ -60,7 +60,7 @@ contract DssSpellAction is DssAction {
     uint256 constant CURRENT_UNIV2AAVEETH_MAT = 165 * RAY / 100;
     uint256 constant CURRENT_UNIV2LINKETH_MAT = 165 * RAY / 100;
 
-    // The end parameter of dss-lerp is calculated as Math.round(CRmax / 100 * 1.5) * RAY where CRmax is the maximum collateral ratio for the ilk
+    // The end parameter of dss-lerp is calculated as Math.round(CRmax * 1.5) * RAY where CRmax is the maximum collateral ratio for the ilk
     uint256 constant TARGET_BAT_MAT          = 3800 * RAY / 100;
     uint256 constant TARGET_LRC_MAT          = 2700 * RAY / 100;
     uint256 constant TARGET_ZRX_MAT          = 2600 * RAY / 100;
