@@ -52,6 +52,7 @@ contract Addresses {
         addr["PROXY_REGISTRY"]                  = 0x46759093D8158db8BB555aC7C6F98070c56169ce;
         addr["MCD_VEST_DAI"]                    = 0x59B1a603cAC9e38EA2AC2C479FFE42Ce48123Fd4;
         addr["MCD_VEST_MKR"]                    = 0x183bE7a75B8b5F35236270b060e95C65D82f5fF9;
+        addr["MCD_VEST_MKR_TREASURY"]           = 0xd1B8dFF41F3268fAC524869f4C7dA27232044916;
         addr["ETH"]                             = 0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6;
         addr["PIP_ETH"]                         = 0x94588e35fF4d2E99ffb8D5095F35d1E37d6dDf12;
         addr["MCD_JOIN_ETH_A"]                  = 0x2372031bB0fC735722AA4009AeBf66E8BEAF4BA1;
