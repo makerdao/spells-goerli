@@ -2278,7 +2278,8 @@ contract DssSpellTest is DSTest, DSMath {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        assertEq(chainLog.getAddress("MCD_VEST_MKR_TREASURY"), addr.addr("MCD_VEST_MKR_TREASURY"));
+        assertEq(chainLog.getAddress("LERP_FAB"), addr.addr("LERP_FAB"));
+        assertEq(chainLog.getAddress("JOIN_FAB"), addr.addr("JOIN_FAB"));
     }
 
     // function testNewIlkRegistryValues() public {

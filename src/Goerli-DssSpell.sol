@@ -19,22 +19,6 @@ pragma solidity 0.6.12;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-interface VatLike {
-    function ilks(bytes32) external view returns (uint256, uint256, uint256, uint256, uint256);
-    function Line() external view returns (uint256);
-    function file(bytes32, uint256) external;
-}
-
-interface TokenLike {
-    function approve(address, uint256) external returns (bool);
-}
-
-interface DssVestLike {
-    function file(bytes32, uint256) external;
-    function create(address, uint256, uint256, uint256, uint256, address) external returns (uint256);
-    function restrict(uint256) external;
-}
-
 contract DssSpellAction is DssAction {
 
     // Provides a descriptive tag for bot consumption
@@ -42,18 +26,18 @@ contract DssSpellAction is DssAction {
     // Hash: seth keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/TODO -q -O - 2>/dev/null)"
     string public constant override description = "Goerli Spell";
 
-    uint256 constant MILLION = 10 ** 6;
-    uint256 constant WAD     = 10 ** 18;
-    uint256 constant RAY     = 10 ** 27;
-
-    function _add(uint x, uint y) internal pure returns (uint z) {
-        require((z = x + y) >= x, "ds-math-add-overflow");
-    }
-    function _sub(uint x, uint y) internal pure returns (uint z) {
-        require((z = x - y) <= x, "ds-math-sub-underflow");
-    }
+    address constant JOIN_FAB = 0x0aaA1E0f026c194E0F951a7763F9edc796c6eDeE;
+    address constant LERP_FAB = 0xE7988B75a19D8690272D65882Ab0D07D492f7002;
 
     function actions() public override {
+
+        // Add Join factory to ChainLog
+        DssExecLib.setChangelogAddress("JOIN_FAB", JOIN_FAB);
+
+        // Update Lerp factory in ChainLog
+        DssExecLib.setChangelogAddress("LERP_FAB", LERP_FAB);
+
+        DssExecLib.setChangelogVersion("1.9.8");
     }
 }
 
