@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
+//
 // Copyright (C) 2021 Dai Foundation
 //
 // This program is free software: you can redistribute it and/or modify
@@ -15,31 +16,82 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
+pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
 contract DssSpellAction is DssAction {
 
+    uint256 constant MILLION  = 10**6;
+
     // Provides a descriptive tag for bot consumption
     // This should be modified weekly to provide a summary of the actions
-    // Hash: seth keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/TODO -q -O - 2>/dev/null)"
-    string public constant override description = "Goerli Spell";
+    // Hash: seth keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/287beee2bb76636b8b9e02c7e698fa639cb6b859/governance/votes/Executive%20vote%20-%20October%2022%2C%202021.md -q -O - 2>/dev/null)"
+    string public constant override description =
+        "2021-10-22 MakerDAO Executive Spell | Hash: 0x1980e67884fc3b449708d14f67d095b612118e9fb183de4b107f37c0bc8499aa";
 
-    address constant JOIN_FAB = 0x0aaA1E0f026c194E0F951a7763F9edc796c6eDeE;
-    address constant LERP_FAB = 0xE7988B75a19D8690272D65882Ab0D07D492f7002;
+    // Many of the settings that change weekly rely on the rate accumulator
+    // described at https://docs.makerdao.com/smart-contract-modules/rates-module
+    // To check this yourself, use the following rate calculation (example 8%):
+    //
+    // $ bc -l <<< 'scale=27; e( l(1.08)/(60 * 60 * 24 * 365) )'
+    //
+    // A table of rates can be found at
+    //    https://ipfs.io/ipfs/QmefQMseb3AiTapiAKKexdKHig8wroKuZbmLtPLv4u2YwW
+    //
+    uint256 constant FIVE_PCT_RATE = 1000000001547125957863212448;
+
+    address public constant WBTC_GEM               = 0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599;
+    address public constant MCD_JOIN_WBTC_B        = 0x13B8EB3d2d40A00d65fD30abF247eb470dDF6C25;
+    address public constant MCD_CLIP_WBTC_B        = 0x4F51B15f8B86822d2Eca8a74BB4bA1e3c64F733F;
+    address public constant MCD_CLIP_CALC_WBTC_B   = 0x1b5a9aDaf15CAE0e3d0349be18b77180C1a0deCc;
+    address public constant PIP_WBTC               = 0xf185d0682d50819263941e5f4EacC763CC5C6C42;
 
     function actions() public override {
 
-        // Add Join factory to ChainLog
-        DssExecLib.setChangelogAddress("JOIN_FAB", JOIN_FAB);
 
-        // Update Lerp factory in ChainLog
-        DssExecLib.setChangelogAddress("LERP_FAB", LERP_FAB);
 
-        DssExecLib.setChangelogVersion("1.9.9");
+        // Add WBTC-B as a new Vault Type - November xx, 2021
+        //  https://vote.makerdao.com/polling/QmSL1kDq?network=mainnet#poll-detail
+        //  https://forum.makerdao.com/t/signal-request-new-iam-vault-type-for-wbtc-with-lower-lr/5736
+        CollateralOpts memory WBTC_B = CollateralOpts({
+            ilk:                   "WBTC-B",
+            gem:                   WBTC_GEM,
+            join:                  MCD_JOIN_WBTC_B,
+            clip:                  MCD_CLIP_WBTC_B,
+            calc:                  MCD_CLIP_CALC_WBTC_B,
+            pip:                   PIP_WBTC,
+            isLiquidatable:        true,
+            isOSM:                 true,
+            whitelistOSM:          true,
+            ilkDebtCeiling:        500 * MILLION, // Start at 3mm, DCIAM sets to 5mm
+            minVaultAmount:        30000,
+            maxLiquidationAmount:  25 * MILLION,
+            liquidationPenalty:    1300,        // 13% penalty fee
+            ilkStabilityFee:       FIVE_PCT_RATE,
+            startingPriceFactor:   12000,       // Auction price begins at 130% of oracle
+            breakerTolerance:      5000,        // Allows for a 50% hourly price drop before disabling liquidations
+            auctionDuration:       90 minutes,
+            permittedDrop:         4000,        // 40% price drop before reset
+            liquidationRatio:      13000,       // 160% collateralization
+            kprFlatReward:         300,         // 300 Dai
+            kprPctReward:          10           // 0.1%
+        });
+        DssExecLib.addNewCollateral(WBTC_B);
+        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_WBTC_B, 60 seconds, 9900);
+        DssExecLib.setIlkAutoLineParameters("WBTC-B", 500 * MILLION, 30 * MILLION, 8 hours);
+
+        DssExecLib.setChangelogAddress("MCD_JOIN_WBTC_B", MCD_JOIN_WBTC_B);
+        DssExecLib.setChangelogAddress("MCD_CLIP_WBTC_B", MCD_CLIP_WBTC_B);
+        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_WBTC_B", MCD_CLIP_CALC_WBTC_B);
+
+
+        // bump changelog version
+        DssExecLib.setChangelogVersion("1.9.10");
     }
 }
+
 
 contract DssSpell is DssExec {
     constructor() DssExec(block.timestamp + 30 days, address(new DssSpellAction())) public {}
