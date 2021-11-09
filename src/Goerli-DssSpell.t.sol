@@ -8,7 +8,7 @@ import "dss-interfaces/Interfaces.sol";
 import "./test/rates.sol";
 import "./test/addresses_goerli.sol";
 
-import {DssSpell} from "./DssSpell.sol";
+import {DssSpell} from "./Goerli-DssSpell.sol";
 
 interface Hevm {
     function warp(uint256) external;
