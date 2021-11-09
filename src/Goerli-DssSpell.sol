@@ -29,8 +29,7 @@ contract DssSpellAction is DssAction {
     // This should be modified weekly to provide a summary of the actions
     // Hash: seth keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/287beee2bb76636b8b9e02c7e698fa639cb6b859/governance/votes/Executive%20vote%20-%20October%2022%2C%202021.md -q -O - 2>/dev/null)"
     string public constant override description =
-        "2021-10-22 MakerDAO Executive Spell | Hash: 0x1980e67884fc3b449708d14f67d095b612118e9fb183de4b107f37c0bc8499aa";
-
+        "2021-11-xx MakerDAO Executive Spell | Hash: 0x0";
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
     // To check this yourself, use the following rate calculation (example 8%):
@@ -50,8 +49,6 @@ contract DssSpellAction is DssAction {
 
     function actions() public override {
 
-
-
         // Add WBTC-B as a new Vault Type - November xx, 2021
         //  https://vote.makerdao.com/polling/QmSL1kDq?network=mainnet#poll-detail
         //  https://forum.makerdao.com/t/signal-request-new-iam-vault-type-for-wbtc-with-lower-lr/5736
@@ -65,7 +62,7 @@ contract DssSpellAction is DssAction {
             isLiquidatable:        true,
             isOSM:                 true,
             whitelistOSM:          true,
-            ilkDebtCeiling:        500 * MILLION, // Start at 3mm, DCIAM sets to 5mm
+            ilkDebtCeiling:        500 * MILLION,
             minVaultAmount:        30000,
             maxLiquidationAmount:  25 * MILLION,
             liquidationPenalty:    1300,        // 13% penalty fee
@@ -74,7 +71,7 @@ contract DssSpellAction is DssAction {
             breakerTolerance:      5000,        // Allows for a 50% hourly price drop before disabling liquidations
             auctionDuration:       90 minutes,
             permittedDrop:         4000,        // 40% price drop before reset
-            liquidationRatio:      13000,       // 160% collateralization
+            liquidationRatio:      13000,       // 130% collateralization
             kprFlatReward:         300,         // 300 Dai
             kprPctReward:          10           // 0.1%
         });
