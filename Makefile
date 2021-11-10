@@ -5,4 +5,4 @@ clean  :; dapp clean
 test   :; ./test-dssspell.sh $(match)
 deploy :; make && dapp create DssSpell | xargs ./verify.py DssSpell
 flatten :; hevm flatten --source-file "src/Goerli-DssSpell.sol" > out/flat.sol
-archive-spell :; ./archive-spell.sh $(name)
+archive-spell :; ./archive-dssspell.sh $(name)
