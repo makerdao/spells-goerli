@@ -507,6 +507,35 @@ contract DssSpellTest is DSTest, DSMath {
             calc_step:    90,
             calc_cut:     9900
         });
+        afterSpell.collaterals["WBTC-B"] = CollateralValues({
+            aL_enabled:   true,
+            aL_line:      500 * MILLION,
+            aL_gap:       30 * MILLION,
+            aL_ttl:       8 hours,
+            line:         0,
+            dust:         30 * THOUSAND,
+            pct:          500,
+            mat:          13000,
+            liqType:      "clip",
+            liqOn:        true,
+            chop:         1300,
+            cat_dunk:     0,
+            flip_beg:     0,
+            flip_ttl:     0,
+            flip_tau:     0,
+            flipper_mom:  0,
+            dog_hole:     25 * MILLION,
+            clip_buf:     12000,
+            clip_tail:    90 minutes,
+            clip_cusp:    4000,
+            clip_chip:    10,
+            clip_tip:     300,
+            clipper_mom:  1,
+            cm_tolerance: 5000,
+            calc_tau:     0,
+            calc_step:    60,
+            calc_cut:     9900
+        });
         afterSpell.collaterals["TUSD-A"] = CollateralValues({
             aL_enabled:   false,
             aL_line:      0,
@@ -1522,36 +1551,6 @@ contract DssSpellTest is DSTest, DSMath {
             calc_step:    120,
             calc_cut:     9990
         });
-        afterSpell.collaterals["WBTC-B"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      500 * MILLION,
-            aL_gap:       30 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         30 * THOUSAND,
-            pct:          500,
-            mat:          13000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     25 * MILLION,
-            clip_buf:     12000,
-            clip_tail:    90 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    60,
-            calc_cut:     9900
-        });
-
     }
 
     function scheduleWaitAndCastFailDay() public {
