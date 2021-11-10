@@ -18,5 +18,5 @@
 - [ ] Deploy spell to Goerli `ETH_GAS="XXX" ETH_GAS_PRICE="YYY" make deploy`
 - [ ] Ensure contract is verified on `Goerli` etherscan
 - [ ] Change test to use Goerli spell address and deploy timestamp
-- [ ] Keep `Goerli-DssSpell.sol` and `Goerli-DssSpell.t.sol` the same, but make a copy in `archive`
+- [ ] Run `make name="YYYY-MM-DD-archive-directory-name" archive-spell` to make an archive directory and copy `Goerli-DssSpell.sol`, `Goerli-DssSpell.t.sol`, and `Goerli-DssSpell.t.base.sol` 
 - [ ] `squash and merge` this PR
