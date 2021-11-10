@@ -32,12 +32,6 @@ contract DssSpellAction is DssAction {
     uint256 constant ZERO_FIVE_PCT_RATE     = 1000000000158153903837946257;
     uint256 constant FIVE_PCT_RATE          = 1000000001547125957863212448;
 
-    address constant WBTC                   = 0x7ccF0411c7932B99FC3704d68575250F032e3bB7;
-    address constant MCD_JOIN_WBTC_B        = 0x13B8EB3d2d40A00d65fD30abF247eb470dDF6C25;
-    address constant MCD_CLIP_WBTC_B        = 0x4F51B15f8B86822d2Eca8a74BB4bA1e3c64F733F;
-    address constant MCD_CLIP_CALC_WBTC_B   = 0x1b5a9aDaf15CAE0e3d0349be18b77180C1a0deCc;
-    address constant PIP_WBTC               = 0xE7de200a3a29E9049E378b52BD36701A0Ce68C3b;
-
     function actions() public override {
 
         // GUNIV3DAIUSDC-A Parameter Adjustments
@@ -46,39 +40,6 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkAutoLineDebtCeiling("GUNIV3DAIUSDC1-A", 500 * MILLION);     // Set DCIAM Max debt ceiling to 500 M
         DssExecLib.setIlkLiquidationRatio("GUNIV3DAIUSDC1-A", 10200);                // Set LR to 102 %
         DssExecLib.setIlkStabilityFee("GUNIV3DAIUSDC1-A", ZERO_FIVE_PCT_RATE, true); // Set stability fee to 0.5 %
-        
-        // Add WBTC-B as a new Vault Type - November xx, 2021
-        //  https://vote.makerdao.com/polling/QmSL1kDq?network=mainnet#poll-detail
-        //  https://forum.makerdao.com/t/signal-request-new-iam-vault-type-for-wbtc-with-lower-lr/5736
-        DssExecLib.addNewCollateral(CollateralOpts({
-            ilk:                   "WBTC-B",
-            gem:                   WBTC,
-            join:                  MCD_JOIN_WBTC_B,
-            clip:                  MCD_CLIP_WBTC_B,
-            calc:                  MCD_CLIP_CALC_WBTC_B,
-            pip:                   PIP_WBTC,
-            isLiquidatable:        true,
-            isOSM:                 true,
-            whitelistOSM:          false,
-            ilkDebtCeiling:        500 * MILLION,
-            minVaultAmount:        30000,
-            maxLiquidationAmount:  25 * MILLION,
-            liquidationPenalty:    1300,        // 13% penalty fee
-            ilkStabilityFee:       FIVE_PCT_RATE,
-            startingPriceFactor:   12000,       // Auction price begins at 130% of oracle
-            breakerTolerance:      5000,        // Allows for a 50% hourly price drop before disabling liquidations
-            auctionDuration:       90 minutes,
-            permittedDrop:         4000,        // 40% price drop before reset
-            liquidationRatio:      13000,       // 130% collateralization
-            kprFlatReward:         300,         // 300 Dai
-            kprPctReward:          10           // 0.1%
-        }));
-        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_WBTC_B, 60 seconds, 9900);
-        DssExecLib.setIlkAutoLineParameters("WBTC-B", 500 * MILLION, 30 * MILLION, 8 hours);
-
-        DssExecLib.setChangelogAddress("MCD_JOIN_WBTC_B", MCD_JOIN_WBTC_B);
-        DssExecLib.setChangelogAddress("MCD_CLIP_WBTC_B", MCD_CLIP_WBTC_B);
-        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_WBTC_B", MCD_CLIP_CALC_WBTC_B);
 
         // bump changelog version
         DssExecLib.setChangelogVersion("1.9.10");
