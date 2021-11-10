@@ -298,7 +298,7 @@ contract DssSpellTest is DSTest, DSMath {
             osm_mom_authority:     address(chief),          // OsmMom authority
             flipper_mom_authority: address(chief),          // FlipperMom authority
             clipper_mom_authority: address(chief),          // ClipperMom authority
-            ilk_count:             42                       // Num expected in system
+            ilk_count:             43                       // Num expected in system
         });
 
         //
@@ -1503,7 +1503,7 @@ contract DssSpellTest is DSTest, DSMath {
             pct:          50,
             mat:          10200,
             liqType:      "clip",
-            liqOn:        true,
+            liqOn:        false,
             chop:         1300,
             cat_dunk:     0,
             flip_beg:     0,
@@ -1549,7 +1549,7 @@ contract DssSpellTest is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    60,
-            calc_cut:     9990
+            calc_cut:     9900
         });
 
     }
