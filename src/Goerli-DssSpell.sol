@@ -40,7 +40,6 @@ contract DssSpellAction is DssAction {
 
     function actions() public override {
 
-
         // GUNIV3DAIUSDC-A Parameter Adjustments
         // https://vote.makerdao.com/polling/QmemHGSM?network=mainnet
         // https://forum.makerdao.com/t/request-to-raise-the-guniv3daiusdc1-a-dc-to-500m/11394
@@ -61,7 +60,7 @@ contract DssSpellAction is DssAction {
             pip:                   PIP_WBTC,
             isLiquidatable:        true,
             isOSM:                 true,
-            whitelistOSM:          true,
+            whitelistOSM:          false,
             ilkDebtCeiling:        500 * MILLION,
             minVaultAmount:        30000,
             maxLiquidationAmount:  25 * MILLION,
