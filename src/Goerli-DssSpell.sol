@@ -49,6 +49,15 @@ contract DssSpellAction is DssAction {
 
     function actions() public override {
 
+
+        // GUNIV3DAIUSDC-A Parameter Adjustments
+        // https://vote.makerdao.com/polling/QmemHGSM?network=mainnet
+        // https://forum.makerdao.com/t/request-to-raise-the-guniv3daiusdc1-a-dc-to-500m/11394
+        bytes32 GUNIV3DAIUSDC_ILK = "GUNIV3DAIUSDC1-A";
+        setIlkAutoLineDebtCeiling(GUNIV3DAIUSDC_ILK, 500 * MILLION);    // Set DCIAM Max debt ceiling to 500 M
+        setIlkLiquidationRatio(GUNIV3DAIUSDC_ILK, 102 * BPS_ONE_PCT);   // Set LR to 102 %
+        setIlkStabilityFee(GUNIV3DAIUSDC_ILK, 0.5 * BPS_ONE_PCT);       // Set stability fee to 0.5 %
+        
         // Add WBTC-B as a new Vault Type - November xx, 2021
         //  https://vote.makerdao.com/polling/QmSL1kDq?network=mainnet#poll-detail
         //  https://forum.makerdao.com/t/signal-request-new-iam-vault-type-for-wbtc-with-lower-lr/5736
