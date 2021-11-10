@@ -137,7 +137,7 @@ contract DssSpellTest is DSTest, DSMath {
     Rates     rates = new Rates();
     Addresses addr  = new Addresses();
 
-    // ADDRESSES
+    // GOERLI ADDRESSES
     ChainlogAbstract    chainLog = ChainlogAbstract(   addr.addr("CHANGELOG"));
     DSPauseAbstract        pause = DSPauseAbstract(    addr.addr("MCD_PAUSE"));
     address           pauseProxy =                     addr.addr("MCD_PAUSE_PROXY");
@@ -162,6 +162,8 @@ contract DssSpellTest is DSTest, DSMath {
     ClipperMomAbstract      clipMom = ClipperMomAbstract( addr.addr("CLIPPER_MOM"));
     DssAutoLineAbstract    autoLine = DssAutoLineAbstract(addr.addr("MCD_IAM_AUTO_LINE"));
     LerpFactoryAbstract lerpFactory = LerpFactoryAbstract(addr.addr("LERP_FAB"));
+
+    // Insert spell-only addresses here
 
     DssSpell spell;
 
@@ -263,8 +265,8 @@ contract DssSpellTest is DSTest, DSMath {
         // Test for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0xc0Dc70048F678e0c9DA82aD11CdC063aA081d950),        // populate with deployed spell if deployed
-            deployed_spell_created:         1634923566,        // use get-created-timestamp.sh if deployed
+            deployed_spell:                 address(0),        // populate with deployed spell if deployed
+            deployed_spell_created:         0,        // use get-created-timestamp.sh if deployed
             previous_spell:                 address(0), // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           true,              // true if officehours is expected to be enabled in the spell
             expiration_threshold:           weekly_expiration  // (weekly_expiration,monthly_expiration) if weekly or monthly spell
@@ -280,7 +282,7 @@ contract DssSpellTest is DSTest, DSMath {
         afterSpell = SystemValues({
             line_offset:           500 * MILLION,           // Offset between the global line against the sum of local lines
             pot_dsr:               1,                       // In basis points
-            pause_delay:           48 hours,                // In seconds
+            pause_delay:           60 seconds,              // In seconds
             vow_wait:              156 hours,               // In seconds
             vow_dump:              250,                     // In whole Dai units
             vow_sump:              50 * THOUSAND,           // In whole Dai units
@@ -296,7 +298,7 @@ contract DssSpellTest is DSTest, DSMath {
             osm_mom_authority:     address(chief),          // OsmMom authority
             flipper_mom_authority: address(chief),          // FlipperMom authority
             clipper_mom_authority: address(chief),          // ClipperMom authority
-            ilk_count:             43                       // Num expected in system
+            ilk_count:             42                       // Num expected in system
         });
 
         //
@@ -305,8 +307,8 @@ contract DssSpellTest is DSTest, DSMath {
         afterSpell.collaterals["ETH-A"] = CollateralValues({
             aL_enabled:   true,            // DssAutoLine is enabled?
             aL_line:      15 * BILLION,    // In whole Dai units
-            aL_gap:       150 * MILLION,   // In whole Dai units
-            aL_ttl:       6 hours,         // In seconds
+            aL_gap:       100 * MILLION,   // In whole Dai units
+            aL_ttl:       8 hours,         // In seconds
             line:         0,               // In whole Dai units  // Not checked here as there is auto line
             dust:         10 * THOUSAND,   // In whole Dai units
             pct:          200,             // In basis points
@@ -333,9 +335,9 @@ contract DssSpellTest is DSTest, DSMath {
         });
         afterSpell.collaterals["ETH-B"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      500 * MILLION,
-            aL_gap:       20 * MILLION,
-            aL_ttl:       6 hours,
+            aL_line:      300 * MILLION,
+            aL_gap:       10 * MILLION,
+            aL_ttl:       8 hours,
             line:         0,
             dust:         30 * THOUSAND,
             pct:          500,
@@ -397,7 +399,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          400,
-            mat:          80000,
+            mat:          15000,
             liqType:      "clip",
             liqOn:        true,
             chop:         0,
@@ -478,9 +480,9 @@ contract DssSpellTest is DSTest, DSMath {
         });
         afterSpell.collaterals["WBTC-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      1_500 * MILLION,
-            aL_gap:       60 * MILLION,
-            aL_ttl:       6 hours,
+            aL_line:      750 * MILLION,
+            aL_gap:       30 * MILLION,
+            aL_ttl:       8 hours,
             line:         0,
             dust:         10 * THOUSAND,
             pct:          200,
@@ -542,7 +544,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          500,
-            mat:          500000,
+            mat:          17500,
             liqType:      "clip",
             liqOn:        true,
             chop:         0,
@@ -571,7 +573,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          400,
-            mat:          90000,
+            mat:          17500,
             liqType:      "clip",
             liqOn:        true,
             chop:         0,
@@ -716,7 +718,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          400,
-            mat:          260000,
+            mat:          17500,
             liqType:      "clip",
             liqOn:        true,
             chop:         0,
@@ -1122,7 +1124,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          300,
-            mat:          30000,
+            mat:          16500,
             liqType:      "clip",
             liqOn:        true,
             chop:         0,
@@ -1209,7 +1211,7 @@ contract DssSpellTest is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          300,
-            mat:          40000,
+            mat:          16500,
             liqType:      "clip",
             liqOn:        true,
             chop:         0,
@@ -1409,7 +1411,7 @@ contract DssSpellTest is DSTest, DSMath {
             aL_line:      0 * MILLION,
             aL_gap:       0 * MILLION,
             aL_ttl:       0,
-            line:         0 * MILLION,
+            line:         20 * MILLION,
             dust:         0,
             pct:          200,
             mat:          10000,
@@ -1493,15 +1495,15 @@ contract DssSpellTest is DSTest, DSMath {
         });
         afterSpell.collaterals["GUNIV3DAIUSDC1-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      50 * MILLION,
+            aL_line:      500 * MILLION,
             aL_gap:       10 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
             dust:         10 * THOUSAND,
-            pct:          100,
-            mat:          10500,
+            pct:          50,
+            mat:          10200,
             liqType:      "clip",
-            liqOn:        false,
+            liqOn:        true,
             chop:         1300,
             cat_dunk:     0,
             flip_beg:     0,
@@ -1520,15 +1522,15 @@ contract DssSpellTest is DSTest, DSMath {
             calc_step:    120,
             calc_cut:     9990
         });
-        afterSpell.collaterals["WSTETH-A"] = CollateralValues({
+        afterSpell.collaterals["WBTC-B"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      5 * MILLION,
-            aL_gap:       3 * MILLION,
+            aL_line:      500 * MILLION,
+            aL_gap:       30 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
-            dust:         10 * THOUSAND,
-            pct:          400,
-            mat:          16000,
+            dust:         30 * THOUSAND,
+            pct:          500,
+            mat:          13000,
             liqType:      "clip",
             liqOn:        true,
             chop:         1300,
@@ -1537,17 +1539,17 @@ contract DssSpellTest is DSTest, DSMath {
             flip_ttl:     0,
             flip_tau:     0,
             flipper_mom:  0,
-            dog_hole:     3 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    140 minutes,
+            dog_hole:     25 * MILLION,
+            clip_buf:     12000,
+            clip_tail:    90 minutes,
             clip_cusp:    4000,
             clip_chip:    10,
             clip_tip:     300,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
+            calc_step:    60,
+            calc_cut:     9990
         });
 
     }
@@ -1779,22 +1781,10 @@ contract DssSpellTest is DSTest, DSMath {
 
             {
             (,uint256 mat) = spotter.ilks(ilk);
-            uint256 normalizedTestMat = (values.collaterals[ilk].mat * 10**23);
             // Convert BP to system expected value
-            if ( ilk == "KNC-A" ||
-                 ilk == "BAT-A" ||
-                 ilk == "ZRX-A" ||
-                 ilk == "LRC-A" ||
-                 ilk == "UNIV2AAVEETH-A" ||
-                 ilk == "UNIV2LINKETH-A"
-                ) {
-                // TODO: remove these when we are done with the lerp
-                assertTrue(mat <= normalizedTestMat, string(abi.encodePacked("TestError/vat-lerping-mat-", ilk)));
-                assertTrue(mat >= RAY && mat <= 50 * RAY, string(abi.encodePacked("TestError/vat-mat-range-", ilk)));
-            } else {
-                assertEq(mat, normalizedTestMat, string(abi.encodePacked("TestError/vat-mat-", ilk)));
-                assertTrue(mat >= RAY && mat < 10 * RAY, string(abi.encodePacked("TestError/vat-mat-range-", ilk)));    // cr eq 100% and lt 1000%
-            }
+            uint256 normalizedTestMat = (values.collaterals[ilk].mat * 10**23);
+            assertEq(mat, normalizedTestMat, string(abi.encodePacked("TestError/vat-mat-", ilk)));
+            assertTrue(mat >= RAY && mat < 10 * RAY, string(abi.encodePacked("TestError/vat-mat-range-", ilk)));    // cr eq 100% and lt 1000%
             }
 
             if (values.collaterals[ilk].liqType == "flip") {
@@ -2317,30 +2307,20 @@ contract DssSpellTest is DSTest, DSMath {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        assertEq(chainLog.getAddress("STETH"), addr.addr("STETH"));
-        assertEq(chainLog.getAddress("WSTETH"), addr.addr("WSTETH"));
-        assertEq(chainLog.getAddress("PIP_WSTETH"), addr.addr("PIP_WSTETH"));
-        assertEq(chainLog.getAddress("MCD_JOIN_WSTETH_A"), addr.addr("MCD_JOIN_WSTETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_WSTETH_A"), addr.addr("MCD_CLIP_WSTETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WSTETH_A"), addr.addr("MCD_CLIP_CALC_WSTETH_A"));
+        assertEq(chainLog.getAddress("MCD_JOIN_WBTC_B"), addr.addr("MCD_JOIN_WBTC_B"));
+        assertEq(chainLog.getAddress("MCD_CLIP_WBTC_B"), addr.addr("MCD_CLIP_WBTC_B"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WBTC_B"), addr.addr("MCD_CLIP_CALC_WBTC_B"));
     }
 
-    function testNewIlkRegistryValues() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+    // function testNewIlkRegistryValues() public {
+    //     vote(address(spell));
+    //     scheduleWaitAndCast(address(spell));
+    //     assertTrue(spell.done());
 
-        IlkRegistryAbstract ilkRegistry = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
+    //     IlkRegistryAbstract ilkRegistry = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
 
-        assertEq(ilkRegistry.join("WSTETH-A"), addr.addr("MCD_JOIN_WSTETH_A"));
-        assertEq(ilkRegistry.gem("WSTETH-A"), addr.addr("WSTETH"));
-        assertEq(ilkRegistry.dec("WSTETH-A"), DSTokenAbstract(addr.addr("WSTETH")).decimals());
-        assertEq(ilkRegistry.class("WSTETH-A"), 1);
-        assertEq(ilkRegistry.pip("WSTETH-A"), addr.addr("PIP_WSTETH"));
-        assertEq(ilkRegistry.xlip("WSTETH-A"), addr.addr("MCD_CLIP_WSTETH_A"));
-        assertEq(ilkRegistry.name("WSTETH-A"), "Wrapped liquid staked Ether 2.0");
-        assertEq(ilkRegistry.symbol("WSTETH-A"), "wstETH");
-    }
+    //     // Insert new ilk registry values tests here
+    // }
 
     function testFailWrongDay() public {
         require(spell.officeHours() == spellValues.office_hours_enabled);
@@ -2516,17 +2496,23 @@ contract DssSpellTest is DSTest, DSMath {
     // }
 
     address[] deployerAddresses = [
-        0xdDb108893104dE4E1C6d0E47c42237dB4E617ACc,
-        0xDa0FaB05039809e63C5D068c897c3e602fA97457,
         0xda0fab060e6cc7b1C0AA105d29Bd50D71f036711,
         0xDA0FaB0700A4389F6E6679aBAb1692B4601ce9bf,
-        0x0048d6225D1F3eA4385627eFDC5B4709Cab4A21c,
-        0xd200790f62c8da69973e61d4936cfE4f356ccD07,
         0xdA0C0de01d90A5933692Edf03c7cE946C7c50445,
-        0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3,  // Oracles
-        0x1f42e41A34B71606FcC60b4e624243b365D99745,  // Oracles
-        0x075da589886BA445d7c7e81c472059dE7AE65250   // Used for Optimism & Arbitrum bridge contracts
+        0xdB33dFD3D61308C33C63209845DaD3e6bfb2c674,
+        0xDA01018eA05D98aBb66cb21a85d6019a311570eE,
+        0xDA0111100cb6080b43926253AB88bE719C60Be13
     ];
+
+    // ONLY ON GOERLI
+    function skipWards(address target, address deployer) internal returns (bool ok) {
+        ok = (
+            target   == address(chainLog)    &&
+            deployer == deployerAddresses[2] ||
+            deployer == deployerAddresses[3] ||
+            deployer == deployerAddresses[4]
+        );
+    }
 
     function checkWards(address _addr, string memory contractName) internal {
         for (uint256 i = 0; i < deployerAddresses.length; i ++) {
@@ -2536,6 +2522,7 @@ contract DssSpellTest is DSTest, DSMath {
             if (!ok || data.length != 32) return;
             uint256 ward = abi.decode(data, (uint256));
             if (ward > 0) {
+                if (skipWards(_addr, deployerAddresses[i])) continue; // ONLY ON GOERLI
                 emit Log("Bad auth", deployerAddresses[i], contractName);
                 fail();
             }
@@ -2559,6 +2546,7 @@ contract DssSpellTest is DSTest, DSMath {
         hevm.warp(spell.nextCastTime());
         spell.cast();
         assertTrue(spell.done());
+
         bytes32[] memory contractNames = chainLog.list();
         for(uint256 i = 0; i < contractNames.length; i++) {
             address _addr = chainLog.getAddress(contractNames[i]);
@@ -2639,10 +2627,4 @@ contract DssSpellTest is DSTest, DSMath {
         }
         assertEq(expectedHash, actualHash);
     }
-
-    function getMat(bytes32 _ilk) internal returns (uint256 mat) {
-        (, mat) = spotter.ilks(_ilk);
-    }
-
-
 }

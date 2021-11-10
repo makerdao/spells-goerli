@@ -28,17 +28,8 @@ contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     // This should be modified weekly to provide a summary of the actions
     // Hash: seth keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/287beee2bb76636b8b9e02c7e698fa639cb6b859/governance/votes/Executive%20vote%20-%20October%2022%2C%202021.md -q -O - 2>/dev/null)"
-    string public constant override description =
-        "2021-11-xx MakerDAO Executive Spell | Hash: 0x0";
-    // Many of the settings that change weekly rely on the rate accumulator
-    // described at https://docs.makerdao.com/smart-contract-modules/rates-module
-    // To check this yourself, use the following rate calculation (example 8%):
-    //
-    // $ bc -l <<< 'scale=27; e( l(1.08)/(60 * 60 * 24 * 365) )'
-    //
-    // A table of rates can be found at
-    //    https://ipfs.io/ipfs/QmefQMseb3AiTapiAKKexdKHig8wroKuZbmLtPLv4u2YwW
-    //
+    string public constant override description = "Goerli Spell";
+    
     uint256 constant FIVE_PCT_RATE = 1000000001547125957863212448;
 
     address public constant WBTC_GEM               = 0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599;
@@ -54,9 +45,9 @@ contract DssSpellAction is DssAction {
         // https://vote.makerdao.com/polling/QmemHGSM?network=mainnet
         // https://forum.makerdao.com/t/request-to-raise-the-guniv3daiusdc1-a-dc-to-500m/11394
         bytes32 GUNIV3DAIUSDC_ILK = "GUNIV3DAIUSDC1-A";
-        setIlkAutoLineDebtCeiling(GUNIV3DAIUSDC_ILK, 500 * MILLION);    // Set DCIAM Max debt ceiling to 500 M
-        setIlkLiquidationRatio(GUNIV3DAIUSDC_ILK, 102 * BPS_ONE_PCT);   // Set LR to 102 %
-        setIlkStabilityFee(GUNIV3DAIUSDC_ILK, 0.5 * BPS_ONE_PCT);       // Set stability fee to 0.5 %
+        DssExecLib.setIlkAutoLineDebtCeiling(GUNIV3DAIUSDC_ILK, 500 * MILLION); // Set DCIAM Max debt ceiling to 500 M
+        DssExecLib.setIlkLiquidationRatio(GUNIV3DAIUSDC_ILK, 10200);            // Set LR to 102 %
+        DssExecLib.setIlkStabilityFee(GUNIV3DAIUSDC_ILK, 50, true);             // Set stability fee to 0.5 %
         
         // Add WBTC-B as a new Vault Type - November xx, 2021
         //  https://vote.makerdao.com/polling/QmSL1kDq?network=mainnet#poll-detail
