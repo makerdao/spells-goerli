@@ -62,21 +62,23 @@ contract DssSpellAction is DssAction {
 
     uint256 constant ONE_POINT_FIVE_PCT = 1000000000472114805215157978;
 
-    address public constant MCD_VAT                   = 0x0000000000000000000000000000000000000000;
-    address public constant MCD_VOW                   = 0x0000000000000000000000000000000000000000;
-    address public constant MCD_CHARTER_MANAGER       = 0x0000000000000000000000000000000000000000;
+    address public constant MCD_VAT                   = DssExecLib.getChangelogAddress("MCD_VAT");
+    address public constant MCD_VOW                   = DssExecLib.getChangelogAddress("MCD_VOW");
+    address public constant MCD_CHARTER_MANAGER       = 0x91678e757C20351d0D393e3C907c6C9B5ef46d6c;
+    address public constant MCD_CHARTER_MANAGER_IMP   = 0x23eA5CC5c9252033208C177da7A936b6060A5af9;
 
-    address public constant ETH_GEM                   = 0x0000000000000000000000000000000000000000;
-    address public constant MCD_JOIN_INST_ETH_A       = 0x0000000000000000000000000000000000000000;
-    address public constant MCD_CLIP_INST_ETH_A       = 0x0000000000000000000000000000000000000000;
+    address public constant ETH_GEM                   = DssExecLib.getChangelogAddress("ETH");
+    address public constant PIP_ETH                   = DssExecLib.getChangelogAddress("PIP_ETH");
+    address public constant MCD_JOIN_INST_ETH_A       = 0x64840DA08EEC4E25D37A26F13AD5EEA0d83E36A0;
+    address public constant MCD_CLIP_INST_ETH_A       = 0x6222213862c49d87fe452876036a73c42386bdc8;
     address public constant MCD_CLIP_CALC_INST_ETH_A  = 0x0000000000000000000000000000000000000000;
-    address public constant PIP_ETH                   = 0x0000000000000000000000000000000000000000;
 
-    address public constant WBTC_GEM                  = 0x0000000000000000000000000000000000000000;
-    address public constant MCD_JOIN_INST_WBTC_A      = 0x0000000000000000000000000000000000000000;
-    address public constant MCD_CLIP_INST_WBTC_A      = 0x0000000000000000000000000000000000000000;
+
+    address public constant WBTC_GEM                  = DssExecLib.getChangelogAddress("WBTC");
+    address public constant PIP_WBTC                  = DssExecLib.getChangelogAddress("PIP_WBTC");
+    address public constant MCD_JOIN_INST_WBTC_A      = 0xa461e204Cb099463a190403Bd460C54093b37320;
+    address public constant MCD_CLIP_INST_WBTC_A      = 0x720221bcaebdc0b0837ca4569ff0e568954d658e;
     address public constant MCD_CLIP_CALC_INST_WBTC_A = 0x0000000000000000000000000000000000000000;
-    address public constant PIP_WBTC                  = 0x0000000000000000000000000000000000000000;
 
     address public constant NEXO                      = 0x0000000000000000000000000000000000000000;
     address public constant NEXO_ETH_A_URN            = 0x0000000000000000000000000000000000000000;
