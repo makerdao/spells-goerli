@@ -36,21 +36,52 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
+    function testCollateralIntegrations() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // Insert new collateral tests here
+        checkIlkIntegration(
+            "WSTETH-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_WSTETH_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_WSTETH_A")),
+            addr.addr("PIP_WSTETH"),
+            true,
+            true,
+            true
+        );
+    }
+
     function testNewChainlogValues() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
+
+        assertEq(chainLog.getAddress("STETH"), addr.addr("STETH"));
+        assertEq(chainLog.getAddress("WSTETH"), addr.addr("WSTETH"));
+        assertEq(chainLog.getAddress("PIP_WSTETH"), addr.addr("PIP_WSTETH"));
+        assertEq(chainLog.getAddress("MCD_JOIN_WSTETH_A"), addr.addr("MCD_JOIN_WSTETH_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_WSTETH_A"), addr.addr("MCD_CLIP_WSTETH_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WSTETH_A"), addr.addr("MCD_CLIP_CALC_WSTETH_A"));
     }
 
-    // function testNewIlkRegistryValues() public {
-    //     vote(address(spell));
-    //     scheduleWaitAndCast(address(spell));
-    //     assertTrue(spell.done());
+    function testNewIlkRegistryValues() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
 
-    //     IlkRegistryAbstract ilkRegistry = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
+        IlkRegistryAbstract ilkRegistry = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
 
-    //     // Insert new ilk registry values tests here
-    // }
+        assertEq(ilkRegistry.join("WSTETH-A"), addr.addr("MCD_JOIN_WSTETH_A"));
+        assertEq(ilkRegistry.gem("WSTETH-A"), addr.addr("WSTETH"));
+        assertEq(ilkRegistry.dec("WSTETH-A"), DSTokenAbstract(addr.addr("WSTETH")).decimals());
+        assertEq(ilkRegistry.class("WSTETH-A"), 1);
+        assertEq(ilkRegistry.pip("WSTETH-A"), addr.addr("PIP_WSTETH"));
+        assertEq(ilkRegistry.xlip("WSTETH-A"), addr.addr("MCD_CLIP_WSTETH_A"));
+        assertEq(ilkRegistry.name("WSTETH-A"), "Wrapped liquid staked Ether 2.0");
+        assertEq(ilkRegistry.symbol("WSTETH-A"), "wstETH");
+    }
 
     function testFailWrongDay() public {
         require(spell.officeHours() == spellValues.office_hours_enabled);

@@ -302,7 +302,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             osm_mom_authority:     address(chief),          // OsmMom authority
             flipper_mom_authority: address(chief),          // FlipperMom authority
             clipper_mom_authority: address(chief),          // ClipperMom authority
-            ilk_count:             42                       // Num expected in system
+            ilk_count:             43                       // Num expected in system
         });
 
         //
@@ -1526,7 +1526,35 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             calc_step:    120,
             calc_cut:     9990
         });
-
+        afterSpell.collaterals["WSTETH-A"] = CollateralValues({
+            aL_enabled:   true,
+            aL_line:      50 * MILLION,
+            aL_gap:       3 * MILLION,
+            aL_ttl:       8 hours,
+            line:         0,
+            dust:         10 * THOUSAND,
+            pct:          400,
+            mat:          16000,
+            liqType:      "clip",
+            liqOn:        true,
+            chop:         1300,
+            cat_dunk:     0,
+            flip_beg:     0,
+            flip_ttl:     0,
+            flip_tau:     0,
+            flipper_mom:  0,
+            dog_hole:     3 * MILLION,
+            clip_buf:     13000,
+            clip_tail:    140 minutes,
+            clip_cusp:    4000,
+            clip_chip:    10,
+            clip_tip:     300,
+            clipper_mom:  1,
+            cm_tolerance: 5000,
+            calc_tau:     0,
+            calc_step:    90,
+            calc_cut:     9900
+        });
     }
 
     function scheduleWaitAndCastFailDay() public {
@@ -1859,13 +1887,13 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
                     (exists, value) = clip.calc().call(abi.encodeWithSignature("step()"));
                     assertEq(exists ? abi.decode(value, (uint256)) : 0, values.collaterals[ilk].calc_step, string(abi.encodePacked("TestError/calc-step-", ilk)));
                     if (exists) {
-                       assertTrue(abi.decode(value, (uint256)) > 0, string(abi.encodePacked("TestError/calc-step-is-zero-", ilk)));
+                        assertTrue(abi.decode(value, (uint256)) > 0, string(abi.encodePacked("TestError/calc-step-is-zero-", ilk)));
                     }
                     (exists, value) = clip.calc().call(abi.encodeWithSignature("cut()"));
                     uint256 normalizedTestCut = values.collaterals[ilk].calc_cut * 10**23;
                     assertEq(exists ? abi.decode(value, (uint256)) : 0, normalizedTestCut, string(abi.encodePacked("TestError/calc-cut-", ilk)));
                     if (exists) {
-                       assertTrue(abi.decode(value, (uint256)) > 0 && abi.decode(value, (uint256)) < RAY, string(abi.encodePacked("TestError/calc-cut-range-", ilk)));
+                        assertTrue(abi.decode(value, (uint256)) > 0 && abi.decode(value, (uint256)) < RAY, string(abi.encodePacked("TestError/calc-cut-range-", ilk)));
                     }
                 }
             }
@@ -2234,14 +2262,6 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         // Dump all dai for next run
         vat.move(address(this), address(0x0), vat.dai(address(this)));
     }
-
-    // function testCollateralIntegrations() public {
-    //     vote(address(spell));
-    //     scheduleWaitAndCast(address(spell));
-    //     assertTrue(spell.done());
-
-    //     // Insert new collateral tests here
-    // }
 
     function getExtcodesize(address target) public view returns (uint256 exsize) {
         assembly {
