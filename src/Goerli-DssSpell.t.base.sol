@@ -9,6 +9,7 @@ import "dss-interfaces/Interfaces.sol";
 
 import "./test/rates.sol";
 import "./test/addresses_goerli.sol";
+import "./test/addresses_deployer_goerli.sol";
 
 import {DssSpell} from "./Goerli-DssSpell.sol";
 
@@ -69,7 +70,7 @@ interface BrokeTokenAbstract {
     function setAuthority(address) external;
 }
 
-contract GoerliDssSpellTestBase is DSTest, DSMath {
+contract GoerliDssSpellTestBase is DSTest, DSMath, DeployerAddresses {
 
     struct SpellValues {
         address deployed_spell;
@@ -2285,17 +2286,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         }
     }
 
-    address[] deployerAddresses = [
-        0xda0fab060e6cc7b1C0AA105d29Bd50D71f036711,
-        0xDA0FaB0700A4389F6E6679aBAb1692B4601ce9bf,
-        0xdA0C0de01d90A5933692Edf03c7cE946C7c50445,
-        0xdB33dFD3D61308C33C63209845DaD3e6bfb2c674,
-        0xDA01018eA05D98aBb66cb21a85d6019a311570eE,
-        0xDA0111100cb6080b43926253AB88bE719C60Be13
-    ];
-
     // ONLY ON GOERLI
-    function skipWards(address target, address deployer) internal returns (bool ok) {
+    function skipWards(address target, address deployer) view internal returns (bool ok) {
         ok = (
             target   == address(chainLog)    &&
             deployer == deployerAddresses[2] ||
