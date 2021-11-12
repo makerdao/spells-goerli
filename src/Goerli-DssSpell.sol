@@ -35,7 +35,7 @@ contract DssSpellAction is DssAction {
 
     address constant STETH                    = 0x1643E812aE58766192Cf7D2Cf9567dF2C37e9B7F;
     address constant WSTETH                   = 0x6320cD32aA674d2898A68ec82e869385Fc5f7E2f;
-    address constant PIP_WSTETH               = 0x852779784DBB2Fa9A1e711c9776744d2E99c60B4;
+    address constant PIP_WSTETH               = 0x323eac5246d5BcB33d66e260E882fC9bF4B6bf41;
     address constant MCD_JOIN_WSTETH_A        = 0xF99834937715255079849BE25ba31BF8b5D5B45D;
     address constant MCD_CLIP_WSTETH_A        = 0x3673978974fC3fB1bA61aea0a6eb1Bac8e27182c;
     address constant MCD_CLIP_CALC_WSTETH_A   = 0xb4f2f0eDFc10e9084a8bba23d84aF2c23B312852;
