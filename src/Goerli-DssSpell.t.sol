@@ -24,7 +24,7 @@ interface SpellLike {
 }
 
 interface AuthLike {
-    function wards(address) external view returns (uint256);
+    function owner() external view returns (address);
 }
 
 interface PsmAbstract {
@@ -65,6 +65,12 @@ interface BrokeTokenAbstract {
     function owner() external view returns (address);
     function setOwner(address) external;
     function setAuthority(address) external;
+}
+
+interface CharterManagerLike {
+    function join(address, address, uint256) external;
+    function getOrCreateProxy(address) external returns (address);
+    function frob(bytes32, address, address, address, int256, int256) external;
 }
 
 contract DssSpellTest is DSTest, DSMath {
@@ -162,8 +168,11 @@ contract DssSpellTest is DSTest, DSMath {
     ClipperMomAbstract      clipMom = ClipperMomAbstract( addr.addr("CLIPPER_MOM"));
     DssAutoLineAbstract    autoLine = DssAutoLineAbstract(addr.addr("MCD_IAM_AUTO_LINE"));
     LerpFactoryAbstract lerpFactory = LerpFactoryAbstract(addr.addr("LERP_FAB"));
+    CharterManagerLike      charter = CharterManagerLike(addr.addr("MCD_CHARTER_MANAGER"));
 
     // Insert spell-only addresses here
+
+    address public constant NEXO = 0xA46C5449feD1dAd583fbdCA4cee7804eC59B1f0c;
 
     DssSpell spell;
 
@@ -2058,31 +2067,28 @@ contract DssSpellTest is DSTest, DSMath {
         assertTrue(false, "TestError/GiveTokens-slot-not-found");
     }
 
-    function giveAuth(address _base, address target) internal {
+    function takeAuth(address _base, address target) internal {
         AuthLike base = AuthLike(_base);
 
-        // Edge case - ward is already set
-        if (base.wards(target) == 1) return;
-
-        for (int i = 0; i < 100; i++) {
+        for (uint256 i = 0; i < 100; i++) {
             // Scan the storage for the ward storage slot
             bytes32 prevValue = hevm.load(
                 address(base),
-                keccak256(abi.encode(target, uint256(i)))
+                bytes32(i)
             );
             hevm.store(
                 address(base),
-                keccak256(abi.encode(target, uint256(i))),
+                bytes32(i),
                 bytes32(uint256(1))
             );
-            if (base.wards(target) == 1) {
+            if (base.owner() == target) {
                 // Found it
                 return;
             } else {
                 // Keep going after restoring the original value
                 hevm.store(
                     address(base),
-                    keccak256(abi.encode(target, uint256(i))),
+                    bytes32(i),
                     prevValue
                 );
             }
@@ -2315,13 +2321,115 @@ contract DssSpellTest is DSTest, DSMath {
         vat.move(address(this), address(0x0), vat.dai(address(this)));
     }
 
-    // function testCollateralIntegrations() public {
-    //     vote(address(spell));
-    //     scheduleWaitAndCast(address(spell));
-    //     assertTrue(spell.done());
+    function checkCharterIlkIntegration(
+        bytes32 _ilk,
+        GemJoinManagedAbstract join,
+        ClipAbstract clip,
+        address pip,
+        bool _isOSM,
+        bool _checkLiquidations,
+        bool _transferFee
+    ) public {
+        // take ownership of the ds-proxy
+        takeAuth(NEXO, address(this));
 
-    //     // Insert new collateral tests here
-    // }
+        DSTokenAbstract token = DSTokenAbstract(join.gem());
+
+        if (_isOSM) OsmAbstract(pip).poke();
+        hevm.warp(block.timestamp + 3601);
+        if (_isOSM) OsmAbstract(pip).poke();
+        spotter.poke(_ilk);
+
+        // Authorization
+        assertEq(join.wards(pauseProxy), 1);
+        assertEq(vat.wards(address(join)), 1);
+        assertEq(clip.wards(address(end)), 1);
+        assertEq(clip.wards(address(clipMom)), 1);
+        if (_isOSM) {
+            assertEq(OsmAbstract(pip).wards(address(osmMom)), 1);
+            assertEq(OsmAbstract(pip).bud(address(spotter)), 1);
+            assertEq(OsmAbstract(pip).bud(address(end)), 1);
+            assertEq(MedianAbstract(OsmAbstract(pip).src()).bud(pip), 1);
+        }
+
+        (,,,, uint256 dust) = vat.ilks(_ilk);
+        dust /= RAY;
+        uint256 amount = 2 * dust * WAD / (_isOSM ? getOSMPrice(pip) : uint256(DSValueAbstract(pip).read()));
+        giveTokens(token, amount);
+
+        assertEq(token.balanceOf(address(this)), amount);
+        assertEq(vat.gem(_ilk, address(this)), 0);
+        token.approve(address(charter), amount);
+        charter.join(address(join), address(this), amount);
+        assertEq(token.balanceOf(address(this)), 0);
+        if (_transferFee) {
+            amount = vat.gem(_ilk, address(this));
+            assertTrue(amount > 0);
+        }
+        assertEq(vat.gem(_ilk, address(this)), amount);
+
+        // Tick the fees forward so that art != dai in wad units
+        hevm.warp(block.timestamp + 1);
+        jug.drip(_ilk);
+
+        // Deposit collateral, generate DAI
+        (,uint256 rate,,,) = vat.ilks(_ilk);
+        assertEq(vat.dai(address(this)), 0);
+        charter.frob(_ilk, address(this), address(this), address(this), int256(amount), int256(divup(mul(RAY, dust), rate)));
+        assertEq(vat.gem(_ilk, address(this)), 0);
+        assertTrue(vat.dai(address(this)) >= dust * RAY);
+        assertTrue(vat.dai(address(this)) <= (dust + 1) * RAY);
+
+        // Payback DAI, withdraw collateral
+        vat.frob(_ilk, address(this), address(this), address(this), -int256(amount), -int256(divup(mul(RAY, dust), rate)));
+        assertEq(vat.gem(_ilk, address(this)), amount);
+        assertEq(vat.dai(address(this)), 0);
+/*
+        // Withdraw from adapter
+        join.exit(address(this), amount);
+        if (_transferFee) {
+            amount = token.balanceOf(address(this));
+        }
+        assertEq(token.balanceOf(address(this)), amount);
+        assertEq(vat.gem(_ilk, address(this)), 0);
+
+        // Generate new DAI to force a liquidation
+        token.approve(address(join), amount);
+        join.join(address(this), amount);
+        if (_transferFee) {
+            amount = vat.gem(_ilk, address(this));
+        }
+        // dart max amount of DAI
+        (,,uint256 spot,,) = vat.ilks(_ilk);
+        vat.frob(_ilk, address(this), address(this), address(this), int256(amount), int256(mul(amount, spot) / rate));
+        hevm.warp(block.timestamp + 1);
+        jug.drip(_ilk);
+        assertEq(clip.kicks(), 0);
+        if (_checkLiquidations) {
+            dog.bark(_ilk, address(this), address(this));
+            assertEq(clip.kicks(), 1);
+        }
+
+        // Dump all dai for next run
+        vat.move(address(this), address(0x0), vat.dai(address(this)));
+*/
+    }
+
+    function testCollateralIntegrations() public {
+         vote(address(spell));
+         scheduleWaitAndCast(address(spell));
+         assertTrue(spell.done());
+
+        checkCharterIlkIntegration(
+            "INST-ETH-A",
+            GemJoinManagedAbstract(addr.addr("MCD_JOIN_INST_ETH_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_INST_ETH_A")),
+            addr.addr("PIP_ETH"),
+            true,
+            true,
+            false
+        );
+    }
 
     function getExtcodesize(address target) public view returns (uint256 exsize) {
         assembly {

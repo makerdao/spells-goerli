@@ -116,7 +116,7 @@ contract DssSpellAction is DssAction {
         (, uint256 oldRate,,,) = VatLike(MCD_VAT).ilks(oldIlk);
         (, uint256 rate,,,) = VatLike(MCD_VAT).ilks(ilk);
 
-        uint256 oldDart = dai / oldRate; // TODO: not nice that dart is uint
+        uint256 oldDart = dai / oldRate;
         uint256 gemAmt = dink / (10 ** (18 - TokenLike(gem).decimals()));
         int256  dart = int256(_mul(oldRate, oldDart) / rate);
 
