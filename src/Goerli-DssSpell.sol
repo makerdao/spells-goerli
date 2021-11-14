@@ -82,6 +82,8 @@ contract DssSpellAction is DssAction {
     address public constant MCD_SPOT                  = 0xACe2A9106ec175bd56ec05C9E38FE1FDa8a1d758;
     address public constant MCD_CHARTER_MANAGER       = 0x91678e757C20351d0D393e3C907c6C9B5ef46d6c;
     address public constant MCD_CHARTER_MANAGER_IMP   = 0x23eA5CC5c9252033208C177da7A936b6060A5af9;
+    address public constant PROXY_ACTIONS_CHARTER     = 0x2ea3036484FCf9B7F5E1329da7e910778767D063;
+    address public constant PROXY_ACTIONS_END_CHARTER = 0x91678e757C20351d0D393e3C907c6C9B5ef46d6c;
 
     address public constant ETH                       = 0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6;
     address public constant PIP_ETH                   = 0x94588e35fF4d2E99ffb8D5095F35d1E37d6dDf12;
@@ -117,8 +119,9 @@ contract DssSpellAction is DssAction {
         (, uint256 rate,,,) = VatLike(MCD_VAT).ilks(ilk);
 
         uint256 oldDart = dai / oldRate;
-        uint256 gemAmt = dink / (10 ** (18 - TokenLike(gem).decimals()));
         int256  dart = int256(_mul(oldRate, oldDart) / rate);
+
+        uint256 gemAmt = dink / (10 ** (18 - TokenLike(gem).decimals()));
 
         VatLike(MCD_VAT).grab(oldIlk, oldUrn, address(this), MCD_VOW, -int256(dink), -int256(oldDart));
         GemJoinLike(oldAdapter).exit(address(this), gemAmt);
@@ -261,6 +264,17 @@ contract DssSpellAction is DssAction {
 
         // Changelog
         DssExecLib.setChangelogAddress("MCD_CHARTER_MANAGER", MCD_CHARTER_MANAGER);
+        DssExecLib.setChangelogAddress("PROXY_ACTIONS_CHARTER", PROXY_ACTIONS_CHARTER);
+        DssExecLib.setChangelogAddress("PROXY_ACTIONS_END_CHARTER", PROXY_ACTIONS_END_CHARTER);
+
+        DssExecLib.setChangelogAddress("MCD_JOIN_INST_ETH_A", MCD_JOIN_INST_ETH_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_INST_ETH_A", MCD_CLIP_INST_ETH_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_INST_ETH_A", MCD_CLIP_CALC_INST_ETH_A);
+
+        DssExecLib.setChangelogAddress("MCD_JOIN_INST_WBTC_A", MCD_JOIN_INST_WBTC_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_INST_WBTC_A", MCD_CLIP_INST_WBTC_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_INST_WBTC_A", MCD_CLIP_CALC_INST_WBTC_A);
+
         DssExecLib.setChangelogVersion("1.9.10");
     }
 }

@@ -68,9 +68,11 @@ interface BrokeTokenAbstract {
 }
 
 interface CharterManagerLike {
-    function join(address, address, uint256) external;
     function getOrCreateProxy(address) external returns (address);
-    function frob(bytes32, address, address, address, int256, int256) external;
+}
+
+interface DsProxyLike {
+    function execute(address, bytes memory) external payable returns (bytes memory);
 }
 
 contract DssSpellTest is DSTest, DSMath {
@@ -172,7 +174,9 @@ contract DssSpellTest is DSTest, DSMath {
 
     // Insert spell-only addresses here
 
-    address public constant NEXO = 0xA46C5449feD1dAd583fbdCA4cee7804eC59B1f0c;
+    address public constant NEXO                = 0xA46C5449feD1dAd583fbdCA4cee7804eC59B1f0c;
+    address public constant proxyActionsCharter = 0x2ea3036484FCf9B7F5E1329da7e910778767D063;
+    DsProxyLike             dsProxy             = DsProxyLike(NEXO);
 
     DssSpell spell;
 
@@ -2079,7 +2083,7 @@ contract DssSpellTest is DSTest, DSMath {
             hevm.store(
                 address(base),
                 bytes32(i),
-                bytes32(uint256(1))
+                bytes32(uint256(uint160(target)))
             );
             if (base.owner() == target) {
                 // Found it
@@ -2321,14 +2325,32 @@ contract DssSpellTest is DSTest, DSMath {
         vat.move(address(this), address(0x0), vat.dai(address(this)));
     }
 
+    function assertEqApprox(uint256 _a, uint256 _b, uint256 _tolerance) internal {
+        uint256 a = _a;
+        uint256 b = _b;
+        if (a < b) {
+            uint256 tmp = a;
+            a = b;
+            b = tmp;
+        }
+        if (a - b > _tolerance) {
+            emit log_bytes32("Error: Wrong `uint' value");
+            emit log_named_uint("  Expected", _b);
+            emit log_named_uint("    Actual", _a);
+            fail();
+        }
+    }
+
     function checkCharterIlkIntegration(
         bytes32 _ilk,
         GemJoinManagedAbstract join,
         ClipAbstract clip,
         address pip,
         bool _isOSM,
-        bool _checkLiquidations,
-        bool _transferFee
+        //bool _checkLiquidations,
+        //bool _transferFee,
+        uint256 migratedInk,
+        uint256 migratedDai
     ) public {
         // take ownership of the ds-proxy
         takeAuth(NEXO, address(this));
@@ -2352,6 +2374,12 @@ contract DssSpellTest is DSTest, DSMath {
             assertEq(MedianAbstract(OsmAbstract(pip).src()).bud(pip), 1);
         }
 
+        // Check post-migration ink and art
+        (,uint256 rate,,,) = vat.ilks(_ilk);
+        (uint256 ink, uint256 art) = vat.urns(_ilk, charter.getOrCreateProxy(NEXO));
+        assertEq(ink, migratedInk);
+        assertEqApprox(art * rate, migratedDai, RAY);
+
         (,,,, uint256 dust) = vat.ilks(_ilk);
         dust /= RAY;
         uint256 amount = 2 * dust * WAD / (_isOSM ? getOSMPrice(pip) : uint256(DSValueAbstract(pip).read()));
@@ -2359,15 +2387,16 @@ contract DssSpellTest is DSTest, DSMath {
 
         assertEq(token.balanceOf(address(this)), amount);
         assertEq(vat.gem(_ilk, address(this)), 0);
-        token.approve(address(charter), amount);
-        charter.join(address(join), address(this), amount);
+        token.approve(address(dsProxy), amount);
+        dsProxy.execute(proxyActionsCharter, abi.encodeWithSignature("lockGem(address,uint256)", address(join), amount));
         assertEq(token.balanceOf(address(this)), 0);
-        if (_transferFee) {
-            amount = vat.gem(_ilk, address(this));
-            assertTrue(amount > 0);
-        }
-        assertEq(vat.gem(_ilk, address(this)), amount);
+        (ink, art) = vat.urns(_ilk, charter.getOrCreateProxy(NEXO));
+        assertEq(ink, migratedInk + amount);
+        //assertEq(vat.gem(_ilk, address(this)), amount);
+        return;
 
+        // TODO: continue tests..
+/*
         // Tick the fees forward so that art != dai in wad units
         hevm.warp(block.timestamp + 1);
         jug.drip(_ilk);
@@ -2384,7 +2413,7 @@ contract DssSpellTest is DSTest, DSMath {
         vat.frob(_ilk, address(this), address(this), address(this), -int256(amount), -int256(divup(mul(RAY, dust), rate)));
         assertEq(vat.gem(_ilk, address(this)), amount);
         assertEq(vat.dai(address(this)), 0);
-/*
+
         // Withdraw from adapter
         join.exit(address(this), amount);
         if (_transferFee) {
@@ -2426,8 +2455,10 @@ contract DssSpellTest is DSTest, DSMath {
             ClipAbstract(addr.addr("MCD_CLIP_INST_ETH_A")),
             addr.addr("PIP_ETH"),
             true,
-            true,
-            false
+            //true,
+            //false,
+            10 * WAD,
+            15_000 * RAD
         );
     }
 
@@ -2473,6 +2504,8 @@ contract DssSpellTest is DSTest, DSMath {
         assertTrue(spell.done());
 
         assertEq(chainLog.getAddress("MCD_CHARTER_MANAGER"), addr.addr("MCD_CHARTER_MANAGER"));
+        assertEq(chainLog.getAddress("PROXY_ACTIONS_CHARTER"), addr.addr("PROXY_ACTIONS_CHARTER"));
+        assertEq(chainLog.getAddress("PROXY_ACTIONS_END_CHARTER"), addr.addr("PROXY_ACTIONS_END_CHARTER"));
 
         assertEq(chainLog.getAddress("MCD_JOIN_INST_ETH_A"), addr.addr("MCD_JOIN_INST_ETH_A"));
         assertEq(chainLog.getAddress("MCD_CLIP_INST_ETH_A"), addr.addr("MCD_CLIP_INST_ETH_A"));
