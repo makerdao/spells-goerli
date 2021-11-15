@@ -172,6 +172,12 @@ contract Addresses {
         addr["MCD_JOIN_MATIC_A"]                = 0xeb680839564F0F9bFB96fE2dF47a31cE31689e63;
         addr["MCD_CLIP_MATIC_A"]                = 0x2082c825b5311A2612c12e6DaF7EFa3Fb37BACbD;
         addr["MCD_CLIP_CALC_MATIC_A"]           = 0xB2dF4Ed2f6a665656CE3405E8f75b9DE8A6E24e9;
+        addr["STETH"]                           = 0x1643E812aE58766192Cf7D2Cf9567dF2C37e9B7F;
+        addr["WSTETH"]                          = 0x6320cD32aA674d2898A68ec82e869385Fc5f7E2f;
+        addr["PIP_WSTETH"]                      = 0x323eac5246d5BcB33d66e260E882fC9bF4B6bf41;
+        addr["MCD_JOIN_WSTETH_A"]               = 0xF99834937715255079849BE25ba31BF8b5D5B45D;
+        addr["MCD_CLIP_WSTETH_A"]               = 0x3673978974fC3fB1bA61aea0a6eb1Bac8e27182c;
+        addr["MCD_CLIP_CALC_WSTETH_A"]          = 0xb4f2f0eDFc10e9084a8bba23d84aF2c23B312852;
         addr["UNIV2DAIETH"]                     = 0x5dD9dec52a16d4d1Df10a66ac71d4731c9Dad984;
         addr["PIP_UNIV2DAIETH"]                 = 0x044c9aeD56369aA3f696c898AEd0C38dC53c6C3D;
         addr["MCD_JOIN_UNIV2DAIETH_A"]          = 0x66931685b532CB4F31abfe804d2408dD34Cd419D;
@@ -261,7 +267,8 @@ contract Addresses {
         addr["RWA006_A_OUTPUT_CONDUIT"]         = 0xd2Ef07535267D17d2314894f7821A43e9700A02e;
         addr["PROXY_PAUSE_ACTIONS"]             = 0x8D1187FCa9A104211bd25c689C08718AD8730C83;
         addr["PROXY_DEPLOYER"]                  = 0xc9476Fd378de5b0de5C4280D4323f6F89f723c15;
-        addr["LERP_FAB"]                        = 0xbBD821c291c492c40Db2577D9b6E5B1bdAEBD207;
+        addr["LERP_FAB"]                        = 0xE7988B75a19D8690272D65882Ab0D07D492f7002;
+        addr["JOIN_FAB"]                        = 0x0aaA1E0f026c194E0F951a7763F9edc796c6eDeE;
         addr["GUNIV3DAIUSDC1"]                  = 0xc5D83e829Ecdce4d67645EE1a1317451e0b4c68d;
         addr["PIP_GUNIV3DAIUSDC1"]              = 0xF953cdebbbf63607EeBc556438d86F2e1d47C8aA;
         addr["MCD_JOIN_GUNIV3DAIUSDC1_A"]       = 0xFBF4e3bB9B86d24F91Da185E6F4C8D903Fb63C86;

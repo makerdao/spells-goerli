@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
+//
 // Copyright (C) 2021 Dai Foundation
 //
 // This program is free software: you can redistribute it and/or modify
@@ -51,10 +52,9 @@ interface CharterManagerLike {
 }
 
 contract DssSpellAction is DssAction {
-
     // Provides a descriptive tag for bot consumption
     // This should be modified weekly to provide a summary of the actions
-    // Hash: seth keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/TODO -q -O - 2>/dev/null)"
+    // Hash: seth keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/287beee2bb76636b8b9e02c7e698fa639cb6b859/governance/votes/Executive%20vote%20-%20October%2022%2C%202021.md -q -O - 2>/dev/null)"
     string public constant override description = "Goerli Spell";
 
     uint256 constant THOUSAND = 10 ** 3;
@@ -278,6 +278,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.setChangelogVersion("1.9.10");
     }
 }
+
 
 contract DssSpell is DssExec {
     constructor() DssExec(block.timestamp + 30 days, address(new DssSpellAction())) public {}

@@ -5,6 +5,7 @@ pragma solidity 0.6.12;
 import "./Goerli-DssSpell.t.base.sol";
 
 contract DssSpellTest is GoerliDssSpellTestBase {
+
     function testSpellIsCast_GENERAL() public {
         string memory description = new DssSpell().description();
         assertTrue(bytes(description).length > 0, "TestError/spell-description-length");
@@ -35,39 +36,34 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
-    // function testCollateralIntegrations() public {
-    //     vote(address(spell));
-    //     scheduleWaitAndCast(address(spell));
-    //     assertTrue(spell.done());
+    function testCollateralIntegrations() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
 
-    //     Insert new collateral tests here
-    //     checkIlkIntegration(
-    //         "WSTETH-A",
-    //         GemJoinAbstract(addr.addr("MCD_JOIN_WSTETH_A")),
-    //         ClipAbstract(addr.addr("MCD_CLIP_WSTETH_A")),
-    //         addr.addr("PIP_WSTETH"),
-    //         true,
-    //         true,
-    //         true
-    //     );
-    // }
+        // Insert new collateral tests here
+        checkIlkIntegration(
+            "WSTETH-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_WSTETH_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_WSTETH_A")),
+            addr.addr("PIP_WSTETH"),
+            true,
+            true,
+            true
+        );
+    }
 
     function testNewChainlogValues() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        assertEq(chainLog.getAddress("MCD_CHARTER_MANAGER"), addr.addr("MCD_CHARTER_MANAGER"));
-        assertEq(chainLog.getAddress("PROXY_ACTIONS_CHARTER"), addr.addr("PROXY_ACTIONS_CHARTER"));
-        assertEq(chainLog.getAddress("PROXY_ACTIONS_END_CHARTER"), addr.addr("PROXY_ACTIONS_END_CHARTER"));
-
-        assertEq(chainLog.getAddress("MCD_JOIN_INST_ETH_A"), addr.addr("MCD_JOIN_INST_ETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_INST_ETH_A"), addr.addr("MCD_CLIP_INST_ETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_INST_ETH_A"), addr.addr("MCD_CLIP_CALC_INST_ETH_A"));
-
-        assertEq(chainLog.getAddress("MCD_JOIN_INST_WBTC_A"), addr.addr("MCD_JOIN_INST_WBTC_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_INST_WBTC_A"), addr.addr("MCD_CLIP_INST_WBTC_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_INST_WBTC_A"), addr.addr("MCD_CLIP_CALC_INST_WBTC_A"));
+        assertEq(chainLog.getAddress("STETH"), addr.addr("STETH"));
+        assertEq(chainLog.getAddress("WSTETH"), addr.addr("WSTETH"));
+        assertEq(chainLog.getAddress("PIP_WSTETH"), addr.addr("PIP_WSTETH"));
+        assertEq(chainLog.getAddress("MCD_JOIN_WSTETH_A"), addr.addr("MCD_JOIN_WSTETH_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_WSTETH_A"), addr.addr("MCD_CLIP_WSTETH_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WSTETH_A"), addr.addr("MCD_CLIP_CALC_WSTETH_A"));
     }
 
     function testNewIlkRegistryValues() public {
@@ -77,6 +73,14 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         IlkRegistryAbstract ilkRegistry = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
 
+        assertEq(ilkRegistry.join("WSTETH-A"), addr.addr("MCD_JOIN_WSTETH_A"));
+        assertEq(ilkRegistry.gem("WSTETH-A"), addr.addr("WSTETH"));
+        assertEq(ilkRegistry.dec("WSTETH-A"), DSTokenAbstract(addr.addr("WSTETH")).decimals());
+        assertEq(ilkRegistry.class("WSTETH-A"), 1);
+        assertEq(ilkRegistry.pip("WSTETH-A"), addr.addr("PIP_WSTETH"));
+        assertEq(ilkRegistry.xlip("WSTETH-A"), addr.addr("MCD_CLIP_WSTETH_A"));
+        assertEq(ilkRegistry.name("WSTETH-A"), "Wrapped liquid staked Ether 2.0");
+        assertEq(ilkRegistry.symbol("WSTETH-A"), "wstETH");
     }
 
     function testFailWrongDay() public {
@@ -306,132 +310,4 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         }
         assertEq(expectedHash, actualHash);
     }
-
-
-    address public constant NEXO                = 0xA46C5449feD1dAd583fbdCA4cee7804eC59B1f0c;
-    address public constant proxyActionsCharter = 0x2ea3036484FCf9B7F5E1329da7e910778767D063;
-    DsProxyLike             dsProxy             = DsProxyLike(NEXO);
-
-    function testCharterCollateralIntegrations() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        checkCharterIlkIntegration(
-            "INST-ETH-A",
-            GemJoinManagedAbstract(addr.addr("MCD_JOIN_INST_ETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_INST_ETH_A")),
-            addr.addr("PIP_ETH"),
-            true,
-            15 * WAD,
-            20_000 * RAD
-        );
-
-        // TODO: test also wbtc
-    }
-
-    function checkCharterIlkIntegration(
-        bytes32 _ilk,
-        GemJoinManagedAbstract join,
-        ClipAbstract clip,
-        address pip,
-        bool _isOSM,
-        uint256 migratedInk,
-        uint256 migratedDai
-    ) public {
-        // take ownership of the ds-proxy
-        giveOwner(NEXO, address(this));
-
-        DSTokenAbstract token = DSTokenAbstract(join.gem());
-
-        if (_isOSM) OsmAbstract(pip).poke();
-        hevm.warp(block.timestamp + 3601);
-        if (_isOSM) OsmAbstract(pip).poke();
-        spotter.poke(_ilk);
-
-        // Authorization
-        assertEq(join.wards(pauseProxy), 1);
-        assertEq(vat.wards(address(join)), 1);
-        assertEq(clip.wards(address(end)), 1);
-        assertEq(clip.wards(address(clipMom)), 1);
-        if (_isOSM) {
-            assertEq(OsmAbstract(pip).wards(address(osmMom)), 1);
-            assertEq(OsmAbstract(pip).bud(address(spotter)), 1);
-            assertEq(OsmAbstract(pip).bud(address(end)), 1);
-            assertEq(MedianAbstract(OsmAbstract(pip).src()).bud(pip), 1);
-        }
-
-        // Check post-migration ink and art
-        (,uint256 rate,,,) = vat.ilks(_ilk);
-        (uint256 ink, uint256 art) = vat.urns(_ilk, charter.getOrCreateProxy(NEXO));
-        assertEq(ink, migratedInk);
-        assertEqApprox(art * rate, migratedDai, RAY);
-
-        (,,,, uint256 dust) = vat.ilks(_ilk);
-        dust /= RAY;
-        uint256 amount = 2 * dust * WAD / (_isOSM ? getOSMPrice(pip) : uint256(DSValueAbstract(pip).read()));
-        giveTokens(token, amount);
-
-        assertEq(token.balanceOf(address(this)), amount);
-        assertEq(vat.gem(_ilk, address(this)), 0);
-        token.approve(address(dsProxy), amount);
-        dsProxy.execute(proxyActionsCharter, abi.encodeWithSignature("lockGem(address,uint256)", address(join), amount));
-        assertEq(token.balanceOf(address(this)), 0);
-        (ink, art) = vat.urns(_ilk, charter.getOrCreateProxy(NEXO));
-        assertEq(ink, migratedInk + amount);
-        //assertEq(vat.gem(_ilk, address(this)), amount);
-        return;
-
-        // TODO: continue tests..
-        /*
-        // Tick the fees forward so that art != dai in wad units
-        hevm.warp(block.timestamp + 1);
-        jug.drip(_ilk);
-
-        // Deposit collateral, generate DAI
-        (,uint256 rate,,,) = vat.ilks(_ilk);
-        assertEq(vat.dai(address(this)), 0);
-        charter.frob(_ilk, address(this), address(this), address(this), int256(amount), int256(divup(mul(RAY, dust), rate)));
-        assertEq(vat.gem(_ilk, address(this)), 0);
-        assertTrue(vat.dai(address(this)) >= dust * RAY);
-        assertTrue(vat.dai(address(this)) <= (dust + 1) * RAY);
-
-        // Payback DAI, withdraw collateral
-        vat.frob(_ilk, address(this), address(this), address(this), -int256(amount), -int256(divup(mul(RAY, dust), rate)));
-        assertEq(vat.gem(_ilk, address(this)), amount);
-        assertEq(vat.dai(address(this)), 0);
-
-        // Withdraw from adapter
-        join.exit(address(this), amount);
-        if (_transferFee) {
-            amount = token.balanceOf(address(this));
-        }
-        assertEq(token.balanceOf(address(this)), amount);
-        assertEq(vat.gem(_ilk, address(this)), 0);
-
-        // Generate new DAI to force a liquidation
-        token.approve(address(join), amount);
-        join.join(address(this), amount);
-        if (_transferFee) {
-            amount = vat.gem(_ilk, address(this));
-        }
-        // dart max amount of DAI
-        (,,uint256 spot,,) = vat.ilks(_ilk);
-        vat.frob(_ilk, address(this), address(this), address(this), int256(amount), int256(mul(amount, spot) / rate));
-        hevm.warp(block.timestamp + 1);
-        jug.drip(_ilk);
-        assertEq(clip.kicks(), 0);
-        if (_checkLiquidations) {
-            dog.bark(_ilk, address(this), address(this));
-            assertEq(clip.kicks(), 1);
-        }
-
-        // Dump all dai for next run
-        vat.move(address(this), address(0x0), vat.dai(address(this)));
-        */
-    }
-}
-
-interface DsProxyLike {
-    function execute(address, bytes memory) external payable returns (bytes memory);
 }
