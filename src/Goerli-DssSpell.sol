@@ -57,6 +57,11 @@ contract DssSpellAction is DssAction {
     // Hash: seth keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/287beee2bb76636b8b9e02c7e698fa639cb6b859/governance/votes/Executive%20vote%20-%20October%2022%2C%202021.md -q -O - 2>/dev/null)"
     string public constant override description = "Goerli Spell";
 
+    // Turn off office hours
+    function officeHours() public override returns (bool) {
+        return false;
+    }
+
     uint256 constant THOUSAND = 10 ** 3;
     uint256 constant MILLION  = 10 ** 6;
     uint256 constant WAD      = 10 ** 18;
@@ -77,32 +82,45 @@ contract DssSpellAction is DssAction {
 
     uint256 constant ONE_POINT_FIVE_PCT = 1000000000472114805215157978;
 
-    address public constant MCD_VAT                   = 0xB966002DDAa2Baf48369f5015329750019736031;
-    address public constant MCD_VOW                   = 0x23f78612769b9013b3145E43896Fa1578cAa2c2a;
-    address public constant MCD_SPOT                  = 0xACe2A9106ec175bd56ec05C9E38FE1FDa8a1d758;
+    address public immutable MCD_VAT;
+    address public immutable MCD_VOW;
+    address public immutable MCD_SPOT;
+    address public immutable ETH;
+    address public immutable PIP_ETH;
+    address public immutable WBTC;
+    address public immutable PIP_WBTC;
+    address public immutable MCD_JOIN_ETH_A;
+    address public immutable MCD_JOIN_WBTC_A;
+
     address public constant MCD_CHARTER_MANAGER       = 0x91678e757C20351d0D393e3C907c6C9B5ef46d6c;
     address public constant MCD_CHARTER_MANAGER_IMP   = 0x23eA5CC5c9252033208C177da7A936b6060A5af9;
     address public constant PROXY_ACTIONS_CHARTER     = 0x2ea3036484FCf9B7F5E1329da7e910778767D063;
     address public constant PROXY_ACTIONS_END_CHARTER = 0x91678e757C20351d0D393e3C907c6C9B5ef46d6c;
 
-    address public constant ETH                       = 0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6;
-    address public constant PIP_ETH                   = 0x94588e35fF4d2E99ffb8D5095F35d1E37d6dDf12;
     address public constant MCD_JOIN_INST_ETH_A       = 0x64840DA08EEC4E25D37A26F13AD5EEA0d83E36A0;
     address public constant MCD_CLIP_INST_ETH_A       = 0x6222213862c49d87fE452876036A73c42386bdc8;
     address public constant MCD_CLIP_CALC_INST_ETH_A  = 0x250BCc40fF755D6c6f56b28826EB830cD3638570;
 
-    address public constant WBTC                      = 0x7ccF0411c7932B99FC3704d68575250F032e3bB7;
-    address public constant PIP_WBTC                  = 0xE7de200a3a29E9049E378b52BD36701A0Ce68C3b;
     address public constant MCD_JOIN_INST_WBTC_A      = 0xa461e204Cb099463a190403Bd460C54093b37320;
     address public constant MCD_CLIP_INST_WBTC_A      = 0x720221bcAEbdC0b0837ca4569FF0E568954D658e;
     address public constant MCD_CLIP_CALC_INST_WBTC_A = 0x7E906D070E16e7c0dA33E57b3ca460CC8217E9b1;
 
     // 0xe1BDDCbED1C90785fdcA9a72A9345e498313Bd4F
     address public constant NEXO                      = 0xA46C5449feD1dAd583fbdCA4cee7804eC59B1f0c;
-    address public constant MCD_JOIN_ETH_A            = 0x2372031bB0fC735722AA4009AeBf66E8BEAF4BA1;
     address public constant NEXO_OLD_ETH_A_URN        = 0xc82f39C54F0709Fe624E35BF91B76Ba7674de54D;
-    address public constant MCD_JOIN_WBTC_A           = 0x3cbE712a12e651eEAF430472c0C1BF1a2a18939D;
     address public constant NEXO_OLD_WBTC_A_URN       = 0x20B9a6eB4A8249e879Db6C6A6799BF52294eFeB7;
+
+    constructor() public {
+        MCD_VAT = DssExecLib.getChangelogAddress("MCD_VAT");
+        MCD_VOW = DssExecLib.getChangelogAddress("MCD_VOW");
+        MCD_SPOT = DssExecLib.getChangelogAddress("MCD_SPOT");
+        ETH = DssExecLib.getChangelogAddress("ETH");
+        PIP_ETH = DssExecLib.getChangelogAddress("PIP_ETH");
+        MCD_JOIN_ETH_A = DssExecLib.getChangelogAddress("MCD_JOIN_ETH_A");
+        WBTC = DssExecLib.getChangelogAddress("WBTC");
+        PIP_WBTC = DssExecLib.getChangelogAddress("PIP_WBTC");
+        MCD_JOIN_WBTC_A = DssExecLib.getChangelogAddress("MCD_JOIN_WBTC_A");
+    }
 
     function migrate(
         address gem,
@@ -164,34 +182,33 @@ contract DssSpellAction is DssAction {
         // Charter Manager
         CharterManagerLike(MCD_CHARTER_MANAGER).setImplementation(MCD_CHARTER_MANAGER_IMP);
 
-        // INST-ETH-A
+        // INST-ETH-A onboarding
+        DssExecLib.addNewCollateral(
+            CollateralOpts({
+                ilk:                   "INST-ETH-A",
+                gem:                   ETH,
+                join:                  MCD_JOIN_INST_ETH_A,
+                clip:                  MCD_CLIP_INST_ETH_A,
+                calc:                  MCD_CLIP_CALC_INST_ETH_A,
+                pip:                   PIP_ETH,
+                isLiquidatable:        true,
+                isOSM:                 true,
+                whitelistOSM:          false,
+                ilkDebtCeiling:        30 * THOUSAND,
+                minVaultAmount:        10 * THOUSAND,
+                maxLiquidationAmount:  50 * MILLION,
+                liquidationPenalty:    2000,
+                ilkStabilityFee:       ONE_POINT_FIVE_PCT,
+                startingPriceFactor:   12000,
+                breakerTolerance:      5000,
+                auctionDuration:       140 minutes,
+                permittedDrop:         4000,
+                liquidationRatio:      12000,
+                kprFlatReward:         300,
+                kprPctReward:          10 // 0.1%
+            })
+        );
         DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_INST_ETH_A, 90 seconds, 9900);
-
-        CollateralOpts memory INST_ETH_A = CollateralOpts({
-            ilk:                   "INST-ETH-A",
-            gem:                   ETH,
-            join:                  MCD_JOIN_INST_ETH_A,
-            clip:                  MCD_CLIP_INST_ETH_A,
-            calc:                  MCD_CLIP_CALC_INST_ETH_A,
-            pip:                   PIP_ETH,
-            isLiquidatable:        true,
-            isOSM:                 true,
-            whitelistOSM:          false,
-            ilkDebtCeiling:        30 * THOUSAND,
-            minVaultAmount:        10 * THOUSAND,
-            maxLiquidationAmount:  50 * MILLION,
-            liquidationPenalty:    2000,
-            ilkStabilityFee:       ONE_POINT_FIVE_PCT,
-            startingPriceFactor:   12000,
-            breakerTolerance:      5000,
-            auctionDuration:       140 minutes,
-            permittedDrop:         4000,
-            liquidationRatio:      12000,
-            kprFlatReward:         300,
-            kprPctReward:          10 // 0.1%
-        });
-
-        DssExecLib.addNewCollateral(INST_ETH_A);
 
         GemJoinLike(MCD_JOIN_INST_ETH_A).rely(MCD_CHARTER_MANAGER);
         CharterManagerLike(MCD_CHARTER_MANAGER).file("INST-ETH-A", "gate", 1);
@@ -199,9 +216,8 @@ contract DssSpellAction is DssAction {
         CharterManagerLike(MCD_CHARTER_MANAGER).file("INST-ETH-A", NEXO, "peace", 150 * RAY / 100); // 150%
         CharterManagerLike(MCD_CHARTER_MANAGER).file("INST-ETH-A", NEXO, "uline", 900 * MILLION * RAD);
 
-        // INST-WBTC-A
-        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_INST_WBTC_A, 90 seconds, 9900);
 
+        // INST-ETH-A Nexo migration
         migrate(
             ETH,
             "ETH-A",
@@ -216,31 +232,33 @@ contract DssSpellAction is DssAction {
         validateSafe("INST-ETH-A", CharterManagerLike(MCD_CHARTER_MANAGER).getOrCreateProxy(NEXO));
         validateUlinePeace("INST-ETH-A", CharterManagerLike(MCD_CHARTER_MANAGER).getOrCreateProxy(NEXO));
 
-        CollateralOpts memory INST_WBTC_A = CollateralOpts({
-            ilk:                   "INST-WBTC-A",
-            gem:                   WBTC,
-            join:                  MCD_JOIN_INST_WBTC_A,
-            clip:                  MCD_CLIP_INST_WBTC_A,
-            calc:                  MCD_CLIP_CALC_INST_WBTC_A,
-            pip:                   PIP_WBTC,
-            isLiquidatable:        true,
-            isOSM:                 true,
-            whitelistOSM:          false,
-            ilkDebtCeiling:        30 * THOUSAND,
-            minVaultAmount:        10 * THOUSAND,
-            maxLiquidationAmount:  30 * MILLION,
-            liquidationPenalty:    2000,
-            ilkStabilityFee:       ONE_POINT_FIVE_PCT,
-            startingPriceFactor:   12000,
-            breakerTolerance:      5000,
-            auctionDuration:       140 minutes,
-            permittedDrop:         4000,
-            liquidationRatio:      12000,
-            kprFlatReward:         300,
-            kprPctReward:          10 // 0.1%
-        });
 
-        DssExecLib.addNewCollateral(INST_WBTC_A);
+        // INST-WBTC-A onboarding
+        DssExecLib.addNewCollateral(
+            CollateralOpts({
+                ilk:                   "INST-WBTC-A",
+                gem:                   WBTC,
+                join:                  MCD_JOIN_INST_WBTC_A,
+                clip:                  MCD_CLIP_INST_WBTC_A,
+                calc:                  MCD_CLIP_CALC_INST_WBTC_A,
+                pip:                   PIP_WBTC,
+                isLiquidatable:        true,
+                isOSM:                 true,
+                whitelistOSM:          false,
+                ilkDebtCeiling:        30 * THOUSAND,
+                minVaultAmount:        10 * THOUSAND,
+                maxLiquidationAmount:  30 * MILLION,
+                liquidationPenalty:    2000,
+                ilkStabilityFee:       ONE_POINT_FIVE_PCT,
+                startingPriceFactor:   12000,
+                breakerTolerance:      5000,
+                auctionDuration:       140 minutes,
+                permittedDrop:         4000,
+                liquidationRatio:      12000,
+                kprFlatReward:         300,
+                kprPctReward:          10 // 0.1%
+            }));
+        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_INST_WBTC_A, 90 seconds, 9900);
 
         GemJoinLike(MCD_JOIN_INST_WBTC_A).rely(MCD_CHARTER_MANAGER);
         CharterManagerLike(MCD_CHARTER_MANAGER).file("INST-WBTC-A", "gate", 1);
@@ -248,6 +266,7 @@ contract DssSpellAction is DssAction {
         CharterManagerLike(MCD_CHARTER_MANAGER).file("INST-WBTC-A", NEXO, "peace", 150 * RAY / 100); // 150%
         CharterManagerLike(MCD_CHARTER_MANAGER).file("INST-WBTC-A", NEXO, "uline", 600 * MILLION * RAD);
 
+        // INST-WBTC-A Nexo migration
         migrate(
             WBTC,
             "WBTC-A",
