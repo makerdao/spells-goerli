@@ -43,13 +43,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         // Insert new collateral tests here
         checkIlkIntegration(
-            "WBTC-B",
-            GemJoinAbstract(addr.addr("MCD_JOIN_WBTC_B")),
-            ClipAbstract(addr.addr("MCD_CLIP_WBTC_B")),
-            addr.addr("PIP_WBTC"),
+            "WSTETH-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_WSTETH_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_WSTETH_A")),
+            addr.addr("PIP_WSTETH"),
             true,
             true,
-            false
+            true
         );
     }
 
@@ -58,11 +58,12 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        assertEq(chainLog.getAddress("WBTC"), addr.addr("WBTC"));
-        assertEq(chainLog.getAddress("PIP_WBTC"), addr.addr("PIP_WBTC"));
-        assertEq(chainLog.getAddress("MCD_JOIN_WBTC_B"), addr.addr("MCD_JOIN_WBTC_B"));
-        assertEq(chainLog.getAddress("MCD_CLIP_WBTC_B"), addr.addr("MCD_CLIP_WBTC_B"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WBTC_B"), addr.addr("MCD_CLIP_CALC_WBTC_B"));
+        assertEq(chainLog.getAddress("STETH"), addr.addr("STETH"));
+        assertEq(chainLog.getAddress("WSTETH"), addr.addr("WSTETH"));
+        assertEq(chainLog.getAddress("PIP_WSTETH"), addr.addr("PIP_WSTETH"));
+        assertEq(chainLog.getAddress("MCD_JOIN_WSTETH_A"), addr.addr("MCD_JOIN_WSTETH_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_WSTETH_A"), addr.addr("MCD_CLIP_WSTETH_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WSTETH_A"), addr.addr("MCD_CLIP_CALC_WSTETH_A"));
     }
 
     function testNewIlkRegistryValues() public {
@@ -70,7 +71,16 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // Insert new ilk registry tests here
+        IlkRegistryAbstract ilkRegistry = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
+
+        assertEq(ilkRegistry.join("WSTETH-A"), addr.addr("MCD_JOIN_WSTETH_A"));
+        assertEq(ilkRegistry.gem("WSTETH-A"), addr.addr("WSTETH"));
+        assertEq(ilkRegistry.dec("WSTETH-A"), DSTokenAbstract(addr.addr("WSTETH")).decimals());
+        assertEq(ilkRegistry.class("WSTETH-A"), 1);
+        assertEq(ilkRegistry.pip("WSTETH-A"), addr.addr("PIP_WSTETH"));
+        assertEq(ilkRegistry.xlip("WSTETH-A"), addr.addr("MCD_CLIP_WSTETH_A"));
+        assertEq(ilkRegistry.name("WSTETH-A"), "Wrapped liquid staked Ether 2.0");
+        assertEq(ilkRegistry.symbol("WSTETH-A"), "wstETH");
     }
 
     function testFailWrongDay() public {

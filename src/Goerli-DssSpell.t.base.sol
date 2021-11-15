@@ -269,7 +269,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         // Test for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0),        // populate with deployed spell if deployed
+            deployed_spell:                 address(0xc8868D73562D7ce2A0E81EA772BD8Fb79Ca56ad5),        // populate with deployed spell if deployed
             deployed_spell_created:         1636728563,        // use get-created-timestamp.sh if deployed
             previous_spell:                 address(0), // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           true,              // true if officehours is expected to be enabled in the spell
@@ -302,7 +302,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             osm_mom_authority:     address(chief),          // OsmMom authority
             flipper_mom_authority: address(chief),          // FlipperMom authority
             clipper_mom_authority: address(chief),          // ClipperMom authority
-            ilk_count:             44                       // Num expected in system
+            ilk_count:             43                       // Num expected in system
         });
 
         //
@@ -509,35 +509,6 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["WBTC-B"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      500 * MILLION,
-            aL_gap:       30 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         30 * THOUSAND,
-            pct:          700,
-            mat:          13000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     25 * MILLION,
-            clip_buf:     12000,
-            clip_tail:    90 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    60,
             calc_cut:     9900
         });
         afterSpell.collaterals["TUSD-A"] = CollateralValues({
@@ -2100,8 +2071,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
 
         (,,,, uint256 dust) = vat.ilks(_ilk);
         dust /= RAY;
-        uint256 amount = 2 * dust * 10**token.decimals() / (_isOSM ? getOSMPrice(pip) : uint256(DSValueAbstract(pip).read()));
-        uint256 amount18 = token.decimals() == 18 ? amount : amount * 10**(18 - token.decimals());
+        uint256 amount = 2 * dust * WAD / (_isOSM ? getOSMPrice(pip) : uint256(DSValueAbstract(pip).read()));
         giveTokens(token, amount);
 
         assertEq(token.balanceOf(address(this)), amount);
@@ -2113,7 +2083,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             amount = vat.gem(_ilk, address(this));
             assertTrue(amount > 0);
         }
-        assertEq(vat.gem(_ilk, address(this)), amount18);
+        assertEq(vat.gem(_ilk, address(this)), amount);
 
         // Tick the fees forward so that art != dai in wad units
         hevm.warp(block.timestamp + 1);
@@ -2122,14 +2092,14 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         // Deposit collateral, generate DAI
         (,uint256 rate,,,) = vat.ilks(_ilk);
         assertEq(vat.dai(address(this)), 0);
-        vat.frob(_ilk, address(this), address(this), address(this), int256(amount18), int256(divup(mul(RAY, dust), rate)));
+        vat.frob(_ilk, address(this), address(this), address(this), int256(amount), int256(divup(mul(RAY, dust), rate)));
         assertEq(vat.gem(_ilk, address(this)), 0);
         assertTrue(vat.dai(address(this)) >= dust * RAY);
         assertTrue(vat.dai(address(this)) <= (dust + 1) * RAY);
 
         // Payback DAI, withdraw collateral
-        vat.frob(_ilk, address(this), address(this), address(this), -int256(amount18), -int256(divup(mul(RAY, dust), rate)));
-        assertEq(vat.gem(_ilk, address(this)), amount18);
+        vat.frob(_ilk, address(this), address(this), address(this), -int256(amount), -int256(divup(mul(RAY, dust), rate)));
+        assertEq(vat.gem(_ilk, address(this)), amount);
         assertEq(vat.dai(address(this)), 0);
 
         // Withdraw from adapter
@@ -2148,7 +2118,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         }
         // dart max amount of DAI
         (,,uint256 spot,,) = vat.ilks(_ilk);
-        vat.frob(_ilk, address(this), address(this), address(this), int256(amount18), int256(mul(amount18, spot) / rate));
+        vat.frob(_ilk, address(this), address(this), address(this), int256(amount), int256(mul(amount, spot) / rate));
         hevm.warp(block.timestamp + 1);
         jug.drip(_ilk);
         assertEq(clip.kicks(), 0);

@@ -20,6 +20,7 @@ pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
+import "dss-interfaces/dss/OsmAbstract.sol";
 
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
@@ -27,60 +28,64 @@ contract DssSpellAction is DssAction {
     // Hash: seth keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/287beee2bb76636b8b9e02c7e698fa639cb6b859/governance/votes/Executive%20vote%20-%20October%2022%2C%202021.md -q -O - 2>/dev/null)"
     string public constant override description = "Goerli Spell";
 
-    // Many of the settings that change weekly rely on the rate accumulator
-    // described at https://docs.makerdao.com/smart-contract-modules/rates-module
-    // To check this yourself, use the following rate calculation (example 8%):
-    //
-    // $ bc -l <<< 'scale=27; e( l(1.08)/(60 * 60 * 24 * 365) )'
-    //
-    // A table of rates can be found at
-    //    https://ipfs.io/ipfs/QmefQMseb3AiTapiAKKexdKHig8wroKuZbmLtPLv4u2YwW
-    //
-
-    uint256 constant SEVEN_PCT_RATE         = 1000000002145441671308778766;
-
     uint256 constant MILLION = 10**6;
 
-    address constant WBTC                   = 0x7ccF0411c7932B99FC3704d68575250F032e3bB7;
-    address constant MCD_JOIN_WBTC_B        = 0x13B8EB3d2d40A00d65fD30abF247eb470dDF6C25;
-    address constant MCD_CLIP_WBTC_B        = 0x4F51B15f8B86822d2Eca8a74BB4bA1e3c64F733F;
-    address constant MCD_CLIP_CALC_WBTC_B   = 0x1b5a9aDaf15CAE0e3d0349be18b77180C1a0deCc;
-    address constant PIP_WBTC               = 0xE7de200a3a29E9049E378b52BD36701A0Ce68C3b;
+    uint256 constant ZERO_FIVE_PCT_RATE     = 1000000000158153903837946257;
+    uint256 constant FOUR_PCT_RATE          = 1000000001243680656318820312;
+
+    address constant STETH                    = 0x1643E812aE58766192Cf7D2Cf9567dF2C37e9B7F;
+    address constant WSTETH                   = 0x6320cD32aA674d2898A68ec82e869385Fc5f7E2f;
+    address constant PIP_WSTETH               = 0x323eac5246d5BcB33d66e260E882fC9bF4B6bf41;
+    address constant MCD_JOIN_WSTETH_A        = 0xF99834937715255079849BE25ba31BF8b5D5B45D;
+    address constant MCD_CLIP_WSTETH_A        = 0x3673978974fC3fB1bA61aea0a6eb1Bac8e27182c;
+    address constant MCD_CLIP_CALC_WSTETH_A   = 0xb4f2f0eDFc10e9084a8bba23d84aF2c23B312852;
 
     function actions() public override {
 
-        //  Add WBTC-B as a new Vault Type
-        //  https://vote.makerdao.com/polling/QmSL1kDq?network=mainnet#poll-detail
-        //  https://forum.makerdao.com/t/signal-request-new-iam-vault-type-for-wbtc-with-lower-lr/5736
-        DssExecLib.addNewCollateral(CollateralOpts({
-            ilk:                   "WBTC-B",
-            gem:                   WBTC,
-            join:                  MCD_JOIN_WBTC_B,
-            clip:                  MCD_CLIP_WBTC_B,
-            calc:                  MCD_CLIP_CALC_WBTC_B,
-            pip:                   PIP_WBTC,
+        // GUNIV3DAIUSDC-A Parameter Adjustments
+        // https://vote.makerdao.com/polling/QmemHGSM?network=mainnet
+        // https://forum.makerdao.com/t/request-to-raise-the-guniv3daiusdc1-a-dc-to-500m/11394
+        DssExecLib.setIlkAutoLineDebtCeiling("GUNIV3DAIUSDC1-A", 500 * MILLION);     // Set DCIAM Max debt ceiling to 500 M
+        DssExecLib.setIlkLiquidationRatio("GUNIV3DAIUSDC1-A", 10200);                // Set LR to 102 %
+        DssExecLib.setIlkStabilityFee("GUNIV3DAIUSDC1-A", ZERO_FIVE_PCT_RATE, true); // Set stability fee to 0.5 %
+
+        // Add WSTETH-A as a new Vault Type (It should have come on version 1.9.8)
+       DssExecLib.addNewCollateral(CollateralOpts({
+            ilk:                   "WSTETH-A",
+            gem:                   WSTETH,
+            join:                  MCD_JOIN_WSTETH_A,
+            clip:                  MCD_CLIP_WSTETH_A,
+            calc:                  MCD_CLIP_CALC_WSTETH_A,
+            pip:                   PIP_WSTETH,
             isLiquidatable:        true,
             isOSM:                 true,
-            whitelistOSM:          false,
-            ilkDebtCeiling:        500 * MILLION,
-            minVaultAmount:        30000,
-            maxLiquidationAmount:  25 * MILLION,
-            liquidationPenalty:    1300,           // 13% penalty fee
-            ilkStabilityFee:       SEVEN_PCT_RATE, // 7% stability fee
-            startingPriceFactor:   12000,          // Auction price begins at 130% of oracle
-            breakerTolerance:      5000,           // Allows for a 50% hourly price drop before disabling liquidations
-            auctionDuration:       90 minutes,
-            permittedDrop:         4000,           // 40% price drop before reset
-            liquidationRatio:      13000,          // 130% collateralization
-            kprFlatReward:         300,            // 300 Dai
-            kprPctReward:          10              // 0.1%
+            whitelistOSM:          true,
+            ilkDebtCeiling:        3 * MILLION,
+            minVaultAmount:        10000,
+            maxLiquidationAmount:  3 * MILLION,
+            liquidationPenalty:    1300,        // 13% penalty fee
+            ilkStabilityFee:       FOUR_PCT_RATE,
+            startingPriceFactor:   13000,       // Auction price begins at 130% of oracle
+            breakerTolerance:      5000,        // Allows for a 50% hourly price drop before disabling liquidations
+            auctionDuration:       140 minutes,
+            permittedDrop:         4000,        // 40% price drop before reset
+            liquidationRatio:      16000,       // 160% collateralization
+            kprFlatReward:         300,         // 300 Dai
+            kprPctReward:          10           // 0.1%
         }));
-        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_WBTC_B, 60 seconds, 9900);
-        DssExecLib.setIlkAutoLineParameters("WBTC-B", 500 * MILLION, 30 * MILLION, 8 hours);
+        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_WSTETH_A, 90 seconds, 9900);
+        DssExecLib.setIlkAutoLineParameters("WSTETH-A", 50 * MILLION, 3 * MILLION, 8 hours);
 
-        DssExecLib.setChangelogAddress("MCD_JOIN_WBTC_B", MCD_JOIN_WBTC_B);
-        DssExecLib.setChangelogAddress("MCD_CLIP_WBTC_B", MCD_CLIP_WBTC_B);
-        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_WBTC_B", MCD_CLIP_CALC_WBTC_B);
+        DssExecLib.setChangelogAddress("STETH", STETH);
+        DssExecLib.setChangelogAddress("WSTETH", WSTETH);
+        DssExecLib.setChangelogAddress("PIP_WSTETH", PIP_WSTETH);
+        DssExecLib.setChangelogAddress("MCD_JOIN_WSTETH_A", MCD_JOIN_WSTETH_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_WSTETH_A", MCD_CLIP_WSTETH_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_WSTETH_A", MCD_CLIP_CALC_WSTETH_A);
+
+        // Rely Median to Oracles team
+
+        DssExecLib.authorize(OsmAbstract(PIP_WSTETH).src(),  0x1f42e41A34B71606FcC60b4e624243b365D99745);
     }
 }
 
