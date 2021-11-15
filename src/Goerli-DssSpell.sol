@@ -177,7 +177,7 @@ contract DssSpellAction is DssAction {
             isLiquidatable:        true,
             isOSM:                 true,
             whitelistOSM:          false,
-            ilkDebtCeiling:        900 * MILLION,
+            ilkDebtCeiling:        30 * THOUSAND,
             minVaultAmount:        10 * THOUSAND,
             maxLiquidationAmount:  50 * MILLION,
             liquidationPenalty:    2000,
@@ -209,8 +209,8 @@ contract DssSpellAction is DssAction {
             NEXO_OLD_ETH_A_URN,
             "INST-ETH-A",
             MCD_JOIN_INST_ETH_A,
-            15_000 * RAD,
-            10 * WAD
+            20_000 * RAD,
+            15 * WAD
         );
         validateSafe("ETH-A", NEXO_OLD_ETH_A_URN);
         validateSafe("INST-ETH-A", CharterManagerLike(MCD_CHARTER_MANAGER).getOrCreateProxy(NEXO));
@@ -226,7 +226,7 @@ contract DssSpellAction is DssAction {
             isLiquidatable:        true,
             isOSM:                 true,
             whitelistOSM:          false,
-            ilkDebtCeiling:        600 * MILLION,
+            ilkDebtCeiling:        30 * THOUSAND,
             minVaultAmount:        10 * THOUSAND,
             maxLiquidationAmount:  30 * MILLION,
             liquidationPenalty:    2000,
@@ -255,8 +255,8 @@ contract DssSpellAction is DssAction {
             NEXO_OLD_WBTC_A_URN,
             "INST-WBTC-A",
             MCD_JOIN_INST_WBTC_A,
-            10_000 * RAD,
-            41 * WAD / 100 // 0.41
+            20_000 * RAD,
+            11 * WAD / 10 // 1.1
         );
         validateSafe("WBTC-A", NEXO_OLD_WBTC_A_URN);
         validateSafe("INST-WBTC-A", CharterManagerLike(MCD_CHARTER_MANAGER).getOrCreateProxy(NEXO));

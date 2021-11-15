@@ -1569,7 +1569,7 @@ contract DssSpellTest is DSTest, DSMath {
             aL_line:      0,
             aL_gap:       0,
             aL_ttl:       0,
-            line:         900 * MILLION,
+            line:         30 * THOUSAND,
             dust:         10 * THOUSAND,
             pct:          150,
             mat:          12000,
@@ -1598,7 +1598,7 @@ contract DssSpellTest is DSTest, DSMath {
             aL_line:      0,
             aL_gap:       0,
             aL_ttl:       0,
-            line:         600 * MILLION,
+            line:         30 * THOUSAND,
             dust:         10 * THOUSAND,
             pct:          150,
             mat:          12000,
@@ -2347,8 +2347,6 @@ contract DssSpellTest is DSTest, DSMath {
         ClipAbstract clip,
         address pip,
         bool _isOSM,
-        //bool _checkLiquidations,
-        //bool _transferFee,
         uint256 migratedInk,
         uint256 migratedDai
     ) public {
@@ -2455,11 +2453,11 @@ contract DssSpellTest is DSTest, DSMath {
             ClipAbstract(addr.addr("MCD_CLIP_INST_ETH_A")),
             addr.addr("PIP_ETH"),
             true,
-            //true,
-            //false,
-            10 * WAD,
-            15_000 * RAD
+            15 * WAD,
+            20_000 * RAD
         );
+
+        // TODO: test also wbtc
     }
 
     function getExtcodesize(address target) public view returns (uint256 exsize) {
