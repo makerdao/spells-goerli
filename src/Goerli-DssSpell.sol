@@ -78,7 +78,7 @@ contract DssSpellAction is DssAction {
                 maxLiquidationAmount:  25 * MILLION,
                 liquidationPenalty:    1300,           // 13% penalty fee
                 ilkStabilityFee:       SEVEN_PCT_RATE, // 7% stability fee
-                startingPriceFactor:   12000,          // Auction price begins at 130% of oracle
+                startingPriceFactor:   12000,          // Auction price begins at 120% of oracle
                 breakerTolerance:      5000,           // Allows for a 50% hourly price drop before disabling liquidations
                 auctionDuration:       90 minutes,
                 permittedDrop:         4000,           // 40% price drop before reset
