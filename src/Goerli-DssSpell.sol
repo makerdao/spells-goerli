@@ -37,21 +37,30 @@ contract DssSpellAction is DssAction {
     //    https://ipfs.io/ipfs/QmefQMseb3AiTapiAKKexdKHig8wroKuZbmLtPLv4u2YwW
     //
 
+    // --- Rate ---
     uint256 constant SEVEN_PCT_RATE         = 1000000002145441671308778766;
 
+    // --- Math ---
     uint256 constant MILLION = 10**6;
 
-    address constant WBTC                   = 0x7ccF0411c7932B99FC3704d68575250F032e3bB7;
+    // --- WBTC-B ---
+    address public immutable WBTC;
+    address public immutable PIP_WBTC;
     address constant MCD_JOIN_WBTC_B        = 0x13B8EB3d2d40A00d65fD30abF247eb470dDF6C25;
     address constant MCD_CLIP_WBTC_B        = 0x4F51B15f8B86822d2Eca8a74BB4bA1e3c64F733F;
     address constant MCD_CLIP_CALC_WBTC_B   = 0x1b5a9aDaf15CAE0e3d0349be18b77180C1a0deCc;
-    address constant PIP_WBTC               = 0xE7de200a3a29E9049E378b52BD36701A0Ce68C3b;
+
+    constructor() public {
+        WBTC = DssExecLib.getChangelogAddress("WBTC");
+        PIP_WBTC = DssExecLib.getChangelogAddress("PIP_WBTC");
+    }
 
     function actions() public override {
 
         //  Add WBTC-B as a new Vault Type
-        //  https://vote.makerdao.com/polling/QmSL1kDq?network=mainnet#poll-detail
-        //  https://vote.makerdao.com/polling/QmRUgsvi?network=mainnet#poll-detail
+        //  https://vote.makerdao.com/polling/QmSL1kDq?network=mainnet#poll-detail (WBTC-B Onboarding)
+        //  https://vote.makerdao.com/polling/QmRUgsvi?network=mainnet#poll-detail (Stability Fee)
+        //  https://forum.makerdao.com/t/wbtc-b-collateral-onboarding-risk-assessment/11397
         //  https://forum.makerdao.com/t/signal-request-new-iam-vault-type-for-wbtc-with-lower-lr/5736
         DssExecLib.addNewCollateral(
             CollateralOpts({
