@@ -58,9 +58,9 @@ contract DssSpellAction is DssAction {
     uint256 constant CURRENT_COMP_MAT       =  165 * RAY / 100;
 
     // --- Offboarding: Target Liquidation Ratio ---
-    uint256 constant TARGET_AAVE_MAT        = 1000 * RAY / 100;
-    uint256 constant TARGET_BAL_MAT         = 1600 * RAY / 100;
-    uint256 constant TARGET_COMP_MAT        =  500 * RAY / 100;
+    uint256 constant TARGET_AAVE_MAT        = 2200 * RAY / 100;
+    uint256 constant TARGET_BAL_MAT         = 2200 * RAY / 100;
+    uint256 constant TARGET_COMP_MAT        = 2000 * RAY / 100;
 
     constructor() public {
         WBTC = DssExecLib.getChangelogAddress("WBTC");
