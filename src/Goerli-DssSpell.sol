@@ -73,7 +73,7 @@ contract DssSpellAction is DssAction {
                 isLiquidatable:        true,
                 isOSM:                 true,
                 whitelistOSM:          false,
-                ilkDebtCeiling:        500 * MILLION,
+                ilkDebtCeiling:        30 * MILLION,
                 minVaultAmount:        30000,
                 maxLiquidationAmount:  25 * MILLION,
                 liquidationPenalty:    1300,           // 13% penalty fee
