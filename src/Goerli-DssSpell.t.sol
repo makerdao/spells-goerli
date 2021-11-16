@@ -58,6 +58,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
+        // Insert new chainlog tests here
         assertEq(chainLog.getAddress("WBTC"), addr.addr("WBTC"));
         assertEq(chainLog.getAddress("PIP_WBTC"), addr.addr("PIP_WBTC"));
         assertEq(chainLog.getAddress("MCD_JOIN_WBTC_B"), addr.addr("MCD_JOIN_WBTC_B"));
@@ -81,6 +82,16 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // WBTC token name not present
         //assertEq(reg.name("WBTC-B"), "Wrapped BTC");
         assertEq(reg.symbol("WBTC-B"), "WBTC");
+    }
+
+    function testAAVELerpOffboardings() public {
+        checkIlkLerpOffboarding("AAVE-A", "AAVE Offboarding", 165, 500, 600, 1000);
+    }
+    function testBALLerpOffboardings() public {
+        checkIlkLerpOffboarding("BAL-A", "BAL Offboarding", 165, 800, 1000, 1600);
+    }
+    function testCOMPLerpOffboardings() public {
+        checkIlkLerpOffboarding("COMP-A", "COMP Offboarding", 165, 250, 350, 500);
     }
 
     function testFailWrongDay() public {

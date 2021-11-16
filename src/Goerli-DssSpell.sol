@@ -20,6 +20,7 @@ pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
+import "dss-interfaces/dss/VatAbstract.sol";
 
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
@@ -41,7 +42,8 @@ contract DssSpellAction is DssAction {
     uint256 constant SEVEN_PCT_RATE         = 1000000002145441671308778766;
 
     // --- Math ---
-    uint256 constant MILLION = 10**6;
+    uint256 constant MILLION                = 10 ** 6;
+    uint256 constant RAY                    = 10 ** 27;
 
     // --- WBTC-B ---
     address public immutable WBTC;
@@ -50,9 +52,26 @@ contract DssSpellAction is DssAction {
     address constant MCD_CLIP_WBTC_B        = 0x4F51B15f8B86822d2Eca8a74BB4bA1e3c64F733F;
     address constant MCD_CLIP_CALC_WBTC_B   = 0x1b5a9aDaf15CAE0e3d0349be18b77180C1a0deCc;
 
+    // --- Offboarding: Current Liquidation Ratio ---
+    uint256 constant CURRENT_AAVE_MAT       =  165 * RAY / 100;
+    uint256 constant CURRENT_BAL_MAT        =  165 * RAY / 100;
+    uint256 constant CURRENT_COMP_MAT       =  165 * RAY / 100;
+
+    // --- Offboarding: Target Liquidation Ratio ---
+    uint256 constant TARGET_AAVE_MAT        = 1000 * RAY / 100;
+    uint256 constant TARGET_BAL_MAT         = 1600 * RAY / 100;
+    uint256 constant TARGET_COMP_MAT        =  500 * RAY / 100;
+
     constructor() public {
         WBTC = DssExecLib.getChangelogAddress("WBTC");
         PIP_WBTC = DssExecLib.getChangelogAddress("PIP_WBTC");
+    }
+
+    function _add(uint x, uint y) internal pure returns (uint z) {
+        require((z = x + y) >= x, "DssSpellAction-add-overflow");
+    }
+    function _sub(uint x, uint y) internal pure returns (uint z) {
+        require((z = x - y) <= x, "DssSpellAction-sub-underflow");
     }
 
     function actions() public override {
@@ -93,6 +112,80 @@ contract DssSpellAction is DssAction {
         DssExecLib.setChangelogAddress("MCD_JOIN_WBTC_B", MCD_JOIN_WBTC_B);
         DssExecLib.setChangelogAddress("MCD_CLIP_WBTC_B", MCD_CLIP_WBTC_B);
         DssExecLib.setChangelogAddress("MCD_CLIP_CALC_WBTC_B", MCD_CLIP_CALC_WBTC_B);
+
+        //
+        // Collateral Offboarding
+        //
+
+        uint256 totalLineReduction;
+        uint256 line;
+        VatAbstract vat = VatAbstract(DssExecLib.vat());
+
+        // Offboard AAVE-A
+        // https://vote.makerdao.com/polling/QmPdvqZg?network=mainnet#poll-detail
+        // https://forum.makerdao.com/t/proposed-offboarding-collateral-parameters-2/11548
+        // https://forum.makerdao.com/t/signal-request-offboarding-matic-comp-aave-and-bal/11184
+
+        (,,,line,) = vat.ilks("AAVE-A");
+        totalLineReduction = _add(totalLineReduction, line);
+        DssExecLib.setIlkLiquidationPenalty("AAVE-A", 0);
+        DssExecLib.removeIlkFromAutoLine("AAVE-A");
+        DssExecLib.setIlkDebtCeiling("AAVE-A", 0);
+        DssExecLib.linearInterpolation({
+            _name:      "AAVE Offboarding",
+            _target:    DssExecLib.spotter(),
+            _ilk:       "AAVE-A",
+            _what:      "mat",
+            _startTime: block.timestamp,
+            _start:     CURRENT_AAVE_MAT,
+            _end:       TARGET_AAVE_MAT,
+            _duration:  30 days
+        });
+
+        // Offboard BAL-A
+        // https://vote.makerdao.com/polling/QmcwtUau?network=mainnet#poll-detail
+        // https://forum.makerdao.com/t/proposed-offboarding-collateral-parameters-2/11548
+        // https://forum.makerdao.com/t/signal-request-offboarding-matic-comp-aave-and-bal/11184
+
+        (,,,line,) = vat.ilks("BAL-A");
+        totalLineReduction = _add(totalLineReduction, line);
+        DssExecLib.setIlkLiquidationPenalty("BAL-A", 0);
+        DssExecLib.removeIlkFromAutoLine("BAL-A");
+        DssExecLib.setIlkDebtCeiling("BAL-A", 0);
+        DssExecLib.linearInterpolation({
+            _name:      "BAL Offboarding",
+            _target:    DssExecLib.spotter(),
+            _ilk:       "BAL-A",
+            _what:      "mat",
+            _startTime: block.timestamp,
+            _start:     CURRENT_BAL_MAT,
+            _end:       TARGET_BAL_MAT,
+            _duration:  30 days
+        });
+
+        // Offboard COMP-A
+        // https://vote.makerdao.com/polling/QmRDeGCn?network=mainnet#poll-detail
+        // https://forum.makerdao.com/t/proposed-offboarding-collateral-parameters-2/11548
+        // https://forum.makerdao.com/t/signal-request-offboarding-matic-comp-aave-and-bal/11184
+
+        (,,,line,) = vat.ilks("COMP-A");
+        totalLineReduction = _add(totalLineReduction, line);
+        DssExecLib.setIlkLiquidationPenalty("COMP-A", 0);
+        DssExecLib.removeIlkFromAutoLine("COMP-A");
+        DssExecLib.setIlkDebtCeiling("COMP-A", 0);
+        DssExecLib.linearInterpolation({
+            _name:      "COMP Offboarding",
+            _target:    DssExecLib.spotter(),
+            _ilk:       "COMP-A",
+            _what:      "mat",
+            _startTime: block.timestamp,
+            _start:     CURRENT_COMP_MAT,
+            _end:       TARGET_COMP_MAT,
+            _duration:  30 days
+        });
+
+        // Decrease Global Debt Ceiling in accordance with Offboarded Ilks
+        vat.file("Line", _sub(vat.Line(), totalLineReduction));
     }
 }
 

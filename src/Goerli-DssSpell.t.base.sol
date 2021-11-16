@@ -715,17 +715,17 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             calc_cut:     9990
         });
         afterSpell.collaterals["COMP-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      20 * MILLION,
-            aL_gap:       2 * MILLION,
-            aL_ttl:       8 hours,
+            aL_enabled:   false,
+            aL_line:      0,
+            aL_gap:       0,
+            aL_ttl:       0,
             line:         0,
             dust:         10 * THOUSAND,
             pct:          100,
             mat:          16500,
             liqType:      "clip",
             liqOn:        true,
-            chop:         1300,
+            chop:         0,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -802,17 +802,17 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             calc_cut:     9900
         });
         afterSpell.collaterals["BAL-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      30 * MILLION,
-            aL_gap:       3 * MILLION,
-            aL_ttl:       8 hours,
+            aL_enabled:   false,
+            aL_line:      0,
+            aL_gap:       0,
+            aL_ttl:       0,
             line:         0,
             dust:         10 * THOUSAND,
             pct:          100,
             mat:          16500,
             liqType:      "clip",
             liqOn:        true,
-            chop:         1300,
+            chop:         0,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -947,17 +947,17 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             calc_cut:     9900
         });
         afterSpell.collaterals["AAVE-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      50 * MILLION,
-            aL_gap:       5 * MILLION,
-            aL_ttl:       8 hours,
+            aL_enabled:   false,
+            aL_line:      0,
+            aL_gap:       0,
+            aL_ttl:       0 hours,
             line:         0,
             dust:         10 * THOUSAND,
             pct:          100,
             mat:          16500,
             liqType:      "clip",
             liqOn:        true,
-            chop:         1300,
+            chop:         0,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -2292,6 +2292,28 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
 
         // Dump all dai for next run
         vat.move(address(this), address(0x0), vat.dai(address(this)));
+    }
+
+    function getMat(bytes32 _ilk) internal returns (uint256 mat) {
+        (, mat) = spotter.ilks(_ilk);
+    }
+
+    function checkIlkLerpOffboarding(bytes32 _ilk, bytes32 _lerp, uint256 _startMat, uint256 _lowMidMat, uint256 _highMidMat, uint256 _endMat) public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        LerpAbstract lerp = LerpAbstract(lerpFactory.lerps(_lerp));
+
+        hevm.warp(block.timestamp + lerp.duration() / 2);
+        assertEq(getMat(_ilk), _startMat * RAY / 100);
+        lerp.tick();
+        assertGt(getMat(_ilk), _lowMidMat * RAY / 100);
+        assertLt(getMat(_ilk), _highMidMat * RAY / 100);
+
+        hevm.warp(block.timestamp + lerp.duration());
+        lerp.tick();
+        assertEq(getMat(_ilk), _endMat * RAY / 100);
     }
 
     function getExtcodesize(address target) public view returns (uint256 exsize) {
