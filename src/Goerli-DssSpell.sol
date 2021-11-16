@@ -51,30 +51,33 @@ contract DssSpellAction is DssAction {
 
         //  Add WBTC-B as a new Vault Type
         //  https://vote.makerdao.com/polling/QmSL1kDq?network=mainnet#poll-detail
+        //  https://vote.makerdao.com/polling/QmRUgsvi?network=mainnet#poll-detail
         //  https://forum.makerdao.com/t/signal-request-new-iam-vault-type-for-wbtc-with-lower-lr/5736
-        DssExecLib.addNewCollateral(CollateralOpts({
-            ilk:                   "WBTC-B",
-            gem:                   WBTC,
-            join:                  MCD_JOIN_WBTC_B,
-            clip:                  MCD_CLIP_WBTC_B,
-            calc:                  MCD_CLIP_CALC_WBTC_B,
-            pip:                   PIP_WBTC,
-            isLiquidatable:        true,
-            isOSM:                 true,
-            whitelistOSM:          false,
-            ilkDebtCeiling:        500 * MILLION,
-            minVaultAmount:        30000,
-            maxLiquidationAmount:  25 * MILLION,
-            liquidationPenalty:    1300,           // 13% penalty fee
-            ilkStabilityFee:       SEVEN_PCT_RATE, // 7% stability fee
-            startingPriceFactor:   12000,          // Auction price begins at 130% of oracle
-            breakerTolerance:      5000,           // Allows for a 50% hourly price drop before disabling liquidations
-            auctionDuration:       90 minutes,
-            permittedDrop:         4000,           // 40% price drop before reset
-            liquidationRatio:      13000,          // 130% collateralization
-            kprFlatReward:         300,            // 300 Dai
-            kprPctReward:          10              // 0.1%
-        }));
+        DssExecLib.addNewCollateral(
+            CollateralOpts({
+                ilk:                   "WBTC-B",
+                gem:                   WBTC,
+                join:                  MCD_JOIN_WBTC_B,
+                clip:                  MCD_CLIP_WBTC_B,
+                calc:                  MCD_CLIP_CALC_WBTC_B,
+                pip:                   PIP_WBTC,
+                isLiquidatable:        true,
+                isOSM:                 true,
+                whitelistOSM:          false,
+                ilkDebtCeiling:        500 * MILLION,
+                minVaultAmount:        30000,
+                maxLiquidationAmount:  25 * MILLION,
+                liquidationPenalty:    1300,           // 13% penalty fee
+                ilkStabilityFee:       SEVEN_PCT_RATE, // 7% stability fee
+                startingPriceFactor:   12000,          // Auction price begins at 130% of oracle
+                breakerTolerance:      5000,           // Allows for a 50% hourly price drop before disabling liquidations
+                auctionDuration:       90 minutes,
+                permittedDrop:         4000,           // 40% price drop before reset
+                liquidationRatio:      13000,          // 130% collateralization
+                kprFlatReward:         300,            // 300 Dai
+                kprPctReward:          10              // 0.1%
+            })
+        );
         DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_WBTC_B, 60 seconds, 9900);
         DssExecLib.setIlkAutoLineParameters("WBTC-B", 500 * MILLION, 30 * MILLION, 8 hours);
 
