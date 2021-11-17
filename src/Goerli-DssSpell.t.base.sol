@@ -1892,7 +1892,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
                 // Convert whole Dai units to expected RAD
                 uint256 normalizedTesthole = values.collaterals[ilk].dog_hole * RAD;
                 assertEq(hole, normalizedTesthole, string(abi.encodePacked("TestError/dog-hole-", ilk)));
-                assertTrue(hole == 0 || hole >= RAD && hole <= 65 * MILLION * RAD, string(abi.encodePacked("TestError/dog-hole-range-", ilk)));
+                assertTrue(hole == 0 || hole >= RAD && hole <= 100 * MILLION * RAD, string(abi.encodePacked("TestError/dog-hole-range-", ilk)));
                 }
                 (address clipper,,,) = dog.ilks(ilk);
                 assertTrue(clipper != address(0), string(abi.encodePacked("TestError/invalid-clip-address-", ilk)));
