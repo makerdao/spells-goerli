@@ -52,8 +52,6 @@ contract DssSpellAction is DssAction {
     uint256 constant RAY                    = 10 ** 27;
 
     // --- WBTC-B ---
-    address public immutable WBTC;
-    address public immutable PIP_WBTC;
     address constant MCD_JOIN_WBTC_B        = 0x13B8EB3d2d40A00d65fD30abF247eb470dDF6C25;
     address constant MCD_CLIP_WBTC_B        = 0x4F51B15f8B86822d2Eca8a74BB4bA1e3c64F733F;
     address constant MCD_CLIP_CALC_WBTC_B   = 0x1b5a9aDaf15CAE0e3d0349be18b77180C1a0deCc;
@@ -68,11 +66,6 @@ contract DssSpellAction is DssAction {
     uint256 constant TARGET_BAL_MAT         = 2200 * RAY / 100;
     uint256 constant TARGET_COMP_MAT        = 2000 * RAY / 100;
 
-    constructor() public {
-        WBTC = DssExecLib.getChangelogAddress("WBTC");
-        PIP_WBTC = DssExecLib.getChangelogAddress("PIP_WBTC");
-    }
-
     function _add(uint x, uint y) internal pure returns (uint z) {
         require((z = x + y) >= x, "DssSpellAction-add-overflow");
     }
@@ -81,6 +74,10 @@ contract DssSpellAction is DssAction {
     }
 
     function actions() public override {
+
+        // WBTC
+        address WBTC     = DssExecLib.getChangelogAddress("WBTC");
+        address PIP_WBTC = DssExecLib.getChangelogAddress("PIP_WBTC");
 
         //  Add WBTC-B as a new Vault Type
         //  https://vote.makerdao.com/polling/QmSL1kDq?network=mainnet#poll-detail (WBTC-B Onboarding)
