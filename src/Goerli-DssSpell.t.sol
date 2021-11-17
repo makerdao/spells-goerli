@@ -64,6 +64,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(chainLog.getAddress("MCD_JOIN_WBTC_B"), addr.addr("MCD_JOIN_WBTC_B"));
         assertEq(chainLog.getAddress("MCD_CLIP_WBTC_B"), addr.addr("MCD_CLIP_WBTC_B"));
         assertEq(chainLog.getAddress("MCD_CLIP_CALC_WBTC_B"), addr.addr("MCD_CLIP_CALC_WBTC_B"));
+        assertEq(chainLog.version(), "1.9.10");
     }
 
     function testNewIlkRegistryValues() public {
