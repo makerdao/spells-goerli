@@ -309,7 +309,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
 
     address public constant NEXO                = 0xA46C5449feD1dAd583fbdCA4cee7804eC59B1f0c;
-    address public constant proxyActionsCharter = 0x2ea3036484FCf9B7F5E1329da7e910778767D063;
+    address public constant proxyActionsCharter = 0x8b579a2d1d0239FF36d18419687B61cce968faBb;
     DsProxyLike             dsProxy             = DsProxyLike(NEXO);
 
     function testCharterCollateralIntegrations() public {

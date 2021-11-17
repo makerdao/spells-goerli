@@ -94,8 +94,8 @@ contract DssSpellAction is DssAction {
 
     address public constant MCD_CHARTER_MANAGER       = 0x91678e757C20351d0D393e3C907c6C9B5ef46d6c;
     address public constant MCD_CHARTER_MANAGER_IMP   = 0x23eA5CC5c9252033208C177da7A936b6060A5af9;
-    address public constant PROXY_ACTIONS_CHARTER     = 0x2ea3036484FCf9B7F5E1329da7e910778767D063;
-    address public constant PROXY_ACTIONS_END_CHARTER = 0x91678e757C20351d0D393e3C907c6C9B5ef46d6c;
+    address public constant PROXY_ACTIONS_CHARTER     = 0x8b579a2d1d0239FF36d18419687B61cce968faBb;
+    address public constant PROXY_ACTIONS_END_CHARTER = 0xfb987F5583cd686d3fa918077884a5252D1FCFb7;
 
     address public constant MCD_JOIN_INST_ETH_A       = 0x64840DA08EEC4E25D37A26F13AD5EEA0d83E36A0;
     address public constant MCD_CLIP_INST_ETH_A       = 0x6222213862c49d87fE452876036A73c42386bdc8;
