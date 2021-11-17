@@ -214,7 +214,7 @@ contract DssSpellAction is DssAction {
         CharterManagerLike(MCD_CHARTER_MANAGER).file("INST-ETH-A", "gate", 1);
         CharterManagerLike(MCD_CHARTER_MANAGER).file("INST-ETH-A", NEXO, "nib", 1 * WAD / 100); // 1%
         CharterManagerLike(MCD_CHARTER_MANAGER).file("INST-ETH-A", NEXO, "peace", 150 * RAY / 100); // 150%
-        CharterManagerLike(MCD_CHARTER_MANAGER).file("INST-ETH-A", NEXO, "uline", 900 * MILLION * RAD);
+        CharterManagerLike(MCD_CHARTER_MANAGER).file("INST-ETH-A", NEXO, "uline", 30 * THOUSAND * RAD);
 
 
         // INST-ETH-A Nexo migration
@@ -264,7 +264,7 @@ contract DssSpellAction is DssAction {
         CharterManagerLike(MCD_CHARTER_MANAGER).file("INST-WBTC-A", "gate", 1);
         CharterManagerLike(MCD_CHARTER_MANAGER).file("INST-WBTC-A", NEXO, "nib", 1 * WAD / 100); // 1%
         CharterManagerLike(MCD_CHARTER_MANAGER).file("INST-WBTC-A", NEXO, "peace", 150 * RAY / 100); // 150%
-        CharterManagerLike(MCD_CHARTER_MANAGER).file("INST-WBTC-A", NEXO, "uline", 600 * MILLION * RAD);
+        CharterManagerLike(MCD_CHARTER_MANAGER).file("INST-WBTC-A", NEXO, "uline", 30 * THOUSAND * RAD);
 
         // INST-WBTC-A Nexo migration
         migrate(
