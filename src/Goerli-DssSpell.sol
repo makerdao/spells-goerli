@@ -39,6 +39,7 @@ contract DssSpellAction is DssAction {
     //
 
     // --- Rate ---
+    uint256 constant FOUR_PCT_RATE          = 1000000001243680656318820312;
     uint256 constant SEVEN_PCT_RATE         = 1000000002145441671308778766;
 
     // --- Math ---
@@ -186,6 +187,20 @@ contract DssSpellAction is DssAction {
 
         // Decrease Global Debt Ceiling in accordance with Offboarded Ilks
         vat.file("Line", _sub(vat.Line(), totalLineReduction));
+
+        // Increase Ilk Local Liquidation Limits (ilk.hole)
+        // https://vote.makerdao.com/polling/QmQN6FX8?network=mainnet#poll-detail
+        // https://forum.makerdao.com/t/auction-throughput-parameters-adjustments-nov-9-2021/11531
+        DssExecLib.setIlkMaxLiquidationAmount("ETH-A",    65 * MILLION); // From 40M to 65M DAI
+        DssExecLib.setIlkMaxLiquidationAmount("ETH-B",    30 * MILLION); // From 25M to 30M DAI
+        DssExecLib.setIlkMaxLiquidationAmount("ETH-C",    35 * MILLION); // From 30M to 35M DAI
+        DssExecLib.setIlkMaxLiquidationAmount("WBTC-A",   40 * MILLION); // From 25M to 40M DAI
+        DssExecLib.setIlkMaxLiquidationAmount("WSTETH-A",  7 * MILLION); // From  3M to  5M DAI
+
+        // Increase WBTC-A Stability Fee (duty)
+        // https://vote.makerdao.com/polling/QmRUgsvi?network=mainnet#poll-detail
+        // https://forum.makerdao.com/t/mid-month-parameter-changes-proposal-ppg-omc-001-2021-11-10/11562
+        DssExecLib.setIlkStabilityFee("WBTC-A", FOUR_PCT_RATE, true); // From 2.5% to 4% (from 2% on goerli)
     }
 }
 

@@ -325,7 +325,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             flip_ttl:     0,               // In seconds
             flip_tau:     0,               // In seconds
             flipper_mom:  0,               // 1 if circuit breaker enabled
-            dog_hole:     40 * MILLION,
+            dog_hole:     65 * MILLION,
             clip_buf:     12000,
             clip_tail:    140 minutes,
             clip_cusp:    4000,
@@ -354,7 +354,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             flip_ttl:     0,
             flip_tau:     0,
             flipper_mom:  0,
-            dog_hole:     25 * MILLION,
+            dog_hole:     30 * MILLION,
             clip_buf:     12000,
             clip_tail:    140 minutes,
             clip_cusp:    4000,
@@ -383,7 +383,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             flip_ttl:     0,
             flip_tau:     0,
             flipper_mom:  0,
-            dog_hole:     30 * MILLION,
+            dog_hole:     35 * MILLION,
             clip_buf:     12000,
             clip_tail:    140 minutes,
             clip_cusp:    4000,
@@ -489,7 +489,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_ttl:       8 hours,
             line:         0,
             dust:         10 * THOUSAND,
-            pct:          200,
+            pct:          400,
             mat:          14500,
             liqType:      "clip",
             liqOn:        true,
@@ -499,7 +499,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             flip_ttl:     0,
             flip_tau:     0,
             flipper_mom:  0,
-            dog_hole:     25 * MILLION,
+            dog_hole:     40 * MILLION,
             clip_buf:     12000,
             clip_tail:    140 minutes,
             clip_cusp:    4000,
@@ -1572,7 +1572,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             flip_ttl:     0,
             flip_tau:     0,
             flipper_mom:  0,
-            dog_hole:     3 * MILLION,
+            dog_hole:     7 * MILLION,
             clip_buf:     13000,
             clip_tail:    140 minutes,
             clip_cusp:    4000,
@@ -1875,7 +1875,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
                 // Convert whole Dai units to expected RAD
                 uint256 normalizedTesthole = values.collaterals[ilk].dog_hole * RAD;
                 assertEq(hole, normalizedTesthole, string(abi.encodePacked("TestError/dog-hole-", ilk)));
-                assertTrue(hole == 0 || hole >= RAD && hole <= 50 * MILLION * RAD, string(abi.encodePacked("TestError/dog-hole-range-", ilk)));
+                assertTrue(hole == 0 || hole >= RAD && hole <= 65 * MILLION * RAD, string(abi.encodePacked("TestError/dog-hole-range-", ilk)));
                 }
                 (address clipper,,,) = dog.ilks(ilk);
                 assertTrue(clipper != address(0), string(abi.encodePacked("TestError/invalid-clip-address-", ilk)));
