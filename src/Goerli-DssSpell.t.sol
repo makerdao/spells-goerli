@@ -86,13 +86,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testAAVELerpOffboardings() public {
-        checkIlkLerpOffboarding("AAVE-A", "AAVE Offboarding", 165, 1100, 1200, 2200);
+        checkIlkLerpOffboarding("AAVE-A", "AAVE Offboarding", 165, 1100, 83, 2200); // 83% tollerance
     }
     function testBALLerpOffboardings() public {
-        checkIlkLerpOffboarding("BAL-A", "BAL Offboarding", 165, 1100, 1200, 2200);
+        checkIlkLerpOffboarding("BAL-A", "BAL Offboarding", 165, 1100, 83, 2200);   // 83% tollerance
     }
     function testCOMPLerpOffboardings() public {
-        checkIlkLerpOffboarding("COMP-A", "COMP Offboarding", 165, 1000, 1100, 2000);
+        checkIlkLerpOffboarding("COMP-A", "COMP Offboarding", 165, 1000, 83, 2000); // 83% tollerance
     }
 
     function testFailWrongDay() public {

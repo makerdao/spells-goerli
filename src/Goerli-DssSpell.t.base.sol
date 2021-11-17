@@ -218,6 +218,23 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         z = add(x, sub(y, 1)) / y;
     }
 
+    // not provided in DSTest
+    function assertEqApprox(uint256 _a, uint256 _b, uint256 _tolerance) internal {
+        uint256 a = _a;
+        uint256 b = _b;
+        if (a < b) {
+            uint256 tmp = a;
+            a = b;
+            b = tmp;
+        }
+        if (a - b > _tolerance) {
+            emit log_bytes32("Error: Wrong `uint' value");
+            emit log_named_uint("  Expected", _b);
+            emit log_named_uint("    Actual", _a);
+            fail();
+        }
+    }
+
     // Not currently used
     // function bytes32ToStr(bytes32 _bytes32) internal pure returns (string memory) {
     //     bytes memory bytesArray = new bytes(32);
@@ -2298,7 +2315,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         (, mat) = spotter.ilks(_ilk);
     }
 
-    function checkIlkLerpOffboarding(bytes32 _ilk, bytes32 _lerp, uint256 _startMat, uint256 _lowMidMat, uint256 _highMidMat, uint256 _endMat) public {
+    function checkIlkLerpOffboarding(bytes32 _ilk, bytes32 _lerp, uint256 _startMat, uint256 _midMat, uint256 _gapMidMat, uint256 _endMat) public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -2308,8 +2325,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         hevm.warp(block.timestamp + lerp.duration() / 2);
         assertEq(getMat(_ilk), _startMat * RAY / 100);
         lerp.tick();
-        assertGt(getMat(_ilk), _lowMidMat * RAY / 100);
-        assertLt(getMat(_ilk), _highMidMat * RAY / 100);
+        assertEqApprox(getMat(_ilk), _midMat * RAY / 100, _gapMidMat * RAY / 100);
 
         hevm.warp(block.timestamp + lerp.duration());
         lerp.tick();
