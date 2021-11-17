@@ -950,7 +950,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_enabled:   false,
             aL_line:      0,
             aL_gap:       0,
-            aL_ttl:       0 hours,
+            aL_ttl:       0,
             line:         0,
             dust:         10 * THOUSAND,
             pct:          100,
