@@ -28,6 +28,11 @@ contract DssSpellAction is DssAction {
     // Hash: seth keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/287beee2bb76636b8b9e02c7e698fa639cb6b859/governance/votes/Executive%20vote%20-%20October%2022%2C%202021.md -q -O - 2>/dev/null)"
     string public constant override description = "Goerli Spell";
 
+    // Office Hours Off
+    function officeHours() public override returns (bool) {
+        return false;
+    }
+
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
     // To check this yourself, use the following rate calculation (example 8%):
