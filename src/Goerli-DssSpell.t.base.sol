@@ -3,10 +3,8 @@
 pragma solidity 0.6.12;
 
 import "ds-math/math.sol";
-
 import "ds-test/test.sol";
 import "dss-interfaces/Interfaces.sol";
-
 import "./test/rates.sol";
 import "./test/addresses_goerli.sol";
 
