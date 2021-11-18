@@ -1170,7 +1170,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          300,
-            mat:          30000,
+            mat:          160000,
             liqType:      "clip",
             liqOn:        true,
             chop:         0,

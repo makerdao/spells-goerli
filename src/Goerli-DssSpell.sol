@@ -48,41 +48,42 @@ contract DssSpellAction is DssAction {
     //
 
     // --- Rates (Housekeeeping) ---
-    uint256 constant ONE_PCT_RATE           = 1000000000315522921573372069;
-    uint256 constant ONE_FIVE_PCT_RATE      = 1000000000472114805215157978;
-    uint256 constant TWO_FIVE_PCT_RATE      = 1000000000782997609082909351;
-    uint256 constant SIX_PCT_RATE           = 1000000001847694957439350562;
+    uint256 constant ONE_PCT_RATE            = 1000000000315522921573372069;
+    uint256 constant ONE_FIVE_PCT_RATE       = 1000000000472114805215157978;
+    uint256 constant TWO_FIVE_PCT_RATE       = 1000000000782997609082909351;
+    uint256 constant SIX_PCT_RATE            = 1000000001847694957439350562;
 
     // --- Rates ---
-    uint256 constant FOUR_PCT_RATE          = 1000000001243680656318820312;
-    uint256 constant SEVEN_PCT_RATE         = 1000000002145441671308778766;
+    uint256 constant FOUR_PCT_RATE           = 1000000001243680656318820312;
+    uint256 constant SEVEN_PCT_RATE          = 1000000002145441671308778766;
 
     // --- Math ---
-    uint256 constant MILLION                = 10 ** 6;
-    uint256 constant RAY                    = 10 ** 27;
+    uint256 constant MILLION                 = 10 ** 6;
+    uint256 constant RAY                     = 10 ** 27;
 
     // --- WBTC-B ---
-    address constant MCD_JOIN_WBTC_B        = 0x13B8EB3d2d40A00d65fD30abF247eb470dDF6C25;
-    address constant MCD_CLIP_WBTC_B        = 0x4F51B15f8B86822d2Eca8a74BB4bA1e3c64F733F;
-    address constant MCD_CLIP_CALC_WBTC_B   = 0x1b5a9aDaf15CAE0e3d0349be18b77180C1a0deCc;
+    address constant MCD_JOIN_WBTC_B         = 0x13B8EB3d2d40A00d65fD30abF247eb470dDF6C25;
+    address constant MCD_CLIP_WBTC_B         = 0x4F51B15f8B86822d2Eca8a74BB4bA1e3c64F733F;
+    address constant MCD_CLIP_CALC_WBTC_B    = 0x1b5a9aDaf15CAE0e3d0349be18b77180C1a0deCc;
 
     // --- Offboarding: Current Liquidation Ratio ---
-    uint256 constant CURRENT_AAVE_MAT       =  165 * RAY / 100;
-    uint256 constant CURRENT_BAL_MAT        =  165 * RAY / 100;
-    uint256 constant CURRENT_COMP_MAT       =  165 * RAY / 100;
+    uint256 constant CURRENT_AAVE_MAT        =  165 * RAY / 100;
+    uint256 constant CURRENT_BAL_MAT         =  165 * RAY / 100;
+    uint256 constant CURRENT_COMP_MAT        =  165 * RAY / 100;
 
     // --- Offboarding: Target Liquidation Ratio ---
-    uint256 constant TARGET_AAVE_MAT        = 2100 * RAY / 100;
-    uint256 constant TARGET_BAL_MAT         = 2300 * RAY / 100;
-    uint256 constant TARGET_COMP_MAT        = 2000 * RAY / 100;
+    uint256 constant TARGET_AAVE_MAT         = 2100 * RAY / 100;
+    uint256 constant TARGET_BAL_MAT          = 2300 * RAY / 100;
+    uint256 constant TARGET_COMP_MAT         = 2000 * RAY / 100;
 
     // --- OLD LERP FAB ---
-    address constant OLD_LERP_FAB = 0xbBD821c291c492c40Db2577D9b6E5B1bdAEBD207;
+    address constant OLD_LERP_FAB            = 0xbBD821c291c492c40Db2577D9b6E5B1bdAEBD207;
 
     // --- Offboarding: Increased Target Liquidation Ratios ---
-    uint256 constant TARGET_LRC_MAT         = 24300 * RAY / 100;
-    uint256 constant TARGET_BAT_MAT         = 11200 * RAY / 100;
-    uint256 constant TARGET_ZRX_MAT         =  5500 * RAY / 100;
+    uint256 constant TARGET_LRC_MAT          = 24300 * RAY / 100;
+    uint256 constant TARGET_BAT_MAT          = 11200 * RAY / 100;
+    uint256 constant TARGET_ZRX_MAT          =  5500 * RAY / 100;
+    uint256 constant TARGET_UNIV2LINKETH_MAT =  1600 * RAY / 100;
 
     function _add(uint x, uint y) internal pure returns (uint z) {
         require((z = x + y) >= x, "DssSpellAction-add-overflow");
@@ -273,7 +274,7 @@ contract DssSpellAction is DssAction {
         uint256 CURRENT_LRC_MAT = LerpAbstract(LRC_LERP).tick();
         SpotAbstract(DssExecLib.spotter()).deny(LRC_LERP);
         DssExecLib.linearInterpolation({
-            _name:      "LRC-A Increased LR Offboarding",
+            _name:      "LRC-A Offboarding",
             _target:    DssExecLib.spotter(),
             _ilk:       "LRC-A",
             _what:      "mat",
@@ -288,7 +289,7 @@ contract DssSpellAction is DssAction {
         uint256 CURRENT_BAT_MAT = LerpAbstract(BAT_LERP).tick();
         SpotAbstract(DssExecLib.spotter()).deny(BAT_LERP);
         DssExecLib.linearInterpolation({
-            _name:      "BAT-A Increased LR Offboarding",
+            _name:      "BAT-A Offboarding",
             _target:    DssExecLib.spotter(),
             _ilk:       "BAT-A",
             _what:      "mat",
@@ -303,13 +304,28 @@ contract DssSpellAction is DssAction {
         uint256 CURRENT_ZRX_MAT = LerpAbstract(ZRX_LERP).tick();
         SpotAbstract(DssExecLib.spotter()).deny(ZRX_LERP);
         DssExecLib.linearInterpolation({
-            _name:      "ZRX-A Increased LR Offboarding",
+            _name:      "ZRX-A Offboarding",
             _target:    DssExecLib.spotter(),
             _ilk:       "ZRX-A",
             _what:      "mat",
             _startTime: block.timestamp,
             _start:     CURRENT_ZRX_MAT,
             _end:       TARGET_ZRX_MAT,
+            _duration:  30 days
+        });
+
+        // Increase UNIV2LINKETH-A Target Liquidation Ratio (mat)
+        address UNIV2LINKETH_LERP = LerpFactoryAbstract(OLD_LERP_FAB).lerps("UNIV2LINKETH Offboarding");
+        uint256 CURRENT_UNIV2LINKETH_MAT = LerpAbstract(UNIV2LINKETH_LERP).tick();
+        SpotAbstract(DssExecLib.spotter()).deny(UNIV2LINKETH_LERP);
+        DssExecLib.linearInterpolation({
+            _name:      "UNIV2LINKETH-A Offboarding",
+            _target:    DssExecLib.spotter(),
+            _ilk:       "UNIV2LINKETH-A",
+            _what:      "mat",
+            _startTime: block.timestamp,
+            _start:     CURRENT_UNIV2LINKETH_MAT,
+            _end:       TARGET_UNIV2LINKETH_MAT,
             _duration:  30 days
         });
     }

@@ -94,15 +94,19 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testLRCIncreasedMatLerpOffboarding() public {
-        checkIlkLerpIncreaseMatOffboarding("LRC-A", "LRC Offboarding", "LRC-A Increased LR Offboarding", 24300);
+        checkIlkLerpIncreaseMatOffboarding("LRC-A", "LRC Offboarding", "LRC-A Offboarding", 24300);
     }
 
     function testBATIncreasedMatLerpOffboarding() public {
-        checkIlkLerpIncreaseMatOffboarding("BAT-A", "BAT Offboarding", "BAT-A Increased LR Offboarding", 11200);
+        checkIlkLerpIncreaseMatOffboarding("BAT-A", "BAT Offboarding", "BAT-A Offboarding", 11200);
     }
 
     function testZRXIncreasedMatLerpOffboarding() public {
-        checkIlkLerpIncreaseMatOffboarding("ZRX-A", "ZRX Offboarding", "ZRX-A Increased LR Offboarding", 5500);
+        checkIlkLerpIncreaseMatOffboarding("ZRX-A", "ZRX Offboarding", "ZRX-A Offboarding", 5500);
+    }
+
+    function testUNIV2LINKETHIncreasedMatLerpOffboarding() public {
+        checkIlkLerpIncreaseMatOffboarding("UNIV2LINKETH-A", "UNIV2LINKETH Offboarding", "UNIV2LINKETH-A Offboarding", 1600);
     }
 
     function testFailWrongDay() public {
