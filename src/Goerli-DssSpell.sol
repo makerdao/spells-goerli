@@ -254,7 +254,7 @@ contract DssSpellAction is DssAction {
         // Increase WBTC-A Stability Fee (duty)
         // https://vote.makerdao.com/polling/QmRUgsvi?network=mainnet#poll-detail
         // https://forum.makerdao.com/t/mid-month-parameter-changes-proposal-ppg-omc-001-2021-11-10/11562
-        DssExecLib.setIlkStabilityFee("WBTC-A", FOUR_PCT_RATE, true); // From 2.5% to 4% (from 2% on goerli)
+        DssExecLib.setIlkStabilityFee("WBTC-A", FOUR_PCT_RATE, true); // From 2.5% to 4%
     }
 }
 
