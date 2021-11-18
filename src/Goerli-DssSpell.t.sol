@@ -58,9 +58,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // Insert new chainlog tests here
-        assertEq(chainLog.getAddress("WBTC"), addr.addr("WBTC"));
-        assertEq(chainLog.getAddress("PIP_WBTC"), addr.addr("PIP_WBTC"));
+        // Insert new chainlog values tests here
         assertEq(chainLog.getAddress("MCD_JOIN_WBTC_B"), addr.addr("MCD_JOIN_WBTC_B"));
         assertEq(chainLog.getAddress("MCD_CLIP_WBTC_B"), addr.addr("MCD_CLIP_WBTC_B"));
         assertEq(chainLog.getAddress("MCD_CLIP_CALC_WBTC_B"), addr.addr("MCD_CLIP_CALC_WBTC_B"));
@@ -72,7 +70,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // Insert new ilk registry tests here
+        // Insert new ilk registry values tests here
         assertEq(reg.pos("WBTC-B"), 43);
         assertEq(reg.join("WBTC-B"), addr.addr("MCD_JOIN_WBTC_B"));
         assertEq(reg.gem("WBTC-B"), addr.addr("WBTC"));
@@ -86,13 +84,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testAAVELerpOffboardings() public {
-        checkIlkLerpOffboarding("AAVE-A", "AAVE Offboarding", 165, 2200);
+        checkIlkLerpOffboarding("AAVE-A", "AAVE-A Offboarding", 165, 2200);
     }
     function testBALLerpOffboardings() public {
-        checkIlkLerpOffboarding("BAL-A", "BAL Offboarding", 165, 2200);
+        checkIlkLerpOffboarding("BAL-A", "BAL-A Offboarding", 165, 2200);
     }
     function testCOMPLerpOffboardings() public {
-        checkIlkLerpOffboarding("COMP-A", "COMP Offboarding", 165, 2000);
+        checkIlkLerpOffboarding("COMP-A", "COMP-A Offboarding", 165, 2000);
     }
 
     function testFailWrongDay() public {

@@ -187,7 +187,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.removeIlkFromAutoLine("AAVE-A");
         DssExecLib.setIlkDebtCeiling("AAVE-A", 0);
         DssExecLib.linearInterpolation({
-            _name:      "AAVE Offboarding",
+            _name:      "AAVE-A Offboarding",
             _target:    DssExecLib.spotter(),
             _ilk:       "AAVE-A",
             _what:      "mat",
@@ -208,7 +208,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.removeIlkFromAutoLine("BAL-A");
         DssExecLib.setIlkDebtCeiling("BAL-A", 0);
         DssExecLib.linearInterpolation({
-            _name:      "BAL Offboarding",
+            _name:      "BAL-A Offboarding",
             _target:    DssExecLib.spotter(),
             _ilk:       "BAL-A",
             _what:      "mat",
@@ -229,7 +229,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.removeIlkFromAutoLine("COMP-A");
         DssExecLib.setIlkDebtCeiling("COMP-A", 0);
         DssExecLib.linearInterpolation({
-            _name:      "COMP Offboarding",
+            _name:      "COMP-A Offboarding",
             _target:    DssExecLib.spotter(),
             _ilk:       "COMP-A",
             _what:      "mat",
@@ -249,7 +249,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkMaxLiquidationAmount("ETH-B",    30 * MILLION); // From 25M to 30M DAI
         DssExecLib.setIlkMaxLiquidationAmount("ETH-C",    35 * MILLION); // From 30M to 35M DAI
         DssExecLib.setIlkMaxLiquidationAmount("WBTC-A",   40 * MILLION); // From 25M to 40M DAI
-        DssExecLib.setIlkMaxLiquidationAmount("WSTETH-A",  7 * MILLION); // From  3M to  5M DAI
+        DssExecLib.setIlkMaxLiquidationAmount("WSTETH-A",  7 * MILLION); // From  3M to  7M DAI
 
         // Increase WBTC-A Stability Fee (duty)
         // https://vote.makerdao.com/polling/QmRUgsvi?network=mainnet#poll-detail
