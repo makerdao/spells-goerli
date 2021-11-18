@@ -143,7 +143,7 @@ contract DssSpellAction is DssAction {
                 pip:                   PIP_WBTC,
                 isLiquidatable:        true,
                 isOSM:                 true,
-                whitelistOSM:          false,
+                whitelistOSM:          true,
                 ilkDebtCeiling:        30 * MILLION,
                 minVaultAmount:        30000,
                 maxLiquidationAmount:  25 * MILLION,
