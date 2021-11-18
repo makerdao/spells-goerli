@@ -93,6 +93,18 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkIlkLerpOffboarding("COMP-A", "COMP-A Offboarding", 165, 2000);
     }
 
+    function testLRCIncreasedMatLerpOffboarding() public {
+        checkIlkLerpIncreaseMatOffboarding("LRC-A", "LRC Offboarding", "LRC-A Increased LR Offboarding", 24300);
+    }
+
+    function testBATIncreasedMatLerpOffboarding() public {
+        checkIlkLerpIncreaseMatOffboarding("BAT-A", "BAT Offboarding", "BAT-A Increased LR Offboarding", 11200);
+    }
+
+    function testZRXIncreasedMatLerpOffboarding() public {
+        checkIlkLerpIncreaseMatOffboarding("ZRX-A", "ZRX Offboarding", "ZRX-A Increased LR Offboarding", 5500);
+    }
+
     function testFailWrongDay() public {
         require(spell.officeHours() == spellValues.office_hours_enabled);
         if (spell.officeHours()) {

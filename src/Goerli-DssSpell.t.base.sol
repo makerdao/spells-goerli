@@ -416,7 +416,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          400,
-            mat:          15000,
+            mat:          80000,
             liqType:      "clip",
             liqOn:        true,
             chop:         0,
@@ -619,7 +619,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          400,
-            mat:          17500,
+            mat:          90000,
             liqType:      "clip",
             liqOn:        true,
             chop:         0,
@@ -764,7 +764,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          400,
-            mat:          17500,
+            mat:          260000,
             liqType:      "clip",
             liqOn:        true,
             chop:         0,
@@ -1828,8 +1828,17 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             (,uint256 mat) = spotter.ilks(ilk);
             // Convert BP to system expected value
             uint256 normalizedTestMat = (values.collaterals[ilk].mat * 10**23);
-            assertEq(mat, normalizedTestMat, string(abi.encodePacked("TestError/vat-mat-", ilk)));
-            assertTrue(mat >= RAY && mat < 10 * RAY, string(abi.encodePacked("TestError/vat-mat-range-", ilk)));    // cr eq 100% and lt 1000%
+            if ( ilk == "BAT-A" ||
+                 ilk == "ZRX-A" ||
+                 ilk == "LRC-A"
+                ) {
+                // TODO: remove these when we are done with the lerp
+                assertTrue(mat <= normalizedTestMat, string(abi.encodePacked("TestError/vat-lerping-mat-", ilk)));
+                assertTrue(mat >= RAY && mat <= 50 * RAY, string(abi.encodePacked("TestError/vat-mat-range-", ilk)));
+            } else {
+                assertEq(mat, normalizedTestMat, string(abi.encodePacked("TestError/vat-mat-", ilk)));
+                assertTrue(mat >= RAY && mat < 10 * RAY, string(abi.encodePacked("TestError/vat-mat-range-", ilk)));    // cr eq 100% and lt 1000%
+            }
             }
 
             if (values.collaterals[ilk].liqType == "flip") {
@@ -2326,6 +2335,31 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         hevm.warp(block.timestamp + lerp.duration());
         lerp.tick();
         assertEq(getMat(_ilk), _endMat * RAY / 100);
+    }
+
+    function checkIlkLerpIncreaseMatOffboarding(bytes32 _ilk, bytes32 _oldLerp, bytes32 _newLerp, uint256 _newEndMat) public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        LerpFactoryAbstract OLD_LERP_FAB = LerpFactoryAbstract(0xbBD821c291c492c40Db2577D9b6E5B1bdAEBD207);
+        LerpAbstract oldLerp = LerpAbstract(OLD_LERP_FAB.lerps(_oldLerp));
+
+        uint256 t = (block.timestamp - oldLerp.startTime()) * WAD / oldLerp.duration();
+        uint256 tickMat = oldLerp.end() * t / WAD + oldLerp.start() - oldLerp.start() * t / WAD;
+        assertEq(getMat(_ilk), tickMat);
+        assertEq(spotter.wards(address(oldLerp)), 0);
+
+        LerpAbstract newLerp = LerpAbstract(lerpFactory.lerps(_newLerp));
+
+        hevm.warp(block.timestamp + newLerp.duration() / 2);
+        assertEq(getMat(_ilk), tickMat);
+        newLerp.tick();
+        assertEqApprox(getMat(_ilk), (tickMat + _newEndMat * RAY / 100) / 2, RAY / 100);
+
+        hevm.warp(block.timestamp + newLerp.duration());
+        newLerp.tick();
+        assertEq(getMat(_ilk), _newEndMat * RAY / 100);
     }
 
     function getExtcodesize(address target) public view returns (uint256 exsize) {
