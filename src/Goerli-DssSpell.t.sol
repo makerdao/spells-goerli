@@ -95,6 +95,15 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkIlkLerpOffboarding("COMP-A", "COMP Offboarding", 165, 1000, 83, 2000); // 83% tollerance
     }
 
+    function testPsmParamChanges() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(PsmAbstract(addr.addr("MCD_PSM_USDC_A")).tin(), 0);
+        assertEq(PsmAbstract(addr.addr("MCD_PSM_PAX_A")).tin(), 0);
+    }
+
     function testFailWrongDay() public {
         require(spell.officeHours() == spellValues.office_hours_enabled);
         if (spell.officeHours()) {

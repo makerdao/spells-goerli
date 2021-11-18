@@ -326,11 +326,11 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         afterSpell.collaterals["ETH-A"] = CollateralValues({
             aL_enabled:   true,            // DssAutoLine is enabled?
             aL_line:      15 * BILLION,    // In whole Dai units
-            aL_gap:       100 * MILLION,   // In whole Dai units
-            aL_ttl:       8 hours,         // In seconds
+            aL_gap:       150 * MILLION,   // In whole Dai units
+            aL_ttl:       6 hours,         // In seconds
             line:         0,               // In whole Dai units  // Not checked here as there is auto line
             dust:         10 * THOUSAND,   // In whole Dai units
-            pct:          200,             // In basis points
+            pct:          250,             // In basis points
             mat:          14500,           // In basis points
             liqType:      "clip",          // "" or "flip" or "clip"
             liqOn:        true,            // If liquidations are enabled
@@ -354,12 +354,12 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         });
         afterSpell.collaterals["ETH-B"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      300 * MILLION,
-            aL_gap:       10 * MILLION,
-            aL_ttl:       8 hours,
+            aL_line:      500 * MILLION,
+            aL_gap:       20 * MILLION,
+            aL_ttl:       6 hours,
             line:         0,
             dust:         30 * THOUSAND,
-            pct:          500,
+            pct:          600,
             mat:          13000,
             liqType:      "clip",
             liqOn:        true,
@@ -446,7 +446,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_ttl:       0,
             line:         0,
             dust:         10 * THOUSAND,
-            pct:          0,
+            pct:          100,
             mat:          10100,
             liqType:      "clip",
             liqOn:        false,
@@ -499,9 +499,9 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         });
         afterSpell.collaterals["WBTC-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      750 * MILLION,
-            aL_gap:       30 * MILLION,
-            aL_ttl:       8 hours,
+            aL_line:      1_500 * MILLION,
+            aL_gap:       60 * MILLION,
+            aL_ttl:       6 hours,
             line:         0,
             dust:         10 * THOUSAND,
             pct:          400,
@@ -644,7 +644,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         });
         afterSpell.collaterals["MANA-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      5 * MILLION,
+            aL_line:      10 * MILLION,
             aL_gap:       1 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
@@ -794,7 +794,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_ttl:       8 hours,
             line:         0,
             dust:         10 * THOUSAND,
-            pct:          100,
+            pct:          150,
             mat:          16500,
             liqType:      "clip",
             liqOn:        true,
@@ -939,7 +939,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_ttl:       8 hours,
             line:         0,
             dust:         10 * THOUSAND,
-            pct:          200,
+            pct:          250,
             mat:          16500,
             liqType:      "clip",
             liqOn:        true,
@@ -1050,12 +1050,12 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         });
         afterSpell.collaterals["UNIV2WBTCETH-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      20 * MILLION,
-            aL_gap:       3 * MILLION,
+            aL_line:      50 * MILLION,
+            aL_gap:       5 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
             dust:         10 * THOUSAND,
-            pct:          200,
+            pct:          250,
             mat:          14500,
             liqType:      "clip",
             liqOn:        true,
@@ -1485,8 +1485,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         });
         afterSpell.collaterals["MATIC-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      10 * MILLION,
-            aL_gap:       3 * MILLION,
+            aL_line:      20 * MILLION,
+            aL_gap:       20 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
             dust:         10 * THOUSAND,

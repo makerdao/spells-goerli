@@ -43,7 +43,13 @@ contract DssSpellAction is DssAction {
     //    https://ipfs.io/ipfs/QmefQMseb3AiTapiAKKexdKHig8wroKuZbmLtPLv4u2YwW
     //
 
-    // --- Rate ---
+    // --- Rates (Housekeeeping) ---
+    uint256 constant ONE_PCT_RATE           = 1000000000315522921573372069;
+    uint256 constant ONE_FIVE_PCT_RATE      = 1000000000472114805215157978;
+    uint256 constant TWO_FIVE_PCT_RATE      = 1000000000782997609082909351;
+    uint256 constant SIX_PCT_RATE           = 1000000001847694957439350562;
+
+    // --- Rates ---
     uint256 constant FOUR_PCT_RATE          = 1000000001243680656318820312;
     uint256 constant SEVEN_PCT_RATE         = 1000000002145441671308778766;
 
@@ -74,6 +80,49 @@ contract DssSpellAction is DssAction {
     }
 
     function actions() public override {
+
+        //
+        // Housekeeping: Sync Goerli System Values with Mainnet
+        //
+
+        // --- 2021-10-22 Weekly Executive ---
+        // https://github.com/makerdao/spells-mainnet/blob/master/archive/2021-10-22-DssSpell/DssSpell.sol
+
+        // Parameter Changes Proposal - MakerDAO Open Market Committee - October 18, 2021
+        // https://vote.makerdao.com/polling/QmP6GPeK?network=mainnet#poll-detail
+        DssExecLib.setIlkAutoLineParameters("ETH-A", 15_000 * MILLION, 150 * MILLION, 6 hours);
+        DssExecLib.setIlkAutoLineParameters("ETH-B", 500 * MILLION, 20 * MILLION, 6 hours);
+        DssExecLib.setIlkAutoLineParameters("WBTC-A", 1_500 * MILLION, 60 * MILLION, 6 hours);
+
+        // --- 2021-11-05 Weekly Executive ---
+        // https://github.com/makerdao/spells-mainnet/blob/master/archive/2021-11-05-DssSpell/DssSpell.sol
+
+        // ----------------------------- Stability Fee updates ----------------------------
+        // https://vote.makerdao.com/polling/QmXDCCPH?network=mainnet#poll-detail
+        DssExecLib.setIlkStabilityFee("ETH-A",          TWO_FIVE_PCT_RATE, true);
+        DssExecLib.setIlkStabilityFee("ETH-B",          SIX_PCT_RATE,      true);
+        DssExecLib.setIlkStabilityFee("WBTC-A",         TWO_FIVE_PCT_RATE, true);
+        DssExecLib.setIlkStabilityFee("LINK-A",         ONE_FIVE_PCT_RATE, true);
+        DssExecLib.setIlkStabilityFee("RENBTC-A",       TWO_FIVE_PCT_RATE, true);
+        DssExecLib.setIlkStabilityFee("USDC-A",         ONE_PCT_RATE,      true);
+        DssExecLib.setIlkStabilityFee("UNIV2WBTCETH-A", TWO_FIVE_PCT_RATE, true);
+
+        // ------------------------------ Debt ceiling updates -----------------------------
+        // https://vote.makerdao.com/polling/QmXDCCPH?network=mainnet#poll-detail
+        DssExecLib.setIlkAutoLineDebtCeiling("MANA-A",        10 * MILLION);
+        DssExecLib.setIlkAutoLineParameters("MATIC-A",        20 * MILLION, 20 * MILLION, 8 hours);
+        DssExecLib.setIlkAutoLineParameters("UNIV2WBTCETH-A", 50 * MILLION,  5 * MILLION, 8 hours);
+
+        // ------------------------------ PSM updates --------------------------------------
+        // https://vote.makerdao.com/polling/QmSkYED5?network=mainnet#poll-detail
+        address MCD_PSM_USDC_A = DssExecLib.getChangelogAddress("MCD_PSM_USDC_A");
+        address MCD_PSM_PAX_A  = DssExecLib.getChangelogAddress("MCD_PSM_PAX_A");
+        DssExecLib.setValue(MCD_PSM_USDC_A, "tin", 0);
+        DssExecLib.setValue(MCD_PSM_PAX_A,  "tin", 0);
+
+        //
+        // END Housekeeping
+        //
 
         // WBTC
         address WBTC     = DssExecLib.getChangelogAddress("WBTC");
