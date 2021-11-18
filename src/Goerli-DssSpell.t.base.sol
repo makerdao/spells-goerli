@@ -590,7 +590,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          500,
-            mat:          17500,
+            mat:          500000,
             liqType:      "clip",
             liqOn:        true,
             chop:         0,
@@ -1170,7 +1170,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          300,
-            mat:          16500,
+            mat:          30000,
             liqType:      "clip",
             liqOn:        true,
             chop:         0,
@@ -1257,7 +1257,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          300,
-            mat:          16500,
+            mat:          40000,
             liqType:      "clip",
             liqOn:        true,
             chop:         0,
@@ -1828,9 +1828,12 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             (,uint256 mat) = spotter.ilks(ilk);
             // Convert BP to system expected value
             uint256 normalizedTestMat = (values.collaterals[ilk].mat * 10**23);
-            if ( ilk == "BAT-A" ||
+            if ( ilk == "KNC-A" ||
+                 ilk == "BAT-A" ||
                  ilk == "ZRX-A" ||
-                 ilk == "LRC-A"
+                 ilk == "LRC-A" ||
+                 ilk == "UNIV2AAVEETH-A" ||
+                 ilk == "UNIV2LINKETH-A"
                 ) {
                 // TODO: remove these when we are done with the lerp
                 assertTrue(mat <= normalizedTestMat, string(abi.encodePacked("TestError/vat-lerping-mat-", ilk)));
