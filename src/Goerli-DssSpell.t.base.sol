@@ -2313,7 +2313,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         (, mat) = spotter.ilks(_ilk);
     }
 
-    function checkIlkLerpOffboarding(bytes32 _ilk, bytes32 _lerp, uint256 _startMat, uint256 _midMat, uint256 _gapMidMat, uint256 _endMat) public {
+    function checkIlkLerpOffboarding(bytes32 _ilk, bytes32 _lerp, uint256 _startMat, uint256 _endMat) public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -2323,7 +2323,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         hevm.warp(block.timestamp + lerp.duration() / 2);
         assertEq(getMat(_ilk), _startMat * RAY / 100);
         lerp.tick();
-        assertEqApprox(getMat(_ilk), _midMat * RAY / 100, _gapMidMat * RAY / 100);
+        assertEqApprox(getMat(_ilk), ((_startMat + _endMat) / 2) * RAY / 100, RAY / 100);
 
         hevm.warp(block.timestamp + lerp.duration());
         lerp.tick();
