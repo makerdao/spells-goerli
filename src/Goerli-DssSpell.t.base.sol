@@ -282,7 +282,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         // Test for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0xfD88CeE74f7D78697775aBDAE53f9Da1559728E4),        // populate with deployed spell if deployed
+            deployed_spell:                 address(0),        // populate with deployed spell if deployed
             deployed_spell_created:         1637334344,        // use get-created-timestamp.sh if deployed
             previous_spell:                 address(0),        // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           false,             // true if officehours is expected to be enabled in the spell
@@ -305,7 +305,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             vow_sump:              50 * THOUSAND,           // In whole Dai units
             vow_bump:              30 * THOUSAND,           // In whole Dai units
             vow_hump_min:          60 * MILLION,            // In whole Dai units
-            vow_hump_max:          60 * MILLION,            // In whole Dai units
+            vow_hump_max:          90 * MILLION,            // In whole Dai units
             flap_beg:              400,                     // in basis points
             flap_ttl:              30 minutes,              // in seconds
             flap_tau:              72 hours,                // in seconds
@@ -315,7 +315,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             osm_mom_authority:     address(chief),          // OsmMom authority
             flipper_mom_authority: address(chief),          // FlipperMom authority
             clipper_mom_authority: address(chief),          // ClipperMom authority
-            ilk_count:             44                       // Num expected in system
+            ilk_count:             46                       // Num expected in system
         });
 
         //
@@ -551,6 +551,35 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    60,
+            calc_cut:     9900
+        });
+        afterSpell.collaterals["WBTC-C"] = CollateralValues({
+            aL_enabled:   true,
+            aL_line:      1000 * MILLION,
+            aL_gap:       100 * MILLION,
+            aL_ttl:       8 hours,
+            line:         0,
+            dust:         7500,
+            pct:          150,
+            mat:          17500,
+            liqType:      "clip",
+            liqOn:        true,
+            chop:         1300,
+            cat_dunk:     0,
+            flip_beg:     0,
+            flip_ttl:     0,
+            flip_tau:     0,
+            flipper_mom:  0,
+            dog_hole:     25 * MILLION,
+            clip_buf:     12000,
+            clip_tail:    90 minutes,
+            clip_cusp:    4000,
+            clip_chip:    10,
+            clip_tip:     300,
+            clipper_mom:  1,
+            cm_tolerance: 5000,
+            calc_tau:     0,
+            calc_step:    90,
             calc_cut:     9900
         });
         afterSpell.collaterals["TUSD-A"] = CollateralValues({
@@ -1597,6 +1626,35 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             calc_step:    90,
             calc_cut:     9900
         });
+        afterSpell.collaterals["PSM-GUSD-A"] = CollateralValues({
+            aL_enabled:   true,
+            aL_line:      10 * MILLION,
+            aL_gap:       10 * MILLION,
+            aL_ttl:       24 hours,
+            line:         0,
+            dust:         0,
+            pct:          0,
+            mat:          10000,
+            liqType:      "clip",
+            liqOn:        false,
+            chop:         1300,
+            cat_dunk:     0,
+            flip_beg:     0,
+            flip_ttl:     0,
+            flip_tau:     0,
+            flipper_mom:  0,
+            dog_hole:     0,
+            clip_buf:     10500,
+            clip_tail:    220 minutes,
+            clip_cusp:    9000,
+            clip_chip:    10,
+            clip_tip:     300,
+            clipper_mom:  0,
+            cm_tolerance: 9500,
+            calc_tau:     0,
+            calc_step:    120,
+            calc_cut:     9990
+        });
     }
 
     function scheduleWaitAndCastFailDay() public {
@@ -2106,6 +2164,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
     ) public {
         DSTokenAbstract token = DSTokenAbstract(join.gem());
 
+        hevm.warp(block.timestamp + 3601);
         if (_isOSM) OsmAbstract(pip).poke();
         hevm.warp(block.timestamp + 3601);
         if (_isOSM) OsmAbstract(pip).poke();
@@ -2310,7 +2369,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         psm.sellGem(address(this), amount);
         amount -= amount * tin / WAD;
         assertEq(token.balanceOf(address(this)), 0);
-        assertEq(dai.balanceOf(address(this)), amount);
+        assertEq(dai.balanceOf(address(this)), amount * (10 ** (18 - token.decimals())));
 
         // Convert all DAI to TOKEN
         amount -= amount * tout / WAD;

@@ -43,13 +43,22 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         // Insert new collateral tests here
         checkIlkIntegration(
-            "WBTC-B",
-            GemJoinAbstract(addr.addr("MCD_JOIN_WBTC_B")),
-            ClipAbstract(addr.addr("MCD_CLIP_WBTC_B")),
+            "WBTC-C",
+            GemJoinAbstract(addr.addr("MCD_JOIN_WBTC_C")),
+            ClipAbstract(addr.addr("MCD_CLIP_WBTC_C")),
             addr.addr("PIP_WBTC"),
             true,
             true,
             false
+        );
+        checkPsmIlkIntegration(
+            "PSM-GUSD-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_PSM_GUSD_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_PSM_GUSD_A")),
+            addr.addr("PIP_GUSD"),
+            PsmAbstract(addr.addr("MCD_PSM_GUSD_A")),
+            0,
+            0
         );
     }
 
@@ -59,10 +68,16 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        assertEq(chainLog.getAddress("MCD_JOIN_WBTC_B"), addr.addr("MCD_JOIN_WBTC_B"));
-        assertEq(chainLog.getAddress("MCD_CLIP_WBTC_B"), addr.addr("MCD_CLIP_WBTC_B"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WBTC_B"), addr.addr("MCD_CLIP_CALC_WBTC_B"));
-        assertEq(chainLog.version(), "1.9.10");
+        assertEq(chainLog.getAddress("MCD_JOIN_WBTC_C"), addr.addr("MCD_JOIN_WBTC_C"));
+        assertEq(chainLog.getAddress("MCD_CLIP_WBTC_C"), addr.addr("MCD_CLIP_WBTC_C"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WBTC_C"), addr.addr("MCD_CLIP_CALC_WBTC_C"));
+
+        assertEq(chainLog.getAddress("MCD_JOIN_PSM_GUSD_A"), addr.addr("MCD_JOIN_PSM_GUSD_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_PSM_GUSD_A"), addr.addr("MCD_CLIP_PSM_GUSD_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_PSM_GUSD_A"), addr.addr("MCD_CLIP_CALC_PSM_GUSD_A"));
+        assertEq(chainLog.getAddress("MCD_PSM_GUSD_A"), addr.addr("MCD_PSM_GUSD_A"));
+
+        assertEq(chainLog.version(), "1.9.11");
     }
 
     function testNewIlkRegistryValues() public {
@@ -81,32 +96,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // WBTC token name not present
         //assertEq(reg.name("WBTC-B"), "Wrapped BTC");
         assertEq(reg.symbol("WBTC-B"), "WBTC");
-    }
-
-    function testAAVELerpOffboardings() public {
-        checkIlkLerpOffboarding("AAVE-A", "AAVE-A Offboarding", 165, 2100);
-    }
-    function testBALLerpOffboardings() public {
-        checkIlkLerpOffboarding("BAL-A", "BAL-A Offboarding", 165, 2300);
-    }
-    function testCOMPLerpOffboardings() public {
-        checkIlkLerpOffboarding("COMP-A", "COMP-A Offboarding", 165, 2000);
-    }
-
-    function testLRCIncreasedMatLerpOffboarding() public {
-        checkIlkLerpIncreaseMatOffboarding("LRC-A", "LRC Offboarding", "LRC-A Offboarding", 24300);
-    }
-
-    function testBATIncreasedMatLerpOffboarding() public {
-        checkIlkLerpIncreaseMatOffboarding("BAT-A", "BAT Offboarding", "BAT-A Offboarding", 11200);
-    }
-
-    function testZRXIncreasedMatLerpOffboarding() public {
-        checkIlkLerpIncreaseMatOffboarding("ZRX-A", "ZRX Offboarding", "ZRX-A Offboarding", 5500);
-    }
-
-    function testUNIV2LINKETHIncreasedMatLerpOffboarding() public {
-        checkIlkLerpIncreaseMatOffboarding("UNIV2LINKETH-A", "UNIV2LINKETH Offboarding", "UNIV2LINKETH-A Offboarding", 1600);
     }
 
     function testFailWrongDay() public {
@@ -337,12 +326,21 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(expectedHash, actualHash);
     }
 
-    function testPsmParamChanges() public {
+    function testLerpSurplusBuffer() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        assertEq(PsmAbstract(addr.addr("MCD_PSM_USDC_A")).tin(), 0);
-        assertEq(PsmAbstract(addr.addr("MCD_PSM_PAX_A")).tin(), 0);
+        LerpAbstract lerp = LerpAbstract(lerpFactory.lerps("Increase SB - 20211126"));
+
+        uint256 duration = 210 days;
+        hevm.warp(block.timestamp + duration / 2);
+        assertEq(vow.hump(), 60 * MILLION * RAD);
+        lerp.tick();
+        assertEq(vow.hump(), 75 * MILLION * RAD);
+        hevm.warp(block.timestamp + duration / 2);
+        lerp.tick();
+        assertEq(vow.hump(), 90 * MILLION * RAD);
+        assertTrue(lerp.done());
     }
 }

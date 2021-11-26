@@ -94,6 +94,9 @@ contract Addresses {
         addr["MCD_JOIN_WBTC_B"]                 = 0x13B8EB3d2d40A00d65fD30abF247eb470dDF6C25;
         addr["MCD_CLIP_WBTC_B"]                 = 0x4F51B15f8B86822d2Eca8a74BB4bA1e3c64F733F;
         addr["MCD_CLIP_CALC_WBTC_B"]            = 0x1b5a9aDaf15CAE0e3d0349be18b77180C1a0deCc;
+        addr["MCD_JOIN_WBTC_C"]                 = 0xe15E69F10E1A362F69d9672BFeA20B75CFf8574A;
+        addr["MCD_CLIP_WBTC_C"]                 = 0xDa3cd88f5FF7D2B9ED6Ab171C8218421916B6e10;
+        addr["MCD_CLIP_CALC_WBTC_C"]            = 0xD26B140fdaA11c23b09230c24cBe71f456AC7ab6;
         addr["ZRX"]                             = 0x96E0C18524789ED3e62CD9F56aAEc7cEAC78725a;
         addr["PIP_ZRX"]                         = 0xe9245D25F3265E9A36DcCDC72B0B5dE1eeACD4cD;
         addr["MCD_JOIN_ZRX_A"]                  = 0xC279765B3f930742167dB91271f13353336B6C72;
@@ -155,6 +158,10 @@ contract Addresses {
         addr["MCD_JOIN_GUSD_A"]                 = 0x455451293100C5c5355db10512DEE81F75E45Edf;
         addr["MCD_CLIP_GUSD_A"]                 = 0xF535799F8b4Ac661cd33E37421A571c742ed9B19;
         addr["MCD_CLIP_CALC_GUSD_A"]            = 0x9F97F2cd4B79fF6CA34d0B77e5AfeA889a292422;
+        addr["MCD_JOIN_PSM_GUSD_A"]             = 0x4115fDa246e2583b91aD602213f2ac4fC6E437Ca;
+        addr["MCD_CLIP_PSM_GUSD_A"]             = 0x7A58fF23D5437C99b44BB02D7e24213D6dA20DFa;
+        addr["MCD_CLIP_CALC_PSM_GUSD_A"]        = 0xE99bd8c56d7B9d90A36C8a563a4CA375b144dD94;
+        addr["MCD_PSM_GUSD_A"]                  = 0x3B2dBE6767fD8B4f8334cE3E8EC3E2DF8aB3957b;
         addr["UNI"]                             = 0x82D98aA89E391c6759012df39ccDA0d9d6b24143;
         addr["PIP_UNI"]                         = 0xf1a5b808fbA8fF80982dACe88020d4a80c91aFe6;
         addr["MCD_JOIN_UNI_A"]                  = 0x31aE6e37964f26f4112A8Fc70e0B680F18e4DC6A;

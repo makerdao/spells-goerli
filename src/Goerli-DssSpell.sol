@@ -22,10 +22,6 @@ import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 import { VatAbstract, LerpFactoryAbstract, SpotAbstract} from "dss-interfaces/Interfaces.sol";
 
-interface LerpAbstract {
-    function tick() external returns (uint256);
-}
-
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     // This should be modified weekly to provide a summary of the actions
@@ -47,43 +43,24 @@ contract DssSpellAction is DssAction {
     //    https://ipfs.io/ipfs/QmefQMseb3AiTapiAKKexdKHig8wroKuZbmLtPLv4u2YwW
     //
 
-    // --- Rates (Housekeeeping) ---
-    uint256 constant ONE_PCT_RATE            = 1000000000315522921573372069;
-    uint256 constant ONE_FIVE_PCT_RATE       = 1000000000472114805215157978;
-    uint256 constant TWO_FIVE_PCT_RATE       = 1000000000782997609082909351;
-    uint256 constant SIX_PCT_RATE            = 1000000001847694957439350562;
-
     // --- Rates ---
-    uint256 constant FOUR_PCT_RATE           = 1000000001243680656318820312;
-    uint256 constant SEVEN_PCT_RATE          = 1000000002145441671308778766;
+    uint256 constant ZERO_PCT_RATE           = 1000000000000000000000000000;
+    uint256 constant ONE_FIVE_PCT_RATE       = 1000000000472114805215157978;
 
     // --- Math ---
     uint256 constant MILLION                 = 10 ** 6;
-    uint256 constant RAY                     = 10 ** 27;
+    uint256 constant RAD                     = 10 ** 45;
 
-    // --- WBTC-B ---
-    address constant MCD_JOIN_WBTC_B         = 0x13B8EB3d2d40A00d65fD30abF247eb470dDF6C25;
-    address constant MCD_CLIP_WBTC_B         = 0x4F51B15f8B86822d2Eca8a74BB4bA1e3c64F733F;
-    address constant MCD_CLIP_CALC_WBTC_B    = 0x1b5a9aDaf15CAE0e3d0349be18b77180C1a0deCc;
+    // --- WBTC-C ---
+    address constant MCD_JOIN_WBTC_C        = 0xe15E69F10E1A362F69d9672BFeA20B75CFf8574A;
+    address constant MCD_CLIP_WBTC_C        = 0xDa3cd88f5FF7D2B9ED6Ab171C8218421916B6e10;
+    address constant MCD_CLIP_CALC_WBTC_C   = 0xD26B140fdaA11c23b09230c24cBe71f456AC7ab6;
 
-    // --- Offboarding: Current Liquidation Ratio ---
-    uint256 constant CURRENT_AAVE_MAT        =  165 * RAY / 100;
-    uint256 constant CURRENT_BAL_MAT         =  165 * RAY / 100;
-    uint256 constant CURRENT_COMP_MAT        =  165 * RAY / 100;
-
-    // --- Offboarding: Target Liquidation Ratio ---
-    uint256 constant TARGET_AAVE_MAT         = 2100 * RAY / 100;
-    uint256 constant TARGET_BAL_MAT          = 2300 * RAY / 100;
-    uint256 constant TARGET_COMP_MAT         = 2000 * RAY / 100;
-
-    // --- OLD LERP FAB ---
-    address constant OLD_LERP_FAB            = 0xbBD821c291c492c40Db2577D9b6E5B1bdAEBD207;
-
-    // --- Offboarding: Increased Target Liquidation Ratios ---
-    uint256 constant TARGET_LRC_MAT          = 24300 * RAY / 100;
-    uint256 constant TARGET_BAT_MAT          = 11200 * RAY / 100;
-    uint256 constant TARGET_ZRX_MAT          =  5500 * RAY / 100;
-    uint256 constant TARGET_UNIV2LINKETH_MAT =  1600 * RAY / 100;
+    // --- PSM-GUSD-A ---
+    address constant MCD_JOIN_PSM_GUSD_A      = 0x4115fDa246e2583b91aD602213f2ac4fC6E437Ca; // AuthGemJoin8
+    address constant MCD_CLIP_PSM_GUSD_A      = 0x7A58fF23D5437C99b44BB02D7e24213D6dA20DFa;
+    address constant MCD_CLIP_CALC_PSM_GUSD_A = 0xE99bd8c56d7B9d90A36C8a563a4CA375b144dD94;
+    address constant MCD_PSM_GUSD_A           = 0x3B2dBE6767fD8B4f8334cE3E8EC3E2DF8aB3957b;
 
     function _add(uint x, uint y) internal pure returns (uint z) {
         require((z = x + y) >= x, "DssSpellAction-add-overflow");
@@ -94,240 +71,117 @@ contract DssSpellAction is DssAction {
 
     function actions() public override {
 
-        //
-        // Housekeeping: Sync Goerli System Values with Mainnet
-        //
+        // --- 2021-11-26 Weekly Executive ---
 
-        // --- 2021-10-22 Weekly Executive ---
-        // https://github.com/makerdao/spells-mainnet/blob/master/archive/2021-10-22-DssSpell/DssSpell.sol
+        // ----------------------------- Debt ceiling updates -----------------------------
+        // Increase the Aave D3M Maximum Debt Ceiling to 100 million
+        // https://vote.makerdao.com/polling/QmZhvNu5?network=mainnet#poll-detail
+        // https://forum.makerdao.com/t/proposal-to-increase-the-d3m-dc-from-50m-to-100m/11737
 
-        // Parameter Changes Proposal - MakerDAO Open Market Committee - October 18, 2021
-        // https://vote.makerdao.com/polling/QmP6GPeK?network=mainnet#poll-detail
-        DssExecLib.setIlkAutoLineParameters("ETH-A", 15_000 * MILLION, 150 * MILLION, 6 hours);
-        DssExecLib.setIlkAutoLineParameters("ETH-B", 500 * MILLION, 20 * MILLION, 6 hours);
-        DssExecLib.setIlkAutoLineParameters("WBTC-A", 1_500 * MILLION, 60 * MILLION, 6 hours);
+        //DssExecLib.setIlkAutoLineDebtCeiling("DIRECT-AAVEV2-DAI", 100 * MILLION); // Not supported on Goerli
 
-        // --- 2021-11-05 Weekly Executive ---
-        // https://github.com/makerdao/spells-mainnet/blob/master/archive/2021-11-05-DssSpell/DssSpell.sol
+        //  ----------------- Increase the Surplus Buffer via Lerp -----------------------
+        //  https://vote.makerdao.com/polling/QmUqfZRv?network=mainnet#poll-detail
+        DssExecLib.linearInterpolation({
+            _name:      "Increase SB - 20211126",
+            _target:    DssExecLib.vow(),
+            _what:      "hump",
+            _startTime: block.timestamp,
+            _start:     60 * MILLION * RAD,
+            _end:       90 * MILLION * RAD,
+            _duration:  210 days
+        });
 
-        // ----------------------------- Stability Fee updates ----------------------------
-        // https://vote.makerdao.com/polling/QmXDCCPH?network=mainnet#poll-detail
-        DssExecLib.setIlkStabilityFee("ETH-A",          TWO_FIVE_PCT_RATE, true);
-        DssExecLib.setIlkStabilityFee("ETH-B",          SIX_PCT_RATE,      true);
-        DssExecLib.setIlkStabilityFee("WBTC-A",         TWO_FIVE_PCT_RATE, true);
-        DssExecLib.setIlkStabilityFee("LINK-A",         ONE_FIVE_PCT_RATE, true);
-        DssExecLib.setIlkStabilityFee("RENBTC-A",       TWO_FIVE_PCT_RATE, true);
-        DssExecLib.setIlkStabilityFee("USDC-A",         ONE_PCT_RATE,      true);
-        DssExecLib.setIlkStabilityFee("UNIV2WBTCETH-A", TWO_FIVE_PCT_RATE, true);
-
-        // ------------------------------ Debt ceiling updates -----------------------------
-        // https://vote.makerdao.com/polling/QmXDCCPH?network=mainnet#poll-detail
-        DssExecLib.setIlkAutoLineDebtCeiling("MANA-A",        10 * MILLION);
-        DssExecLib.setIlkAutoLineParameters("MATIC-A",        20 * MILLION, 20 * MILLION, 8 hours);
-        DssExecLib.setIlkAutoLineParameters("UNIV2WBTCETH-A", 50 * MILLION,  5 * MILLION, 8 hours);
-
-        // ------------------------------ PSM updates --------------------------------------
-        // https://vote.makerdao.com/polling/QmSkYED5?network=mainnet#poll-detail
-        address MCD_PSM_USDC_A = DssExecLib.getChangelogAddress("MCD_PSM_USDC_A");
-        address MCD_PSM_PAX_A  = DssExecLib.getChangelogAddress("MCD_PSM_PAX_A");
-        DssExecLib.setValue(MCD_PSM_USDC_A, "tin", 0);
-        DssExecLib.setValue(MCD_PSM_PAX_A,  "tin", 0);
-
-        //
-        // END Housekeeping
-        //
+        // ----------------------------- Collateral Onboarding ----------------------------
+        //  Add WBTC-C as a new Vault Type
+        //  https://vote.makerdao.com/polling/QmdVYMRo?network=mainnet#poll-detail (WBTC-C Onboarding)
+        //  https://forum.makerdao.com/t/proposed-risk-parameters-for-wbtc-c-vault-type/11707
+        //  https://forum.makerdao.com/t/signal-request-new-vault-type-for-wbtc-with-a-higher-lr/11579
 
         // WBTC
         address WBTC     = DssExecLib.getChangelogAddress("WBTC");
         address PIP_WBTC = DssExecLib.getChangelogAddress("PIP_WBTC");
 
-        //  Add WBTC-B as a new Vault Type
-        //  https://vote.makerdao.com/polling/QmSL1kDq?network=mainnet#poll-detail (WBTC-B Onboarding)
-        //  https://vote.makerdao.com/polling/QmRUgsvi?network=mainnet#poll-detail (Stability Fee)
-        //  https://forum.makerdao.com/t/wbtc-b-collateral-onboarding-risk-assessment/11397
-        //  https://forum.makerdao.com/t/signal-request-new-iam-vault-type-for-wbtc-with-lower-lr/5736
         DssExecLib.addNewCollateral(
             CollateralOpts({
-                ilk:                   "WBTC-B",
+                ilk:                   "WBTC-C",
                 gem:                   WBTC,
-                join:                  MCD_JOIN_WBTC_B,
-                clip:                  MCD_CLIP_WBTC_B,
-                calc:                  MCD_CLIP_CALC_WBTC_B,
+                join:                  MCD_JOIN_WBTC_C,
+                clip:                  MCD_CLIP_WBTC_C,
+                calc:                  MCD_CLIP_CALC_WBTC_C,
                 pip:                   PIP_WBTC,
                 isLiquidatable:        true,
                 isOSM:                 true,
                 whitelistOSM:          true,
-                ilkDebtCeiling:        30 * MILLION,
-                minVaultAmount:        30000,
+                ilkDebtCeiling:        100 * MILLION,
+                minVaultAmount:        7500,
                 maxLiquidationAmount:  25 * MILLION,
-                liquidationPenalty:    1300,           // 13% penalty fee
-                ilkStabilityFee:       SEVEN_PCT_RATE, // 7% stability fee
-                startingPriceFactor:   12000,          // Auction price begins at 120% of oracle
-                breakerTolerance:      5000,           // Allows for a 50% hourly price drop before disabling liquidations
+                liquidationPenalty:    1300,                // 13% penalty fee
+                ilkStabilityFee:       ONE_FIVE_PCT_RATE,   // 1.5% stability fee
+                startingPriceFactor:   12000,               // Auction price begins at 120% of oracle
+                breakerTolerance:      5000,                // Allows for a 50% hourly price drop before disabling liquidations
                 auctionDuration:       90 minutes,
-                permittedDrop:         4000,           // 40% price drop before reset
-                liquidationRatio:      13000,          // 130% collateralization
-                kprFlatReward:         300,            // 300 Dai
-                kprPctReward:          10              // 0.1%
+                permittedDrop:         4000,                // 40% price drop before reset
+                liquidationRatio:      17500,               // 175% collateralization
+                kprFlatReward:         300,                 // 300 Dai
+                kprPctReward:          10                   // 0.1%
             })
         );
-        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_WBTC_B, 60 seconds, 9900);
-        DssExecLib.setIlkAutoLineParameters("WBTC-B", 500 * MILLION, 30 * MILLION, 8 hours);
+        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_WBTC_C, 90 seconds, 9900);
+        DssExecLib.setIlkAutoLineParameters("WBTC-C", 1000 * MILLION, 100 * MILLION, 8 hours);
 
-        // Changelog
-        DssExecLib.setChangelogAddress("MCD_JOIN_WBTC_B", MCD_JOIN_WBTC_B);
-        DssExecLib.setChangelogAddress("MCD_CLIP_WBTC_B", MCD_CLIP_WBTC_B);
-        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_WBTC_B", MCD_CLIP_CALC_WBTC_B);
+        DssExecLib.setChangelogAddress("MCD_JOIN_WBTC_C", MCD_JOIN_WBTC_C);
+        DssExecLib.setChangelogAddress("MCD_CLIP_WBTC_C", MCD_CLIP_WBTC_C);
+        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_WBTC_C", MCD_CLIP_CALC_WBTC_C);
 
-        DssExecLib.setChangelogVersion("1.9.10");
+        // Add a GUSD Peg Stability Module
+        // https://vote.makerdao.com/polling/QmayeEjz?network=mainnet#poll-detail
+        // https://forum.makerdao.com/t/proposal-gusd-psm/11148
+        // https://forum.makerdao.com/t/psm-gusd-a-collateral-onboarding-risk-evaluation/11559
 
-        //
-        // Collateral Offboarding
-        //
+        // GUSD
+        address GUSD     = DssExecLib.getChangelogAddress("GUSD");
+        address PIP_GUSD = DssExecLib.getChangelogAddress("PIP_GUSD");
 
-        uint256 totalLineReduction;
-        uint256 line;
-        VatAbstract vat = VatAbstract(DssExecLib.vat());
+        //GUSD PSM
+        DssExecLib.authorize(MCD_JOIN_PSM_GUSD_A, MCD_PSM_GUSD_A);
 
-        // Offboard AAVE-A
-        // https://vote.makerdao.com/polling/QmPdvqZg?network=mainnet#poll-detail
-        // https://forum.makerdao.com/t/proposed-offboarding-collateral-parameters-2/11548
-        // https://forum.makerdao.com/t/signal-request-offboarding-matic-comp-aave-and-bal/11184
+        DssExecLib.addNewCollateral(CollateralOpts({
+            ilk:                   "PSM-GUSD-A",
+            gem:                   GUSD,
+            join:                  MCD_JOIN_PSM_GUSD_A,
+            clip:                  MCD_CLIP_PSM_GUSD_A,
+            calc:                  MCD_CLIP_CALC_PSM_GUSD_A,
+            pip:                   PIP_GUSD,
+            isLiquidatable:        false,
+            isOSM:                 false,
+            whitelistOSM:          false,
+            ilkDebtCeiling:        10 * MILLION,
+            minVaultAmount:        0,
+            maxLiquidationAmount:  0,
+            liquidationPenalty:    1300,
+            ilkStabilityFee:       ZERO_PCT_RATE,
+            startingPriceFactor:   10500,
+            breakerTolerance:      9500, // Allows for a 5% hourly price drop before disabling liquidations
+            auctionDuration:       220 minutes,
+            permittedDrop:         9000,
+            liquidationRatio:      10000,
+            kprFlatReward:         300,
+            kprPctReward:          10 // 0.1%
+        }));
+        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_PSM_GUSD_A, 120 seconds, 9990);
+        DssExecLib.setIlkAutoLineParameters("PSM-GUSD-A", 10 * MILLION, 10 * MILLION, 24 hours);
 
-        (,,,line,) = vat.ilks("AAVE-A");
-        totalLineReduction = _add(totalLineReduction, line);
-        DssExecLib.setIlkLiquidationPenalty("AAVE-A", 0);
-        DssExecLib.removeIlkFromAutoLine("AAVE-A");
-        DssExecLib.setIlkDebtCeiling("AAVE-A", 0);
-        DssExecLib.linearInterpolation({
-            _name:      "AAVE-A Offboarding",
-            _target:    DssExecLib.spotter(),
-            _ilk:       "AAVE-A",
-            _what:      "mat",
-            _startTime: block.timestamp,
-            _start:     CURRENT_AAVE_MAT,
-            _end:       TARGET_AAVE_MAT,
-            _duration:  30 days
-        });
+        DssExecLib.setValue(MCD_PSM_GUSD_A, "tin", 0);
+        DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 0);
 
-        // Offboard BAL-A
-        // https://vote.makerdao.com/polling/QmcwtUau?network=mainnet#poll-detail
-        // https://forum.makerdao.com/t/proposed-offboarding-collateral-parameters-2/11548
-        // https://forum.makerdao.com/t/signal-request-offboarding-matic-comp-aave-and-bal/11184
+        DssExecLib.setChangelogAddress("MCD_JOIN_PSM_GUSD_A", MCD_JOIN_PSM_GUSD_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_PSM_GUSD_A", MCD_CLIP_PSM_GUSD_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_PSM_GUSD_A", MCD_CLIP_CALC_PSM_GUSD_A);
+        DssExecLib.setChangelogAddress("MCD_PSM_GUSD_A", MCD_PSM_GUSD_A);
 
-        (,,,line,) = vat.ilks("BAL-A");
-        totalLineReduction = _add(totalLineReduction, line);
-        DssExecLib.setIlkLiquidationPenalty("BAL-A", 0);
-        DssExecLib.removeIlkFromAutoLine("BAL-A");
-        DssExecLib.setIlkDebtCeiling("BAL-A", 0);
-        DssExecLib.linearInterpolation({
-            _name:      "BAL-A Offboarding",
-            _target:    DssExecLib.spotter(),
-            _ilk:       "BAL-A",
-            _what:      "mat",
-            _startTime: block.timestamp,
-            _start:     CURRENT_BAL_MAT,
-            _end:       TARGET_BAL_MAT,
-            _duration:  30 days
-        });
-
-        // Offboard COMP-A
-        // https://vote.makerdao.com/polling/QmRDeGCn?network=mainnet#poll-detail
-        // https://forum.makerdao.com/t/proposed-offboarding-collateral-parameters-2/11548
-        // https://forum.makerdao.com/t/signal-request-offboarding-matic-comp-aave-and-bal/11184
-
-        (,,,line,) = vat.ilks("COMP-A");
-        totalLineReduction = _add(totalLineReduction, line);
-        DssExecLib.setIlkLiquidationPenalty("COMP-A", 0);
-        DssExecLib.removeIlkFromAutoLine("COMP-A");
-        DssExecLib.setIlkDebtCeiling("COMP-A", 0);
-        DssExecLib.linearInterpolation({
-            _name:      "COMP-A Offboarding",
-            _target:    DssExecLib.spotter(),
-            _ilk:       "COMP-A",
-            _what:      "mat",
-            _startTime: block.timestamp,
-            _start:     CURRENT_COMP_MAT,
-            _end:       TARGET_COMP_MAT,
-            _duration:  30 days
-        });
-
-        // Decrease Global Debt Ceiling in accordance with Offboarded Ilks
-        vat.file("Line", _sub(vat.Line(), totalLineReduction));
-
-        // Increase Ilk Local Liquidation Limits (ilk.hole)
-        // https://vote.makerdao.com/polling/QmQN6FX8?network=mainnet#poll-detail
-        // https://forum.makerdao.com/t/auction-throughput-parameters-adjustments-nov-9-2021/11531
-        DssExecLib.setIlkMaxLiquidationAmount("ETH-A",    65 * MILLION); // From 40M to 65M DAI
-        DssExecLib.setIlkMaxLiquidationAmount("ETH-B",    30 * MILLION); // From 25M to 30M DAI
-        DssExecLib.setIlkMaxLiquidationAmount("ETH-C",    35 * MILLION); // From 30M to 35M DAI
-        DssExecLib.setIlkMaxLiquidationAmount("WBTC-A",   40 * MILLION); // From 25M to 40M DAI
-        DssExecLib.setIlkMaxLiquidationAmount("WSTETH-A",  7 * MILLION); // From  3M to  7M DAI
-
-        // Increase WBTC-A Stability Fee (duty)
-        // https://vote.makerdao.com/polling/QmRUgsvi?network=mainnet#poll-detail
-        // https://forum.makerdao.com/t/mid-month-parameter-changes-proposal-ppg-omc-001-2021-11-10/11562
-        DssExecLib.setIlkStabilityFee("WBTC-A", FOUR_PCT_RATE, true); // From 2.5% to 4%
-
-        // Increase LRC-A Target Liquidation Ratio (mat)
-        address LRC_LERP = LerpFactoryAbstract(OLD_LERP_FAB).lerps("LRC Offboarding");
-        uint256 CURRENT_LRC_MAT = LerpAbstract(LRC_LERP).tick();
-        SpotAbstract(DssExecLib.spotter()).deny(LRC_LERP);
-        DssExecLib.linearInterpolation({
-            _name:      "LRC-A Offboarding",
-            _target:    DssExecLib.spotter(),
-            _ilk:       "LRC-A",
-            _what:      "mat",
-            _startTime: block.timestamp,
-            _start:     CURRENT_LRC_MAT,
-            _end:       TARGET_LRC_MAT,
-            _duration:  30 days
-        });
-
-        // Increase BAT-A Target Liquidation Ratio (mat)
-        address BAT_LERP = LerpFactoryAbstract(OLD_LERP_FAB).lerps("BAT Offboarding");
-        uint256 CURRENT_BAT_MAT = LerpAbstract(BAT_LERP).tick();
-        SpotAbstract(DssExecLib.spotter()).deny(BAT_LERP);
-        DssExecLib.linearInterpolation({
-            _name:      "BAT-A Offboarding",
-            _target:    DssExecLib.spotter(),
-            _ilk:       "BAT-A",
-            _what:      "mat",
-            _startTime: block.timestamp,
-            _start:     CURRENT_BAT_MAT,
-            _end:       TARGET_BAT_MAT,
-            _duration:  30 days
-        });
-
-        // Increase ZRX-A Target Liquidation Ratio (mat)
-        address ZRX_LERP = LerpFactoryAbstract(OLD_LERP_FAB).lerps("ZRX Offboarding");
-        uint256 CURRENT_ZRX_MAT = LerpAbstract(ZRX_LERP).tick();
-        SpotAbstract(DssExecLib.spotter()).deny(ZRX_LERP);
-        DssExecLib.linearInterpolation({
-            _name:      "ZRX-A Offboarding",
-            _target:    DssExecLib.spotter(),
-            _ilk:       "ZRX-A",
-            _what:      "mat",
-            _startTime: block.timestamp,
-            _start:     CURRENT_ZRX_MAT,
-            _end:       TARGET_ZRX_MAT,
-            _duration:  30 days
-        });
-
-        // Increase UNIV2LINKETH-A Target Liquidation Ratio (mat)
-        address UNIV2LINKETH_LERP = LerpFactoryAbstract(OLD_LERP_FAB).lerps("UNIV2LINKETH Offboarding");
-        uint256 CURRENT_UNIV2LINKETH_MAT = LerpAbstract(UNIV2LINKETH_LERP).tick();
-        SpotAbstract(DssExecLib.spotter()).deny(UNIV2LINKETH_LERP);
-        DssExecLib.linearInterpolation({
-            _name:      "UNIV2LINKETH-A Offboarding",
-            _target:    DssExecLib.spotter(),
-            _ilk:       "UNIV2LINKETH-A",
-            _what:      "mat",
-            _startTime: block.timestamp,
-            _start:     CURRENT_UNIV2LINKETH_MAT,
-            _end:       TARGET_UNIV2LINKETH_MAT,
-            _duration:  30 days
-        });
+        // Changelog version
+        DssExecLib.setChangelogVersion("1.9.11");
     }
 }
 
