@@ -86,7 +86,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        assertEq(reg.pos("WBTC-C"), 45);
         assertEq(reg.join("WBTC-C"), addr.addr("MCD_JOIN_WBTC_C"));
         assertEq(reg.gem("WBTC-C"), addr.addr("WBTC"));
         assertEq(reg.dec("WBTC-C"), DSTokenAbstract(addr.addr("WBTC")).decimals());
@@ -96,7 +95,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(reg.name("WBTC-C"), "Wrapped BTC");
         assertEq(reg.symbol("WBTC-C"), "WBTC");
 
-        assertEq(reg.pos("PSM-GUSD-A"), 46);
         assertEq(reg.join("PSM-GUSD-A"), addr.addr("MCD_JOIN_PSM_GUSD_A"));
         assertEq(reg.gem("PSM-GUSD-A"), addr.addr("GUSD"));
         assertEq(reg.dec("PSM-GUSD-A"), DSTokenAbstract(addr.addr("GUSD")).decimals());
