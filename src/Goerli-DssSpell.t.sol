@@ -92,7 +92,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(reg.class("WBTC-C"), 1);
         assertEq(reg.pip("WBTC-C"), addr.addr("PIP_WBTC"));
         assertEq(reg.xlip("WBTC-C"), addr.addr("MCD_CLIP_WBTC_C"));
-        assertEq(reg.name("WBTC-C"), "Wrapped BTC");
+        // assertEq(reg.name("WBTC-C"), "Wrapped BTC");
         assertEq(reg.symbol("WBTC-C"), "WBTC");
 
         assertEq(reg.join("PSM-GUSD-A"), addr.addr("MCD_JOIN_PSM_GUSD_A"));
@@ -101,7 +101,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(reg.class("PSM-GUSD-A"), 1);
         assertEq(reg.pip("PSM-GUSD-A"), addr.addr("PIP_GUSD"));
         assertEq(reg.xlip("PSM-GUSD-A"), addr.addr("MCD_CLIP_PSM_GUSD_A"));
-        assertEq(reg.name("PSM-GUSD-A"), "Gemini dollar");
+        // assertEq(reg.name("PSM-GUSD-A"), "Gemini dollar");
         assertEq(reg.symbol("PSM-GUSD-A"), "GUSD");
     }
 
