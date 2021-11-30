@@ -20,7 +20,7 @@ pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
-import { VatAbstract, LerpFactoryAbstract, SpotAbstract, IlkRegistryAbstract } from "dss-interfaces/Interfaces.sol";
+import { VatAbstract, LerpFactoryAbstract, SpotAbstract, IlkRegistryAbstract, DogAbstract } from "dss-interfaces/Interfaces.sol";
 
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
@@ -112,21 +112,37 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkAutoLineParameters("WBTC-A", 2 * BILLION, 80 * MILLION, 6 hours);
 
         // Increase the Dust Parameter from 30,000 DAI to 40,000 DAI for the ETH-B
-        DssExecLib.setIlkMinVaultAmount("ETH-B", 40000);
+        DssExecLib.setIlkMinVaultAmount("ETH-B", 40_000);
 
         // Increase the Dust Parameter from 10,000 DAI to 15,000 DAI for all vault-types excluding ETH-B and ETH-C
-        IlkRegistryAbstract ilkRegistry = IlkRegistryAbstract(DssExecLib.reg());
-        bytes32[] memory ilks = ilkRegistry.list();
-
-        for (uint256 i = 0; i < ilks.length; i++) {
-            (, , uint256 ilkClass, , , , ,) = ilkRegistry.info(ilks[i]);
-            bool isRWA = ilkClass == 3;
-
-            // Do not change the dust for RWAs
-            if (!isRWA && ilks[i] != "ETH-B" && ilks[i] != "ETH-C") {
-                DssExecLib.setIlkMinVaultAmount(ilks[i], 15000);
-            }
-        }
+        DssExecLib.setIlkMinVaultAmount("ETH-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("USDC-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("USDC-B", 15_000);
+        DssExecLib.setIlkMinVaultAmount("TUSD-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("WBTC-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("KNC-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("MANA-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("USDT-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("PAXUSD-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("LINK-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("YFI-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("GUSD-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("UNI-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("RENBTC-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("MATIC-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("UNIV2DAIETH-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("UNIV2WBTCETH-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("UNIV2USDCETH-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("UNIV2DAIUSDC-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("UNIV2ETHUSDT-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("UNIV2UNIETH-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("UNIV2WBTCDAI-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("UNIV2AAVEETH-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("UNIV2DAIUSDT-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("GUNIV3DAIUSDC1-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("WSTETH-A", 15_000);
+        DssExecLib.setIlkMinVaultAmount("WBTC-B", 15_000);
+        DssExecLib.setIlkMinVaultAmount("WBTC-C", 15_000);
 
         // Changelog version
         DssExecLib.setChangelogVersion("1.9.12"); // ?????
