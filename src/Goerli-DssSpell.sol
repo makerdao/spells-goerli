@@ -69,7 +69,6 @@ contract DssSpellAction is DssAction {
     }
 
     function actions() public override {
-
         // --- 2021-12-03 Weekly Executive ---
 
         // ----------------------------- Rates updates -----------------------------

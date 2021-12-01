@@ -42,24 +42,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new collateral tests here
-        checkIlkIntegration(
-            "WBTC-C",
-            GemJoinAbstract(addr.addr("MCD_JOIN_WBTC_C")),
-            ClipAbstract(addr.addr("MCD_CLIP_WBTC_C")),
-            addr.addr("PIP_WBTC"),
-            true,
-            true,
-            false
-        );
-        checkPsmIlkIntegration(
-            "PSM-GUSD-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_PSM_GUSD_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_PSM_GUSD_A")),
-            addr.addr("PIP_GUSD"),
-            PsmAbstract(addr.addr("MCD_PSM_GUSD_A")),
-            0,
-            0
-        );
+       
     }
 
     function testNewChainlogValues() public {
@@ -67,6 +50,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
+        // Insert new chainlog values tests here
+        
         assertEq(chainLog.version(), "1.9.12");
     }
 
