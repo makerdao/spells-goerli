@@ -42,7 +42,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new collateral tests here
-       
+
     }
 
     function testNewChainlogValues() public {
@@ -51,7 +51,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        
+
         assertEq(chainLog.version(), "1.9.12");
     }
 

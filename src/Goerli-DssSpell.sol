@@ -20,7 +20,7 @@ pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
-import { VatAbstract, LerpFactoryAbstract, SpotAbstract, IlkRegistryAbstract, DogAbstract } from "dss-interfaces/Interfaces.sol";
+import { VatAbstract, LerpFactoryAbstract, SpotAbstract } from "dss-interfaces/Interfaces.sol";
 
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
