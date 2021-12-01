@@ -51,17 +51,6 @@ contract DssSpellAction is DssAction {
     uint256 constant MILLION                 = 10 ** 6;
     uint256 constant RAD                     = 10 ** 45;
 
-    // --- WBTC-C ---
-    address constant MCD_JOIN_WBTC_C        = 0xe15E69F10E1A362F69d9672BFeA20B75CFf8574A;
-    address constant MCD_CLIP_WBTC_C        = 0xDa3cd88f5FF7D2B9ED6Ab171C8218421916B6e10;
-    address constant MCD_CLIP_CALC_WBTC_C   = 0xD26B140fdaA11c23b09230c24cBe71f456AC7ab6;
-
-    // --- PSM-GUSD-A ---
-    address constant MCD_JOIN_PSM_GUSD_A      = 0x4115fDa246e2583b91aD602213f2ac4fC6E437Ca; // AuthGemJoin8
-    address constant MCD_CLIP_PSM_GUSD_A      = 0x7A58fF23D5437C99b44BB02D7e24213D6dA20DFa;
-    address constant MCD_CLIP_CALC_PSM_GUSD_A = 0xE99bd8c56d7B9d90A36C8a563a4CA375b144dD94;
-    address constant MCD_PSM_GUSD_A           = 0x3B2dBE6767fD8B4f8334cE3E8EC3E2DF8aB3957b;
-
     function _add(uint x, uint y) internal pure returns (uint z) {
         require((z = x + y) >= x, "DssSpellAction-add-overflow");
     }
@@ -70,7 +59,7 @@ contract DssSpellAction is DssAction {
     }
 
     function actions() public override {
-        
+
     
     }
 }
