@@ -67,42 +67,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // Insert new chainlog values tests here
-        assertEq(chainLog.getAddress("MCD_JOIN_WBTC_C"), addr.addr("MCD_JOIN_WBTC_C"));
-        assertEq(chainLog.getAddress("MCD_CLIP_WBTC_C"), addr.addr("MCD_CLIP_WBTC_C"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WBTC_C"), addr.addr("MCD_CLIP_CALC_WBTC_C"));
-
-        assertEq(chainLog.getAddress("MCD_JOIN_PSM_GUSD_A"), addr.addr("MCD_JOIN_PSM_GUSD_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_PSM_GUSD_A"), addr.addr("MCD_CLIP_PSM_GUSD_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_PSM_GUSD_A"), addr.addr("MCD_CLIP_CALC_PSM_GUSD_A"));
-        assertEq(chainLog.getAddress("MCD_PSM_GUSD_A"), addr.addr("MCD_PSM_GUSD_A"));
-
-        assertEq(chainLog.version(), "1.9.11");
-    }
-
-    function testNewIlkRegistryValues() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        // Insert new ilk registry values tests here
-        assertEq(reg.join("WBTC-C"), addr.addr("MCD_JOIN_WBTC_C"));
-        assertEq(reg.gem("WBTC-C"), addr.addr("WBTC"));
-        assertEq(reg.dec("WBTC-C"), DSTokenAbstract(addr.addr("WBTC")).decimals());
-        assertEq(reg.class("WBTC-C"), 1);
-        assertEq(reg.pip("WBTC-C"), addr.addr("PIP_WBTC"));
-        assertEq(reg.xlip("WBTC-C"), addr.addr("MCD_CLIP_WBTC_C"));
-        // assertEq(reg.name("WBTC-C"), "Wrapped BTC");
-        assertEq(reg.symbol("WBTC-C"), "WBTC");
-
-        assertEq(reg.join("PSM-GUSD-A"), addr.addr("MCD_JOIN_PSM_GUSD_A"));
-        assertEq(reg.gem("PSM-GUSD-A"), addr.addr("GUSD"));
-        assertEq(reg.dec("PSM-GUSD-A"), DSTokenAbstract(addr.addr("GUSD")).decimals());
-        assertEq(reg.class("PSM-GUSD-A"), 1);
-        assertEq(reg.pip("PSM-GUSD-A"), addr.addr("PIP_GUSD"));
-        assertEq(reg.xlip("PSM-GUSD-A"), addr.addr("MCD_CLIP_PSM_GUSD_A"));
-        // assertEq(reg.name("PSM-GUSD-A"), "Gemini dollar");
-        assertEq(reg.symbol("PSM-GUSD-A"), "GUSD");
+        assertEq(chainLog.version(), "1.9.12");
     }
 
     function testFailWrongDay() public {
@@ -157,13 +122,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function test_nextCastTime() public {
-        hevm.warp(1606161600); // Nov 23, 20 UTC (could be cast Nov 26)
+        hevm.warp(1638302400); // Nov 30, 20 UTC (could be cast Dec 2)
 
         vote(address(spell));
         spell.schedule();
 
-        uint256 monday_1400_UTC = 1606744800; // Nov 30, 2020
-        uint256 monday_2100_UTC = 1606770000; // Nov 30, 2020
+        uint256 monday_1400_UTC = 1638799200; // Dec 7, 2021
+        uint256 monday_2100_UTC = 1638824400; // Dec 7, 2021
 
         // Day tests
         hevm.warp(monday_1400_UTC);                                    // Monday,   14:00 UTC
@@ -214,7 +179,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function test_use_eta() public {
-        hevm.warp(1606161600); // Nov 23, 20 UTC (could be cast Nov 26)
+        hevm.warp(1638302400); // Nov 30, 20 UTC (could be cast Dec 2)
 
         vote(address(spell));
         spell.schedule();
@@ -222,61 +187,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         uint256 castTime = spell.nextCastTime();
         assertEq(castTime, spell.eta());
     }
-
-    // function test_OSMs() public {
-    //     vote(address(spell));
-    //     spell.schedule();
-    //     hevm.warp(spell.nextCastTime());
-    //     spell.cast();
-    //     assertTrue(spell.done());
-
-    //     // Track OSM authorizations here
-
-    //     address YEARN_PROXY = 0x208EfCD7aad0b5DD49438E0b6A0f38E951A50E5f;
-    //     assertEq(OsmAbstract(addr.addr("PIP_YFI")).bud(YEARN_PROXY), 1);
-
-    //     // Gnosis
-    //     address GNOSIS = 0xD5885fbCb9a8a8244746010a3BC6F1C6e0269777;
-    //     assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(GNOSIS), 1);
-    //     assertEq(OsmAbstract(addr.addr("PIP_LINK")).bud(GNOSIS), 1);
-    //     assertEq(OsmAbstract(addr.addr("PIP_COMP")).bud(GNOSIS), 1);
-    //     assertEq(OsmAbstract(addr.addr("PIP_YFI")).bud(GNOSIS), 1);
-    //     assertEq(OsmAbstract(addr.addr("PIP_ZRX")).bud(GNOSIS), 1);
-
-    //     // Instadapp
-    //     address INSTADAPP = 0xDF3CDd10e646e4155723a3bC5b1191741DD90333;
-    //     assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(INSTADAPP), 1);
-    // }
-
-    // function test_Medianizers() public {
-    //     vote(address(spell));
-    //     spell.schedule();
-    //     hevm.warp(spell.nextCastTime());
-    //     spell.cast();
-    //     assertTrue(spell.done());
-
-    //     // Track Median authorizations here
-
-    //     address SET_AAVE    = 0x8b1C079f8192706532cC0Bf0C02dcC4fF40d045D;
-    //     address AAVEUSD_MED = OsmAbstract(addr.addr("PIP_AAVE")).src();
-    //     assertEq(MedianAbstract(AAVEUSD_MED).bud(SET_AAVE), 1);
-
-    //     address SET_LRC     = 0x1D5d9a2DDa0843eD9D8a9Bddc33F1fca9f9C64a0;
-    //     address LRCUSD_MED  = OsmAbstract(addr.addr("PIP_LRC")).src();
-    //     assertEq(MedianAbstract(LRCUSD_MED).bud(SET_LRC), 1);
-
-    //     address SET_YFI     = 0x1686d01Bd776a1C2A3cCF1579647cA6D39dd2465;
-    //     address YFIUSD_MED  = OsmAbstract(addr.addr("PIP_YFI")).src();
-    //     assertEq(MedianAbstract(YFIUSD_MED).bud(SET_YFI), 1);
-
-    //     address SET_ZRX     = 0xFF60D1650696238F81BE53D23b3F91bfAAad938f;
-    //     address ZRXUSD_MED  = OsmAbstract(addr.addr("PIP_ZRX")).src();
-    //     assertEq(MedianAbstract(ZRXUSD_MED).bud(SET_ZRX), 1);
-
-    //     address SET_UNI     = 0x3c3Afa479d8C95CF0E1dF70449Bb5A14A3b7Af67;
-    //     address UNIUSD_MED  = OsmAbstract(addr.addr("PIP_UNI")).src();
-    //     assertEq(MedianAbstract(UNIUSD_MED).bud(SET_UNI), 1);
-    // }
 
     function test_auth() public {
         checkAuth(false);
@@ -331,23 +241,5 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             actualHash := keccak256(ptr, size)
         }
         assertEq(expectedHash, actualHash);
-    }
-
-    function testLerpSurplusBuffer() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        LerpAbstract lerp = LerpAbstract(lerpFactory.lerps("Increase SB - 20211126"));
-
-        uint256 duration = 210 days;
-        hevm.warp(block.timestamp + duration / 2);
-        assertEq(vow.hump(), 60 * MILLION * RAD);
-        lerp.tick();
-        assertEq(vow.hump(), 75 * MILLION * RAD);
-        hevm.warp(block.timestamp + duration / 2);
-        lerp.tick();
-        assertEq(vow.hump(), 90 * MILLION * RAD);
-        assertTrue(lerp.done());
     }
 }
