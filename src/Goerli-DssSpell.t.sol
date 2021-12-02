@@ -107,13 +107,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function test_nextCastTime() public {
-        hevm.warp(1638302400); // Nov 30, 20 UTC (could be cast Dec 2)
+        hevm.warp(1606161600); // Nov 23, 20 UTC (could be cast Nov 26)
 
         vote(address(spell));
         spell.schedule();
 
-        uint256 monday_1400_UTC = 1638799200; // Dec 7, 2021
-        uint256 monday_2100_UTC = 1638824400; // Dec 7, 2021
+        uint256 monday_1400_UTC = 1606744800; // Nov 30, 2020
+        uint256 monday_2100_UTC = 1606770000; // Nov 30, 2020
 
         // Day tests
         hevm.warp(monday_1400_UTC);                                    // Monday,   14:00 UTC
@@ -164,7 +164,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function test_use_eta() public {
-        hevm.warp(1638302400); // Nov 30, 20 UTC (could be cast Dec 2)
+        hevm.warp(1606161600); // Nov 23, 20 UTC (could be cast Nov 26)
 
         vote(address(spell));
         spell.schedule();
