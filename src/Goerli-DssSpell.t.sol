@@ -42,25 +42,38 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new collateral tests here
-        checkIlkIntegration(
-            "WBTC-C",
-            GemJoinAbstract(addr.addr("MCD_JOIN_WBTC_C")),
-            ClipAbstract(addr.addr("MCD_CLIP_WBTC_C")),
-            addr.addr("PIP_WBTC"),
-            true,
-            true,
+
+        checkUNILPIntegration(
+            "GUNIV3DAIUSDC2-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_GUNIV3DAIUSDC2_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_GUNIV3DAIUSDC2_A")),
+            LPOsmAbstract(addr.addr("PIP_GUNIV3DAIUSDC2")),
+            0x47c3dC029825Da43BE595E21fffD0b66FfcB7F6e,
+            addr.addr("PIP_USDC"),
+            false,
+            false,
             false
         );
-        checkPsmIlkIntegration(
-            "PSM-GUSD-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_PSM_GUSD_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_PSM_GUSD_A")),
-            addr.addr("PIP_GUSD"),
-            PsmAbstract(addr.addr("MCD_PSM_GUSD_A")),
-            0,
-            0
-        );
     }
+
+    // function testLerpSurplusBuffer() public {
+    //     vote(address(spell));
+    //     scheduleWaitAndCast(address(spell));
+    //     assertTrue(spell.done());
+
+    //     LerpAbstract lerp = LerpAbstract(lerpFactory.lerps("Increase SB - 20211126"));
+
+    //     uint256 duration = 210 days;
+    //     hevm.warp(block.timestamp + duration / 2);
+    //     assertEq(vow.hump(), 60 * MILLION * RAD);
+    //     lerp.tick();
+    //     assertEq(vow.hump(), 75 * MILLION * RAD);
+    //     hevm.warp(block.timestamp + duration / 2);
+    //     lerp.tick();
+    //     assertEq(vow.hump(), 90 * MILLION * RAD);
+    //     assertTrue(lerp.done());
+    // }
+
 
     function testNewChainlogValues() public {
         vote(address(spell));
@@ -68,16 +81,14 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        assertEq(chainLog.getAddress("MCD_JOIN_WBTC_C"), addr.addr("MCD_JOIN_WBTC_C"));
-        assertEq(chainLog.getAddress("MCD_CLIP_WBTC_C"), addr.addr("MCD_CLIP_WBTC_C"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WBTC_C"), addr.addr("MCD_CLIP_CALC_WBTC_C"));
+        assertEq(chainLog.getAddress("GUNIV3DAIUSDC2"), addr.addr("GUNIV3DAIUSDC2"));
+        assertEq(chainLog.getAddress("MCD_JOIN_GUNIV3DAIUSDC2_A"), addr.addr("MCD_JOIN_GUNIV3DAIUSDC2_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_GUNIV3DAIUSDC2_A"), addr.addr("MCD_CLIP_GUNIV3DAIUSDC2_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_GUNIV3DAIUSDC2_A"), addr.addr("MCD_CLIP_CALC_GUNIV3DAIUSDC2_A"));
+        assertEq(chainLog.getAddress("PIP_GUNIV3DAIUSDC2"), addr.addr("PIP_GUNIV3DAIUSDC2"));
 
-        assertEq(chainLog.getAddress("MCD_JOIN_PSM_GUSD_A"), addr.addr("MCD_JOIN_PSM_GUSD_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_PSM_GUSD_A"), addr.addr("MCD_CLIP_PSM_GUSD_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_PSM_GUSD_A"), addr.addr("MCD_CLIP_CALC_PSM_GUSD_A"));
-        assertEq(chainLog.getAddress("MCD_PSM_GUSD_A"), addr.addr("MCD_PSM_GUSD_A"));
+        assertEq(chainLog.version(), "1.9.12");
 
-        assertEq(chainLog.version(), "1.9.11");
     }
 
     function testNewIlkRegistryValues() public {
@@ -86,24 +97,52 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        assertEq(reg.join("WBTC-C"), addr.addr("MCD_JOIN_WBTC_C"));
-        assertEq(reg.gem("WBTC-C"), addr.addr("WBTC"));
-        assertEq(reg.dec("WBTC-C"), DSTokenAbstract(addr.addr("WBTC")).decimals());
-        assertEq(reg.class("WBTC-C"), 1);
-        assertEq(reg.pip("WBTC-C"), addr.addr("PIP_WBTC"));
-        assertEq(reg.xlip("WBTC-C"), addr.addr("MCD_CLIP_WBTC_C"));
-        // assertEq(reg.name("WBTC-C"), "Wrapped BTC");
-        assertEq(reg.symbol("WBTC-C"), "WBTC");
-
-        assertEq(reg.join("PSM-GUSD-A"), addr.addr("MCD_JOIN_PSM_GUSD_A"));
-        assertEq(reg.gem("PSM-GUSD-A"), addr.addr("GUSD"));
-        assertEq(reg.dec("PSM-GUSD-A"), DSTokenAbstract(addr.addr("GUSD")).decimals());
-        assertEq(reg.class("PSM-GUSD-A"), 1);
-        assertEq(reg.pip("PSM-GUSD-A"), addr.addr("PIP_GUSD"));
-        assertEq(reg.xlip("PSM-GUSD-A"), addr.addr("MCD_CLIP_PSM_GUSD_A"));
-        // assertEq(reg.name("PSM-GUSD-A"), "Gemini dollar");
-        assertEq(reg.symbol("PSM-GUSD-A"), "GUSD");
+        assertEq(reg.pos("GUNIV3DAIUSDC2-A"), 47);
+        assertEq(reg.join("GUNIV3DAIUSDC2-A"), addr.addr("MCD_JOIN_GUNIV3DAIUSDC2_A"));
+        assertEq(reg.gem("GUNIV3DAIUSDC2-A"), addr.addr("GUNIV3DAIUSDC2"));
+        assertEq(reg.dec("GUNIV3DAIUSDC2-A"), DSTokenAbstract(addr.addr("GUNIV3DAIUSDC2")).decimals());
+        assertEq(reg.class("GUNIV3DAIUSDC2-A"), 1);
+        assertEq(reg.pip("GUNIV3DAIUSDC2-A"), addr.addr("PIP_GUNIV3DAIUSDC2"));
+        assertEq(reg.xlip("GUNIV3DAIUSDC2-A"), addr.addr("MCD_CLIP_GUNIV3DAIUSDC2_A"));
+        assertEq(reg.name("GUNIV3DAIUSDC2-A"), "Gelato Uniswap DAI/USDC LP");
+        assertEq(reg.symbol("GUNIV3DAIUSDC2-A"), "G-UNI");
     }
+
+
+//    function testOneTimePaymentDistributions() public {
+//        uint256 prevSin              = vat.sin(address(vow));
+//        uint256 prevDaiCom           = dai.balanceOf(COM_WALLET);
+//        uint256 prevDaiFlipFlop      = dai.balanceOf(FLIPFLOPFLAP_WALLET);
+//        uint256 prevDaiFeedblack     = dai.balanceOf(FEEDBLACKLOOPS_WALLET);
+//        uint256 prevDaiUltra         = dai.balanceOf(ULTRASCHUPPI_WALLET);
+//        uint256 prevDaiField         = dai.balanceOf(FIELDTECHNOLOGIES_WALLET);
+//
+//        uint256 amountCom       = 27_058;
+//        uint256 amountFlipFlop  = 12_000;
+//        uint256 amountFeedblack = 12_000;
+//        uint256 amountUltra     = 8144;
+//        uint256 amountField     = 3690;
+//
+//        uint256 amountTotal     = amountCom + amountFlipFlop + amountFeedblack
+//                                + amountUltra + amountField;
+//
+//        assertEq(vat.can(address(pauseProxy), address(daiJoin)), 1);
+//
+//        vote(address(spell));
+//        spell.schedule();
+//        hevm.warp(spell.nextCastTime());
+//        spell.cast();
+//        assertTrue(spell.done());
+//
+//        assertEq(vat.can(address(pauseProxy), address(daiJoin)), 1);
+//
+//        assertEq(vat.sin(address(vow)) - prevSin, amountTotal * RAD);
+//        assertEq(dai.balanceOf(COM_WALLET) - prevDaiCom, amountCom * WAD);
+//        assertEq(dai.balanceOf(FLIPFLOPFLAP_WALLET) - prevDaiFlipFlop, amountFlipFlop * WAD);
+//        assertEq(dai.balanceOf(FEEDBLACKLOOPS_WALLET) - prevDaiFeedblack, amountFeedblack * WAD);
+//        assertEq(dai.balanceOf(ULTRASCHUPPI_WALLET) - prevDaiUltra, amountUltra * WAD);
+//        assertEq(dai.balanceOf(FIELDTECHNOLOGIES_WALLET) - prevDaiField, amountField * WAD);
+//    }
 
     function testFailWrongDay() public {
         require(spell.officeHours() == spellValues.office_hours_enabled);
@@ -156,6 +195,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(totalGas <= 10 * MILLION);
     }
 
+    // The specific date doesn't matter that much since function is checking for difference between warps
     function test_nextCastTime() public {
         hevm.warp(1606161600); // Nov 23, 20 UTC (could be cast Nov 26)
 
@@ -331,23 +371,5 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             actualHash := keccak256(ptr, size)
         }
         assertEq(expectedHash, actualHash);
-    }
-
-    function testLerpSurplusBuffer() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        LerpAbstract lerp = LerpAbstract(lerpFactory.lerps("Increase SB - 20211126"));
-
-        uint256 duration = 210 days;
-        hevm.warp(block.timestamp + duration / 2);
-        assertEq(vow.hump(), 60 * MILLION * RAD);
-        lerp.tick();
-        assertEq(vow.hump(), 75 * MILLION * RAD);
-        hevm.warp(block.timestamp + duration / 2);
-        lerp.tick();
-        assertEq(vow.hump(), 90 * MILLION * RAD);
-        assertTrue(lerp.done());
     }
 }

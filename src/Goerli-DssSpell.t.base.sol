@@ -67,6 +67,14 @@ interface BrokeTokenAbstract {
     function setAuthority(address) external;
 }
 
+interface DirectDepositLike is GemJoinAbstract {
+    function file(bytes32, uint256) external;
+    function exec() external;
+    function tau() external view returns (uint256);
+    function bar() external view returns (uint256);
+    function king() external view returns (address);
+}
+
 contract GoerliDssSpellTestBase is DSTest, DSMath {
 
     struct SpellValues {
@@ -137,7 +145,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
     Rates     rates = new Rates();
     Addresses addr  = new Addresses();
 
-    // GOERLI ADDRESSES
+    // ADDRESSES
     ChainlogAbstract    chainLog = ChainlogAbstract(   addr.addr("CHANGELOG"));
     DSPauseAbstract        pause = DSPauseAbstract(    addr.addr("MCD_PAUSE"));
     address           pauseProxy =                     addr.addr("MCD_PAUSE_PROXY");
@@ -162,6 +170,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
     ClipperMomAbstract      clipMom = ClipperMomAbstract( addr.addr("CLIPPER_MOM"));
     DssAutoLineAbstract    autoLine = DssAutoLineAbstract(addr.addr("MCD_IAM_AUTO_LINE"));
     LerpFactoryAbstract lerpFactory = LerpFactoryAbstract(addr.addr("LERP_FAB"));
+    VestAbstract            vestDai = VestAbstract(       addr.addr("MCD_VEST_DAI"));
 
     DssSpell spell;
 
@@ -315,7 +324,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             osm_mom_authority:     address(chief),          // OsmMom authority
             flipper_mom_authority: address(chief),          // FlipperMom authority
             clipper_mom_authority: address(chief),          // ClipperMom authority
-            ilk_count:             46                       // Num expected in system
+            ilk_count:             47                       // Num expected in system
         });
 
         //
@@ -327,8 +336,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       150 * MILLION,   // In whole Dai units
             aL_ttl:       6 hours,         // In seconds
             line:         0,               // In whole Dai units  // Not checked here as there is auto line
-            dust:         10 * THOUSAND,   // In whole Dai units
-            pct:          250,             // In basis points
+            dust:         15 * THOUSAND,   // In whole Dai units
+            pct:          275,             // In basis points
             mat:          14500,           // In basis points
             liqType:      "clip",          // "" or "flip" or "clip"
             liqOn:        true,            // If liquidations are enabled
@@ -356,8 +365,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       20 * MILLION,
             aL_ttl:       6 hours,
             line:         0,
-            dust:         30 * THOUSAND,
-            pct:          600,
+            dust:         40 * THOUSAND,
+            pct:          650,
             mat:          13000,
             liqType:      "clip",
             liqOn:        true,
@@ -443,7 +452,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       0,
             aL_ttl:       0,
             line:         0,
-            dust:         10 * THOUSAND,
+            dust:         15 * THOUSAND,
             pct:          100,
             mat:          10100,
             liqType:      "clip",
@@ -497,11 +506,11 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         });
         afterSpell.collaterals["WBTC-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      1_500 * MILLION,
-            aL_gap:       60 * MILLION,
+            aL_line:      2_000 * MILLION,
+            aL_gap:       80 * MILLION,
             aL_ttl:       6 hours,
             line:         0,
-            dust:         10 * THOUSAND,
+            dust:         15 * THOUSAND,
             pct:          400,
             mat:          14500,
             liqType:      "clip",
@@ -559,7 +568,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       100 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
-            dust:         7500,
+            dust:         75 * HUNDRED,
             pct:          150,
             mat:          17500,
             liqType:      "clip",
@@ -588,7 +597,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       0,
             aL_ttl:       0,
             line:         0,
-            dust:         10 * THOUSAND,
+            dust:         15 * THOUSAND,
             pct:          100,
             mat:          10100,
             liqType:      "clip",
@@ -675,8 +684,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       1 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
-            dust:         10 * THOUSAND,
-            pct:          300,
+            dust:         15 * THOUSAND,
+            pct:          600,
             mat:          17500,
             liqType:      "clip",
             liqOn:        true,
@@ -733,7 +742,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       0,
             aL_ttl:       0,
             line:         0,
-            dust:         10 * THOUSAND,
+            dust:         15 * THOUSAND,
             pct:          100,
             mat:          10100,
             liqType:      "clip",
@@ -820,8 +829,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       7 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
-            dust:         10 * THOUSAND,
-            pct:          150,
+            dust:         15 * THOUSAND,
+            pct:          250,
             mat:          16500,
             liqType:      "clip",
             liqOn:        true,
@@ -878,7 +887,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       7 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
-            dust:         10 * THOUSAND,
+            dust:         15 * THOUSAND,
             pct:          100,
             mat:          16500,
             liqType:      "clip",
@@ -907,8 +916,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       0,
             aL_ttl:       0,
             line:         5 * MILLION,
-            dust:         10 * THOUSAND,
-            pct:          0,
+            dust:         15 * THOUSAND,
+            pct:          100,
             mat:          10100,
             liqType:      "clip",
             liqOn:        false,
@@ -936,8 +945,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       5 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
-            dust:         10 * THOUSAND,
-            pct:          100,
+            dust:         15 * THOUSAND,
+            pct:          300,
             mat:          16500,
             liqType:      "clip",
             liqOn:        true,
@@ -965,7 +974,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       1 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
-            dust:         10 * THOUSAND,
+            dust:         15 * THOUSAND,
             pct:          250,
             mat:          16500,
             liqType:      "clip",
@@ -1023,8 +1032,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       5 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
-            dust:         10 * THOUSAND,
-            pct:          150,
+            dust:         15 * THOUSAND,
+            pct:          200,
             mat:          12000,
             liqType:      "clip",
             liqOn:        true,
@@ -1081,8 +1090,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       5 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
-            dust:         10 * THOUSAND,
-            pct:          250,
+            dust:         15 * THOUSAND,
+            pct:          300,
             mat:          14500,
             liqType:      "clip",
             liqOn:        true,
@@ -1110,8 +1119,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       5 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
-            dust:         10 * THOUSAND,
-            pct:          200,
+            dust:         15 * THOUSAND,
+            pct:          250,
             mat:          12000,
             liqType:      "clip",
             liqOn:        true,
@@ -1139,7 +1148,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       10 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
-            dust:         10 * THOUSAND,
+            dust:         15 * THOUSAND,
             pct:          0,
             mat:          10200,
             liqType:      "clip",
@@ -1226,8 +1235,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       3 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
-            dust:         10 * THOUSAND,
-            pct:          200,
+            dust:         15 * THOUSAND,
+            pct:          400,
             mat:          16000,
             liqType:      "clip",
             liqOn:        true,
@@ -1255,7 +1264,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       3 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
-            dust:         10 * THOUSAND,
+            dust:         15 * THOUSAND,
             pct:          0,
             mat:          12000,
             liqType:      "clip",
@@ -1486,7 +1495,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_line:      0 * MILLION,
             aL_gap:       0 * MILLION,
             aL_ttl:       0,
-            line:         20 * MILLION,
+            line:         0 * MILLION,
             dust:         0,
             pct:          200,
             mat:          10000,
@@ -1516,7 +1525,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       20 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
-            dust:         10 * THOUSAND,
+            dust:         15 * THOUSAND,
             pct:          300,
             mat:          17500,
             liqType:      "clip",
@@ -1574,8 +1583,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       10 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
-            dust:         10 * THOUSAND,
-            pct:          50,
+            dust:         15 * THOUSAND,
+            pct:          10,
             mat:          10200,
             liqType:      "clip",
             liqOn:        false,
@@ -1603,7 +1612,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             aL_gap:       3 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
-            dust:         10 * THOUSAND,
+            dust:         15 * THOUSAND,
             pct:          400,
             mat:          16000,
             liqType:      "clip",
@@ -1626,6 +1635,35 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             calc_step:    90,
             calc_cut:     9900
         });
+//        afterSpell.collaterals["DIRECT-AAVEV2-DAI"] = CollateralValues({
+//            aL_enabled:   true,
+//            aL_line:      100 * MILLION,
+//            aL_gap:       25 * MILLION,
+//            aL_ttl:       12 hours,
+//            line:         0,
+//            dust:         0,
+//            pct:          0,
+//            mat:          10000,
+//            liqType:      "clip",
+//            liqOn:        false,
+//            chop:         1300,
+//            cat_dunk:     0,
+//            flip_beg:     0,
+//            flip_ttl:     0,
+//            flip_tau:     0,
+//            flipper_mom:  0,
+//            dog_hole:     0,
+//            clip_buf:     10500,
+//            clip_tail:    220 minutes,
+//            clip_cusp:    9000,
+//            clip_chip:    10,
+//            clip_tip:     300,
+//            clipper_mom:  0,
+//            cm_tolerance: 9500,
+//            calc_tau:     0,
+//            calc_step:    120,
+//            calc_cut:     9990
+//        });
         afterSpell.collaterals["PSM-GUSD-A"] = CollateralValues({
             aL_enabled:   true,
             aL_line:      10 * MILLION,
@@ -1644,6 +1682,35 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             flip_tau:     0,
             flipper_mom:  0,
             dog_hole:     0,
+            clip_buf:     10500,
+            clip_tail:    220 minutes,
+            clip_cusp:    9000,
+            clip_chip:    10,
+            clip_tip:     300,
+            clipper_mom:  0,
+            cm_tolerance: 9500,
+            calc_tau:     0,
+            calc_step:    120,
+            calc_cut:     9990
+        });
+        afterSpell.collaterals["GUNIV3DAIUSDC2-A"] = CollateralValues({
+            aL_enabled:   true,
+            aL_line:      10 * MILLION,
+            aL_gap:       10 * MILLION,
+            aL_ttl:       8 hours,
+            line:         0,
+            dust:         15 * THOUSAND,
+            pct:          100,
+            mat:          10500,
+            liqType:      "clip",
+            liqOn:        false,
+            chop:         1300,
+            cat_dunk:     0,
+            flip_beg:     0,
+            flip_ttl:     0,
+            flip_tau:     0,
+            flipper_mom:  0,
+            dog_hole:     5 * MILLION,
             clip_buf:     10500,
             clip_tail:    220 minutes,
             clip_cusp:    9000,
@@ -1898,7 +1965,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
                 ) {
                 // TODO: remove these when we are done with the lerp
                 assertTrue(mat <= normalizedTestMat, string(abi.encodePacked("TestError/vat-lerping-mat-", ilk)));
-                assertTrue(mat >= RAY && mat <= 50 * RAY, string(abi.encodePacked("TestError/vat-mat-range-", ilk)));
+                assertTrue(mat >= RAY && mat <= 150 * RAY, string(abi.encodePacked("TestError/vat-mat-range-", ilk)));
             } else {
                 assertEq(mat, normalizedTestMat, string(abi.encodePacked("TestError/vat-mat-", ilk)));
                 assertTrue(mat >= RAY && mat < 10 * RAY, string(abi.encodePacked("TestError/vat-mat-range-", ilk)));    // cr eq 100% and lt 1000%
@@ -2164,7 +2231,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
     ) public {
         DSTokenAbstract token = DSTokenAbstract(join.gem());
 
-        hevm.warp(block.timestamp + 3601);
+        hevm.warp(block.timestamp + 3601); // Avoid OSM delay errors on Görli
         if (_isOSM) OsmAbstract(pip).poke();
         hevm.warp(block.timestamp + 3601);
         if (_isOSM) OsmAbstract(pip).poke();
@@ -2379,6 +2446,64 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
 
         // Dump all dai for next run
         vat.move(address(this), address(0x0), vat.dai(address(this)));
+    }
+
+    function checkDirectIlkIntegration(
+        bytes32 _ilk,
+        DirectDepositLike join,
+        ClipAbstract clip,
+        address pip,
+        uint256 bar,
+        uint256 tau
+    ) public {
+        DSTokenAbstract token = DSTokenAbstract(join.gem());
+        assertTrue(pip != address(0));
+
+        spotter.poke(_ilk);
+
+        // Authorization
+        assertEq(join.wards(pauseProxy), 1);
+        assertEq(vat.wards(address(join)), 1);
+        assertEq(clip.wards(address(end)), 1);
+        assertEq(join.wards(address(esm)), 1);             // Required in case of gov. attack
+        assertEq(join.wards(addr.addr("DIRECT_MOM")), 1);  // Zero-delay shutdown for Aave gov. attack
+
+        // Check the bar/tau/king are set correctly
+        assertEq(join.bar(), bar);
+        assertEq(join.tau(), tau);
+        assertEq(join.king(), pauseProxy);
+
+        // Set the target bar to be super low to max out the debt ceiling
+        giveAuth(address(join), address(this));
+        join.file("bar", 1 * RAY / 10000);     // 0.01%
+        join.deny(address(this));
+        join.exec();
+
+        // Module should be maxed out
+        (,,, uint256 line,) = vat.ilks(_ilk);
+        (uint256 ink, uint256 art) = vat.urns(_ilk, address(join));
+        assertEq(ink*RAY, line);
+        assertEq(art*RAY, line);
+        assertGe(token.balanceOf(address(join)), ink - 1);         // Allow for small rounding error
+
+        // Disable the module
+        giveAuth(address(join), address(this));
+        join.file("bar", 0);
+        join.deny(address(this));
+        join.exec();
+
+        // Module should clear out
+        (ink, art) = vat.urns(_ilk, address(join));
+        assertLe(ink, 1);
+        assertLe(art, 1);
+        assertEq(token.balanceOf(address(join)), 0);
+    }
+
+    function checkDaiVest(uint256 _index, address _wallet, uint256 _start, uint256 _end, uint256 _amount) public {
+        assertEq(vestDai.usr(_index), _wallet);
+        assertEq(vestDai.bgn(_index), _start);
+        assertEq(vestDai.fin(_index), _end);
+        assertEq(vestDai.tot(_index), _amount * WAD);
     }
 
     function getMat(bytes32 _ilk) internal returns (uint256 mat) {
