@@ -23,25 +23,6 @@ interface SpellLike {
     function nextCastTime() external returns (uint256);
 }
 
-interface AuthLike {
-    function wards(address) external view returns (uint256);
-}
-
-interface PsmAbstract {
-    function wards(address) external returns (uint256);
-    function vat() external returns (address);
-    function gemJoin() external returns (address);
-    function dai() external returns (address);
-    function daiJoin() external returns (address);
-    function ilk() external returns (bytes32);
-    function vow() external returns (address);
-    function tin() external returns (uint256);
-    function tout() external returns (uint256);
-    function file(bytes32 what, uint256 data) external;
-    function sellGem(address usr, uint256 gemAmt) external;
-    function buyGem(address usr, uint256 gemAmt) external;
-}
-
 interface BrokeTokenAbstract {
     function name() external view returns (bytes32);
     function symbol() external view returns (bytes32);
@@ -2120,7 +2101,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
     }
 
     function giveAuth(address _base, address target) internal {
-        AuthLike base = AuthLike(_base);
+        WardsAbstract base = WardsAbstract(_base);
 
         // Edge case - ward is already set
         if (base.wards(target) == 1) return;
