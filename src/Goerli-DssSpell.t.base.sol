@@ -105,7 +105,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
     Rates         rates = new Rates();
     Addresses      addr = new Addresses();
     Deployers deployers = new Deployers();
-
+    
     // ADDRESSES
     ChainlogAbstract    chainLog = ChainlogAbstract(   addr.addr("CHANGELOG"));
     DSPauseAbstract        pause = DSPauseAbstract(    addr.addr("MCD_PAUSE"));
