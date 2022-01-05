@@ -71,6 +71,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         uint256 calc_tau;
         uint256 calc_step;
         uint256 calc_cut;
+        bool    lerp;
     }
 
     struct SystemValues {
@@ -321,7 +322,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         false
         });
         afterSpell.collaterals["ETH-B"] = CollateralValues({
             aL_enabled:   true,
@@ -350,7 +352,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    60,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         false
         });
         afterSpell.collaterals["ETH-C"] = CollateralValues({
             aL_enabled:   true,
@@ -379,7 +382,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         false
         });
         afterSpell.collaterals["BAT-A"] = CollateralValues({
             aL_enabled:   false,
@@ -408,7 +412,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         true
         });
         afterSpell.collaterals["USDC-A"] = CollateralValues({
             aL_enabled:   false,
@@ -437,7 +442,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 9500,
             calc_tau:     0,
             calc_step:    120,
-            calc_cut:     9990
+            calc_cut:     9990,
+            lerp:         false
         });
         afterSpell.collaterals["USDC-B"] = CollateralValues({
             aL_enabled:   false,
@@ -466,7 +472,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 9500,
             calc_tau:     0,
             calc_step:    120,
-            calc_cut:     9990
+            calc_cut:     9990,
+            lerp:         false
         });
         afterSpell.collaterals["WBTC-A"] = CollateralValues({
             aL_enabled:   true,
@@ -495,7 +502,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         false
         });
         afterSpell.collaterals["WBTC-B"] = CollateralValues({
             aL_enabled:   true,
@@ -524,7 +532,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    60,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         false
         });
         afterSpell.collaterals["WBTC-C"] = CollateralValues({
             aL_enabled:   true,
@@ -553,7 +562,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         false
         });
         afterSpell.collaterals["TUSD-A"] = CollateralValues({
             aL_enabled:   false,
@@ -582,7 +592,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 9500,
             calc_tau:     0,
             calc_step:    120,
-            calc_cut:     9990
+            calc_cut:     9990,
+            lerp:         false
         });
         afterSpell.collaterals["KNC-A"] = CollateralValues({
             aL_enabled:   false,
@@ -611,7 +622,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         true
         });
         afterSpell.collaterals["ZRX-A"] = CollateralValues({
             aL_enabled:   false,
@@ -640,7 +652,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         true
         });
         afterSpell.collaterals["MANA-A"] = CollateralValues({
             aL_enabled:   true,
@@ -669,7 +682,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         false
         });
         afterSpell.collaterals["USDT-A"] = CollateralValues({
             aL_enabled:   false,
@@ -698,7 +712,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 9500,
             calc_tau:     0,
             calc_step:    120,
-            calc_cut:     9990
+            calc_cut:     9990,
+            lerp:         false
         });
         afterSpell.collaterals["PAXUSD-A"] = CollateralValues({
             aL_enabled:   false,
@@ -727,7 +742,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 9500,
             calc_tau:     0,
             calc_step:    120,
-            calc_cut:     9990
+            calc_cut:     9990,
+            lerp:         false
         });
         afterSpell.collaterals["COMP-A"] = CollateralValues({
             aL_enabled:   false,
@@ -756,7 +772,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         true
         });
         afterSpell.collaterals["LRC-A"] = CollateralValues({
             aL_enabled:   false,
@@ -785,7 +802,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         true
         });
         afterSpell.collaterals["LINK-A"] = CollateralValues({
             aL_enabled:   true,
@@ -814,7 +832,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         false
         });
         afterSpell.collaterals["BAL-A"] = CollateralValues({
             aL_enabled:   false,
@@ -843,7 +862,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         true
         });
         afterSpell.collaterals["YFI-A"] = CollateralValues({
             aL_enabled:   true,
@@ -872,7 +892,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         false
         });
         afterSpell.collaterals["GUSD-A"] = CollateralValues({
             aL_enabled:   false,
@@ -901,7 +922,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 9500,
             calc_tau:     0,
             calc_step:    120,
-            calc_cut:     9990
+            calc_cut:     9990,
+            lerp:         false
         });
         afterSpell.collaterals["UNI-A"] = CollateralValues({
             aL_enabled:   true,
@@ -930,7 +952,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         false
         });
         afterSpell.collaterals["RENBTC-A"] = CollateralValues({
             aL_enabled:   true,
@@ -959,7 +982,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         false
         });
         afterSpell.collaterals["AAVE-A"] = CollateralValues({
             aL_enabled:   false,
@@ -988,7 +1012,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         true
         });
         afterSpell.collaterals["UNIV2DAIETH-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1017,7 +1042,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 7000,
             calc_tau:     0,
             calc_step:    125,
-            calc_cut:     9950
+            calc_cut:     9950,
+            lerp:         false
         });
         afterSpell.collaterals["PSM-USDC-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1046,7 +1072,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 9500,
             calc_tau:     0,
             calc_step:    120,
-            calc_cut:     9990
+            calc_cut:     9990,
+            lerp:         false
         });
         afterSpell.collaterals["UNIV2WBTCETH-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1075,7 +1102,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    130,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         false
         });
         afterSpell.collaterals["UNIV2USDCETH-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1104,7 +1132,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 7000,
             calc_tau:     0,
             calc_step:    125,
-            calc_cut:     9950
+            calc_cut:     9950,
+            lerp:         false
         });
         afterSpell.collaterals["UNIV2DAIUSDC-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1133,7 +1162,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 9500,
             calc_tau:     0,
             calc_step:    120,
-            calc_cut:     9990
+            calc_cut:     9990,
+            lerp:         false
         });
         afterSpell.collaterals["UNIV2ETHUSDT-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1162,7 +1192,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 7000,
             calc_tau:     0,
             calc_step:    125,
-            calc_cut:     9950
+            calc_cut:     9950,
+            lerp:         false
         });
         afterSpell.collaterals["UNIV2LINKETH-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1191,7 +1222,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    130,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         true
         });
         afterSpell.collaterals["UNIV2UNIETH-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1220,7 +1252,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    130,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         false
         });
         afterSpell.collaterals["UNIV2WBTCDAI-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1249,7 +1282,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 7000,
             calc_tau:     0,
             calc_step:    125,
-            calc_cut:     9950
+            calc_cut:     9950,
+            lerp:         false
         });
         afterSpell.collaterals["UNIV2AAVEETH-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1278,7 +1312,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    130,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         true
         });
         afterSpell.collaterals["UNIV2DAIUSDT-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1307,7 +1342,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 9500,
             calc_tau:     0,
             calc_step:    120,
-            calc_cut:     9990
+            calc_cut:     9990,
+            lerp:         false
         });
         afterSpell.collaterals["RWA001-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1336,7 +1372,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 0,
             calc_tau:     0,
             calc_step:    0,
-            calc_cut:     0
+            calc_cut:     0,
+            lerp:         false
         });
         afterSpell.collaterals["RWA002-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1365,7 +1402,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 0,
             calc_tau:     0,
             calc_step:    0,
-            calc_cut:     0
+            calc_cut:     0,
+            lerp:         false
         });
         afterSpell.collaterals["RWA003-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1394,7 +1432,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 0,
             calc_tau:     0,
             calc_step:    0,
-            calc_cut:     0
+            calc_cut:     0,
+            lerp:         false
         });
         afterSpell.collaterals["RWA004-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1423,7 +1462,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 0,
             calc_tau:     0,
             calc_step:    0,
-            calc_cut:     0
+            calc_cut:     0,
+            lerp:         false
         });
         afterSpell.collaterals["RWA005-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1452,7 +1492,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 0,
             calc_tau:     0,
             calc_step:    0,
-            calc_cut:     0
+            calc_cut:     0,
+            lerp:         false
         });
         afterSpell.collaterals["RWA006-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1481,7 +1522,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 0,
             calc_tau:     0,
             calc_step:    0,
-            calc_cut:     0
+            calc_cut:     0,
+            lerp:         false
         });
         afterSpell.collaterals["MATIC-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1510,7 +1552,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         false
         });
         afterSpell.collaterals["PSM-PAX-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1539,7 +1582,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 9500,
             calc_tau:     0,
             calc_step:    120,
-            calc_cut:     9990
+            calc_cut:     9990,
+            lerp:         false
         });
         afterSpell.collaterals["GUNIV3DAIUSDC1-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1568,7 +1612,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 9500,
             calc_tau:     0,
             calc_step:    120,
-            calc_cut:     9990
+            calc_cut:     9990,
+            lerp:         false
         });
         afterSpell.collaterals["WSTETH-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1597,7 +1642,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900
+            calc_cut:     9900,
+            lerp:         false
         });
 //        afterSpell.collaterals["DIRECT-AAVEV2-DAI"] = CollateralValues({
 //            aL_enabled:   true,
@@ -1655,7 +1701,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             cm_tolerance: 9500,
             calc_tau:     0,
             calc_step:    120,
-            calc_cut:     9990
+            calc_cut:     9990,
+            lerp:         false
         });
         afterSpell.collaterals["GUNIV3DAIUSDC2-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1917,17 +1964,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             (,uint256 mat) = spotter.ilks(ilk);
             // Convert BP to system expected value
             uint256 normalizedTestMat = (values.collaterals[ilk].mat * 10**23);
-            if ( ilk == "AAVE-A" ||
-                 ilk == "BAL-A"  ||
-                 ilk == "COMP-A" ||
-                 ilk == "KNC-A"  ||
-                 ilk == "BAT-A"  ||
-                 ilk == "ZRX-A"  ||
-                 ilk == "LRC-A"  ||
-                 ilk == "UNIV2AAVEETH-A" ||
-                 ilk == "UNIV2LINKETH-A"
-                ) {
-                // TODO: remove these when we are done with the lerp
+            if ( values.collaterals[ilk].lerp ) {
                 assertTrue(mat <= normalizedTestMat, string(abi.encodePacked("TestError/vat-lerping-mat-", ilk)));
                 assertTrue(mat >= RAY && mat <= 150 * RAY, string(abi.encodePacked("TestError/vat-mat-range-", ilk)));
             } else {
