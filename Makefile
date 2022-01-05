@@ -3,7 +3,7 @@ all             :; DAPP_LIBRARIES=' lib/dss-exec-lib/src/DssExecLib.sol:DssExecL
                     dapp --use solc:0.6.12 build
 clean           :; dapp clean
 test            :; ./test-dssspell.sh match=$(match) optimzier=$(optimizer)
-test-dev        :; ./test-dssspell.sh match=$(match) optimzier=$(optimizer)
+test-dev        :; ./test-dssspell.sh match=$(match) optimzier=0
 deploy          :; make && dapp create DssSpell | xargs ./verify.py DssSpell
 flatten         :; hevm flatten --source-file "src/Goerli-DssSpell.sol" > out/flat.sol
 archive-spell   :; ./archive-dssspell.sh $(name)
