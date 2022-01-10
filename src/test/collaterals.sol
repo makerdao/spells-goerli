@@ -1524,7 +1524,8 @@ contract Collaterals {
             cm_tolerance: 9500,
             calc_tau:     0,
             calc_step:    120,
-            calc_cut:     9990
+            calc_cut:     9990,
+            lerp:         false
         });
     }
 }
