@@ -58,6 +58,7 @@ contract DssSpellAction is DssAction {
     // --- Ilks ---
     bytes32 constant WSTETH_A = "WSTETH-A";
     bytes32 constant MATIC_A  = "MATIC-A";
+    bytes32 constant RWA006_A = "RWA006-A";
 
     // --- GUNIV3DAIUSDC2-A ---
     address constant GUNIV3DAIUSDC2                 = 0x540BBCcb890cEb6c539fA94a0d63fF7a6aA25762;
@@ -222,6 +223,18 @@ contract DssSpellAction is DssAction {
             _gap:    10 * MILLION,
             _ttl:    8 hours
         });
+
+
+        // ------------------------------------------------------------------------
+        // ----------------- Other cleanup changes --------------------------------
+        // ------------------------------------------------------------------------
+
+        DssExecLib.setIlkDebtCeiling({
+            _ilk:    RWA006_A,
+            _amount: 0
+        });
+
+        DssExecLib.decreaseGlobalDebtCeiling(20 * MILLION);
 
     }
 }

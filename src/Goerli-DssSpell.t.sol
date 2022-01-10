@@ -48,7 +48,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             GemJoinAbstract(addr.addr("MCD_JOIN_GUNIV3DAIUSDC2_A")),
             ClipAbstract(addr.addr("MCD_CLIP_GUNIV3DAIUSDC2_A")),
             LPOsmAbstract(addr.addr("PIP_GUNIV3DAIUSDC2")),
-            0x47c3dC029825Da43BE595E21fffD0b66FfcB7F6e,
+            addr.addr("PIP_DAI"),
             addr.addr("PIP_USDC"),
             false,
             false,
@@ -97,7 +97,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        assertEq(reg.pos("GUNIV3DAIUSDC2-A"), 47);
+        assertEq(reg.pos("GUNIV3DAIUSDC2-A"), 46);
         assertEq(reg.join("GUNIV3DAIUSDC2-A"), addr.addr("MCD_JOIN_GUNIV3DAIUSDC2_A"));
         assertEq(reg.gem("GUNIV3DAIUSDC2-A"), addr.addr("GUNIV3DAIUSDC2"));
         assertEq(reg.dec("GUNIV3DAIUSDC2-A"), DSTokenAbstract(addr.addr("GUNIV3DAIUSDC2")).decimals());

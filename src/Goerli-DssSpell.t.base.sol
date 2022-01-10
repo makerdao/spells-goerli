@@ -1604,8 +1604,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             flip_ttl:     0,
             flip_tau:     0,
             flipper_mom:  0,
-            dog_hole:     7 * MILLION,
-            clip_buf:     13000,
+            dog_hole:     15 * MILLION,
+            clip_buf:     12000,
             clip_tail:    140 minutes,
             clip_cusp:    4000,
             clip_chip:    10,
@@ -2067,7 +2067,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
                 }
             }
         }
-        //       actual    expected
+        //       actual                               expected
         assertEq(sumlines + values.line_offset * RAD, vat.Line(), "TestError/vat-Line");
     }
 
@@ -2487,7 +2487,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         assertEq(vestDai.tot(_index), _amount * WAD);
     }
 
-    function getMat(bytes32 _ilk) internal returns (uint256 mat) {
+    function getMat(bytes32 _ilk) internal view returns (uint256 mat) {
         (, mat) = spotter.ilks(_ilk);
     }
 
@@ -2564,7 +2564,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
     ];
 
     // ONLY ON GOERLI
-    function skipWards(address target, address deployer) internal returns (bool ok) {
+    function skipWards(address target, address deployer) internal view returns (bool ok) {
         ok = (
             target   == address(chainLog)    &&
             deployer == deployerAddresses[2] ||
