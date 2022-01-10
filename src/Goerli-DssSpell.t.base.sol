@@ -24,6 +24,7 @@ interface DssExecSpellLike {
     function cast() external;
     function nextCastTime() external returns (uint256);
 }
+
 interface DirectDepositLike is GemJoinAbstract {
     function file(bytes32, uint256) external;
     function exec() external;
