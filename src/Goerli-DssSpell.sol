@@ -55,16 +55,22 @@ contract DssSpellAction is DssAction {
     uint256 constant MILLION = 10 ** 6;
     uint256 constant BILLION = 10 ** 9;
 
+    // --- Ilks ---
+    bytes32 constant WSTETH_A = "WSTETH-A";
+    bytes32 constant MATIC_A  = "MATIC-A";
+
     // --- GUNIV3DAIUSDC2-A ---
-    address constant GUNIV3DAIUSDC2                 = ;
-    address constant MCD_JOIN_GUNIV3DAIUSDC2_A      = ;
-    address constant MCD_CLIP_GUNIV3DAIUSDC2_A      = ;
-    address constant MCD_CLIP_CALC_GUNIV3DAIUSDC2_A = ;
-    address constant PIP_GUNIV3DAIUSDC2             = ;
+    address constant GUNIV3DAIUSDC2                 = 0x540BBCcb890cEb6c539fA94a0d63fF7a6aA25762;
+    address constant MCD_JOIN_GUNIV3DAIUSDC2_A      = 0xbd039ea6d63AC57F2cD051202dC4fB6BA6681489;
+    address constant MCD_CLIP_GUNIV3DAIUSDC2_A      = 0x39aee8F2D5ea5dffE4b84529f0349743C71C07c3;
+    address constant MCD_CLIP_CALC_GUNIV3DAIUSDC2_A = 0xbF87fbA8ec2190E50Da297815A9A6Ae668306aFE;
+    address constant PIP_GUNIV3DAIUSDC2             = 0x6Fb18806ff87B45220C2DB0941709142f2395069;
 
     function actions() public override {
 
+        // ---------------------------------------------------------------------------------
         // ------------- Changes corresponding to the 2021-12-03 mainnet spell -------------
+        // ---------------------------------------------------------------------------------
 
 
         // ----------------------------- Collateral onboarding -----------------------------
@@ -183,10 +189,39 @@ contract DssSpellAction is DssAction {
 
 
 
-
+        // ---------------------------------------------------------------------------------
         // ------------- Changes corresponding to the 2021-12-10 mainnet spell -------------
+        // ---------------------------------------------------------------------------------
 
 
+        // ------------- Transfer vesting streams from MCD_VEST_MKR to MCD_VEST_MKR_TREASURY -------------
+        // https://vote.makerdao.com/polling/QmYdDTsn
+
+        // no vesting streams on Görli
+
+
+        // -------------------- wstETH-A Parameter Changes ------------------------
+        // https://vote.makerdao.com/polling/QmYuK441
+
+        DssExecLib.setIlkAutoLineParameters({
+            _ilk:    WSTETH_A,
+            _amount: 200 * MILLION,
+            _gap:    20 * MILLION,
+            _ttl:    6 hours
+        });
+        DssExecLib.setStartingPriceMultiplicativeFactor(WSTETH_A, 120_00);
+        DssExecLib.setIlkMaxLiquidationAmount(WSTETH_A, 15 * MILLION);
+
+
+        // ------------------- MATIC-A Parameter Changes --------------------------
+        // https://vote.makerdao.com/polling/QmdzwZyS
+
+        DssExecLib.setIlkAutoLineParameters({
+            _ilk:    MATIC_A,
+            _amount: 35 * MILLION,
+            _gap:    10 * MILLION,
+            _ttl:    8 hours
+        });
 
     }
 }

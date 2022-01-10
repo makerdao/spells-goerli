@@ -272,7 +272,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         // Test for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0x724462C11bd0738486f21D4a00ffa715eb2cA8EA),        // populate with deployed spell if deployed
+            deployed_spell:                 address(0),        // populate with deployed spell if deployed
             deployed_spell_created:         1637959921,        // use get-created-timestamp.sh if deployed
             previous_spell:                 address(0),        // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           false,             // true if officehours is expected to be enabled in the spell
@@ -1502,8 +1502,8 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         });
         afterSpell.collaterals["MATIC-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      20 * MILLION,
-            aL_gap:       20 * MILLION,
+            aL_line:      35 * MILLION,
+            aL_gap:       10 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
             dust:         15 * THOUSAND,
@@ -1589,9 +1589,9 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         });
         afterSpell.collaterals["WSTETH-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      50 * MILLION,
-            aL_gap:       3 * MILLION,
-            aL_ttl:       8 hours,
+            aL_line:      200 * MILLION,
+            aL_gap:       20 * MILLION,
+            aL_ttl:       6 hours,
             line:         0,
             dust:         15 * THOUSAND,
             pct:          400,
