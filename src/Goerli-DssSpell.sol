@@ -21,7 +21,9 @@ pragma experimental ABIEncoderV2;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-contract DssSpellAction is DssAction {
+import { DssSpellCollateralOnboardingAction } from "./DssSpellCollateralOnboarding.sol";
+
+contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
@@ -70,6 +72,9 @@ contract DssSpellAction is DssAction {
     function actions() public override {
 
         // ---------------------------------------------------------------------------------
+        // Includes changes from the DssSpellCollateralOnboardingAction
+        // onboardNewCollaterals();
+
         // ------------- Changes corresponding to the 2021-12-03 mainnet spell -------------
         // ---------------------------------------------------------------------------------
 
