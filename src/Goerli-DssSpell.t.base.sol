@@ -102,7 +102,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
     Hevm hevm;
 
     Rates         rates = new Rates();
-    Addresses     addr  = new Addresses();
+    Addresses      addr = new Addresses();
     Deployers deployers = new Deployers();
 
     // ADDRESSES
