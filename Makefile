@@ -2,8 +2,8 @@ all             :; DAPP_LIBRARIES=' lib/dss-exec-lib/src/DssExecLib.sol:DssExecL
                     DAPP_BUILD_OPTIMIZE=1 DAPP_BUILD_OPTIMIZE_RUNS=1 \
                     dapp --use solc:0.6.12 build
 clean           :; dapp clean
-test            :; ./test-dssspell.sh match=$(match) optimzier=$(optimizer)
-test-dev        :; ./test-dssspell.sh match=$(match) optimzier=0
+test            :; ./test-dssspell.sh match=$(match) optimizer=$(optimizer)
+test-dev        :; ./test-dssspell.sh match=$(match) optimizer=0
 deploy          :; make && dapp create DssSpell | xargs ./verify.py DssSpell
 flatten         :; hevm flatten --source-file "src/Goerli-DssSpell.sol" > out/flat.sol
 archive-spell   :; ./archive-dssspell.sh $(name)
