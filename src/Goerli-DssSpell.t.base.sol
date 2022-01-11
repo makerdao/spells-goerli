@@ -34,7 +34,7 @@ interface DirectDepositLike is GemJoinAbstract {
     function king() external view returns (address);
 }
 
-contract GoerliDssSpellTestBase is Collaterals, DSTest, DSMath {
+contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
     struct SpellValues {
         address deployed_spell;
