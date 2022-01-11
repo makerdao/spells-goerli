@@ -5,8 +5,11 @@ pragma solidity 0.6.12;
 import "ds-math/math.sol";
 import "ds-test/test.sol";
 import "dss-interfaces/Interfaces.sol";
+
 import "./test/rates.sol";
 import "./test/addresses_goerli.sol";
+import "./test/addresses_deployers.sol";
+import "./test/config.sol";
 
 import {DssSpell} from "./Goerli-DssSpell.sol";
 
@@ -16,58 +19,22 @@ interface Hevm {
     function load(address,bytes32) external view returns (bytes32);
 }
 
-interface SpellLike {
+interface DssExecSpellLike {
     function done() external view returns (bool);
     function eta() external view returns (uint256);
     function cast() external;
     function nextCastTime() external returns (uint256);
 }
 
-interface AuthLike {
-    function wards(address) external view returns (uint256);
+interface DirectDepositLike is GemJoinAbstract {
+    function file(bytes32, uint256) external;
+    function exec() external;
+    function tau() external view returns (uint256);
+    function bar() external view returns (uint256);
+    function king() external view returns (address);
 }
 
-interface PsmAbstract {
-    function wards(address) external returns (uint256);
-    function vat() external returns (address);
-    function gemJoin() external returns (address);
-    function dai() external returns (address);
-    function daiJoin() external returns (address);
-    function ilk() external returns (bytes32);
-    function vow() external returns (address);
-    function tin() external returns (uint256);
-    function tout() external returns (uint256);
-    function file(bytes32 what, uint256 data) external;
-    function sellGem(address usr, uint256 gemAmt) external;
-    function buyGem(address usr, uint256 gemAmt) external;
-}
-
-interface BrokeTokenAbstract {
-    function name() external view returns (bytes32);
-    function symbol() external view returns (bytes32);
-    function decimals() external view returns (uint256);
-    function totalSupply() external view returns (uint256);
-    function balanceOf(address) external view returns (uint256);
-    function transfer(address, uint256) external;
-    function allowance(address, address) external view returns (uint256);
-    function approve(address, uint256) external;
-    function approve(address) external;
-    function transferFrom(address, address, uint256) external;
-    function push(address, uint256) external;
-    function pull(address, uint256) external;
-    function move(address, address, uint256) external;
-    function mint(uint256) external;
-    function mint(address,uint) external;
-    function burn(uint256) external;
-    function burn(address,uint) external;
-    function setName(bytes32) external;
-    function authority() external view returns (address);
-    function owner() external view returns (address);
-    function setOwner(address) external;
-    function setAuthority(address) external;
-}
-
-contract GoerliDssSpellTestBase is DSTest, DSMath {
+contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
     struct SpellValues {
         address deployed_spell;
@@ -77,67 +44,15 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         uint256 expiration_threshold;
     }
 
-    struct CollateralValues {
-        bool aL_enabled;
-        uint256 aL_line;
-        uint256 aL_gap;
-        uint256 aL_ttl;
-        uint256 line;
-        uint256 dust;
-        uint256 pct;
-        uint256 mat;
-        bytes32 liqType;
-        bool    liqOn;
-        uint256 chop;
-        uint256 cat_dunk;
-        uint256 flip_beg;
-        uint48  flip_ttl;
-        uint48  flip_tau;
-        uint256 flipper_mom;
-        uint256 dog_hole;
-        uint256 clip_buf;
-        uint256 clip_tail;
-        uint256 clip_cusp;
-        uint256 clip_chip;
-        uint256 clip_tip;
-        uint256 clipper_mom;
-        uint256 cm_tolerance;
-        uint256 calc_tau;
-        uint256 calc_step;
-        uint256 calc_cut;
-    }
-
-    struct SystemValues {
-        uint256 line_offset;
-        uint256 pot_dsr;
-        uint256 pause_delay;
-        uint256 vow_wait;
-        uint256 vow_dump;
-        uint256 vow_sump;
-        uint256 vow_bump;
-        uint256 vow_hump_min;
-        uint256 vow_hump_max;
-        uint256 flap_beg;
-        uint256 flap_ttl;
-        uint256 flap_tau;
-        uint256 cat_box;
-        uint256 dog_Hole;
-        address pause_authority;
-        address osm_mom_authority;
-        address flipper_mom_authority;
-        address clipper_mom_authority;
-        uint256 ilk_count;
-        mapping (bytes32 => CollateralValues) collaterals;
-    }
-
-    SystemValues afterSpell;
     SpellValues  spellValues;
 
     Hevm hevm;
-    Rates     rates = new Rates();
-    Addresses addr  = new Addresses();
 
-    // GOERLI ADDRESSES
+    Rates         rates = new Rates();
+    Addresses      addr = new Addresses();
+    Deployers deployers = new Deployers();
+    
+    // ADDRESSES
     ChainlogAbstract    chainLog = ChainlogAbstract(   addr.addr("CHANGELOG"));
     DSPauseAbstract        pause = DSPauseAbstract(    addr.addr("MCD_PAUSE"));
     address           pauseProxy =                     addr.addr("MCD_PAUSE_PROXY");
@@ -162,6 +77,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
     ClipperMomAbstract      clipMom = ClipperMomAbstract( addr.addr("CLIPPER_MOM"));
     DssAutoLineAbstract    autoLine = DssAutoLineAbstract(addr.addr("MCD_IAM_AUTO_LINE"));
     LerpFactoryAbstract lerpFactory = LerpFactoryAbstract(addr.addr("LERP_FAB"));
+    VestAbstract            vestDai = VestAbstract(       addr.addr("MCD_VEST_DAI"));
 
     DssSpell spell;
 
@@ -169,10 +85,10 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
     bytes20 constant CHEAT_CODE =
         bytes20(uint160(uint256(keccak256('hevm cheat code'))));
 
-    uint256 constant HUNDRED    = 10 ** 2;
-    uint256 constant THOUSAND   = 10 ** 3;
-    uint256 constant MILLION    = 10 ** 6;
-    uint256 constant BILLION    = 10 ** 9;
+    // uint256 constant HUNDRED    = 10 ** 2;  // provided by collaterals
+    // uint256 constant THOUSAND   = 10 ** 3;  // provided by collaterals
+    // uint256 constant MILLION    = 10 ** 6;  // provided by collaterals
+    // uint256 constant BILLION    = 10 ** 9;  // provided by collaterals
     // uint256 constant WAD        = 10 ** 18; // provided by ds-math
     // uint256 constant RAY        = 10 ** 27; // provided by ds-math
     uint256 constant RAD        = 10 ** 45;
@@ -260,9 +176,9 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
     }
 
     function castPreviousSpell() internal {
-        SpellLike prevSpell = SpellLike(spellValues.previous_spell);
+        DssExecSpellLike prevSpell = DssExecSpellLike(spellValues.previous_spell);
         // warp and cast previous spell so values are up-to-date to test against
-        if (prevSpell != SpellLike(0) && !prevSpell.done()) {
+        if (prevSpell != DssExecSpellLike(0) && !prevSpell.done()) {
             if (prevSpell.eta() == 0) {
                 vote(address(prevSpell));
                 scheduleWaitAndCast(address(prevSpell));
@@ -282,7 +198,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         // Test for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0x724462C11bd0738486f21D4a00ffa715eb2cA8EA),        // populate with deployed spell if deployed
+            deployed_spell:                 address(0),        // populate with deployed spell if deployed
             deployed_spell_created:         1637959921,        // use get-created-timestamp.sh if deployed
             previous_spell:                 address(0),        // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           false,             // true if officehours is expected to be enabled in the spell
@@ -315,1346 +231,11 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             osm_mom_authority:     address(chief),          // OsmMom authority
             flipper_mom_authority: address(chief),          // FlipperMom authority
             clipper_mom_authority: address(chief),          // ClipperMom authority
-            ilk_count:             46                       // Num expected in system
+            ilk_count:             47                       // Num expected in system
         });
 
-        //
-        // Test for all collateral based changes here
-        //
-        afterSpell.collaterals["ETH-A"] = CollateralValues({
-            aL_enabled:   true,            // DssAutoLine is enabled?
-            aL_line:      15 * BILLION,    // In whole Dai units
-            aL_gap:       150 * MILLION,   // In whole Dai units
-            aL_ttl:       6 hours,         // In seconds
-            line:         0,               // In whole Dai units  // Not checked here as there is auto line
-            dust:         10 * THOUSAND,   // In whole Dai units
-            pct:          250,             // In basis points
-            mat:          14500,           // In basis points
-            liqType:      "clip",          // "" or "flip" or "clip"
-            liqOn:        true,            // If liquidations are enabled
-            chop:         1300,            // In basis points
-            cat_dunk:     0,               // In whole Dai units
-            flip_beg:     0,               // In basis points
-            flip_ttl:     0,               // In seconds
-            flip_tau:     0,               // In seconds
-            flipper_mom:  0,               // 1 if circuit breaker enabled
-            dog_hole:     65 * MILLION,
-            clip_buf:     12000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["ETH-B"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      500 * MILLION,
-            aL_gap:       20 * MILLION,
-            aL_ttl:       6 hours,
-            line:         0,
-            dust:         30 * THOUSAND,
-            pct:          600,
-            mat:          13000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     30 * MILLION,
-            clip_buf:     12000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    60,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["ETH-C"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      2 * BILLION,
-            aL_gap:       100 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         5 * THOUSAND,
-            pct:          50,
-            mat:          17000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     35 * MILLION,
-            clip_buf:     12000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["BAT-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          400,
-            mat:          1120000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     1 * MILLION + 500 * THOUSAND,
-            clip_buf:     13000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["USDC-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          100,
-            mat:          10100,
-            liqType:      "clip",
-            liqOn:        false,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     10500,
-            clip_tail:    220 minutes,
-            clip_cusp:    9000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  0,
-            cm_tolerance: 9500,
-            calc_tau:     0,
-            calc_step:    120,
-            calc_cut:     9990
-        });
-        afterSpell.collaterals["USDC-B"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          5000,
-            mat:          12000,
-            liqType:      "clip",
-            liqOn:        false,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     10500,
-            clip_tail:    220 minutes,
-            clip_cusp:    9000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  0,
-            cm_tolerance: 9500,
-            calc_tau:     0,
-            calc_step:    120,
-            calc_cut:     9990
-        });
-        afterSpell.collaterals["WBTC-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      1_500 * MILLION,
-            aL_gap:       60 * MILLION,
-            aL_ttl:       6 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          400,
-            mat:          14500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     40 * MILLION,
-            clip_buf:     12000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["WBTC-B"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      500 * MILLION,
-            aL_gap:       30 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         30 * THOUSAND,
-            pct:          700,
-            mat:          13000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     25 * MILLION,
-            clip_buf:     12000,
-            clip_tail:    90 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    60,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["WBTC-C"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      1000 * MILLION,
-            aL_gap:       100 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         7500,
-            pct:          150,
-            mat:          17500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     25 * MILLION,
-            clip_buf:     12000,
-            clip_tail:    90 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["TUSD-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          100,
-            mat:          10100,
-            liqType:      "clip",
-            liqOn:        false,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     10500,
-            clip_tail:    220 minutes,
-            clip_cusp:    9000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  0,
-            cm_tolerance: 9500,
-            calc_tau:     0,
-            calc_step:    120,
-            calc_cut:     9990
-        });
-        afterSpell.collaterals["KNC-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          500,
-            mat:          500000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     500 * THOUSAND,
-            clip_buf:     13000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["ZRX-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          400,
-            mat:          550000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     1 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["MANA-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      10 * MILLION,
-            aL_gap:       1 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          300,
-            mat:          17500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     1 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["USDT-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          800,
-            mat:          30000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     15_000,
-            clip_buf:     10500,
-            clip_tail:    220 minutes,
-            clip_cusp:    9000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 9500,
-            calc_tau:     0,
-            calc_step:    120,
-            calc_cut:     9990
-        });
-        afterSpell.collaterals["PAXUSD-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          100,
-            mat:          10100,
-            liqType:      "clip",
-            liqOn:        false,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     10500,
-            clip_tail:    220 minutes,
-            clip_cusp:    9000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  0,
-            cm_tolerance: 9500,
-            calc_tau:     0,
-            calc_step:    120,
-            calc_cut:     9990
-        });
-        afterSpell.collaterals["COMP-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          100,
-            mat:          200000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     2 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["LRC-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          400,
-            mat:          2430000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     500 * THOUSAND,
-            clip_buf:     13000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["LINK-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      140 * MILLION,
-            aL_gap:       7 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          150,
-            mat:          16500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     6 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["BAL-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          100,
-            mat:          230000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     3 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["YFI-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      130 * MILLION,
-            aL_gap:       7 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          100,
-            mat:          16500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     5 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["GUSD-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         5 * MILLION,
-            dust:         10 * THOUSAND,
-            pct:          0,
-            mat:          10100,
-            liqType:      "clip",
-            liqOn:        false,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     10500,
-            clip_tail:    220 minutes,
-            clip_cusp:    9000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  0,
-            cm_tolerance: 9500,
-            calc_tau:     0,
-            calc_step:    120,
-            calc_cut:     9990
-        });
-        afterSpell.collaterals["UNI-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      50 * MILLION,
-            aL_gap:       5 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          100,
-            mat:          16500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     5 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["RENBTC-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      10 * MILLION,
-            aL_gap:       1 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          250,
-            mat:          16500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     3 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["AAVE-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          100,
-            mat:          210000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     5 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["UNIV2DAIETH-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      50 * MILLION,
-            aL_gap:       5 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          150,
-            mat:          12000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     5 * MILLION,
-            clip_buf:     11500,
-            clip_tail:    215 minutes,
-            clip_cusp:    6000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 7000,
-            calc_tau:     0,
-            calc_step:    125,
-            calc_cut:     9950
-        });
-        afterSpell.collaterals["PSM-USDC-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      10 * BILLION,
-            aL_gap:       950 * MILLION,
-            aL_ttl:       24 hours,
-            line:         0,
-            dust:         0,
-            pct:          0,
-            mat:          10000,
-            liqType:      "clip",
-            liqOn:        false,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     10500,
-            clip_tail:    220 minutes,
-            clip_cusp:    9000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  0,
-            cm_tolerance: 9500,
-            calc_tau:     0,
-            calc_step:    120,
-            calc_cut:     9990
-        });
-        afterSpell.collaterals["UNIV2WBTCETH-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      50 * MILLION,
-            aL_gap:       5 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          250,
-            mat:          14500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     5 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    200 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    130,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["UNIV2USDCETH-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      50 * MILLION,
-            aL_gap:       5 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          200,
-            mat:          12000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     5 * MILLION,
-            clip_buf:     11500,
-            clip_tail:    215 minutes,
-            clip_cusp:    6000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 7000,
-            calc_tau:     0,
-            calc_step:    125,
-            calc_cut:     9950
-        });
-        afterSpell.collaterals["UNIV2DAIUSDC-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      250 * MILLION,
-            aL_gap:       10 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          0,
-            mat:          10200,
-            liqType:      "clip",
-            liqOn:        false,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     10500,
-            clip_tail:    220 minutes,
-            clip_cusp:    9000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  0,
-            cm_tolerance: 9500,
-            calc_tau:     0,
-            calc_step:    120,
-            calc_cut:     9990
-        });
-        afterSpell.collaterals["UNIV2ETHUSDT-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          200,
-            mat:          14000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     5 * MILLION,
-            clip_buf:     11500,
-            clip_tail:    215 minutes,
-            clip_cusp:    6000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 7000,
-            calc_tau:     0,
-            calc_step:    125,
-            calc_cut:     9950
-        });
-        afterSpell.collaterals["UNIV2LINKETH-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          300,
-            mat:          160000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     3 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    200 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    130,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["UNIV2UNIETH-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      20 * MILLION,
-            aL_gap:       3 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          200,
-            mat:          16000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     3 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    200 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    130,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["UNIV2WBTCDAI-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      20 * MILLION,
-            aL_gap:       3 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          0,
-            mat:          12000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     5 * MILLION,
-            clip_buf:     11500,
-            clip_tail:    215 minutes,
-            clip_cusp:    6000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 7000,
-            calc_tau:     0,
-            calc_step:    125,
-            calc_cut:     9950
-        });
-        afterSpell.collaterals["UNIV2AAVEETH-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          300,
-            mat:          40000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     3 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    200 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    130,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["UNIV2DAIUSDT-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          200,
-            mat:          12500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     5 * MILLION,
-            clip_buf:     10500,
-            clip_tail:    220 minutes,
-            clip_cusp:    9000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 9500,
-            calc_tau:     0,
-            calc_step:    120,
-            calc_cut:     9990
-        });
-        afterSpell.collaterals["RWA001-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         15 * MILLION,
-            dust:         0,
-            pct:          300,
-            mat:          10000,
-            liqType:      "",
-            liqOn:        false,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     0,
-            clip_tail:    0,
-            clip_cusp:    0,
-            clip_chip:    0,
-            clip_tip:     0,
-            clipper_mom:  0,
-            cm_tolerance: 0,
-            calc_tau:     0,
-            calc_step:    0,
-            calc_cut:     0
-        });
-        afterSpell.collaterals["RWA002-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         20 * MILLION,
-            dust:         0,
-            pct:          350,
-            mat:          10500,
-            liqType:      "",
-            liqOn:        false,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     0,
-            clip_tail:    0,
-            clip_cusp:    0,
-            clip_chip:    0,
-            clip_tip:     0,
-            clipper_mom:  0,
-            cm_tolerance: 0,
-            calc_tau:     0,
-            calc_step:    0,
-            calc_cut:     0
-        });
-        afterSpell.collaterals["RWA003-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0 * MILLION,
-            aL_gap:       0 * MILLION,
-            aL_ttl:       0,
-            line:         2 * MILLION,
-            dust:         0,
-            pct:          600,
-            mat:          10500,
-            liqType:      "",
-            liqOn:        false,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     0,
-            clip_tail:    0,
-            clip_cusp:    0,
-            clip_chip:    0,
-            clip_tip:     0,
-            clipper_mom:  0,
-            cm_tolerance: 0,
-            calc_tau:     0,
-            calc_step:    0,
-            calc_cut:     0
-        });
-        afterSpell.collaterals["RWA004-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0 * MILLION,
-            aL_gap:       0 * MILLION,
-            aL_ttl:       0,
-            line:         7 * MILLION,
-            dust:         0,
-            pct:          700,
-            mat:          11000,
-            liqType:      "",
-            liqOn:        false,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     0,
-            clip_tail:    0,
-            clip_cusp:    0,
-            clip_chip:    0,
-            clip_tip:     0,
-            clipper_mom:  0,
-            cm_tolerance: 0,
-            calc_tau:     0,
-            calc_step:    0,
-            calc_cut:     0
-        });
-        afterSpell.collaterals["RWA005-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0 * MILLION,
-            aL_gap:       0 * MILLION,
-            aL_ttl:       0,
-            line:         15 * MILLION,
-            dust:         0,
-            pct:          450,
-            mat:          10500,
-            liqType:      "",
-            liqOn:        false,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     0,
-            clip_tail:    0,
-            clip_cusp:    0,
-            clip_chip:    0,
-            clip_tip:     0,
-            clipper_mom:  0,
-            cm_tolerance: 0,
-            calc_tau:     0,
-            calc_step:    0,
-            calc_cut:     0
-        });
-        afterSpell.collaterals["RWA006-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0 * MILLION,
-            aL_gap:       0 * MILLION,
-            aL_ttl:       0,
-            line:         20 * MILLION,
-            dust:         0,
-            pct:          200,
-            mat:          10000,
-            liqType:      "",
-            liqOn:        false,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     0,
-            clip_tail:    0,
-            clip_cusp:    0,
-            clip_chip:    0,
-            clip_tip:     0,
-            clipper_mom:  0,
-            cm_tolerance: 0,
-            calc_tau:     0,
-            calc_step:    0,
-            calc_cut:     0
-        });
-        afterSpell.collaterals["MATIC-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      20 * MILLION,
-            aL_gap:       20 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          300,
-            mat:          17500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     3 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["PSM-PAX-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      500 * MILLION,
-            aL_gap:       50 * MILLION,
-            aL_ttl:       24 hours,
-            line:         0,
-            dust:         0,
-            pct:          0,
-            mat:          10000,
-            liqType:      "clip",
-            liqOn:        false,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     10500,
-            clip_tail:    220 minutes,
-            clip_cusp:    9000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  0,
-            cm_tolerance: 9500,
-            calc_tau:     0,
-            calc_step:    120,
-            calc_cut:     9990
-        });
-        afterSpell.collaterals["GUNIV3DAIUSDC1-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      500 * MILLION,
-            aL_gap:       10 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          50,
-            mat:          10200,
-            liqType:      "clip",
-            liqOn:        false,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     5 * MILLION,
-            clip_buf:     10500,
-            clip_tail:    220 minutes,
-            clip_cusp:    9000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  0,
-            cm_tolerance: 9500,
-            calc_tau:     0,
-            calc_step:    120,
-            calc_cut:     9990
-        });
-        afterSpell.collaterals["WSTETH-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      50 * MILLION,
-            aL_gap:       3 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          400,
-            mat:          16000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     7 * MILLION,
-            clip_buf:     13000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900
-        });
-        afterSpell.collaterals["PSM-GUSD-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      10 * MILLION,
-            aL_gap:       10 * MILLION,
-            aL_ttl:       24 hours,
-            line:         0,
-            dust:         0,
-            pct:          0,
-            mat:          10000,
-            liqType:      "clip",
-            liqOn:        false,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     10500,
-            clip_tail:    220 minutes,
-            clip_cusp:    9000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  0,
-            cm_tolerance: 9500,
-            calc_tau:     0,
-            calc_step:    120,
-            calc_cut:     9990
-        });
+        setCollateralValues();
+
     }
 
     function scheduleWaitAndCastFailDay() public {
@@ -1886,19 +467,9 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
             (,uint256 mat) = spotter.ilks(ilk);
             // Convert BP to system expected value
             uint256 normalizedTestMat = (values.collaterals[ilk].mat * 10**23);
-            if ( ilk == "AAVE-A" ||
-                 ilk == "BAL-A"  ||
-                 ilk == "COMP-A" ||
-                 ilk == "KNC-A"  ||
-                 ilk == "BAT-A"  ||
-                 ilk == "ZRX-A"  ||
-                 ilk == "LRC-A"  ||
-                 ilk == "UNIV2AAVEETH-A" ||
-                 ilk == "UNIV2LINKETH-A"
-                ) {
-                // TODO: remove these when we are done with the lerp
+            if ( values.collaterals[ilk].lerp ) {
                 assertTrue(mat <= normalizedTestMat, string(abi.encodePacked("TestError/vat-lerping-mat-", ilk)));
-                assertTrue(mat >= RAY && mat <= 50 * RAY, string(abi.encodePacked("TestError/vat-mat-range-", ilk)));
+                assertTrue(mat >= RAY && mat <= 150 * RAY, string(abi.encodePacked("TestError/vat-mat-range-", ilk)));
             } else {
                 assertEq(mat, normalizedTestMat, string(abi.encodePacked("TestError/vat-mat-", ilk)));
                 assertTrue(mat >= RAY && mat < 10 * RAY, string(abi.encodePacked("TestError/vat-mat-range-", ilk)));    // cr eq 100% and lt 1000%
@@ -2019,7 +590,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
                 }
             }
         }
-        //       actual    expected
+        //       actual                               expected
         assertEq(sumlines + values.line_offset * RAD, vat.Line(), "TestError/vat-Line");
     }
 
@@ -2055,38 +626,6 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         return price;
     }
 
-    function giveBrokeTokens(BrokeTokenAbstract token, uint256 amount) internal {
-        // Edge case - balance is already set for some reason
-        if (token.balanceOf(address(this)) == amount) return;
-
-        for (uint256 i = 0; i < 200; i++) {
-            // Scan the storage for the balance storage slot
-            bytes32 prevValue = hevm.load(
-                address(token),
-                keccak256(abi.encode(address(this), uint256(i)))
-            );
-            hevm.store(
-                address(token),
-                keccak256(abi.encode(address(this), uint256(i))),
-                bytes32(amount)
-            );
-            if (token.balanceOf(address(this)) == amount) {
-                // Found it
-                return;
-            } else {
-                // Keep going after restoring the original value
-                hevm.store(
-                    address(token),
-                    keccak256(abi.encode(address(this), uint256(i))),
-                    prevValue
-                );
-            }
-        }
-
-        // We have failed if we reach here
-        assertTrue(false, "TestError/GiveTokens-slot-not-found");
-    }
-
     function giveTokens(DSTokenAbstract token, uint256 amount) internal {
         // Edge case - balance is already set for some reason
         if (token.balanceOf(address(this)) == amount) return;
@@ -2120,7 +659,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
     }
 
     function giveAuth(address _base, address target) internal {
-        AuthLike base = AuthLike(_base);
+        WardsAbstract base = WardsAbstract(_base);
 
         // Edge case - ward is already set
         if (base.wards(target) == 1) return;
@@ -2164,7 +703,7 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
     ) public {
         DSTokenAbstract token = DSTokenAbstract(join.gem());
 
-        hevm.warp(block.timestamp + 3601);
+        hevm.warp(block.timestamp + 3601); // Avoid OSM delay errors on Görli
         if (_isOSM) OsmAbstract(pip).poke();
         hevm.warp(block.timestamp + 3601);
         if (_isOSM) OsmAbstract(pip).poke();
@@ -2381,7 +920,65 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         vat.move(address(this), address(0x0), vat.dai(address(this)));
     }
 
-    function getMat(bytes32 _ilk) internal returns (uint256 mat) {
+    function checkDirectIlkIntegration(
+        bytes32 _ilk,
+        DirectDepositLike join,
+        ClipAbstract clip,
+        address pip,
+        uint256 bar,
+        uint256 tau
+    ) public {
+        DSTokenAbstract token = DSTokenAbstract(join.gem());
+        assertTrue(pip != address(0));
+
+        spotter.poke(_ilk);
+
+        // Authorization
+        assertEq(join.wards(pauseProxy), 1);
+        assertEq(vat.wards(address(join)), 1);
+        assertEq(clip.wards(address(end)), 1);
+        assertEq(join.wards(address(esm)), 1);             // Required in case of gov. attack
+        assertEq(join.wards(addr.addr("DIRECT_MOM")), 1);  // Zero-delay shutdown for Aave gov. attack
+
+        // Check the bar/tau/king are set correctly
+        assertEq(join.bar(), bar);
+        assertEq(join.tau(), tau);
+        assertEq(join.king(), pauseProxy);
+
+        // Set the target bar to be super low to max out the debt ceiling
+        giveAuth(address(join), address(this));
+        join.file("bar", 1 * RAY / 10000);     // 0.01%
+        join.deny(address(this));
+        join.exec();
+
+        // Module should be maxed out
+        (,,, uint256 line,) = vat.ilks(_ilk);
+        (uint256 ink, uint256 art) = vat.urns(_ilk, address(join));
+        assertEq(ink*RAY, line);
+        assertEq(art*RAY, line);
+        assertGe(token.balanceOf(address(join)), ink - 1);         // Allow for small rounding error
+
+        // Disable the module
+        giveAuth(address(join), address(this));
+        join.file("bar", 0);
+        join.deny(address(this));
+        join.exec();
+
+        // Module should clear out
+        (ink, art) = vat.urns(_ilk, address(join));
+        assertLe(ink, 1);
+        assertLe(art, 1);
+        assertEq(token.balanceOf(address(join)), 0);
+    }
+
+    function checkDaiVest(uint256 _index, address _wallet, uint256 _start, uint256 _end, uint256 _amount) public {
+        assertEq(vestDai.usr(_index), _wallet);
+        assertEq(vestDai.bgn(_index), _start);
+        assertEq(vestDai.fin(_index), _end);
+        assertEq(vestDai.tot(_index), _amount * WAD);
+    }
+
+    function getMat(bytes32 _ilk) internal view returns (uint256 mat) {
         (, mat) = spotter.ilks(_ilk);
     }
 
@@ -2448,35 +1045,27 @@ contract GoerliDssSpellTestBase is DSTest, DSMath {
         }
     }
 
-    address[] deployerAddresses = [
-        0xda0fab060e6cc7b1C0AA105d29Bd50D71f036711,
-        0xDA0FaB0700A4389F6E6679aBAb1692B4601ce9bf,
-        0xdA0C0de01d90A5933692Edf03c7cE946C7c50445,
-        0xdB33dFD3D61308C33C63209845DaD3e6bfb2c674,
-        0xDA01018eA05D98aBb66cb21a85d6019a311570eE,
-        0xDA0111100cb6080b43926253AB88bE719C60Be13
-    ];
 
     // ONLY ON GOERLI
-    function skipWards(address target, address deployer) internal returns (bool ok) {
+    function skipWards(address target, address deployer) internal view returns (bool ok) {
         ok = (
             target   == address(chainLog)    &&
-            deployer == deployerAddresses[2] ||
-            deployer == deployerAddresses[3] ||
-            deployer == deployerAddresses[4]
+            deployer == deployers.addr(2) ||
+            deployer == deployers.addr(3) ||
+            deployer == deployers.addr(4)
         );
     }
 
     function checkWards(address _addr, string memory contractName) internal {
-        for (uint256 i = 0; i < deployerAddresses.length; i ++) {
+        for (uint256 i = 0; i < deployers.count(); i ++) {
             (bool ok, bytes memory data) = _addr.call(
-                abi.encodeWithSignature("wards(address)", deployerAddresses[i])
+                abi.encodeWithSignature("wards(address)", deployers.addr(i))
             );
             if (!ok || data.length != 32) return;
             uint256 ward = abi.decode(data, (uint256));
             if (ward > 0) {
-                if (skipWards(_addr, deployerAddresses[i])) continue; // ONLY ON GOERLI
-                emit Log("Bad auth", deployerAddresses[i], contractName);
+                if (skipWards(_addr, deployers.addr(i))) continue; // ONLY ON GOERLI
+                emit Log("Bad auth", deployers.addr(i), contractName);
                 fail();
             }
         }

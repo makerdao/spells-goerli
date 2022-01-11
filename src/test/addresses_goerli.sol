@@ -1,5 +1,20 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+//
+// Copyright (C) 2021 Dai Foundation
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Affero General Public License for more details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.6.12;
 
 contract Addresses {
@@ -284,5 +299,11 @@ contract Addresses {
         addr["MCD_JOIN_GUNIV3DAIUSDC1_A"]       = 0xFBF4e3bB9B86d24F91Da185E6F4C8D903Fb63C86;
         addr["MCD_CLIP_GUNIV3DAIUSDC1_A"]       = 0xFb98C5A49eDd0888e85f6d2CCc7695b5202A6B32;
         addr["MCD_CLIP_CALC_GUNIV3DAIUSDC1_A"]  = 0x4652E3a6b4850a0fE50E60B0ac72aBd74199D973;
+        addr["GUNIV3DAIUSDC2"]                  = 0x540BBCcb890cEb6c539fA94a0d63fF7a6aA25762;
+        addr["MCD_JOIN_GUNIV3DAIUSDC2_A"]       = 0xbd039ea6d63AC57F2cD051202dC4fB6BA6681489;
+        addr["MCD_CLIP_GUNIV3DAIUSDC2_A"]       = 0x39aee8F2D5ea5dffE4b84529f0349743C71C07c3;
+        addr["MCD_CLIP_CALC_GUNIV3DAIUSDC2_A"]  = 0xbF87fbA8ec2190E50Da297815A9A6Ae668306aFE;
+        addr["PIP_GUNIV3DAIUSDC2"]              = 0x6Fb18806ff87B45220C2DB0941709142f2395069;
+        addr["PIP_DAI"]                         = 0xe7A915f8Db97f0dE219e0cEf60fF7886305a14ef;
     }
 }
