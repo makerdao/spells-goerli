@@ -21,7 +21,9 @@ pragma experimental ABIEncoderV2;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-contract DssSpellAction is DssAction {
+import { DssSpellCollateralOnboardingAction } from "./DssSpellCollateralOnboarding.sol";
+
+contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
@@ -42,7 +44,6 @@ contract DssSpellAction is DssAction {
 
     // --- Rates ---
     uint256 constant ZERO_ONE_PCT_RATE       = 1000000000031693947650284507;
-    uint256 constant ONE_PCT_RATE            = 1000000000315522921573372069;
     uint256 constant TWO_PCT_RATE            = 1000000000627937192491029810;
     uint256 constant TWO_FIVE_PCT_RATE       = 1000000000782997609082909351;
     uint256 constant TWO_SEVEN_FIVE_PCT_RATE = 1000000000860244400048238898;
@@ -52,7 +53,6 @@ contract DssSpellAction is DssAction {
     uint256 constant SIX_FIVE_PCT_RATE       = 1000000001996917783620820123;
 
     // --- Math ---
-    uint256 constant MILLION = 10 ** 6;
     uint256 constant BILLION = 10 ** 9;
 
     // --- Ilks ---
@@ -60,51 +60,15 @@ contract DssSpellAction is DssAction {
     bytes32 constant MATIC_A  = "MATIC-A";
     bytes32 constant RWA006_A = "RWA006-A";
 
-    // --- GUNIV3DAIUSDC2-A ---
-    address constant GUNIV3DAIUSDC2                 = 0x540BBCcb890cEb6c539fA94a0d63fF7a6aA25762;
-    address constant MCD_JOIN_GUNIV3DAIUSDC2_A      = 0xbd039ea6d63AC57F2cD051202dC4fB6BA6681489;
-    address constant MCD_CLIP_GUNIV3DAIUSDC2_A      = 0x39aee8F2D5ea5dffE4b84529f0349743C71C07c3;
-    address constant MCD_CLIP_CALC_GUNIV3DAIUSDC2_A = 0xbF87fbA8ec2190E50Da297815A9A6Ae668306aFE;
-    address constant PIP_GUNIV3DAIUSDC2             = 0x6Fb18806ff87B45220C2DB0941709142f2395069;
-
     function actions() public override {
 
-        // ---------------------------------------------------------------------------------
+
         // ------------- Changes corresponding to the 2021-12-03 mainnet spell -------------
         // ---------------------------------------------------------------------------------
 
-
-        // ----------------------------- Collateral onboarding -----------------------------
-        //  Add GUNIV3DAIUSDC2-A as a new Vault Type
-        //  https://vote.makerdao.com/polling/QmSkHE8T?network=mainnet#poll-detail
-        DssExecLib.addNewCollateral(
-            CollateralOpts({
-                ilk:                   "GUNIV3DAIUSDC2-A",
-                gem:                   GUNIV3DAIUSDC2,
-                join:                  MCD_JOIN_GUNIV3DAIUSDC2_A,
-                clip:                  MCD_CLIP_GUNIV3DAIUSDC2_A,
-                calc:                  MCD_CLIP_CALC_GUNIV3DAIUSDC2_A,
-                pip:                   PIP_GUNIV3DAIUSDC2,
-                isLiquidatable:        false,
-                isOSM:                 true,
-                whitelistOSM:          true,
-                ilkDebtCeiling:        10 * MILLION,
-                minVaultAmount:        15_000,
-                maxLiquidationAmount:  5 * MILLION,
-                liquidationPenalty:    1300,
-                ilkStabilityFee:       ONE_PCT_RATE,
-                startingPriceFactor:   10500,
-                breakerTolerance:      9500,
-                auctionDuration:       220 minutes,
-                permittedDrop:         9000,
-                liquidationRatio:      10500,
-                kprFlatReward:         300,
-                kprPctReward:          10
-            })
-        );
-
-        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_GUNIV3DAIUSDC2_A, 120 seconds, 9990);
-        DssExecLib.setIlkAutoLineParameters("GUNIV3DAIUSDC2-A", 10 * MILLION, 10 * MILLION, 8 hours);
+        // ---------------------------------------------------------------------------------
+        // Includes changes from the DssSpellCollateralOnboardingAction
+        onboardNewCollaterals();
 
         // ----------------------------- Rates updates -----------------------------
         // https://vote.makerdao.com/polling/QmNqCZGa?network=mainnet

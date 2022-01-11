@@ -8,6 +8,7 @@ else
   mkdir "./archive/$name"
   mkdir "./archive/$name/test"
   cp "./src/Goerli-DssSpell.sol" "./archive/$name"
+  cp "./src/Goerli-DssSpellCollateralOnboarding.sol" "./archive/$name"
   cp "./src/Goerli-DssSpell.t.sol" "./archive/$name"
   cp "./src/Goerli-DssSpell.t.base.sol" "./archive/$name"
   cp ./src/test/* "./archive/$name/test"
