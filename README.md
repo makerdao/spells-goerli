@@ -16,13 +16,27 @@ $ dapp update
 $ make
 ```
 
-### Test
+### Test (DappTools with Optimizations)
 
 Set `ETH_RPC_URL` to a Goerli node.
 
 ```
 $ export ETH_RPC_URL=<Goerli URL>
 $ make test
+```
+
+### Test (Forge without Optimizations)
+
+#### Prerequisites
+1. [Install](https://www.rust-lang.org/tools/install) Rust.
+2. [Install](https://github.com/gakonst/foundry#forge) Forge.
+
+#### Operation
+Set `ETH_RPC_URL` to a Goerli node.
+
+```
+$ export ETH_RPC_URL=<Goerli URL>
+$ make test-forge
 ```
 
 ### Deploy
