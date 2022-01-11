@@ -177,17 +177,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         });
 
 
-        // ------------------------------------------------------------------------
-        // ----------------- Other cleanup changes --------------------------------
-        // ------------------------------------------------------------------------
-
-        DssExecLib.setIlkDebtCeiling({
-            _ilk:    RWA006_A,
-            _amount: 0
-        });
-
-        DssExecLib.decreaseGlobalDebtCeiling(20 * MILLION);
-
         // ---------------------------------------------------------------------------------
         // ------------- Changes corresponding to the 2022-01-14 mainnet spell -------------
         // ---------------------------------------------------------------------------------
@@ -213,6 +202,16 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         DssExecLib.setIlkMinVaultAmount("UNIV2WBTCETH-A", 25_000);
         DssExecLib.setIlkMinVaultAmount("UNIV2UNIETH-A", 25_000);
 
+        // ------------------------------------------------------------------------
+        // ----------------- Other cleanup changes --------------------------------
+        // ------------------------------------------------------------------------
+
+        DssExecLib.setIlkDebtCeiling({
+            _ilk:    RWA006_A,
+            _amount: 0
+        });
+
+        DssExecLib.decreaseGlobalDebtCeiling(20 * MILLION);
 
     }
 }
