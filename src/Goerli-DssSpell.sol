@@ -142,18 +142,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         // no budget distributions on Görli
 
 
-        // Changelog
-        DssExecLib.setChangelogAddress("GUNIV3DAIUSDC2", GUNIV3DAIUSDC2);
-        DssExecLib.setChangelogAddress("MCD_JOIN_GUNIV3DAIUSDC2_A", MCD_JOIN_GUNIV3DAIUSDC2_A);
-        DssExecLib.setChangelogAddress("MCD_CLIP_GUNIV3DAIUSDC2_A", MCD_CLIP_GUNIV3DAIUSDC2_A);
-        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_GUNIV3DAIUSDC2_A", MCD_CLIP_CALC_GUNIV3DAIUSDC2_A);
-        DssExecLib.setChangelogAddress("PIP_GUNIV3DAIUSDC2", PIP_GUNIV3DAIUSDC2);
-
-        DssExecLib.setChangelogVersion("1.9.12");
-
-
-
-
         // ---------------------------------------------------------------------------------
         // ------------- Changes corresponding to the 2021-12-10 mainnet spell -------------
         // ---------------------------------------------------------------------------------
