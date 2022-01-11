@@ -15,14 +15,14 @@ do
     esac
 done
 
-DSS_EXEC_LIB='src/DssSpell.sol:DssExecLib:0x4aad139a88d2dd5e7410b408593208523a3a891d'
+export DAPP_LIBRARIES='src/DssSpell.sol:DssExecLib:0x4aad139a88d2dd5e7410b408593208523a3a891d'
 
 if [[ -z "$MATCH" && -z "$BLOCK" ]]; then
-    forge test --fork-url "$ETH_RPC_URL" --libraries $DSS_EXEC_LIB -vvv --force
+    forge test --fork-url "$ETH_RPC_URL" -vvv --force
 elif [[ -z "$BLOCK" ]]; then
-    forge test --fork-url "$ETH_RPC_URL" --libraries $DSS_EXEC_LIB --match "$MATCH" -vvv --force
+    forge test --fork-url "$ETH_RPC_URL" --match "$MATCH" -vvv --force
 elif [[ -z "$MATCH" ]]; then
-    forge test --fork-url "$ETH_RPC_URL" --libraries $DSS_EXEC_LIB --fork-block-number "$BLOCK" -vvv --force
+    forge test --fork-url "$ETH_RPC_URL" --fork-block-number "$BLOCK" -vvv --force
 else
-    forge test --fork-url "$ETH_RPC_URL" --libraries $DSS_EXEC_LIB --match "$MATCH" --fork-block-number "$BLOCK" -vvv --force
+    forge test --fork-url "$ETH_RPC_URL" --match "$MATCH" --fork-block-number "$BLOCK" -vvv --force
 fi
