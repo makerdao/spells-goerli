@@ -128,12 +128,12 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         DssExecLib.setIlkMinVaultAmount("GUSD-A", 15_000);
         DssExecLib.setIlkMinVaultAmount("UNI-A", 15_000);
         DssExecLib.setIlkMinVaultAmount("RENBTC-A", 15_000);
-        DssExecLib.setIlkMinVaultAmount("UNIV2DAIETH-A", 15_000);
-        DssExecLib.setIlkMinVaultAmount("UNIV2WBTCETH-A", 15_000);
-        DssExecLib.setIlkMinVaultAmount("UNIV2USDCETH-A", 15_000);
+        // DssExecLib.setIlkMinVaultAmount("UNIV2DAIETH-A", 15_000); // Updated in Jan 14 spell below
+        // DssExecLib.setIlkMinVaultAmount("UNIV2WBTCETH-A", 15_000); // Updated in Jan 14 spell below
+        // DssExecLib.setIlkMinVaultAmount("UNIV2USDCETH-A", 15_000); // Updated in Jan 14 spell below
         DssExecLib.setIlkMinVaultAmount("UNIV2DAIUSDC-A", 15_000);
-        DssExecLib.setIlkMinVaultAmount("UNIV2UNIETH-A", 15_000);
-        DssExecLib.setIlkMinVaultAmount("UNIV2WBTCDAI-A", 15_000);
+        // DssExecLib.setIlkMinVaultAmount("UNIV2UNIETH-A", 15_000); // Updated in Jan 14 spell below
+        // DssExecLib.setIlkMinVaultAmount("UNIV2WBTCDAI-A", 15_000); // Updated in Jan 14 spell below
         DssExecLib.setIlkMinVaultAmount("MATIC-A", 15_000);
         DssExecLib.setIlkMinVaultAmount("GUNIV3DAIUSDC1-A", 15_000);
         DssExecLib.setIlkMinVaultAmount("WSTETH-A", 15_000);
@@ -187,6 +187,32 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         });
 
         DssExecLib.decreaseGlobalDebtCeiling(20 * MILLION);
+
+        // ---------------------------------------------------------------------------------
+        // ------------- Changes corresponding to the 2022-01-14 mainnet spell -------------
+        // ---------------------------------------------------------------------------------
+
+        // ----------------------------- Delegate Compensation -----------------------------
+        // https://forum.makerdao.com/t/delegate-compensation-breakdown-december-2021/12462
+
+        // no budget distributions on Görli
+
+        // ----------------------------- Optimism Dai Recovery -----------------------------
+        // https://vote.makerdao.com/polling/Qmcfb72e
+
+        // no recovery on Görli
+
+        // ---------------------- Dust Parameter Updates for LP Tokens ---------------------
+        // https://vote.makerdao.com/polling/QmUSfhmF
+
+
+        DssExecLib.setIlkMinVaultAmount("UNIV2DAIETH-A", 60_000);
+        DssExecLib.setIlkMinVaultAmount("UNIV2USDCETH-A", 60_000);
+        DssExecLib.setIlkMinVaultAmount("UNIV2WBTCDAI-A", 60_000);
+        
+        DssExecLib.setIlkMinVaultAmount("UNIV2WBTCETH-A", 25_000);
+        DssExecLib.setIlkMinVaultAmount("UNIV2UNIETH-A", 25_000);
+
 
     }
 }
