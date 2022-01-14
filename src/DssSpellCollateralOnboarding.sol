@@ -78,7 +78,7 @@ contract DssSpellCollateralOnboardingAction {
         DssExecLib.setIlkAutoLineParameters("GUNIV3DAIUSDC2-A", 10 * MILLION, 10 * MILLION, 8 hours);
 
         // ChainLog Updates
-        // Add the new flip and join to the Chainlog
+        // Add the new gem, join, clip, calc and pip to the Chainlog and bump its version
         // address constant CHAINLOG        = 0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F;
         DssExecLib.setChangelogAddress("GUNIV3DAIUSDC2", GUNIV3DAIUSDC2);
         DssExecLib.setChangelogAddress("MCD_JOIN_GUNIV3DAIUSDC2_A", MCD_JOIN_GUNIV3DAIUSDC2_A);
