@@ -80,8 +80,13 @@ contract DssSpellCollateralOnboardingAction {
         // ChainLog Updates
         // Add the new flip and join to the Chainlog
         // address constant CHAINLOG        = 0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F;
-        // ChainlogAbstract(CHAINLOG).setAddress("<join-name>", <join-address>);
-        // ChainlogAbstract(CHAINLOG).setAddress("<flip-name>", <flip-address>);
-        // ChainlogAbstract(CHAINLOG).setVersion("<new-version>");
+        DssExecLib.setChangelogAddress("GUNIV3DAIUSDC2", GUNIV3DAIUSDC2);
+        DssExecLib.setChangelogAddress("MCD_JOIN_GUNIV3DAIUSDC2_A", MCD_JOIN_GUNIV3DAIUSDC2_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_GUNIV3DAIUSDC2_A", MCD_CLIP_GUNIV3DAIUSDC2_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_GUNIV3DAIUSDC2_A", MCD_CLIP_CALC_GUNIV3DAIUSDC2_A);
+        DssExecLib.setChangelogAddress("PIP_GUNIV3DAIUSDC2", PIP_GUNIV3DAIUSDC2);
+
+        DssExecLib.setChangelogVersion("1.9.12");
+
     }
 }
