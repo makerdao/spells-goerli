@@ -90,74 +90,74 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     // }
 
 
-    function testNewChainlogValues() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+    // function testNewChainlogValues() public {
+    //     vote(address(spell));
+    //     scheduleWaitAndCast(address(spell));
+    //     assertTrue(spell.done());
 
-        // Insert new chainlog values tests here
-        assertEq(chainLog.getAddress("GUNIV3DAIUSDC2"), addr.addr("GUNIV3DAIUSDC2"));
-        assertEq(chainLog.getAddress("MCD_JOIN_GUNIV3DAIUSDC2_A"), addr.addr("MCD_JOIN_GUNIV3DAIUSDC2_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_GUNIV3DAIUSDC2_A"), addr.addr("MCD_CLIP_GUNIV3DAIUSDC2_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_GUNIV3DAIUSDC2_A"), addr.addr("MCD_CLIP_CALC_GUNIV3DAIUSDC2_A"));
-        assertEq(chainLog.getAddress("PIP_GUNIV3DAIUSDC2"), addr.addr("PIP_GUNIV3DAIUSDC2"));
+    //     // Insert new chainlog values tests here
+    //     assertEq(chainLog.getAddress("GUNIV3DAIUSDC2"), addr.addr("GUNIV3DAIUSDC2"));
+    //     assertEq(chainLog.getAddress("MCD_JOIN_GUNIV3DAIUSDC2_A"), addr.addr("MCD_JOIN_GUNIV3DAIUSDC2_A"));
+    //     assertEq(chainLog.getAddress("MCD_CLIP_GUNIV3DAIUSDC2_A"), addr.addr("MCD_CLIP_GUNIV3DAIUSDC2_A"));
+    //     assertEq(chainLog.getAddress("MCD_CLIP_CALC_GUNIV3DAIUSDC2_A"), addr.addr("MCD_CLIP_CALC_GUNIV3DAIUSDC2_A"));
+    //     assertEq(chainLog.getAddress("PIP_GUNIV3DAIUSDC2"), addr.addr("PIP_GUNIV3DAIUSDC2"));
 
-        assertEq(chainLog.version(), "1.9.12");
+    //     assertEq(chainLog.version(), "1.9.12");
 
-    }
+    // }
 
-    function testNewIlkRegistryValues() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+    // function testNewIlkRegistryValues() public {
+    //     vote(address(spell));
+    //     scheduleWaitAndCast(address(spell));
+    //     assertTrue(spell.done());
 
-        // Insert new ilk registry values tests here
-        assertEq(reg.pos("GUNIV3DAIUSDC2-A"), 46);
-        assertEq(reg.join("GUNIV3DAIUSDC2-A"), addr.addr("MCD_JOIN_GUNIV3DAIUSDC2_A"));
-        assertEq(reg.gem("GUNIV3DAIUSDC2-A"), addr.addr("GUNIV3DAIUSDC2"));
-        assertEq(reg.dec("GUNIV3DAIUSDC2-A"), DSTokenAbstract(addr.addr("GUNIV3DAIUSDC2")).decimals());
-        assertEq(reg.class("GUNIV3DAIUSDC2-A"), 1);
-        assertEq(reg.pip("GUNIV3DAIUSDC2-A"), addr.addr("PIP_GUNIV3DAIUSDC2"));
-        assertEq(reg.xlip("GUNIV3DAIUSDC2-A"), addr.addr("MCD_CLIP_GUNIV3DAIUSDC2_A"));
-        assertEq(reg.name("GUNIV3DAIUSDC2-A"), "Gelato Uniswap DAI/USDC LP");
-        assertEq(reg.symbol("GUNIV3DAIUSDC2-A"), "G-UNI");
-    }
+    //     // Insert new ilk registry values tests here
+    //     assertEq(reg.pos("GUNIV3DAIUSDC2-A"), 46);
+    //     assertEq(reg.join("GUNIV3DAIUSDC2-A"), addr.addr("MCD_JOIN_GUNIV3DAIUSDC2_A"));
+    //     assertEq(reg.gem("GUNIV3DAIUSDC2-A"), addr.addr("GUNIV3DAIUSDC2"));
+    //     assertEq(reg.dec("GUNIV3DAIUSDC2-A"), DSTokenAbstract(addr.addr("GUNIV3DAIUSDC2")).decimals());
+    //     assertEq(reg.class("GUNIV3DAIUSDC2-A"), 1);
+    //     assertEq(reg.pip("GUNIV3DAIUSDC2-A"), addr.addr("PIP_GUNIV3DAIUSDC2"));
+    //     assertEq(reg.xlip("GUNIV3DAIUSDC2-A"), addr.addr("MCD_CLIP_GUNIV3DAIUSDC2_A"));
+    //     assertEq(reg.name("GUNIV3DAIUSDC2-A"), "Gelato Uniswap DAI/USDC LP");
+    //     assertEq(reg.symbol("GUNIV3DAIUSDC2-A"), "G-UNI");
+    // }
 
 
-//    function testOneTimePaymentDistributions() public {
-//        uint256 prevSin              = vat.sin(address(vow));
-//        uint256 prevDaiCom           = dai.balanceOf(COM_WALLET);
-//        uint256 prevDaiFlipFlop      = dai.balanceOf(FLIPFLOPFLAP_WALLET);
-//        uint256 prevDaiFeedblack     = dai.balanceOf(FEEDBLACKLOOPS_WALLET);
-//        uint256 prevDaiUltra         = dai.balanceOf(ULTRASCHUPPI_WALLET);
-//        uint256 prevDaiField         = dai.balanceOf(FIELDTECHNOLOGIES_WALLET);
-//
-//        uint256 amountCom       = 27_058;
-//        uint256 amountFlipFlop  = 12_000;
-//        uint256 amountFeedblack = 12_000;
-//        uint256 amountUltra     = 8144;
-//        uint256 amountField     = 3690;
-//
-//        uint256 amountTotal     = amountCom + amountFlipFlop + amountFeedblack
-//                                + amountUltra + amountField;
-//
-//        assertEq(vat.can(address(pauseProxy), address(daiJoin)), 1);
-//
-//        vote(address(spell));
-//        spell.schedule();
-//        hevm.warp(spell.nextCastTime());
-//        spell.cast();
-//        assertTrue(spell.done());
-//
-//        assertEq(vat.can(address(pauseProxy), address(daiJoin)), 1);
-//
-//        assertEq(vat.sin(address(vow)) - prevSin, amountTotal * RAD);
-//        assertEq(dai.balanceOf(COM_WALLET) - prevDaiCom, amountCom * WAD);
-//        assertEq(dai.balanceOf(FLIPFLOPFLAP_WALLET) - prevDaiFlipFlop, amountFlipFlop * WAD);
-//        assertEq(dai.balanceOf(FEEDBLACKLOOPS_WALLET) - prevDaiFeedblack, amountFeedblack * WAD);
-//        assertEq(dai.balanceOf(ULTRASCHUPPI_WALLET) - prevDaiUltra, amountUltra * WAD);
-//        assertEq(dai.balanceOf(FIELDTECHNOLOGIES_WALLET) - prevDaiField, amountField * WAD);
-//    }
+    // function testOneTimePaymentDistributions() public {
+    //     uint256 prevSin              = vat.sin(address(vow));
+    //     uint256 prevDaiCom           = dai.balanceOf(COM_WALLET);
+    //     uint256 prevDaiFlipFlop      = dai.balanceOf(FLIPFLOPFLAP_WALLET);
+    //     uint256 prevDaiFeedblack     = dai.balanceOf(FEEDBLACKLOOPS_WALLET);
+    //     uint256 prevDaiUltra         = dai.balanceOf(ULTRASCHUPPI_WALLET);
+    //     uint256 prevDaiField         = dai.balanceOf(FIELDTECHNOLOGIES_WALLET);
+
+    //     uint256 amountCom       = 27_058;
+    //     uint256 amountFlipFlop  = 12_000;
+    //     uint256 amountFeedblack = 12_000;
+    //     uint256 amountUltra     = 8144;
+    //     uint256 amountField     = 3690;
+
+    //     uint256 amountTotal     = amountCom + amountFlipFlop + amountFeedblack
+    //                             + amountUltra + amountField;
+
+    //     assertEq(vat.can(address(pauseProxy), address(daiJoin)), 1);
+
+    //     vote(address(spell));
+    //     spell.schedule();
+    //     hevm.warp(spell.nextCastTime());
+    //     spell.cast();
+    //     assertTrue(spell.done());
+
+    //     assertEq(vat.can(address(pauseProxy), address(daiJoin)), 1);
+
+    //     assertEq(vat.sin(address(vow)) - prevSin, amountTotal * RAD);
+    //     assertEq(dai.balanceOf(COM_WALLET) - prevDaiCom, amountCom * WAD);
+    //     assertEq(dai.balanceOf(FLIPFLOPFLAP_WALLET) - prevDaiFlipFlop, amountFlipFlop * WAD);
+    //     assertEq(dai.balanceOf(FEEDBLACKLOOPS_WALLET) - prevDaiFeedblack, amountFeedblack * WAD);
+    //     assertEq(dai.balanceOf(ULTRASCHUPPI_WALLET) - prevDaiUltra, amountUltra * WAD);
+    //     assertEq(dai.balanceOf(FIELDTECHNOLOGIES_WALLET) - prevDaiField, amountField * WAD);
+    // }
 
     function testFailWrongDay() public {
         require(spell.officeHours() == spellValues.office_hours_enabled);
