@@ -19,13 +19,12 @@ else
     seth send "$MCD_ADM" 'lift(address)' "$spell"
     seth send "$spell" 'schedule()'
     
-    sleep 60s
+    sleep 120s
+
+    seth send "$spell" 'cast()'
 
     seth send "$MCD_IOU" 'approve(address,uint256)' "$MCD_ADM" "$MKR"
     seth send "$MCD_ADM" 'free(uint256)' "$MKR"
 
-    sleep 60s
-    
-    seth send "$spell" 'cast()'
     echo "Goerli Spell Cast: https://goerli.etherscan.io/address/$spell"
 fi
