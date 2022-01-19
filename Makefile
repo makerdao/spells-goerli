@@ -7,4 +7,5 @@ test-dev        :; ./test-dssspell.sh match="$(match)" optimizer="0"
 test-forge      :; ./test-dssspell-forge.sh match="$(match)" block="$(block)"
 deploy          :; make && dapp create DssSpell | xargs ./verify.py DssSpell
 flatten         :; hevm flatten --source-file "src/Goerli-DssSpell.sol" > out/flat.sol
+cast-spell      :; ./cast-dssspell.sh $(spell)
 archive-spell   :; ./archive-dssspell.sh $(name)
