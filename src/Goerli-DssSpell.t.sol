@@ -51,25 +51,25 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
-    function testCollateralIntegrations() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+    // function testCollateralIntegrations() public {
+    //     vote(address(spell));
+    //     scheduleWaitAndCast(address(spell));
+    //     assertTrue(spell.done());
 
-        // Insert new collateral tests here
+    //     // Insert new collateral tests here
 
-        checkUNILPIntegration(
-            "GUNIV3DAIUSDC2-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_GUNIV3DAIUSDC2_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_GUNIV3DAIUSDC2_A")),
-            LPOsmAbstract(addr.addr("PIP_GUNIV3DAIUSDC2")),
-            addr.addr("PIP_DAI"),
-            addr.addr("PIP_USDC"),
-            false,
-            false,
-            false
-        );
-    }
+    //     checkUNILPIntegration(
+    //         "GUNIV3DAIUSDC2-A",
+    //         GemJoinAbstract(addr.addr("MCD_JOIN_GUNIV3DAIUSDC2_A")),
+    //         ClipAbstract(addr.addr("MCD_CLIP_GUNIV3DAIUSDC2_A")),
+    //         LPOsmAbstract(addr.addr("PIP_GUNIV3DAIUSDC2")),
+    //         addr.addr("PIP_DAI"),
+    //         addr.addr("PIP_USDC"),
+    //         false,
+    //         false,
+    //         false
+    //     );
+    // }
 
     // function testLerpSurplusBuffer() public {
     //     vote(address(spell));
