@@ -5,7 +5,6 @@ set -e
 if [[ -z "$1" ]]; then
   echo "You must provide a name option to name the directory"
 else
-  rm -rf "./archive/$1-DssSpell"
   mkdir "./archive/$1-DssSpell"
   mkdir "./archive/$1-DssSpell/test"
   cp "./src/Goerli-DssSpell.sol" "./archive/$1-DssSpell"
