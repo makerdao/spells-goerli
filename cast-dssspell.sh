@@ -12,6 +12,8 @@ MKR=$(seth --to-wei 10001 ether)
 if [[ -z "$1" ]]; then
     echo "Please specify the Goerli Spell Address"
 else
+    [[ ! "$(seth call "$MCD_GOV" 'balanceOf(address)(uint256)' "$ETH_FROM")" < "$MKR" ]] || { echo "Insufficient MKR Balance"; exit 1; }
+
     seth send "$MCD_GOV" 'approve(address,uint256)' "$MCD_ADM" "$MKR"
     seth send "$MCD_ADM" 'lock(uint256)' "$MKR"
     
