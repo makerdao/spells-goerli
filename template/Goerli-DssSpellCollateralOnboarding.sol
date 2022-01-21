@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 //
-// Copyright (C) 2021-2022 Dai Foundation
+// Copyright (C) 2021 Dai Foundation
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -80,8 +80,6 @@ contract DssSpellCollateralOnboardingAction {
         //     TTL
         // );
 
-        // ChainLog Updates
-        // Add the new flip and join to the Chainlog
         // address constant CHAINLOG        = DssExecLib.LOG();
         // ChainlogAbstract(CHAINLOG).setAddress("<join-name>", <join-address>);
         // ChainlogAbstract(CHAINLOG).setAddress("<clip-name>", <clip-address>);
