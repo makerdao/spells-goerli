@@ -16,8 +16,9 @@ CONTI=1
 if [[ -z "$1" ]];
 then
     echo "Please specify the Goerli Spell Address"
-elif [[ "$APPROVALS" -ge "$DEPOSITS" ]];
-then
+else
+    if [[ "$APPROVALS" -ge "$DEPOSITS" ]];
+    then
     DELTA=$((APPROVALS - DEPOSITS))
     LOCK_AMOUNT=$((DELTA + CONTI))
 
@@ -27,8 +28,7 @@ then
     seth send "$MCD_ADM" 'lock(uint256)' "$LOCK_AMOUNT"
 
     DEPOSITS=$(seth call "$MCD_ADM" 'deposits(address)(uint256)' "$ETH_FROM")
-
-else
+    fi
 
     seth send "$MCD_ADM" 'vote(address[] memory)' ["$spell"]
     seth send "$MCD_ADM" 'lift(address)' "$spell"
