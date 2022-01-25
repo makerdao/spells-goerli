@@ -10,8 +10,8 @@
 # Checklist
 
 - [ ] Every contract variable/method declared as public/external private/internal
-- [ ] Consider if this PR needs the `officeHours` modifier
-- [ ] Verify expiration (`4 days + 2 hours` monthly and `30 days` for the rest)
+- [ ] Consider if this PR needs the `officeHours` modifier override
+- [ ] Verify expiration (`30 days` unless otherwise specified)
 - [ ] Verify hash in the description matches [here](https://emn178.github.io/online-tools/keccak_256.html)
 - [ ] Validate all addresses used are in Goerli changelog or known
 - [ ] Notify any external teams affected by the spell so they have the opportunity to review
@@ -19,5 +19,5 @@
 - [ ] Ensure contract is verified on `Goerli` etherscan
 - [ ] Change test to use Goerli spell address and deploy timestamp
 - [ ] Cast spell on Goerli `make spell="0x-deployed-spell-address" cast-spell`
-- [ ] Run `make name="YYYY-MM-DD-archive-directory-name" archive-spell` to make an archive directory and copy `Goerli-DssSpell.sol`, `Goerli-DssSpell.t.sol`, and `Goerli-DssSpell.t.base.sol` 
+- [ ] Run `make archive-spell` or `make date="YYYY-MM-DD" archive-spell` to make an archive directory and copy `Goerli-DssSpell.sol`, `Goerli-DssSpell.t.sol`, `Goerli-DssSpell.t.base.sol`, and `Goerli-DssSpellCollateralOnboarding.sol`
 - [ ] `squash and merge` this PR

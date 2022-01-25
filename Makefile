@@ -8,4 +8,4 @@ test-forge      :; ./test-dssspell-forge.sh match="$(match)" block="$(block)"
 deploy          :; make && dapp create DssSpell | xargs ./verify.py DssSpell
 flatten         :; hevm flatten --source-file "src/Goerli-DssSpell.sol" > out/flat.sol
 cast-spell      :; ./cast-dssspell.sh $(spell)
-archive-spell   :; ./archive-dssspell.sh $(name)
+archive-spell   :; ./archive-dssspell.sh "$(if $(date),$(date),$(shell date +'%Y-%m-%d'))"
