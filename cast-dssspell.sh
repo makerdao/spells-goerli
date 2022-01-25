@@ -28,7 +28,7 @@ then
 
     DEPOSITS=$(seth call "$MCD_ADM" 'deposits(address)(uint256)' "$ETH_FROM")
 
-    else
+else
 
     seth send "$MCD_ADM" 'vote(address[] memory)' ["$spell"]
     seth send "$MCD_ADM" 'lift(address)' "$spell"
