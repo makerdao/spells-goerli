@@ -220,8 +220,8 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             vow_dump:              250,                     // In whole Dai units
             vow_sump:              50 * THOUSAND,           // In whole Dai units
             vow_bump:              30 * THOUSAND,           // In whole Dai units
-            vow_hump_min:          60 * MILLION,            // In whole Dai units
-            vow_hump_max:          90 * MILLION,            // In whole Dai units
+            vow_hump_min:          250 * MILLION,           // In whole Dai units
+            vow_hump_max:          250 * MILLION,           // In whole Dai units
             flap_beg:              400,                     // in basis points
             flap_ttl:              30 minutes,              // in seconds
             flap_tau:              72 hours,                // in seconds
@@ -375,7 +375,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         uint256 normalizedHumpMax = values.vow_hump_max * RAD;
         assertTrue(vow.hump() >= normalizedHumpMin && vow.hump() <= normalizedHumpMax, "TestError/vow-hump-min-max");
         assertTrue(
-            (vow.hump() >= RAD && vow.hump() < HUNDRED * MILLION * RAD) ||
+            (vow.hump() >= RAD && vow.hump() < 1 * BILLION * RAD) ||
             vow.hump() == 0,
             "TestError/vow-hump-range"
         );
@@ -472,7 +472,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
                 assertTrue(mat >= RAY && mat <= 150 * RAY, string(abi.encodePacked("TestError/vat-mat-range-", ilk)));
             } else {
                 assertEq(mat, normalizedTestMat, string(abi.encodePacked("TestError/vat-mat-", ilk)));
-                assertTrue(mat >= RAY && mat < 10 * RAY, string(abi.encodePacked("TestError/vat-mat-range-", ilk)));    // cr eq 100% and lt 1000%
+                assertTrue(mat >= RAY && mat < 300 * RAY, string(abi.encodePacked("TestError/vat-mat-range-", ilk)));    // cr eq 100% and lt 30000%
             }
             }
 
