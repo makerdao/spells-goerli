@@ -32,19 +32,19 @@ else
     DEPOSITS=$(seth call "$MCD_ADM" 'deposits(address)(uint256)' "$ETH_FROM")
     fi
 
-    seth send "$MCD_ADM" 'vote(address[] memory)' ["$spell"]
-    seth send "$MCD_ADM" 'lift(address)' "$spell"
+    seth send "$MCD_ADM" 'vote(address[] memory)' ["$1"]
+    seth send "$MCD_ADM" 'lift(address)' "$1"
 
-    seth send "$spell" 'schedule()'
+    seth send "$1" 'schedule()'
 
     sleep 120s
 
-    seth send "$spell" 'cast()'
+    seth send "$1" 'cast()'
 
     FREE_AMOUNT=$((DEPOSITS - HAT_THRESHOLD))
 
     seth send "$MCD_IOU" 'approve(address,uint256)' "$MCD_ADM" "$FREE_AMOUNT"
     seth send "$MCD_ADM" 'free(uint256)' "$FREE_AMOUNT"
 
-    echo "Goerli Spell Cast: https://goerli.etherscan.io/address/$spell"
+    echo "Goerli Spell Cast: https://goerli.etherscan.io/address/$1"
 fi
