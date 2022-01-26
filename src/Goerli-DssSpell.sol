@@ -48,6 +48,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
     // Math
     uint256 constant MILLION = 10**6;
+    uint256 constant WAD = 10**18;
 
     function actions() public override {
 
@@ -60,6 +61,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         address OLD_MCD_ESM = DssExecLib.getChangelogAddress(MCD_ESM);
 
         address addr;
+
+        // Set the ESM threshold to 100k MKR
+        DssExecLib.setValue(NEW_MCD_ESM, "min", 100_000 * WAD);
 
         // MCD_END
         addr = DssExecLib.getChangelogAddress("MCD_END");
