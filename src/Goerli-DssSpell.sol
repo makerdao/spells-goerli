@@ -63,6 +63,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         address addr;
 
         // Set the ESM threshold to 100k MKR
+        // https://vote.makerdao.com/polling/QmQSVmrh?network=mainnet#poll-detail
         DssExecLib.setValue(NEW_MCD_ESM, "min", 100_000 * WAD);
 
         // MCD_END
@@ -286,6 +287,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
         // -----------
         // Deauthorize the existing lerp to prevent additional overwrites of hump.
+        // https://vote.makerdao.com/executive/template-executive-vote-temporarily-prevent-surplus-flap-auctions-and-mkr-burn-january-24-2022?network=mainnet#proposal-detail
         DssExecLib.deauthorize(DssExecLib.vow(), SB_LERP);
 
         DssExecLib.setSurplusBuffer(250 * MILLION);
