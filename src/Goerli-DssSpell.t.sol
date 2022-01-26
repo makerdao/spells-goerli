@@ -51,6 +51,32 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
+    function testLerps() public { // make public to use
+
+        address lerp = 0x98bbDDe76EB5753578280bEA86Ed8401f2831213;
+
+        uint256 hump = vow.hump();
+        (bool ok, bytes memory val) = lerp.call(abi.encodeWithSignature("tick()"));
+        assertTrue(ok); // Lerp call should have passed
+        assertTrue(vow.hump() > hump); // Hump should be increased
+        assertEq(vow.wards(lerp), 1);
+
+        hevm.warp(block.timestamp + 1 days);
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        hump = vow.hump();
+
+        (ok, val) = lerp.call(abi.encodeWithSignature("tick()"));
+
+        assertTrue(!ok); // Lerp call should have failed
+        assertEq(vow.hump(), hump);
+        assertEq(vow.wards(lerp), 0);
+
+    }
+
     // function testCollateralIntegrations() public {
     //     vote(address(spell));
     //     scheduleWaitAndCast(address(spell));

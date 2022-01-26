@@ -576,7 +576,7 @@ contract Config {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          400,
-            mat:          2430000,
+            mat:          2430000,  // 24,300%
             liqType:      "clip",
             liqOn:        true,
             chop:         0,
@@ -596,7 +596,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         true
+            lerp:         false
         });
         afterSpell.collaterals["LINK-A"] = CollateralValues({
             aL_enabled:   true,
