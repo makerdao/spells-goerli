@@ -11,15 +11,17 @@ BALANCE=$(seth call "$MCD_GOV" 'balanceOf(address)(uint256)' "$ETH_FROM")
 HAT=$(seth call "$MCD_ADM" 'hat()(address)')
 APPROVALS=$(seth call "$MCD_ADM" 'approvals(address)(uint256)' "$HAT")
 DEPOSITS=$(seth call "$MCD_ADM" 'deposits(address)(uint256)' "$ETH_FROM")
+HAT_THRESHOLD=$(seth --to-wei 100000 ETH)
 CONTI=1
 
 if [[ -z "$1" ]];
 then
     echo "Please specify the Goerli Spell Address"
 else
-    if [[ "$APPROVALS" -ge "$DEPOSITS" ]];
+    if [[ "$APPROVALS" -ge "$DEPOSITS" ]] || [[ "$DEPOSITS" -lt "$HAT_THRESHOLD" ]];
     then
-    DELTA=$((APPROVALS - DEPOSITS))
+    GAP=$((HAT_THRESHOLD - DEPOSITS))
+    DELTA=$((APPROVALS - DEPOSITS + GAP))
     LOCK_AMOUNT=$((DELTA + CONTI))
 
     [[ "$BALANCE" -ge "$LOCK_AMOUNT" ]] || { echo "$ETH_FROM: Insufficient MKR Balance"; exit 1; }
@@ -39,7 +41,7 @@ else
 
     seth send "$spell" 'cast()'
 
-    FREE_AMOUNT=$((DEPOSITS - APPROVALS))
+    FREE_AMOUNT=$((DEPOSITS - HAT_THRESHOLD))
 
     seth send "$MCD_IOU" 'approve(address,uint256)' "$MCD_ADM" "$FREE_AMOUNT"
     seth send "$MCD_ADM" 'free(uint256)' "$FREE_AMOUNT"
