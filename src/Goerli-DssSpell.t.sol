@@ -77,6 +77,46 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     }
 
+    bytes32[] items;
+    function testESMOffboarding() public {
+        delete items; // reset array
+        address _oldEsm = chainLog.getAddress("MCD_ESM");
+
+        bytes32[] memory contractNames = chainLog.list();
+        uint256 nameLen = contractNames.length;
+        for(uint256 i = 0; i < nameLen; i++) {
+            bytes32 _name = contractNames[i];
+            if (_name == "DEPLOYER" ||
+                _name == "ETH"||
+                _name == "PROXY_DEPLOYER"
+                ) { continue; }
+            address _addr = chainLog.getAddress(_name);
+            (bool ok, bytes memory val) = _addr.call(abi.encodeWithSignature("wards(address)", _oldEsm));
+            log_bytes(val);
+            if (ok) {
+                uint256 isWard = abi.decode(val, (uint256));
+                log_uint(isWard);
+                if (isWard == 1) {
+                    items.push(_name);
+                }
+            }
+        }
+        assertTrue(items.length > 0);
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done(), "TestError/spell-not-done");
+
+        address _newEsm = chainLog.getAddress("MCD_ESM");
+
+        uint256 itemLen = items.length;
+        for(uint256 i = 0; i < itemLen; i++) {
+            WardsAbstract _base = WardsAbstract(chainLog.getAddress(items[i]));
+            assertEq(_base.wards(_oldEsm), 0);
+            assertEq(_base.wards(_newEsm), 1);
+        }
+    }
+
     // function testCollateralIntegrations() public {
     //     vote(address(spell));
     //     scheduleWaitAndCast(address(spell));
