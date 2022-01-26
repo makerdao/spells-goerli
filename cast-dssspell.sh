@@ -18,9 +18,9 @@ if [[ -z "$1" ]];
 then
     echo "Please specify the Goerli Spell Address"
 else
-    if [[ "$APPROVALS" -ge "$DEPOSITS" ]] || [[ "$DEPOSITS" -lt "$HAT_THRESHOLD" ]];
+    if [[ "$APPROVALS" -ge "$DEPOSITS" ]] || [[ "$APPROVALS" -lt "$HAT_THRESHOLD" ]];
     then
-    GAP=$((HAT_THRESHOLD - DEPOSITS))
+    GAP=$((HAT_THRESHOLD - APPROVALS))
     DELTA=$((APPROVALS - DEPOSITS + GAP))
     LOCK_AMOUNT=$((DELTA + CONTI))
 
