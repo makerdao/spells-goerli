@@ -42,9 +42,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     //    https://ipfs.io/ipfs/QmefQMseb3AiTapiAKKexdKHig8wroKuZbmLtPLv4u2YwW
     //
 
-    // --- Rates ---
-
-    address constant NEW_MCD_ESM = address(1); // TODO
+    address constant SB_LERP = address(0x98bbDDe76EB5753578280bEA86Ed8401f2831213);
+    address constant NEW_MCD_ESM = address(0x023A960cb9BE7eDE35B433256f4AfE9013334b55);
     bytes32 constant MCD_ESM = "MCD_ESM";
 
     // Math
@@ -281,7 +280,11 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         DssExecLib.setChangelogVersion("1.10.0");
 
 
+        // -----------
+        // Deauthorize the existing lerp to prevent additional overwrites of hump.
+        DssExecLib.deauthorize(DssExecLib.vow(), SB_LERP);
 
+        DssExecLib.setSurplusBuffer(250 * MILLION);
     }
 }
 
