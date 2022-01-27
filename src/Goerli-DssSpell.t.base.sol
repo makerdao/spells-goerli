@@ -227,7 +227,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             flap_tau:              72 hours,                // in seconds
             cat_box:               20 * MILLION,            // In whole Dai units
             dog_Hole:              100 * MILLION,           // In whole Dai units
-            esm_min:               100 * THOUSAND,           // In whole MKR units
+            esm_min:               100 * THOUSAND,          // In whole MKR units
             pause_authority:       address(chief),          // Pause authority
             osm_mom_authority:     address(chief),          // OsmMom authority
             flipper_mom_authority: address(chief),          // FlipperMom authority
