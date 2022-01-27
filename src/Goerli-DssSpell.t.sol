@@ -19,6 +19,10 @@ pragma solidity 0.6.12;
 
 import "./Goerli-DssSpell.t.base.sol";
 
+interface DenyProxyLike {
+    function denyProxy(address) external;
+}
+
 contract DssSpellTest is GoerliDssSpellTestBase {
 
     function testSpellIsCast_GENERAL() public {
@@ -115,6 +119,43 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             assertEq(_base.wards(_oldEsm), 0);
             assertEq(_base.wards(_newEsm), 1);
         }
+    }
+
+    function testFireESM() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertTrue(esm.revokesGovernanceAccess());
+
+        uint256 amt = 100 * THOUSAND * WAD;
+        assertEq(esm.min(), amt);
+        giveTokens(gov, amt);
+        gov.approve(address(esm), amt);
+        esm.join(amt);
+
+        assertEq(vat.wards(address(pauseProxy)), 1);
+        esm.fire();
+        assertEq(vat.wards(address(pauseProxy)), 0);
+        assertEq(end.live(), 0);
+        assertEq(vat.live(), 0);
+
+        ClipAbstract clipLINKA = ClipAbstract(addr.addr("MCD_CLIP_LINK_A"));
+        assertEq(clipLINKA.wards(address(pauseProxy)), 1);
+        DenyProxyLike(address(esm)).denyProxy(address(clipLINKA));
+        assertEq(clipLINKA.wards(address(pauseProxy)), 0);
+    }
+
+    function testFailFireESM() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        uint256 amt = 99 * THOUSAND * WAD;
+        giveTokens(gov, amt);
+        gov.approve(address(esm), amt);
+        esm.join(amt);
+        esm.fire();
     }
 
     // function testCollateralIntegrations() public {
