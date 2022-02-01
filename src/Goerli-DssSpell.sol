@@ -42,10 +42,19 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // A table of rates can be found at
     //    https://ipfs.io/ipfs/QmefQMseb3AiTapiAKKexdKHig8wroKuZbmLtPLv4u2YwW
     //
+    uint256 constant ZERO_PCT_RATE                = 1000000000000000000000000000;
+    uint256 constant ZERO_PT_TWO_FIVE_PCT_RATE    = 1000000000079175551708715274;
+    uint256 constant ZERO_PT_SEVEN_FIVE_PCT_RATE  = 1000000000236936036262880196;
+    uint256 constant ONE_PCT_RATE                 = 1000000000315522921573372069;
+    uint256 constant ONE_PT_FIVE_PCT_RATE         = 1000000000472114805215157978;
+    uint256 constant TWO_PCT_RATE                 = 1000000000627937192491029810;
+    uint256 constant TWO_PT_FIVE_PCT_RATE         = 1000000000782997609082909351;
+    uint256 constant TWO_PT_TWO_FIVE_PCT_RATE     = 1000000000705562181084137268;
+    uint256 constant THREE_PT_FIVE_PCT_RATE       = 1000000001090862085746321732;
+    uint256 constant THREE_PT_SEVEN_FIVE_PCT_RATE = 1000000001167363430498603315;
+    uint256 constant FOUR_PCT_RATE                = 1000000001243680656318820312;
+    uint256 constant FIVE_PCT_RATE                = 1000000001547125957863212448;
 
-    address constant SB_LERP = address(0x98bbDDe76EB5753578280bEA86Ed8401f2831213);
-    address constant NEW_MCD_ESM = address(0x023A960cb9BE7eDE35B433256f4AfE9013334b55);
-    bytes32 constant MCD_ESM = "MCD_ESM";
 
     // Math
     uint256 constant MILLION = 10**6;
@@ -53,245 +62,63 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
     function actions() public override {
 
-
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralOnboardingAction
         // onboardNewCollaterals();
 
+        // Update rates to mainnet
+        // PPG - Open Market Committee Proposal - January 31, 2022
+        //  https://vote.makerdao.com/polling/QmWReBMh?network=mainnet#poll-detail
 
-        address OLD_MCD_ESM = DssExecLib.getChangelogAddress(MCD_ESM);
+        /// Stability Fee Decreases
 
-        address addr;
+        // Decrease the ETH-A Stability Fee from 2.5% to 2.25%.
+        DssExecLib.setIlkStabilityFee("ETH-A", TWO_PT_TWO_FIVE_PCT_RATE, true);
 
-        // Set the ESM threshold to 100k MKR
-        // https://vote.makerdao.com/polling/QmQSVmrh?network=mainnet#poll-detail
-        DssExecLib.setValue(NEW_MCD_ESM, "min", 100_000 * WAD);
+        // Decrease the ETH-B Stability Fee from 6.5% to 4%.
+        DssExecLib.setIlkStabilityFee("ETH-B", FOUR_PCT_RATE, true);
 
-        // MCD_END
-        addr = DssExecLib.getChangelogAddress("MCD_END");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
+        // Decrease the WSTETH-A Stability Fee from 3% to 2.5%.
+        DssExecLib.setIlkStabilityFee("WSTETH-A", TWO_PT_FIVE_PCT_RATE, true);
 
-        // MCD_CLIP_ETH_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_ETH_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
+        // Decrease the WBTC-A Stability Fee from 4% to 3.75%.
+        DssExecLib.setIlkStabilityFee("WBTC-A", THREE_PT_SEVEN_FIVE_PCT_RATE, true);
 
-        // MCD_CLIP_ETH_B
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_ETH_B");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
+        // Decrease the WBTC-B Stability Fee from 7% to 5%.
+        DssExecLib.setIlkStabilityFee("WBTC-B", FIVE_PCT_RATE, true);
 
-        // MCD_CLIP_ETH_C
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_ETH_C");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
+        // Decrease the WBTC-C Stability Fee from 1.5% to 0.75%.
+        DssExecLib.setIlkStabilityFee("WBTC-C", ZERO_PT_SEVEN_FIVE_PCT_RATE, true);
 
-        // MCD_CLIP_BAT_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_BAT_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
+        // Decrease the UNIV2DAIETH-A Stability Fee from 2% to 1%.
+        DssExecLib.setIlkStabilityFee("UNIV2DAIETH-A", ONE_PCT_RATE, true);
 
-        // MCD_CLIP_USDC_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_USDC_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
+        // Decrease the UNIV2WBTCETH-A Stability Fee from 3% to 2%.
+        DssExecLib.setIlkStabilityFee("UNIV2WBTCETH-A", TWO_PCT_RATE, true);
 
-        // MCD_CLIP_USDC_B
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_USDC_B");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
+        // Decrease the UNIV2USDCETH-A Stability Fee from 2.5% to 1.5%.
+        DssExecLib.setIlkStabilityFee("UNIV2USDCETH-A", ONE_PT_FIVE_PCT_RATE, true);
 
-        // MCD_CLIP_TUSD_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_TUSD_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
+        // Decrease the GUNIV3DAIUSDC2-A Stability Fee from 0.5% to 0.25%.
+        DssExecLib.setIlkStabilityFee("GUNIV3DAIUSDC2-A", ZERO_PT_TWO_FIVE_PCT_RATE, true);
 
-        // MCD_CLIP_WBTC_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_WBTC_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_ZRX_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_ZRX_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_KNC_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_KNC_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_MANA_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_MANA_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_USDT_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_USDT_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_PAXUSD_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_PAXUSD_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_COMP_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_COMP_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_LRC_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_LRC_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_LINK_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_LINK_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_BAL_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_BAL_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_YFI_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_YFI_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_GUSD_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_GUSD_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_UNI_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_UNI_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_RENBTC_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_RENBTC_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_AAVE_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_AAVE_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_PSM_USDC_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_PSM_USDC_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_MATIC_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_MATIC_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_UNIV2DAIETH_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_UNIV2DAIETH_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_UNIV2WBTCETH_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_UNIV2WBTCETH_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_UNIV2USDCETH_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_UNIV2USDCETH_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_UNIV2DAIUSDC_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_UNIV2DAIUSDC_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_UNIV2ETHUSDT_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_UNIV2ETHUSDT_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_UNIV2LINKETH_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_UNIV2LINKETH_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_UNIV2UNIETH_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_UNIV2UNIETH_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_UNIV2WBTCDAI_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_UNIV2WBTCDAI_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_UNIV2AAVEETH_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_UNIV2AAVEETH_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_UNIV2DAIUSDT_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_UNIV2DAIUSDT_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_PSM_PAX_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_PSM_PAX_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_GUNIV3DAIUSDC1_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_GUNIV3DAIUSDC1_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_WSTETH_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_WSTETH_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_WBTC_B
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_WBTC_B");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_WBTC_C
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_WBTC_C");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_PSM_GUSD_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_PSM_GUSD_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_CLIP_GUNIV3DAIUSDC2_A
-        addr = DssExecLib.getChangelogAddress("MCD_CLIP_GUNIV3DAIUSDC2_A");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        // MCD_VAT
-        addr = DssExecLib.getChangelogAddress("MCD_VAT");
-        DssExecLib.deauthorize(addr, OLD_MCD_ESM);
-        DssExecLib.authorize(addr, NEW_MCD_ESM);
-
-        DssExecLib.setChangelogAddress(MCD_ESM, NEW_MCD_ESM);
-        DssExecLib.setChangelogVersion("1.10.0");
+        // Decrease the TUSD-A Stability Fee from 1% to 0%.
+        DssExecLib.setIlkStabilityFee("TUSD-A", ZERO_PCT_RATE, true);
 
 
-        // -----------
-        // Deauthorize the existing lerp to prevent additional overwrites of hump.
-        // https://vote.makerdao.com/executive/template-executive-vote-temporarily-prevent-surplus-flap-auctions-and-mkr-burn-january-24-2022?network=mainnet#proposal-detail
-        DssExecLib.deauthorize(DssExecLib.vow(), SB_LERP);
+        /// DIRECT-AAVEV2-DAI (Aave D3M) Target Borrow Rate Decrease
 
-        DssExecLib.setSurplusBuffer(250 * MILLION);
+        // Decrease the DIRECT-AAVEV2-DAI Target Borrow Rate from 3.75% to 3.5%.
+        //   NOT AVAILABLE ON GOERLI
+
+        /// Maximum Debt Ceiling Changes
+
+        // Decrease the GUNIV3DAIUSDC1-A Maximum Debt Ceiling from 500 million DAI to 100 million DAI.
+        DssExecLib.setIlkAutoLineParameters("GUNIV3DAIUSDC1-A", 100 * MILLION, 10 * MILLION, 8 hours);
+
+        // Increase the GUNIV3DAIUSDC2-A Maximum Debt Ceiling from 500 million DAI to 750 million DAI.
+        DssExecLib.setIlkAutoLineParameters("GUNIV3DAIUSDC2-A", 750 * MILLION, 10 * MILLION, 8 hours);
+
     }
 }
 
