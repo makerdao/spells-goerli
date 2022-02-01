@@ -24,8 +24,9 @@ fi
 # export DAPP_BUILD_OPTIMIZE="$OPTIMIZER"
 # export DAPP_BUILD_OPTIMIZE_RUNS=1
 
-# DssExecLib 0.0.8
-export DAPP_LIBRARIES=' lib/dss-exec-lib/src/DssExecLib.sol:DssExecLib:0x4aad139a88d2dd5e7410b408593208523a3a891d'
+DSS_EXEC_LIB=$(< DssExecLib.address)
+echo "Using DssExecLib at: $DSS_EXEC_LIB"
+export DAPP_LIBRARIES=" lib/dss-exec-lib/src/DssExecLib.sol:DssExecLib:$DSS_EXEC_LIB"
 export DAPP_LINK_TEST_LIBRARIES=0
 
 if [[ -z "$MATCH" ]]; then
