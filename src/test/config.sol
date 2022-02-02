@@ -1501,7 +1501,7 @@ contract Config {
         afterSpell.collaterals["GUNIV3DAIUSDC2-A"] = CollateralValues({
             aL_enabled:   true,
             aL_line:      750 * MILLION,
-            aL_gap:       10 * MILLION,
+            aL_gap:       50 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
             dust:         15 * THOUSAND,

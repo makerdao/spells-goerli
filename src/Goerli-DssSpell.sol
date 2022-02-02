@@ -48,8 +48,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     uint256 constant ONE_PCT_RATE                 = 1000000000315522921573372069;
     uint256 constant ONE_PT_FIVE_PCT_RATE         = 1000000000472114805215157978;
     uint256 constant TWO_PCT_RATE                 = 1000000000627937192491029810;
-        uint256 constant TWO_PT_TWO_FIVE_PCT_RATE     = 1000000000705562181084137268;
-        uint256 constant TWO_PT_FIVE_PCT_RATE         = 1000000000782997609082909351;
+    uint256 constant TWO_PT_TWO_FIVE_PCT_RATE     = 1000000000705562181084137268;
+    uint256 constant TWO_PT_FIVE_PCT_RATE         = 1000000000782997609082909351;
     uint256 constant THREE_PT_FIVE_PCT_RATE       = 1000000001090862085746321732;
     uint256 constant THREE_PT_SEVEN_FIVE_PCT_RATE = 1000000001167363430498603315;
     uint256 constant FOUR_PCT_RATE                = 1000000001243680656318820312;
@@ -58,7 +58,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
     // Math
     uint256 constant MILLION = 10**6;
-    uint256 constant WAD = 10**18;
 
     function actions() public override {
 
@@ -114,10 +113,11 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         /// Maximum Debt Ceiling Changes
 
         // Decrease the GUNIV3DAIUSDC1-A Maximum Debt Ceiling from 500 million DAI to 100 million DAI.
-        DssExecLib.setIlkAutoLineParameters("GUNIV3DAIUSDC1-A", 100 * MILLION, 10 * MILLION, 8 hours);
+        DssExecLib.setIlkAutoLineDebtCeiling("GUNIV3DAIUSDC1-A", 100 * MILLION);
 
         // Increase the GUNIV3DAIUSDC2-A Maximum Debt Ceiling from 500 million DAI to 750 million DAI.
-        DssExecLib.setIlkAutoLineParameters("GUNIV3DAIUSDC2-A", 750 * MILLION, 10 * MILLION, 8 hours);
+        // Increase the GUNIV3DAIUSDC2-A Target Available Debt (gap) from 10 million DAI to 50 million DAI.
+        DssExecLib.setIlkAutoLineParameters("GUNIV3DAIUSDC2-A", 750 * MILLION, 50 * MILLION, 8 hours);
 
     }
 }
