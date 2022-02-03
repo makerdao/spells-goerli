@@ -15,7 +15,9 @@ do
     esac
 done
 
-export DAPP_LIBRARIES='src/DssSpell.sol:DssExecLib:0x4aad139a88d2dd5e7410b408593208523a3a891d'
+DSS_EXEC_LIB=$(< DssExecLib.address)
+echo "Using DssExecLib at: $DSS_EXEC_LIB"
+export DAPP_LIBRARIES="src/DssSpell.sol:DssExecLib:$DSS_EXEC_LIB"
 
 if [[ -z "$MATCH" && -z "$BLOCK" ]]; then
     forge test --fork-url "$ETH_RPC_URL" --force
