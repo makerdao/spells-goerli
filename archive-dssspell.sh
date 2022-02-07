@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-
 if [[ -z "$1" ]]; then
   echo "You must provide a name option to name the directory"
 else
