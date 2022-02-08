@@ -89,7 +89,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             if (_name == "DEPLOYER" ||
                 _name == "ETH"||
                 _name == "PROXY_DEPLOYER"
-                ) { continue; }
+            ) { continue; }
             address _addr = chainLog.getAddress(_name);
             (bool ok, bytes memory val) = _addr.call(abi.encodeWithSignature("wards(address)", _oldEsm));
             log_bytes(val);
