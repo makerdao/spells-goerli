@@ -19,10 +19,6 @@ pragma solidity 0.6.12;
 
 import "./Goerli-DssSpell.t.base.sol";
 
-interface DenyProxyLike {
-    function denyProxy(address) external;
-}
-
 contract DssSpellTest is GoerliDssSpellTestBase {
 
     function testSpellIsCast_GENERAL() public {
@@ -93,7 +89,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             if (_name == "DEPLOYER" ||
                 _name == "ETH"||
                 _name == "PROXY_DEPLOYER"
-                ) { continue; }
+            ) { continue; }
             address _addr = chainLog.getAddress(_name);
             (bool ok, bytes memory val) = _addr.call(abi.encodeWithSignature("wards(address)", _oldEsm));
             log_bytes(val);
@@ -105,7 +101,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
                 }
             }
         }
-        assertTrue(items.length > 0);
+        assertEq(items.length, 43);
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
@@ -142,7 +138,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         ClipAbstract clipLINKA = ClipAbstract(addr.addr("MCD_CLIP_LINK_A"));
         assertEq(clipLINKA.wards(address(pauseProxy)), 1);
-        DenyProxyLike(address(esm)).denyProxy(address(clipLINKA));
+        ESMAbstract(address(esm)).denyProxy(address(clipLINKA));
         assertEq(clipLINKA.wards(address(pauseProxy)), 0);
     }
 
