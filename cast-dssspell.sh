@@ -19,19 +19,23 @@ if [[ -z "$1" ]];
 then
     echo "Please specify the Goerli Spell Address"
 else
-    if [[ "$APPROVALS" -ge "$DEPOSITS" ]] || [[ "$APPROVALS" -lt "$HAT_THRESHOLD" ]];
-    then
-    GAP=$((HAT_THRESHOLD - APPROVALS))
-    DELTA=$((APPROVALS - DEPOSITS + GAP))
-    LOCK_AMOUNT=$((DELTA + CONTI))
+    ### Check Approvals and Deposits to Lock MKR
+    approvalsGeDeposits=$(echo "$APPROVALS >= $DEPOSITS" | bc)
+    approvalsLtHatThreshold=$(echo "$APPROVALS < $HAT_THRESHOLD" | bc)
+    if [[ "$approvalsGeDeposits" == 1  ||  "$approvalsLtHatThreshold" == 1 ]]; then
+        GAP=$(echo "$HAT_THRESHOLD - $APPROVALS" | bc)
+        DELTA=$(echo "$APPROVALS - $DEPOSITS + $GAP" | bc)
+        LOCK_AMOUNT=$(echo "$DELTA + $CONTI" | bc)
 
-    [[ "$BALANCE_GOV" -ge "$LOCK_AMOUNT" ]] || { echo "$ETH_FROM: Insufficient MKR Balance"; exit 1; }
+        ### Check MKR Balance
+        balanceGeLockAmount=$(echo "$BALANCE_GOV >= $LOCK_AMOUNT" | bc)
+        [[ "$balanceGeLockAmount" == 1 ]] || { echo "$ETH_FROM: Insufficient MKR Balance"; exit 1; }
 
-    seth send "$MCD_GOV" 'approve(address,uint256)' "$MCD_ADM" "$LOCK_AMOUNT"
-    seth send "$MCD_ADM" 'lock(uint256)' "$LOCK_AMOUNT"
+        seth send "$MCD_GOV" 'approve(address,uint256)' "$MCD_ADM" "$LOCK_AMOUNT"
+        seth send "$MCD_ADM" 'lock(uint256)' "$LOCK_AMOUNT"
 
-    DEPOSITS=$(seth call "$MCD_ADM" 'deposits(address)(uint256)' "$ETH_FROM")
-    BALANCE_IOU=$(seth call "$MCD_IOU" 'balanceOf(address)(uint256)' "$ETH_FROM")
+        DEPOSITS=$(seth call "$MCD_ADM" 'deposits(address)(uint256)' "$ETH_FROM")
+        BALANCE_IOU=$(seth call "$MCD_IOU" 'balanceOf(address)(uint256)' "$ETH_FROM")
     fi
 
     seth send "$MCD_ADM" 'vote(address[] memory)' ["$1"]
@@ -43,9 +47,11 @@ else
 
     seth send "$1" 'cast()'
 
-    FREE_AMOUNT=$((DEPOSITS - HAT_THRESHOLD))
+    FREE_AMOUNT=$(echo "$DEPOSITS - $HAT_THRESHOLD" | bc)
 
-    [[ "$BALANCE_IOU" -ge "$FREE_AMOUNT" ]] || { echo "$ETH_FROM: Insufficient IOU Balance"; exit 1; }
+    ### Check IOU Balance
+    balanceGeFreeAmount=$(echo "$BALANCE_IOU >= $FREE_AMOUNT" | bc)
+    [[ "$balanceGeFreeAmount" == 1 ]] || { echo "$ETH_FROM: Insufficient IOU Balance"; exit 1; }
 
     seth send "$MCD_IOU" 'approve(address,uint256)' "$MCD_ADM" "$FREE_AMOUNT"
     seth send "$MCD_ADM" 'free(uint256)' "$FREE_AMOUNT"
