@@ -34,11 +34,15 @@ else
         balanceGOVGeLockAmt=$(echo "$balanceGOV >= $lockAmt" | bc)
         [[ "$balanceGOVGeLockAmt" == 1 ]] || { echo "$ETH_FROM: Insufficient MKR Balance"; exit 1; }
 
-        seth send "$MCD_GOV" 'approve(address,uint256)' "$MCD_ADM" "$lockAmt"
-        seth send "$MCD_ADM" 'lock(uint256)' "$lockAmt"
+        ### Lock Sanity Check
+        lockAmtGtZero=$(echo "$lockAmt > 0" | bc)
+        if [[ "$lockAmtGtZero" == 1 ]]; then
+            seth send "$MCD_GOV" 'approve(address,uint256)' "$MCD_ADM" "$lockAmt"
+            seth send "$MCD_ADM" 'lock(uint256)' "$lockAmt"
 
-        deposits=$(seth call "$MCD_ADM" 'deposits(address)(uint256)' "$ETH_FROM")
-        balanceIOU=$(seth call "$MCD_IOU" 'balanceOf(address)(uint256)' "$ETH_FROM")
+            deposits=$(seth call "$MCD_ADM" 'deposits(address)(uint256)' "$ETH_FROM")
+            balanceIOU=$(seth call "$MCD_IOU" 'balanceOf(address)(uint256)' "$ETH_FROM")
+        fi
     fi
 
     seth send "$MCD_ADM" 'vote(address[] memory)' ["$1"]
@@ -56,8 +60,12 @@ else
     balanceIOUGeFreeAmt=$(echo "$balanceIOU >= $freeAmt" | bc)
     [[ "$balanceIOUGeFreeAmt" == 1 ]] || { echo "$ETH_FROM: Insufficient IOU Balance"; exit 1; }
 
-    seth send "$MCD_IOU" 'approve(address,uint256)' "$MCD_ADM" "$freeAmt"
-    seth send "$MCD_ADM" 'free(uint256)' "$freeAmt"
+    ### Free Sanity Check
+    freeAmtGtZero=$(echo "$freeAmt > 0" | bc)
+    if [[ "$freeAmtGtZero" == 1 ]]; then
+        seth send "$MCD_IOU" 'approve(address,uint256)' "$MCD_ADM" "$freeAmt"
+        seth send "$MCD_ADM" 'free(uint256)' "$freeAmt"
+    fi
 
     echo "Goerli Spell Cast: https://goerli.etherscan.io/address/$1"
 fi
