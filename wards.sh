@@ -7,10 +7,8 @@ set -e
 
 ### Override maxFeePerGas to avoid spikes
 BASE_FEE=$(seth basefee)
-ethGasPriceLtBaseFee=$(echo "$ETH_GAS_PRICE < $BASE_FEE" | bc)
-if [[ -n "$ETH_GAS_PRICE" && "$ethGasPriceLtBaseFee" == 1 ]]; then
-        export ETH_GAS_PRICE=$(echo "$BASE_FEE * 3" | bc)
-fi
+[[ -n "$ETH_GAS_PRICE" ]] && ethGasPriceLtBaseFee=$(echo "$ETH_GAS_PRICE < $BASE_FEE" | bc)
+[[ "$ethGasPriceLtBaseFee" == 1 ]] && export "ETH_GAS_PRICE=$(echo "$BASE_FEE * 3" | bc)"
 
 CHANGELOG=0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F
 
