@@ -3,7 +3,7 @@ set -e
 
 [[ "$ETH_RPC_URL" ]] || { echo "Please set a ETH_RPC_URL"; exit 1; }
 
-[[ "$1" ]] || { echo "Please specify the ChainLog Key in ASCII to inspect"; exit 1; }
+[[ "$1" ]] || { echo "Please specify the Target Address or ChainLog Key (ASCII) to inspect"; exit 1; }
 
 ### Override maxFeePerGas to avoid spikes
 BASE_FEE=$(seth basefee)
