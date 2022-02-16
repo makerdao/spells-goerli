@@ -13,21 +13,21 @@ BASE_FEE=$(seth basefee)
 CHANGELOG=0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F
 
 if [[ "$1" =~ 0x* ]]; then
-        TARGET=$1
+    TARGET=$1
 else
-        KEY=$(seth --to-bytes32 "$(seth --from-ascii "$1")")
-        TARGET=$(seth call "$CHANGELOG" 'getAddress(bytes32)(address)' "$KEY")
+    KEY=$(seth --to-bytes32 "$(seth --from-ascii "$1")")
+    TARGET=$(seth call "$CHANGELOG" 'getAddress(bytes32)(address)' "$KEY")
 fi
 
 echo -e "Network: $(seth chain)"
 LIST=$(seth call "$CHANGELOG" 'list()(bytes32[])')
 for key in $(echo -e "$LIST" | sed "s/,/ /g")
 do
-        KEY=$(seth --to-ascii "$key" | sed 's/\x0/ /g')
-        ADDRESS=$(seth call "$CHANGELOG" 'getAddress(bytes32)(address)' "$key")
-        WARDS=$(seth call "$ADDRESS" 'wards(address)(uint256)' "$TARGET" 2>/dev/null) || continue
-        [[ "$WARDS" == "1" ]] && echo "$KEY"
-        SOURCE=$(seth call "$ADDRESS" 'src()(address)' 2>/dev/null) || continue
-        SWARDS=$(seth call "$SOURCE" 'wards(address)(uint256)' "$TARGET" 2>/dev/null) || continue
-        [[ "$SWARDS" == "1" ]] && echo "source of $KEY"
+    KEY=$(seth --to-ascii "$key" | sed 's/\x0/ /g')
+    ADDRESS=$(seth call "$CHANGELOG" 'getAddress(bytes32)(address)' "$key")
+    WARDS=$(seth call "$ADDRESS" 'wards(address)(uint256)' "$TARGET" 2>/dev/null) || continue
+    [[ "$WARDS" == "1" ]] && echo "$KEY"
+    SOURCE=$(seth call "$ADDRESS" 'src()(address)' 2>/dev/null) || continue
+    SWARDS=$(seth call "$SOURCE" 'wards(address)(uint256)' "$TARGET" 2>/dev/null) || continue
+    [[ "$SWARDS" == "1" ]] && echo "source of $KEY"
 done
