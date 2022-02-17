@@ -283,30 +283,23 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(castTime, spell.eta());
     }
 
-    // function test_OSMs() public {
-    //     vote(address(spell));
-    //     spell.schedule();
-    //     hevm.warp(spell.nextCastTime());
-    //     spell.cast();
-    //     assertTrue(spell.done());
+    function test_OSMs() public {
+        address OAZO_ADDR = 0x0F1AE882272032D494926D5D983E4FBE253CB544;
 
-    //     // Track OSM authorizations here
+        assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(OAZO_ADDR), 0);
+        assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(OAZO_ADDR), 0);
+        assertEq(OsmAbstract(addr.addr("PIP_WSTETH")).bud(OAZO_ADDR), 0);
 
-    //     address YEARN_PROXY = 0x208EfCD7aad0b5DD49438E0b6A0f38E951A50E5f;
-    //     assertEq(OsmAbstract(addr.addr("PIP_YFI")).bud(YEARN_PROXY), 1);
+        vote(address(spell));
+        spell.schedule();
+        hevm.warp(spell.nextCastTime());
+        spell.cast();
+        assertTrue(spell.done());
 
-    //     // Gnosis
-    //     address GNOSIS = 0xD5885fbCb9a8a8244746010a3BC6F1C6e0269777;
-    //     assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(GNOSIS), 1);
-    //     assertEq(OsmAbstract(addr.addr("PIP_LINK")).bud(GNOSIS), 1);
-    //     assertEq(OsmAbstract(addr.addr("PIP_COMP")).bud(GNOSIS), 1);
-    //     assertEq(OsmAbstract(addr.addr("PIP_YFI")).bud(GNOSIS), 1);
-    //     assertEq(OsmAbstract(addr.addr("PIP_ZRX")).bud(GNOSIS), 1);
-
-    //     // Instadapp
-    //     address INSTADAPP = 0xDF3CDd10e646e4155723a3bC5b1191741DD90333;
-    //     assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(INSTADAPP), 1);
-    // }
+        assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(OAZO_ADDR), 1);
+        assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(OAZO_ADDR), 1);
+        assertEq(OsmAbstract(addr.addr("PIP_WSTETH")).bud(OAZO_ADDR), 1);
+    }
 
     // function test_Medianizers() public {
     //     vote(address(spell));
