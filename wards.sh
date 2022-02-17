@@ -29,5 +29,5 @@ do
     [[ "$wards" == "1" ]] && echo "$contractName"
     src=$(seth call "$contract" 'src()(address)' 2>/dev/null) || continue
     srcWards=$(seth call "$src" 'wards(address)(uint256)' "$target" 2>/dev/null) || continue
-    [[ "$srcWards" == "1" ]] && echo "source of $contractName"
+    [[ "$srcWards" == "1" ]] && echo -e "source of $contractName\n$src"
 done
