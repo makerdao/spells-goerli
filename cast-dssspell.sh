@@ -24,9 +24,12 @@ then
 else
     ### Check Approvals and Deposits to Lock MKR
     approvalsGeDeposits=$(echo "$approvals >= $deposits" | bc)
-    approvalsLtHatThreshold=$(echo "$approvals < $HAT_THRESHOLD" | bc)
-    if [[ "$approvalsGeDeposits" == 1  ||  "$approvalsLtHatThreshold" == 1 ]]; then
-        gap=$(echo "$HAT_THRESHOLD - $approvals" | bc)
+    if [[ "$approvalsGeDeposits" == 1 ]]; then
+        ### Check Approvals against Hat Threshold to set Gap
+        gap=0
+        approvalsLtHatThreshold=$(echo "$approvals < $HAT_THRESHOLD" | bc)
+        [[ "$approvalsLtHatThreshold" == 1 ]] && gap=$(echo "$HAT_THRESHOLD - $approvals" | bc)
+
         delta=$(echo "$approvals - $deposits + $gap" | bc)
         lockAmt=$(echo "$delta + $CONTI" | bc)
 
@@ -54,7 +57,10 @@ else
 
     seth send "$1" 'cast()'
 
-    freeAmt=$(echo "$deposits - $HAT_THRESHOLD" | bc)
+    ### Check Deposits against Hat Threshold to Free MKR
+    freeAmt=0
+    depositsGtHatThreshold=$(echo "$deposits > $HAT_THRESHOLD" | bc)
+    [[ "$depositsGtHatThreshold" == 1  ]] && freeAmt=$(echo "$deposits - $HAT_THRESHOLD" | bc)
 
     ### Check IOU Balance
     balanceIOUGeFreeAmt=$(echo "$balanceIOU >= $freeAmt" | bc)
