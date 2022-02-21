@@ -21,11 +21,11 @@ then
 else
     target="$DESIRED_HAT_APPROVALS"
     if [[ $(echo "$approvals + 1 >= $target" | bc) == 1 ]]; then
-        target="$approvals + 1"
+        target="$(echo "$approvals + 1" | bc)"
     fi
 
     if [[ $(echo "$deposits < $target" | bc) == 1 ]]; then
-        lockAmt="$(echo "$target" - "$deposits" | bc)"
+        lockAmt="$(echo "$target - $deposits" | bc)"
         [[ "$(echo "$(seth call "$MCD_GOV" 'balanceOf(address)(uint256)' "$ETH_FROM") >= $lockAmt" | bc)" == 1 ]] || { echo "$ETH_FROM: Insufficient MKR Balance"; exit 1; }
 
         seth send "$MCD_GOV" 'approve(address,uint256)' "$MCD_ADM" "$lockAmt"
@@ -44,7 +44,7 @@ else
     seth send "$1" 'cast()'
 
     if [[ $(echo "$deposits > $DESIRED_HAT_APPROVALS" | bc) == 1 ]]; then
-        freeAmt="$(echo "$deposits" - "$DESIRED_HAT_APPROVALS" | bc)"
+        freeAmt="$(echo "$deposits - $DESIRED_HAT_APPROVALS" | bc)"
         [[ "$(echo "$(seth call "$MCD_IOU" 'balanceOf(address)(uint256)' "$ETH_FROM") >= $freeAmt" | bc)" == 1 ]] || { echo "$ETH_FROM: Insufficient IOU Balance"; exit 1; }
         seth send "$MCD_IOU" 'approve(address,uint256)' "$MCD_ADM" "$freeAmt"
         seth send "$MCD_ADM" 'free(uint256)' "$freeAmt"
