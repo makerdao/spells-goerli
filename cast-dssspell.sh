@@ -10,7 +10,7 @@ MCD_GOV=$(seth call "$CHANGELOG" 'getAddress(bytes32)(address)' "$(seth --to-byt
 MCD_IOU=$(seth call "$CHANGELOG" 'getAddress(bytes32)(address)' "$(seth --to-bytes32 "$(seth --from-ascii "MCD_IOU")")")
 
 ### Data
-target=$(seth --to-wei 100000 ETH)
+DESIRED_HAT_APPROVALS=$(seth --to-wei 100000 ETH)
 hat=$(seth call "$MCD_ADM" 'hat()(address)')
 approvals=$(seth call "$MCD_ADM" 'approvals(address)(uint256)' "$hat")
 deposits=$(seth call "$MCD_ADM" 'deposits(address)(uint256)' "$ETH_FROM")
