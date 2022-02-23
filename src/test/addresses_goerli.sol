@@ -100,7 +100,7 @@ contract Addresses {
         addr["PIP_TUSD"]                        = 0x0ce19eA2C568890e63083652f205554C927a0caa;
         addr["MCD_JOIN_TUSD_A"]                 = 0x5BC597f00d74fAcEE53Be784f0B7Ace63b4e2EBe;
         addr["MCD_CLIP_TUSD_A"]                 = 0x22d843aE7121F399604D5C00863B95F9Af7e7E9C;
-        addr["MCD_CLIP_CALC_TUSD_A"]            = 0xCE7174c95555fcAA300F8018dC925Ccac08f1633;
+        addr["MCD_CLIP_CALC_TUSD_A"]            = 0xddD44166CdCd051AFa053A716608Cdc42C0C30D4;
         addr["WBTC"]                            = 0x7ccF0411c7932B99FC3704d68575250F032e3bB7;
         addr["PIP_WBTC"]                        = 0xE7de200a3a29E9049E378b52BD36701A0Ce68C3b;
         addr["MCD_JOIN_WBTC_A"]                 = 0x3cbE712a12e651eEAF430472c0C1BF1a2a18939D;
