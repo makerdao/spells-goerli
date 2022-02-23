@@ -111,6 +111,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             assertTrue(false);
         } catch {}
         assertEq(chainLog.getAddress("MCD_FLAP"), addr.addr("MCD_FLAP"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_TUSD_A"), addr.addr("MCD_CLIP_CALC_TUSD_A"));
 
         assertEq(chainLog.version(), "1.10.1");
 
