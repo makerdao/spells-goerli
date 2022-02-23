@@ -95,21 +95,27 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     // }
 
 
-    // function testNewChainlogValues() public {
-    //     vote(address(spell));
-    //     scheduleWaitAndCast(address(spell));
-    //     assertTrue(spell.done());
+    function testNewChainlogValues() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
 
-    //     // Insert new chainlog values tests here
-    //     assertEq(chainLog.getAddress("GUNIV3DAIUSDC2"), addr.addr("GUNIV3DAIUSDC2"));
-    //     assertEq(chainLog.getAddress("MCD_JOIN_GUNIV3DAIUSDC2_A"), addr.addr("MCD_JOIN_GUNIV3DAIUSDC2_A"));
-    //     assertEq(chainLog.getAddress("MCD_CLIP_GUNIV3DAIUSDC2_A"), addr.addr("MCD_CLIP_GUNIV3DAIUSDC2_A"));
-    //     assertEq(chainLog.getAddress("MCD_CLIP_CALC_GUNIV3DAIUSDC2_A"), addr.addr("MCD_CLIP_CALC_GUNIV3DAIUSDC2_A"));
-    //     assertEq(chainLog.getAddress("PIP_GUNIV3DAIUSDC2"), addr.addr("PIP_GUNIV3DAIUSDC2"));
+        // Insert new chainlog values tests here
+        try chainLog.getAddress("MCD_FLIP_ETH_A") returns (address) {
+            assertTrue(false);
+        } catch {}
+        try chainLog.getAddress("MCD_FLIP_BAT_A") returns (address) {
+            assertTrue(false);
+        } catch {}
+        try chainLog.getAddress("MCD_FLIP_USDC_A") returns (address) {
+            assertTrue(false);
+        } catch {}
+        assertEq(chainLog.getAddress("MCD_FLAP"), addr.addr("MCD_FLAP"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_TUSD_A"), addr.addr("MCD_CLIP_CALC_TUSD_A"));
 
-    //     assertEq(chainLog.version(), "1.9.12");
+        assertEq(chainLog.version(), "1.10.1");
 
-    // }
+    }
 
     // function testNewIlkRegistryValues() public {
     //     vote(address(spell));
@@ -283,23 +289,23 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(castTime, spell.eta());
     }
 
-    function test_OSMs() public {
-        address OAZO_ADDR = 0x0F1AE882272032D494926D5D983E4FBE253CB544;
+    // function test_OSMs() public {
+    //     address OAZO_ADDR = 0x0F1AE882272032D494926D5D983E4FBE253CB544;
 
-        assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(OAZO_ADDR), 0);
-        assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(OAZO_ADDR), 0);
-        assertEq(OsmAbstract(addr.addr("PIP_WSTETH")).bud(OAZO_ADDR), 0);
+    //     assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(OAZO_ADDR), 0);
+    //     assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(OAZO_ADDR), 0);
+    //     assertEq(OsmAbstract(addr.addr("PIP_WSTETH")).bud(OAZO_ADDR), 0);
 
-        vote(address(spell));
-        spell.schedule();
-        hevm.warp(spell.nextCastTime());
-        spell.cast();
-        assertTrue(spell.done());
+    //     vote(address(spell));
+    //     spell.schedule();
+    //     hevm.warp(spell.nextCastTime());
+    //     spell.cast();
+    //     assertTrue(spell.done());
 
-        assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(OAZO_ADDR), 1);
-        assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(OAZO_ADDR), 1);
-        assertEq(OsmAbstract(addr.addr("PIP_WSTETH")).bud(OAZO_ADDR), 1);
-    }
+    //     assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(OAZO_ADDR), 1);
+    //     assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(OAZO_ADDR), 1);
+    //     assertEq(OsmAbstract(addr.addr("PIP_WSTETH")).bud(OAZO_ADDR), 1);
+    // }
 
     // function test_Medianizers() public {
     //     vote(address(spell));
