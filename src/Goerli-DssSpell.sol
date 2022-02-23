@@ -32,6 +32,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
     uint256 public constant MILLION = 10**6;
 
+    uint256 public constant RAD = 10**45;
+
     address public constant MCD_FLAP = 0x015bEd3a7EBbB0Be03A35E0572E8a7B0BA2AA0fB;
 
     // Turn office hours off
@@ -49,6 +51,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         DssExecLib.setValue(MCD_FLAP, "beg", FlapAbstract(MCD_FLAP_OLD).beg());
         DssExecLib.setValue(MCD_FLAP, "ttl", FlapAbstract(MCD_FLAP_OLD).ttl());
         DssExecLib.setValue(MCD_FLAP, "tau", FlapAbstract(MCD_FLAP_OLD).tau());
+        DssExecLib.setValue(MCD_FLAP, "lid", 300_000 * RAD);
         DssExecLib.deauthorize(MCD_FLAP_OLD, MCD_VOW);
         DssExecLib.authorize(MCD_FLAP, MCD_VOW);
         DssExecLib.setContract(MCD_VOW, "flapper", MCD_FLAP);

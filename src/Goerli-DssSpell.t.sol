@@ -390,4 +390,65 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         }
         assertEq(expectedHash, actualHash);
     }
+
+    function setFlaps() internal {
+        vote(address(spell));
+        spell.schedule();
+        hevm.warp(spell.nextCastTime());
+        spell.cast();
+        assertTrue(spell.done());
+        // Force creation of 1B surplus
+        hevm.store(
+            address(vat),
+            bytes32(uint256(keccak256(abi.encode(address(vow), uint256(5))))),
+            bytes32(uint256(1_000_000_000 * RAD))
+        );
+        assertEq(vat.dai(address(vow)), 1_000_000_000 * RAD);
+        vow.heal(vat.sin(address(vow)) - vow.Sin() - vow.Ash());
+    }
+
+    function test_new_flapper() public {
+        setFlaps();
+
+        assertEq(vow.flapper(), addr.addr("MCD_FLAP"));
+        assertEq(address(flap), addr.addr("MCD_FLAP"));
+
+        assertEq(flap.fill(), 0);
+        vow.flap();
+        assertEq(flap.fill(), 30_000 * RAD);
+        vow.flap();
+        assertEq(flap.fill(), 60_000 * RAD);
+        vow.flap();
+        assertEq(flap.fill(), 90_000 * RAD);
+        vow.flap();
+        assertEq(flap.fill(), 120_000 * RAD);
+        vow.flap();
+        assertEq(flap.fill(), 150_000 * RAD);
+        vow.flap();
+        assertEq(flap.fill(), 180_000 * RAD);
+        vow.flap();
+        assertEq(flap.fill(), 210_000 * RAD);
+        vow.flap();
+        assertEq(flap.fill(), 240_000 * RAD);
+        vow.flap();
+        assertEq(flap.fill(), 270_000 * RAD);
+        vow.flap();
+        assertEq(flap.fill(), 300_000 * RAD);
+    }
+
+    function testFail_new_flapper_exeed_limit() public {
+        setFlaps();
+
+        vow.flap();
+        vow.flap();
+        vow.flap();
+        vow.flap();
+        vow.flap();
+        vow.flap();
+        vow.flap();
+        vow.flap();
+        vow.flap();
+        vow.flap();
+        vow.flap();
+    }
 }

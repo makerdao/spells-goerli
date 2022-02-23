@@ -31,6 +31,7 @@ contract Config {
         uint256 flap_beg;
         uint256 flap_ttl;
         uint256 flap_tau;
+        uint256 flap_lid;
         uint256 cat_box;
         uint256 dog_Hole;
         uint256 esm_min;
