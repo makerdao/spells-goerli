@@ -21,7 +21,6 @@ pragma solidity 0.6.12;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
-import "dss-interfaces/dss/FlapAbstract.sol";
 import "dss-interfaces/dss/ChainlogAbstract.sol";
 
 import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
@@ -32,9 +31,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
     uint256 public constant MILLION = 10**6;
 
-    uint256 public constant RAD = 10**45;
-
-    address public constant MCD_FLAP = 0x015bEd3a7EBbB0Be03A35E0572E8a7B0BA2AA0fB;
     address public constant MCD_CLIP_CALC_TUSD_A = 0xCE7174c95555fcAA300F8018dC925Ccac08f1633;
 
     // Turn office hours off
@@ -45,17 +41,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     function actions() public override {
         // Increase PSM-GUSD-A max debt ceiling from 10M to 60M
         DssExecLib.setIlkAutoLineDebtCeiling("PSM-GUSD-A", 60 * MILLION);
-
-        // Replace Flapper with rate limit one
-        address MCD_VOW = DssExecLib.vow();
-        address MCD_FLAP_OLD = DssExecLib.flap();
-        DssExecLib.setValue(MCD_FLAP, "beg", FlapAbstract(MCD_FLAP_OLD).beg());
-        DssExecLib.setValue(MCD_FLAP, "ttl", FlapAbstract(MCD_FLAP_OLD).ttl());
-        DssExecLib.setValue(MCD_FLAP, "tau", FlapAbstract(MCD_FLAP_OLD).tau());
-        DssExecLib.setValue(MCD_FLAP, "lid", 300_000 * RAD);
-        DssExecLib.deauthorize(MCD_FLAP_OLD, MCD_VOW);
-        DssExecLib.authorize(MCD_FLAP, MCD_VOW);
-        DssExecLib.setContract(MCD_VOW, "flapper", MCD_FLAP);
 
         // TUSD-A turn liquidations on and finish offboarding
         address MCD_CLIP_TUSD_A = DssExecLib.getChangelogAddress("MCD_CLIP_TUSD_A");
@@ -75,7 +60,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         ChainlogAbstract(DssExecLib.LOG).removeAddress("MCD_FLIP_ETH_A");
         ChainlogAbstract(DssExecLib.LOG).removeAddress("MCD_FLIP_BAT_A");
         ChainlogAbstract(DssExecLib.LOG).removeAddress("MCD_FLIP_USDC_A");
-        DssExecLib.setChangelogAddress("MCD_FLAP", MCD_FLAP);
         DssExecLib.setChangelogAddress("MCD_CLIP_CALC_TUSD_A", MCD_CLIP_CALC_TUSD_A);
         DssExecLib.setChangelogVersion("1.10.1");
     }
