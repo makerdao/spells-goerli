@@ -98,16 +98,30 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
+        // Housekeeping
+        try chainLog.getAddress("MCD_FLIP_ETH_A") {
+            assertTrue(false);
+        } catch Error(string memory errmsg) {
+            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
+        } catch {
+            assertTrue(false);
+        }
+        try chainLog.getAddress("MCD_FLIP_BAT_A") {
+            assertTrue(false);
+        } catch Error(string memory errmsg) {
+            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
+        } catch {
+            assertTrue(false);
+        }
+        try chainLog.getAddress("MCD_FLIP_USDC_A") {
+            assertTrue(false);
+        } catch Error(string memory errmsg) {
+            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
+        } catch {
+            assertTrue(false);
+        }
+
         // Insert new chainlog values tests here
-        try chainLog.getAddress("MCD_FLIP_ETH_A") returns (address) {
-            assertTrue(false);
-        } catch {}
-        try chainLog.getAddress("MCD_FLIP_BAT_A") returns (address) {
-            assertTrue(false);
-        } catch {}
-        try chainLog.getAddress("MCD_FLIP_USDC_A") returns (address) {
-            assertTrue(false);
-        } catch {}
         assertEq(chainLog.getAddress("MCD_CLIP_CALC_TUSD_A"), addr.addr("MCD_CLIP_CALC_TUSD_A"));
 
         assertEq(chainLog.version(), "1.10.1");

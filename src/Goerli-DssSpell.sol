@@ -39,6 +39,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     }
 
     function actions() public override {
+        // Housekeeping: PE-872 2022-02-25 Executive Spell
         // Increase PSM-GUSD-A max debt ceiling from 10M to 60M
         DssExecLib.setIlkAutoLineDebtCeiling("PSM-GUSD-A", 60 * MILLION);
 

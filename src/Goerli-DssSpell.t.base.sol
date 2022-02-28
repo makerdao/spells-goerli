@@ -133,6 +133,10 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         }
     }
 
+    function cmpStr(string memory a, string memory b) internal pure returns (bool) {
+         return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
+    }
+
     // Not currently used
     // function bytes32ToStr(bytes32 _bytes32) internal pure returns (string memory) {
     //     bytes memory bytesArray = new bytes(32);
