@@ -59,7 +59,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     EndAbstract              end = EndAbstract(        addr.addr("MCD_END"));
     ESMAbstract              esm = ESMAbstract(        addr.addr("MCD_ESM"));
     IlkRegistryAbstract      reg = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
-    FlapAbstract            flap = FlapAbstract(        addr.addr("MCD_FLAP"));
+    FlapAbstract            flap = FlapAbstract(       addr.addr("MCD_FLAP"));
 
     OsmMomAbstract           osmMom = OsmMomAbstract(     addr.addr("OSM_MOM"));
     FlipperMomAbstract      flipMom = FlipperMomAbstract( addr.addr("FLIPPER_MOM"));
