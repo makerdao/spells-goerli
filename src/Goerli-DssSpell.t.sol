@@ -122,10 +122,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         }
 
         // Insert new chainlog values tests here
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_TUSD_A"), addr.addr("MCD_CLIP_CALC_TUSD_A"));
-
-        assertEq(chainLog.version(), "1.10.1");
-
     }
 
     // function testNewIlkRegistryValues() public {

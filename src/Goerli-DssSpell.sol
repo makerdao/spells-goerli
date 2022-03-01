@@ -31,8 +31,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
     uint256 public constant MILLION = 10**6;
 
-    address public constant MCD_CLIP_CALC_TUSD_A = 0xCE7174c95555fcAA300F8018dC925Ccac08f1633;
-
     // Turn office hours off
     function officeHours() public override returns (bool) {
         return false;
@@ -42,27 +40,10 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         // Housekeeping: PE-872 2022-02-25 Executive Spell
         // Increase PSM-GUSD-A max debt ceiling from 10M to 60M
         DssExecLib.setIlkAutoLineDebtCeiling("PSM-GUSD-A", 60 * MILLION);
-
-        // TUSD-A turn liquidations on and finish offboarding
-        // https://forum.makerdao.com/t/proposed-parameters-for-offboarding-tusd-a/13506
-        address MCD_CLIP_TUSD_A = DssExecLib.getChangelogAddress("MCD_CLIP_TUSD_A");
-        DssExecLib.setContract(MCD_CLIP_TUSD_A, "calc", MCD_CLIP_CALC_TUSD_A);                 // LinearDecrease (abaci)
-        DssExecLib.setValue(MCD_CLIP_TUSD_A, "stopped", 0);                                    // Enable Liquidations (no breaker)
-        DssExecLib.setIlkLiquidationPenalty("TUSD-A", 0);                                      // chop 0
-        DssExecLib.setIlkLiquidationRatio("TUSD-A", 150_00);                                   // mat 150%
-        DssExecLib.setStartingPriceMultiplicativeFactor("TUSD-A", 100_00);                     // buf 1 (100%)
-        DssExecLib.setAuctionTimeBeforeReset("TUSD-A", 5 days);                                // tail 5 days
-        DssExecLib.setIlkMaxLiquidationAmount("TUSD-A", 5 * MILLION);                          // hole 5M
-        DssExecLib.setKeeperIncentivePercent("TUSD-A", 0);                                     // chip 0
-        DssExecLib.setKeeperIncentiveFlatRate("TUSD-A", 500);                                  // tip 500 Dai
-        DssExecLib.setValue(MCD_CLIP_CALC_TUSD_A, "tau", 250 days);                            // tau 250 days
-
         // Update Chainlog
         ChainlogAbstract(DssExecLib.LOG).removeAddress("MCD_FLIP_ETH_A");
         ChainlogAbstract(DssExecLib.LOG).removeAddress("MCD_FLIP_BAT_A");
         ChainlogAbstract(DssExecLib.LOG).removeAddress("MCD_FLIP_USDC_A");
-        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_TUSD_A", MCD_CLIP_CALC_TUSD_A);
-        DssExecLib.setChangelogVersion("1.10.1");
     }
 }
 
