@@ -283,24 +283,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(castTime, spell.eta());
     }
 
-    function test_OSMs() public {
-        address OAZO_ADDR = 0x0F1AE882272032D494926D5D983E4FBE253CB544;
-
-        assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(OAZO_ADDR), 0);
-        assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(OAZO_ADDR), 0);
-        assertEq(OsmAbstract(addr.addr("PIP_WSTETH")).bud(OAZO_ADDR), 0);
-
-        vote(address(spell));
-        spell.schedule();
-        hevm.warp(spell.nextCastTime());
-        spell.cast();
-        assertTrue(spell.done());
-
-        assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(OAZO_ADDR), 1);
-        assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(OAZO_ADDR), 1);
-        assertEq(OsmAbstract(addr.addr("PIP_WSTETH")).bud(OAZO_ADDR), 1);
-    }
-
     // function test_Medianizers() public {
     //     vote(address(spell));
     //     spell.schedule();
