@@ -48,7 +48,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         address MCD_CLIP_TUSD_A = DssExecLib.getChangelogAddress("MCD_CLIP_TUSD_A");
         DssExecLib.setContract(MCD_CLIP_TUSD_A, "calc", MCD_CLIP_CALC_TUSD_A);                 // LinearDecrease (abaci)
         DssExecLib.setValue(MCD_CLIP_TUSD_A, "stopped", 0);                                    // Enable Liquidations (no breaker)
-        DssExecLib.authorize(MCD_CLIP_TUSD_A, DssExecLib.getChangelogAddress("CLIPPER_MOM"));  // rely clipper mom
         DssExecLib.setIlkLiquidationPenalty("TUSD-A", 0);                                      // chop 0
         DssExecLib.setIlkLiquidationRatio("TUSD-A", 150_00);                                   // mat 150%
         DssExecLib.setStartingPriceMultiplicativeFactor("TUSD-A", 100_00);                     // buf 1 (100%)
