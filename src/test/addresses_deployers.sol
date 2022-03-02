@@ -32,7 +32,7 @@ contract Deployers {
         ];
     }
 
-    function count() external view returns (uint) {
+    function count() external view returns (uint256) {
         return addr.length;
     }
 }
