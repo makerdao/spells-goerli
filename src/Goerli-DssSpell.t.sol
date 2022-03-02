@@ -19,6 +19,11 @@ pragma solidity 0.6.12;
 
 import "./Goerli-DssSpell.t.base.sol";
 
+interface DSProxyAbstract {
+    function owner() external returns (address owner);
+    function execute(address _target, bytes memory _data) external returns (bytes memory response);
+}
+
 interface CharterAbstract {
     function getOrCreateProxy(address usr) external returns (address urp);
     function join(address gemJoin, address usr, uint256 amt) external;
@@ -30,7 +35,12 @@ interface CharterAbstract {
 
 contract DssSpellTest is GoerliDssSpellTestBase {
 
-    CharterAbstract public charter = CharterAbstract(addr.addr("MCD_CHARTER"));
+    CharterAbstract charter = CharterAbstract(addr.addr("MCD_CHARTER"));
+
+    address dssProxyActions    = addr.addr("PROXY_ACTIONS_CHARTER");
+    address dssProxyActionsEnd = addr.addr("PROXY_ACTIONS_END_CHARTER");
+
+    DSProxyAbstract oazoProxy = DSProxyAbstract(0xDdA54E31B7586153D72A2AC1bAFaC5B9C21fc45C);
 
     function testSpellIsCast_GENERAL() public {
         string memory description = new DssSpell().description();
@@ -230,6 +240,60 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     //     assertTrue(lerp.done());
     }
 
+    function open(bytes32, address) public returns (uint256 cdp) {
+        bytes memory response = oazoProxy.execute(dssProxyActions, msg.data);
+        assembly {
+            cdp := mload(add(response, 0x20))
+        }
+    }
+
+    function lockGem(address, uint256, uint256) public {
+        oazoProxy.execute(dssProxyActions, msg.data);
+    }
+
+    function draw(address, address, uint256, uint256) public {
+        oazoProxy.execute(dssProxyActions, msg.data);
+    }
+
+    function takeDsProxy(address dsProxy, address target) internal {
+        hevm.store(address(dsProxy), bytes32(uint256(1)), bytes32(uint256(uint160(target))));
+        assertEq(DSProxyAbstract(dsProxy).owner(), target);
+    }
+
+    function checkCharterVault(
+        bytes32 _ilk,
+        GemJoinManagedAbstract join
+    ) public {
+
+        DSTokenAbstract token = DSTokenAbstract(join.gem());
+        uint256 amount = 100 * THOUSAND * 10 ** token.decimals();
+        giveTokens(token, amount);
+
+        takeDsProxy(address(oazoProxy), address(this));
+        uint256 cdp = this.open(_ilk, address(oazoProxy));
+
+        token.approve(address(oazoProxy), amount);
+        this.lockGem(address(join), cdp, amount);
+
+        uint256 vowDaiBefore = vat.dai(address(vow));
+        this.draw(address(jug), address(daiJoin), cdp, 100_000 ether);
+        assertEq(dai.balanceOf(address(this)), 100_000 ether);
+
+        uint256 expectedFee = 1010101010101010101010110000000000000000000000000; // (100_000 / 0.99) * 0.01 * 10^45
+        assertEqApprox(vat.dai(address(vow)) - vowDaiBefore, expectedFee, RAY);
+
+        // Dump all dai for next run
+        dai.transfer(address(0x0), 100_000 ether);
+    }
+
+    function testCharterVaults() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        checkCharterVault("INST-ETH-A",  GemJoinManagedAbstract(addr.addr("MCD_JOIN_INST_ETH_A")));
+        checkCharterVault("INST-WBTC-A", GemJoinManagedAbstract(addr.addr("MCD_JOIN_INST_WBTC_A")));
+    }
 
     // function testNewChainlogValues() public {
     //     vote(address(spell));
