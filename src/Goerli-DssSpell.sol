@@ -44,6 +44,20 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         ChainlogAbstract(DssExecLib.LOG).removeAddress("MCD_FLIP_ETH_A");
         ChainlogAbstract(DssExecLib.LOG).removeAddress("MCD_FLIP_BAT_A");
         ChainlogAbstract(DssExecLib.LOG).removeAddress("MCD_FLIP_USDC_A");
+
+        // --- Open Market Committee Proposal ---
+        // https://vote.makerdao.com/polling/QmPhbQ3B
+        //
+        // Increase WSTETH-A AutoLine (line) from 200 million DAI to 300 million DAI
+        // Increase WSTETH-A Autoline (gap) from 20 million DAI to 30 million DAI.
+        DssExecLib.setIlkAutoLineParameters("WSTETH-A", 300 * MILLION, 30 * MILLION, 6 hours);
+
+        // Increase DIRECT-AAVEV2-DAI AutoLine (line) from 220 million DAI to 300 million DAI.
+        // Increase DIRECT-AAVEV2-DAI AutoLine (gap) from 50 million DAI to 65 million DAI.
+        // DssExecLib.setIlkAutoLineParameters("DIRECT-AAVEV2-DAI", 300 * MILLION, 65 * MILLION, 12 hours);
+
+        // Decrease DIRECT-AAVEV2-DAI Target Borrow Rate (bar) from 3.5% to 2.85%.
+        // DssExecLib.setD3MTargetInterestRate(DssExecLib.getChangelogAddress("MCD_JOIN_DIRECT_AAVEV2_DAI"), 285); // 2.85%
     }
 }
 

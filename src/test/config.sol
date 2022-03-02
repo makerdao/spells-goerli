@@ -1461,8 +1461,8 @@ contract Config {
         });
         afterSpell.collaterals["WSTETH-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      200 * MILLION,
-            aL_gap:       20 * MILLION,
+            aL_line:      300 * MILLION,
+            aL_gap:       30 * MILLION,
             aL_ttl:       6 hours,
             line:         0,
             dust:         15 * THOUSAND,
@@ -1491,8 +1491,8 @@ contract Config {
         });
 //        afterSpell.collaterals["DIRECT-AAVEV2-DAI"] = CollateralValues({
 //            aL_enabled:   true,
-//            aL_line:      100 * MILLION,
-//            aL_gap:       25 * MILLION,
+//            aL_line:      300 * MILLION,
+//            aL_gap:       65 * MILLION,
 //            aL_ttl:       12 hours,
 //            line:         0,
 //            dust:         0,

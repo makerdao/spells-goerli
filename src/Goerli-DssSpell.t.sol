@@ -93,6 +93,17 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     //     assertTrue(lerp.done());
     // }
 
+    // function testAAVEDirectBarChange() public {
+    //     DirectDepositLike join = DirectDepositLike(addr.addr("MCD_JOIN_DIRECT_AAVEV2_DAI"));
+    //     assertEq(join.bar(), 3.5 * RAY / 100);
+    //
+    //     vote(address(spell));
+    //     scheduleWaitAndCast(address(spell));
+    //     assertTrue(spell.done());
+    //
+    //     assertEq(join.bar(), 2.85 * RAY / 100);
+    // }
+
     function testNewChainlogValues() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
