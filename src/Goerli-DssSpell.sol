@@ -29,7 +29,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
-    uint256 public constant MILLION = 10**6;
+    uint256 constant MILLION = 10**6;
 
     // Turn office hours off
     function officeHours() public override returns (bool) {
