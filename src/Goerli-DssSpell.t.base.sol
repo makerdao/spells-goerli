@@ -232,7 +232,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             osm_mom_authority:     address(chief),          // OsmMom authority
             flipper_mom_authority: address(chief),          // FlipperMom authority
             clipper_mom_authority: address(chief),          // ClipperMom authority
-            ilk_count:             47                       // Num expected in system
+            ilk_count:             49                       // Num expected in system
         });
 
         setCollateralValues();

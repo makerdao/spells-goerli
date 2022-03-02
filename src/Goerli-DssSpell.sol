@@ -17,28 +17,53 @@
 
 pragma solidity 0.6.12;
 // Enable ABIEncoderV2 when onboarding collateral
-//pragma experimental ABIEncoderV2;
+pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
 
+interface CharterLike {
+    function setImplementation(address) external;
+    function file(bytes32, bytes32, uint256) external;
+    function file(bytes32, address, bytes32, uint256) external;
+}
+
 contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
+
+    address constant MCD_CHARTER_IMP           = 0xf6a9bD36553208ee02049Dc8A9c44919383C9a6b;
+
+    // The below addresses are given for documentation purposes:
+    address constant CDP_REGISTRY              = 0x0636E6878703E30aB11Ba13A68C6124d9d252e6B;
+    address constant PROXY_ACTIONS_CHARTER     = 0xfFb896D7BEf704DF73abc9A2EBf295CE236c5919;
+    address constant PROXY_ACTIONS_END_CHARTER = 0xDAdE5a1bAC92c539B886eeC82738Ff26b66Dc484;
+
+    address constant OAZO_DS_PROXY = 0xDdA54E31B7586153D72A2AC1bAFaC5B9C21fc45C;
 
     // Turn office hours off
     function officeHours() public override returns (bool) {
         return false;
     }
 
-    address constant public OAZO_ADDR = 0x0F1AE882272032D494926D5D983E4FBE253CB544;
-
     function actions() public override {
-        DssExecLib.addReaderToWhitelist(DssExecLib.getChangelogAddress("PIP_ETH"), OAZO_ADDR);
-        DssExecLib.addReaderToWhitelist(DssExecLib.getChangelogAddress("PIP_WBTC"), OAZO_ADDR);
-        DssExecLib.addReaderToWhitelist(DssExecLib.getChangelogAddress("PIP_WSTETH"), OAZO_ADDR);
+
+        // ---------------------------------------------------------------------------------
+        onboardNewCollaterals();
+
+        CharterLike(MCD_CHARTER).setImplementation(MCD_CHARTER_IMP);
+
+        CharterLike(MCD_CHARTER).file("INST-ETH-A", "gate", 1);
+        CharterLike(MCD_CHARTER).file("INST-ETH-A", OAZO_DS_PROXY, "nib", 1 * WAD / 100); // 1%
+        CharterLike(MCD_CHARTER).file("INST-ETH-A", OAZO_DS_PROXY, "peace", 150 * RAY / 100); // 150%
+        CharterLike(MCD_CHARTER).file("INST-ETH-A", OAZO_DS_PROXY, "uline", 900 * MILLION * RAD);
+
+        CharterLike(MCD_CHARTER).file("INST-WBTC-A", "gate", 1);
+        CharterLike(MCD_CHARTER).file("INST-WBTC-A", OAZO_DS_PROXY, "nib", 1 * WAD / 100); // 1%
+        CharterLike(MCD_CHARTER).file("INST-WBTC-A", OAZO_DS_PROXY, "peace", 150 * RAY / 100); // 150%
+        CharterLike(MCD_CHARTER).file("INST-WBTC-A", OAZO_DS_PROXY, "uline", 600 * MILLION * RAD);
     }
 }
 

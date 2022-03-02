@@ -32,53 +32,121 @@ contract DssSpellCollateralOnboardingAction {
     //    https://ipfs.io/ipfs/QmTRiQ3GqjCiRhh1ojzKzgScmSsiwQPLyjhgYSxZASQekj
     //
 
+    uint256 constant ONE_POINT_FIVE_PCT = 1000000000472114805215157978;
+
     // --- Math ---
+
+    uint256 constant WAD = 10 ** 18;
+    uint256 constant RAY = 10 ** 27;
+    uint256 constant RAD = 10 ** 45;
+
+    uint256 constant THOUSAND   = 10 ** 3;
+    uint256 constant MILLION    = 10 ** 6;
 
     // --- DEPLOYED COLLATERAL ADDRESSES ---
 
+    address constant MCD_CHARTER               = 0x7ea0d7ea31C544a472b55D19112e016Ba6708288;
+
+    address constant MCD_JOIN_INST_ETH_A       = 0x99507A436aC9E8eB5A89001a2dFc80E343D82122;
+    address constant MCD_CLIP_INST_ETH_A       = 0x6ECc35a9237a73022697976891Def7bAd87Be408;
+    address constant MCD_CLIP_CALC_INST_ETH_A  = 0xea999A6381e78311Ff176751e00F46360F1562e9;
+
+    address constant MCD_JOIN_INST_WBTC_A      = 0xbd5978308C9BbF6d8d1D26cD1df9AA3EA83F782a;
+    address constant MCD_CLIP_INST_WBTC_A      = 0x81Bf27c821F24b6FC9Bcc0F7d4D7cc2651712E3c;
+    address constant MCD_CLIP_CALC_INST_WBTC_A = 0x32ff6F008eB4aA5780efF2e0436b7adCDECb213a;
+
     function onboardNewCollaterals() internal {
         // ----------------------------- Collateral onboarding -----------------------------
-        //  Add ______________ as a new Vault Type
-        //  Poll Link:
+        //  Add INST-ETH-A as a new Vault Type
+        //  Poll Link: https://vote.makerdao.com/polling/QmU41X9v?network=mainnet#poll-detail
 
-        // DssExecLib.addNewCollateral(
-        //     CollateralOpts({
-        //         ilk:                   ,
-        //         gem:                   ,
-        //         join:                  ,
-        //         clip:                  ,
-        //         calc:                  ,
-        //         pip:                   ,
-        //         isLiquidatable:        ,
-        //         isOSM:                 ,
-        //         whitelistOSM:          ,
-        //         ilkDebtCeiling:        ,
-        //         minVaultAmount:        ,
-        //         maxLiquidationAmount:  ,
-        //         liquidationPenalty:    ,
-        //         ilkStabilityFee:       ,
-        //         startingPriceFactor:   ,
-        //         breakerTolerance:      ,
-        //         auctionDuration:       ,
-        //         permittedDrop:         ,
-        //         liquidationRatio:      ,
-        //         kprFlatReward:         ,
-        //         kprPctReward:
-        //     })
-        // );
+        DssExecLib.addNewCollateral(
+         CollateralOpts({
+             ilk:                   "INST-ETH-A",
+             gem:                   DssExecLib.getChangelogAddress("ETH"),
+             join:                  MCD_JOIN_INST_ETH_A,
+             clip:                  MCD_CLIP_INST_ETH_A,
+             calc:                  MCD_CLIP_CALC_INST_ETH_A,
+             pip:                   DssExecLib.getChangelogAddress("PIP_ETH"),
+             isLiquidatable:        true,
+             isOSM:                 true,
+             whitelistOSM:          false,
+             ilkDebtCeiling:        50 * MILLION,
+             minVaultAmount:        10 * THOUSAND,
+             maxLiquidationAmount:  50 * MILLION,
+             liquidationPenalty:    2000,
+             ilkStabilityFee:       ONE_POINT_FIVE_PCT,
+             startingPriceFactor:   12000,
+             breakerTolerance:      5000,
+             auctionDuration:       140 minutes,
+             permittedDrop:         4000,
+             liquidationRatio:      12000,
+             kprFlatReward:         300,
+             kprPctReward:          10
+         })
+        );
 
-        // DssExecLib.setStairstepExponentialDecrease(
-        //     CALC_ADDR,
-        //     DURATION,
-        //     PCT_BPS
-        // );
+        DssExecLib.setStairstepExponentialDecrease(
+            MCD_CLIP_CALC_INST_ETH_A,
+            90 seconds,
+            9900
+        );
 
-        // DssExecLib.setIlkAutoLineParameters(
-        //     ILK,
-        //     AMOUNT,
-        //     GAP,
-        //     TTL
-        // );
+        DssExecLib.setIlkAutoLineParameters(
+            "INST-ETH-A",
+            900 * MILLION,
+            50 * MILLION,
+            8 hours
+        );
+
+        DssExecLib.authorize(MCD_JOIN_INST_ETH_A, MCD_CHARTER);
+
+        // ----------------------------- Collateral onboarding -----------------------------
+        //  Add INST-WBTC-A as a new Vault Type
+        //  Poll Link: https://vote.makerdao.com/polling/QmU41X9v?network=mainnet#poll-detail
+
+        DssExecLib.addNewCollateral(
+         CollateralOpts({
+            ilk:                   "INST-WBTC-A",
+            gem:                   DssExecLib.getChangelogAddress("WBTC"),
+            join:                  MCD_JOIN_INST_WBTC_A,
+            clip:                  MCD_CLIP_INST_WBTC_A,
+            calc:                  MCD_CLIP_CALC_INST_WBTC_A,
+            pip:                   DssExecLib.getChangelogAddress("PIP_WBTC"),
+            isLiquidatable:        true,
+            isOSM:                 true,
+            whitelistOSM:          false,
+            ilkDebtCeiling:        50 * MILLION,
+            minVaultAmount:        10 * THOUSAND,
+            maxLiquidationAmount:  30 * MILLION,
+            liquidationPenalty:    2000,
+            ilkStabilityFee:       ONE_POINT_FIVE_PCT,
+            startingPriceFactor:   12000,
+            breakerTolerance:      5000,
+            auctionDuration:       140 minutes,
+            permittedDrop:         4000,
+            liquidationRatio:      12000,
+            kprFlatReward:         300,
+            kprPctReward:          10 // 0.1%
+         })
+        );
+
+        DssExecLib.setStairstepExponentialDecrease(
+            MCD_CLIP_CALC_INST_WBTC_A,
+            90 seconds,
+            9900
+        );
+
+        DssExecLib.setIlkAutoLineParameters(
+            "INST-WBTC-A",
+            600 * MILLION,
+            50 * MILLION,
+            8 hours
+        );
+
+        DssExecLib.authorize(MCD_JOIN_INST_WBTC_A, MCD_CHARTER);
+
+        // Note - as this is a sneaky deployment we do not update the changelog
 
         // ChainLog Updates
         // Add the new flip and join to the Chainlog

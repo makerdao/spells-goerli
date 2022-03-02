@@ -19,11 +19,18 @@ pragma solidity 0.6.12;
 
 import "./Goerli-DssSpell.t.base.sol";
 
-interface DenyProxyLike {
-    function denyProxy(address) external;
+interface CharterAbstract {
+    function getOrCreateProxy(address usr) external returns (address urp);
+    function join(address gemJoin, address usr, uint256 amt) external;
+    function frob(bytes32 ilk, address u, address v, address w, int256 dink, int256 dart) external;
+    function file(bytes32 ilk, address usr, bytes32 what, uint256 data) external;
+    function deny(address usr) external;
+    function exit(address gemJoin, address usr, uint256 amt) external;
 }
 
 contract DssSpellTest is GoerliDssSpellTestBase {
+
+    CharterAbstract public charter = CharterAbstract(addr.addr("MCD_CHARTER"));
 
     function testSpellIsCast_GENERAL() public {
         string memory description = new DssSpell().description();
@@ -55,11 +62,140 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
+    function setUline(bytes32 _ilk) public {
+        giveAuth(address(charter), address(this));
+        (,,, uint256 line,) = vat.ilks(_ilk);
+        charter.file(_ilk, address(this), "uline", line);
+        charter.deny(address(this));
+    }
 
-    // function testCollateralIntegrations() public {
-    //     vote(address(spell));
-    //     scheduleWaitAndCast(address(spell));
-    //     assertTrue(spell.done());
+    function checkCharterIlkIntegration(
+        bytes32 _ilk,
+        GemJoinManagedAbstract join,
+        ClipAbstract clip,
+        address pip,
+        bool _isOSM,
+        bool _checkLiquidations,
+        bool _transferFee
+    ) public {
+        DSTokenAbstract token = DSTokenAbstract(join.gem());
+        address proxy = charter.getOrCreateProxy(address(this));
+
+        setUline(_ilk);
+
+        hevm.warp(block.timestamp + 3601); // Avoid OSM delay errors on Görli
+        if (_isOSM) OsmAbstract(pip).poke();
+        hevm.warp(block.timestamp + 3601);
+        if (_isOSM) OsmAbstract(pip).poke();
+        spotter.poke(_ilk);
+
+        // Authorization
+        assertEq(join.wards(pauseProxy), 1);
+        assertEq(vat.wards(address(join)), 1);
+        assertEq(clip.wards(address(end)), 1);
+        assertEq(clip.wards(address(clipMom)), 1);
+        if (_isOSM) {
+            assertEq(OsmAbstract(pip).wards(address(osmMom)), 1);
+            assertEq(OsmAbstract(pip).bud(address(spotter)), 1);
+            assertEq(OsmAbstract(pip).bud(address(clip)), 1);
+            assertEq(OsmAbstract(pip).bud(address(clipMom)), 1);
+            assertEq(OsmAbstract(pip).bud(address(end)), 1);
+            assertEq(MedianAbstract(OsmAbstract(pip).src()).bud(pip), 1);
+            assertEq(OsmMomAbstract(osmMom).osms(_ilk), pip);
+        }
+
+        (,,,, uint256 dust) = vat.ilks(_ilk);
+        dust /= RAY;
+        uint256 amount = 2 * dust * 10**token.decimals() / (_isOSM ? getOSMPrice(pip) : uint256(DSValueAbstract(pip).read()));
+        uint256 amount18 = token.decimals() == 18 ? amount : amount * 10**(18 - token.decimals());
+        giveTokens(token, amount);
+
+        assertEq(token.balanceOf(address(this)), amount);
+        assertEq(vat.gem(_ilk, address(this)), 0);
+
+        // Each account that interacts with Charter needs to approve it in the vat
+        vat.hope(address(charter));
+
+        token.approve(address(charter), amount);
+        charter.join(address(join), address(this), amount);
+        assertEq(token.balanceOf(address(this)), 0);
+        if (_transferFee) {
+            amount = vat.gem(_ilk, address(this));
+            assertTrue(amount > 0);
+        }
+        assertEq(vat.gem(_ilk, proxy), amount18);
+
+        // Tick the fees forward so that art != dai in wad units
+        hevm.warp(block.timestamp + 1);
+        jug.drip(_ilk);
+
+        // Deposit collateral, generate DAI
+        (,uint256 rate,,,) = vat.ilks(_ilk);
+        assertEq(vat.dai(address(this)), 0);
+        charter.frob(_ilk, address(this), address(this), address(this), int256(amount18), int256(divup(mul(RAY, dust), rate)));
+        assertEq(vat.gem(_ilk, proxy), 0);
+        assertTrue(vat.dai(address(this)) >= dust * RAY);
+        assertTrue(vat.dai(address(this)) <= (dust + 1) * RAY);
+
+        // Payback DAI, withdraw collateral
+        charter.frob(_ilk, address(this), address(this), address(this), -int256(amount18), -int256(divup(mul(RAY, dust), rate)));
+        assertEq(vat.gem(_ilk, proxy), amount18);
+        assertEq(vat.dai(address(this)), 0);
+
+        // Withdraw from adapter
+        charter.exit(address(join), address(this), amount);
+        if (_transferFee) {
+            amount = token.balanceOf(address(this));
+        }
+        assertEq(token.balanceOf(address(this)), amount);
+        assertEq(vat.gem(_ilk, proxy), 0);
+
+        // Generate new DAI to force a liquidation
+        token.approve(address(charter), amount);
+        charter.join(address(join), address(this), amount);
+        if (_transferFee) {
+            amount = vat.gem(_ilk, address(this));
+        }
+        // dart max amount of DAI
+        (,,uint256 spot,,) = vat.ilks(_ilk);
+        charter.frob(_ilk, address(this), address(this), address(this), int256(amount18), int256(mul(amount18, spot) / rate));
+        hevm.warp(block.timestamp + 1);
+        jug.drip(_ilk);
+        assertEq(clip.kicks(), 0);
+        if (_checkLiquidations) {
+            dog.bark(_ilk, proxy, address(this));
+            assertEq(clip.kicks(), 1);
+        }
+
+        // Dump all dai for next run
+        vat.move(address(this), address(0x0), vat.dai(address(this)));
+    }
+
+    function testCollateralIntegrations() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // Insert new collateral tests here
+        checkCharterIlkIntegration(
+            "INST-ETH-A",
+            GemJoinManagedAbstract(addr.addr("MCD_JOIN_INST_ETH_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_INST_ETH_A")),
+            addr.addr("PIP_ETH"),
+            true,
+            true,
+            false
+        );
+
+        checkCharterIlkIntegration(
+            "INST-WBTC-A",
+            GemJoinManagedAbstract(addr.addr("MCD_JOIN_INST_WBTC_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_INST_WBTC_A")),
+            addr.addr("PIP_WBTC"),
+            true,
+            true,
+            false
+        );
 
     //     // Insert new collateral tests here
 
@@ -92,7 +228,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     //     lerp.tick();
     //     assertEq(vow.hump(), 90 * MILLION * RAD);
     //     assertTrue(lerp.done());
-    // }
+    }
 
 
     // function testNewChainlogValues() public {
@@ -319,6 +455,19 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     function test_auth_in_sources() public {
         checkAuth(true);
+    }
+
+    // As Charter is a sneak deployment its contracts are not added to the Chainlog, and therefore checked explicitly.
+    function test_wards_charter()  public {
+        checkWards(addr.addr("MCD_CHARTER"), "MCD_CHARTER");
+        checkWards(addr.addr("PROXY_ACTIONS_CHARTER"), "PROXY_ACTIONS_CHARTER");
+        checkWards(addr.addr("PROXY_ACTIONS_END_CHARTER"), "PROXY_ACTIONS_END_CHARTER");
+        checkWards(addr.addr("MCD_JOIN_INST_ETH_A"), "MCD_JOIN_INST_ETH_A");
+        checkWards(addr.addr("MCD_CLIP_INST_ETH_A"), "MCD_CLIP_INST_ETH_A");
+        checkWards(addr.addr("MCD_CLIP_CALC_INST_ETH_A"), "MCD_CLIP_CALC_INST_ETH_A");
+        checkWards(addr.addr("MCD_JOIN_INST_WBTC_A"), "MCD_JOIN_INST_WBTC_A");
+        checkWards(addr.addr("MCD_CLIP_INST_WBTC_A"), "MCD_CLIP_INST_WBTC_A");
+        checkWards(addr.addr("MCD_CLIP_CALC_INST_WBTC_A"), "MCD_CLIP_CALC_INST_WBTC_A");
     }
 
     // Verifies that the bytecode of the action of the spell used for testing
