@@ -60,6 +60,7 @@ contract DssSpellCollateralOnboardingAction {
         //  Add INST-ETH-A as a new Vault Type
         //  Poll Link: https://vote.makerdao.com/polling/QmU41X9v?network=mainnet#poll-detail
 
+        // Note: All the values are for post migration stage (as in Goerli there is no mingration)
         DssExecLib.addNewCollateral(
          CollateralOpts({
              ilk:                   "INST-ETH-A",
@@ -127,7 +128,7 @@ contract DssSpellCollateralOnboardingAction {
             permittedDrop:         4000,
             liquidationRatio:      12000,
             kprFlatReward:         300,
-            kprPctReward:          10 // 0.1%
+            kprPctReward:          10
          })
         );
 
