@@ -256,11 +256,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // Track Median authorizations here
     }
 
-    function test_auth() public {
+    function test_auth() private { // make public to use
         checkAuth(false);
     }
 
-    function test_auth_in_sources() public {
+    function test_auth_in_sources() private { // make public to use
         checkAuth(true);
     }
 
