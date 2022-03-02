@@ -41,7 +41,7 @@ contract Addresses {
         addr["MCD_DOG"]                         = 0x5cf85A37Dbd28A239698B4F9aA9a03D55C04F292;
         addr["MCD_VOW"]                         = 0x23f78612769b9013b3145E43896Fa1578cAa2c2a;
         addr["MCD_JOIN_DAI"]                    = 0x6a60b7070befb2bfc964F646efDF70388320f4E0;
-        addr["MCD_FLAP"]                        = 0x8E4B877d7eD4584b22e1508ffDAA8Ae4f6927397;
+        addr["MCD_FLAP"]                        = 0x015bEd3a7EBbB0Be03A35E0572E8a7B0BA2AA0fB;
         addr["MCD_FLOP"]                        = 0x742D041dFBA61110Bd886509CB299DF6A521B352;
         addr["MCD_PAUSE"]                       = 0xefcd235B1f13e7fC5eab1d05C910d3c390b3439F;
         addr["MCD_PAUSE_PROXY"]                 = 0x5DCdbD3cCF9B09EAAD03bc5f50fA2B3d3ACA0121;

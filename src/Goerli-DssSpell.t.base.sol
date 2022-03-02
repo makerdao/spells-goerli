@@ -34,6 +34,11 @@ interface DirectDepositLike is GemJoinAbstract {
     function king() external view returns (address);
 }
 
+interface FlapLike is FlapAbstract {
+    function fill() external view returns (uint256);
+    function lid() external view returns (uint256);
+}
+
 contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
     struct SpellValues {
@@ -70,7 +75,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     EndAbstract              end = EndAbstract(        addr.addr("MCD_END"));
     ESMAbstract              esm = ESMAbstract(        addr.addr("MCD_ESM"));
     IlkRegistryAbstract      reg = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
-    FlapAbstract            flap = FlapAbstract(       addr.addr("MCD_FLAP"));
+    FlapLike                flap = FlapLike(           addr.addr("MCD_FLAP"));
 
     OsmMomAbstract           osmMom = OsmMomAbstract(     addr.addr("OSM_MOM"));
     FlipperMomAbstract      flipMom = FlipperMomAbstract( addr.addr("FLIPPER_MOM"));
@@ -198,7 +203,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         // Test for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0xC5ba94b65bD061e273c3E251C1839f25d0FCC9f7),        // populate with deployed spell if deployed
+            deployed_spell:                 address(0),        // populate with deployed spell if deployed
             deployed_spell_created:         1645105674,        // use get-created-timestamp.sh if deployed
             previous_spell:                 address(0),        // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           false,             // true if officehours is expected to be enabled in the spell

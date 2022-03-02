@@ -21,6 +21,8 @@ pragma solidity 0.6.12;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
+import "dss-interfaces/dss/FlapAbstract.sol";
+import "dss-interfaces/dss/ChainlogAbstract.sol";
 
 import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
 
@@ -28,17 +30,30 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
+    uint256 public constant RAD = 10**45;
+
+    address public constant MCD_FLAP = 0x015bEd3a7EBbB0Be03A35E0572E8a7B0BA2AA0fB;
+
     // Turn office hours off
     function officeHours() public override returns (bool) {
         return false;
     }
 
-    address constant public OAZO_ADDR = 0x0F1AE882272032D494926D5D983E4FBE253CB544;
-
     function actions() public override {
-        DssExecLib.addReaderToWhitelist(DssExecLib.getChangelogAddress("PIP_ETH"), OAZO_ADDR);
-        DssExecLib.addReaderToWhitelist(DssExecLib.getChangelogAddress("PIP_WBTC"), OAZO_ADDR);
-        DssExecLib.addReaderToWhitelist(DssExecLib.getChangelogAddress("PIP_WSTETH"), OAZO_ADDR);
+        // Replace Flapper with rate limit one
+        address MCD_VOW = DssExecLib.vow();
+        address MCD_FLAP_OLD = DssExecLib.flap();
+        DssExecLib.setValue(MCD_FLAP, "beg", FlapAbstract(MCD_FLAP_OLD).beg());
+        DssExecLib.setValue(MCD_FLAP, "ttl", FlapAbstract(MCD_FLAP_OLD).ttl());
+        DssExecLib.setValue(MCD_FLAP, "tau", FlapAbstract(MCD_FLAP_OLD).tau());
+        DssExecLib.setValue(MCD_FLAP, "lid", 150_000 * RAD);
+        DssExecLib.deauthorize(MCD_FLAP_OLD, MCD_VOW);
+        DssExecLib.authorize(MCD_FLAP, MCD_VOW);
+        DssExecLib.setContract(MCD_VOW, "flapper", MCD_FLAP);
+
+        // Changelog updates
+        DssExecLib.setChangelogAddress("MCD_FLAP", MCD_FLAP);
+        DssExecLib.setChangelogVersion("1.10.1");
     }
 }
 
