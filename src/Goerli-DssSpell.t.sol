@@ -55,39 +55,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
-    // function testAAVEDirectBarChange() public {
-    //     DirectDepositLike join = DirectDepositLike(addr.addr("MCD_JOIN_DIRECT_AAVEV2_DAI"));
-    //     assertEq(join.bar(), 3.5 * RAY / 100);
-    //
-    //     vote(address(spell));
-    //     scheduleWaitAndCast(address(spell));
-    //     assertTrue(spell.done());
-    //
-    //     assertEq(join.bar(), 2.85 * RAY / 100);
-    // }
-
-    function testCollateralIntegrations() private { // make public to use
+    function testRemoveChainlogValues() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // Insert new collateral tests here
-    }
-
-    function testLerps() private { // make public to use
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        // Insert new lerp tests here
-    }
-
-    function testNewChainlogValues() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        // Housekeeping
         try chainLog.getAddress("MCD_FLIP_ETH_A") {
             assertTrue(false);
         } catch Error(string memory errmsg) {
@@ -109,8 +81,66 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         } catch {
             assertTrue(false);
         }
+    }
+
+    // function testAAVEDirectBarChange() public {
+    //     DirectDepositLike join = DirectDepositLike(addr.addr("MCD_JOIN_DIRECT_AAVEV2_DAI"));
+    //     assertEq(join.bar(), 3.5 * 10**27 / 100);
+    //
+    //     vote(address(spell));
+    //     scheduleWaitAndCast(address(spell));
+    //     assertTrue(spell.done());
+    //
+    //     assertEq(join.bar(), 2.85 * 10**27 / 100);
+    // }
+
+    function testCollateralIntegrations() private { // make public to use
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // Insert new collateral tests here
+        checkIlkIntegration(
+            "TOKEN-X",
+            GemJoinAbstract(addr.addr("MCD_JOIN_TOKEN_X")),
+            ClipAbstract(addr.addr("MCD_CLIP_TOKEN_X")),
+            addr.addr("PIP_TOKEN"),
+            true,
+            true,
+            false
+        );
+    }
+
+    function testLerpSurplusBuffer() private { // make public to use
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // Insert new SB lerp tests here
+
+        LerpAbstract lerp = LerpAbstract(lerpFactory.lerps("NAME"));
+
+        uint256 duration = 210 days;
+        hevm.warp(block.timestamp + duration / 2);
+        assertEq(vow.hump(), 60 * MILLION * RAD);
+        lerp.tick();
+        assertEq(vow.hump(), 75 * MILLION * RAD);
+        hevm.warp(block.timestamp + duration / 2);
+        lerp.tick();
+        assertEq(vow.hump(), 90 * MILLION * RAD);
+        assertTrue(lerp.done());
+    }
+
+    function testNewChainlogValues() private { // make public to use
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
 
         // Insert new chainlog values tests here
+        assertEq(chainLog.getAddress("MCD_JOIN_TOKEN_X"), addr.addr("MCD_JOIN_TOKEN_X"));
+        assertEq(chainLog.getAddress("MCD_CLIP_TOKEN_X"), addr.addr("MCD_CLIP_TOKEN_X"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_TOKEN_X"), addr.addr("MCD_CLIP_CALC_TOKEN_X"));
+        assertEq(chainLog.version(), "X.X.X");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
@@ -119,6 +149,15 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
+        assertEq(reg.pos("TOKEN-X"), 47);
+        assertEq(reg.join("TOKEN-X"), addr.addr("MCD_JOIN_TOKEN_X"));
+        assertEq(reg.gem("TOKEN-X"), addr.addr("TOKEN"));
+        assertEq(reg.dec("TOKEN-X"), DSTokenAbstract(addr.addr("TOKEN")).decimals());
+        assertEq(reg.class("TOKEN-X"), 1);
+        assertEq(reg.pip("TOKEN-X"), addr.addr("PIP_TOKEN"));
+        assertEq(reg.xlip("TOKEN-X"), addr.addr("MCD_CLIP_TOKEN_X"));
+        //assertEq(reg.name("TOKEN-X"), "NAME"); // Token Name Not Present (DSToken, ONLY ON GOERLI)
+        assertEq(reg.symbol("TOKEN-X"), "SYMBOL");
     }
 
     function testFailWrongDay() public {
