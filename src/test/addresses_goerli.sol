@@ -306,6 +306,7 @@ contract Addresses {
         addr["PIP_GUNIV3DAIUSDC2"]              = 0x6Fb18806ff87B45220C2DB0941709142f2395069;
         addr["PIP_DAI"]                         = 0xe7A915f8Db97f0dE219e0cEf60fF7886305a14ef;
         addr["MCD_CHARTER"]                     = 0x7ea0d7ea31C544a472b55D19112e016Ba6708288;
+        addr["MCD_CHARTER_IMP"]                 = 0xf6a9bD36553208ee02049Dc8A9c44919383C9a6b;
         addr["PROXY_ACTIONS_CHARTER"]           = 0xfFb896D7BEf704DF73abc9A2EBf295CE236c5919;
         addr["PROXY_ACTIONS_END_CHARTER"]       = 0xDAdE5a1bAC92c539B886eeC82738Ff26b66Dc484;
         addr["MCD_JOIN_INST_ETH_A"]             = 0x99507A436aC9E8eB5A89001a2dFc80E343D82122;

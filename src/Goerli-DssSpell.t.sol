@@ -25,7 +25,14 @@ interface DSProxyAbstract {
 }
 
 interface CharterAbstract {
-    function getOrCreateProxy(address usr) external returns (address urp);
+    function implementation() external returns (address);
+    function gate(bytes32 ilk) external returns (uint256);
+    function Nib(bytes32 ilk) external returns (uint256);
+    function nib(bytes32 ilk, address usr) external returns (uint256);
+    function Peace(bytes32 ilk) external returns (uint256);
+    function peace(bytes32 ilk, address usr) external returns (uint256);
+    function uline(bytes32 ilk, address usr) external returns (uint256);
+    function getOrCreateProxy(address usr) external returns (address);
     function join(address gemJoin, address usr, uint256 amt) external;
     function frob(bytes32 ilk, address u, address v, address w, int256 dink, int256 dart) external;
     function file(bytes32 ilk, address usr, bytes32 what, uint256 data) external;
@@ -79,6 +86,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         charter.deny(address(this));
     }
 
+    // Note: this is a modified version of checkIlkIntegration()
     function checkCharterIlkIntegration(
         bytes32 _ilk,
         GemJoinManagedAbstract join,
@@ -286,10 +294,28 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         dai.transfer(address(0x0), 100_000 ether);
     }
 
-    function testCharterVaults() public {
+    function testCharter() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
+
+        assertEq(charter.implementation(), addr.addr("MCD_CHARTER_IMP"));
+        assertEq(GemJoinManagedAbstract(addr.addr("MCD_JOIN_INST_ETH_A")).wards(address(charter)), 1);
+        assertEq(GemJoinManagedAbstract(addr.addr("MCD_JOIN_INST_WBTC_A")).wards(address(charter)), 1);
+
+        assertEq(charter.gate("INST-ETH-A"), 1);
+        assertEq(charter.Nib("INST-ETH-A"),  0);
+        assertEq(charter.nib("INST-ETH-A", address(oazoProxy)),  1 * WAD / 100);
+        assertEq(charter.Peace("INST-ETH-A"),  0);
+        assertEq(charter.peace("INST-ETH-A", address(oazoProxy)),  150 * RAY / 100);
+        assertEq(charter.uline("INST-ETH-A", address(oazoProxy)),  900 * MILLION * RAD);
+
+        assertEq(charter.gate("INST-WBTC-A"), 1);
+        assertEq(charter.Nib("INST-WBTC-A"),  0);
+        assertEq(charter.nib("INST-WBTC-A", address(oazoProxy)),  1 * WAD / 100);
+        assertEq(charter.Peace("INST-WBTC-A"),  0);
+        assertEq(charter.peace("INST-WBTC-A", address(oazoProxy)),  150 * RAY / 100);
+        assertEq(charter.uline("INST-WBTC-A", address(oazoProxy)),  600 * MILLION * RAD);
 
         checkCharterVault("INST-ETH-A",  GemJoinManagedAbstract(addr.addr("MCD_JOIN_INST_ETH_A")));
         checkCharterVault("INST-WBTC-A", GemJoinManagedAbstract(addr.addr("MCD_JOIN_INST_WBTC_A")));
