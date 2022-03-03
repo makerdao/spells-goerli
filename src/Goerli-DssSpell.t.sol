@@ -280,11 +280,16 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function test_OSMs() private { // make public to use
+        address READER_ADDR = address(0);
+
+        // Track OSM authorizations here
+        assertEq(OsmAbstract(addr.addr("PIP_TOKEN")).bud(READER_ADDR), 0);
+
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // Track OSM authorizations here
+        assertEq(OsmAbstract(addr.addr("PIP_TOKEN")).bud(READER_ADDR), 1);
     }
 
     function test_Medianizers() private { // make public to use
@@ -293,6 +298,9 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Track Median authorizations here
+        address SET_TOKEN    = address(0);
+        address TOKENUSD_MED = OsmAbstract(addr.addr("PIP_TOKEN")).src();
+        assertEq(MedianAbstract(TOKENUSD_MED).bud(SET_TOKEN), 1);
     }
 
     function test_auth() private { // make public to use
