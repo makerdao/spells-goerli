@@ -21,7 +21,6 @@ pragma solidity 0.6.12;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
-import "dss-interfaces/dss/FlapAbstract.sol";
 import "dss-interfaces/dss/ChainlogAbstract.sol";
 
 import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
@@ -30,9 +29,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
-    uint256 constant RAD = 10**45;
-
-    address constant MCD_FLAP = 0x015bEd3a7EBbB0Be03A35E0572E8a7B0BA2AA0fB;
+    uint256 constant MILLION = 10**6;
 
     // Turn office hours off
     function officeHours() public override returns (bool) {
@@ -40,21 +37,27 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     }
 
     function actions() public override {
-        // Replace Flapper with rate limit one
-        // https://vote.makerdao.com/polling/Qmdd4Pg7
-        address MCD_VOW = DssExecLib.vow();
-        address MCD_FLAP_OLD = DssExecLib.flap();
-        DssExecLib.setValue(MCD_FLAP, "beg", FlapAbstract(MCD_FLAP_OLD).beg());
-        DssExecLib.setValue(MCD_FLAP, "ttl", FlapAbstract(MCD_FLAP_OLD).ttl());
-        DssExecLib.setValue(MCD_FLAP, "tau", FlapAbstract(MCD_FLAP_OLD).tau());
-        DssExecLib.setValue(MCD_FLAP, "lid", 150_000 * RAD);
-        DssExecLib.deauthorize(MCD_FLAP_OLD, MCD_VOW);
-        DssExecLib.authorize(MCD_FLAP, MCD_VOW);
-        DssExecLib.setContract(MCD_VOW, "flapper", MCD_FLAP);
+        // Housekeeping: PE-872 2022-02-25 Executive Spell
+        // Increase PSM-GUSD-A max debt ceiling from 10M to 60M
+        DssExecLib.setIlkAutoLineDebtCeiling("PSM-GUSD-A", 60 * MILLION);
+        // Update Chainlog
+        ChainlogAbstract(DssExecLib.LOG).removeAddress("MCD_FLIP_ETH_A");
+        ChainlogAbstract(DssExecLib.LOG).removeAddress("MCD_FLIP_BAT_A");
+        ChainlogAbstract(DssExecLib.LOG).removeAddress("MCD_FLIP_USDC_A");
 
-        // Changelog updates
-        DssExecLib.setChangelogAddress("MCD_FLAP", MCD_FLAP);
-        DssExecLib.setChangelogVersion("1.10.1");
+        // --- Open Market Committee Proposal ---
+        // https://vote.makerdao.com/polling/QmPhbQ3B
+        //
+        // Increase WSTETH-A AutoLine (line) from 200 million DAI to 300 million DAI
+        // Increase WSTETH-A Autoline (gap) from 20 million DAI to 30 million DAI.
+        DssExecLib.setIlkAutoLineParameters("WSTETH-A", 300 * MILLION, 30 * MILLION, 6 hours);
+
+        // Increase DIRECT-AAVEV2-DAI AutoLine (line) from 220 million DAI to 300 million DAI.
+        // Increase DIRECT-AAVEV2-DAI AutoLine (gap) from 50 million DAI to 65 million DAI.
+        // DssExecLib.setIlkAutoLineParameters("DIRECT-AAVEV2-DAI", 300 * MILLION, 65 * MILLION, 12 hours);
+
+        // Decrease DIRECT-AAVEV2-DAI Target Borrow Rate (bar) from 3.5% to 2.85%.
+        // DssExecLib.setD3MTargetInterestRate(DssExecLib.getChangelogAddress("MCD_JOIN_DIRECT_AAVEV2_DAI"), 285); // 2.85%
     }
 }
 

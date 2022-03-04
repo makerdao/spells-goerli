@@ -41,7 +41,7 @@ contract Addresses {
         addr["MCD_DOG"]                         = 0x5cf85A37Dbd28A239698B4F9aA9a03D55C04F292;
         addr["MCD_VOW"]                         = 0x23f78612769b9013b3145E43896Fa1578cAa2c2a;
         addr["MCD_JOIN_DAI"]                    = 0x6a60b7070befb2bfc964F646efDF70388320f4E0;
-        addr["MCD_FLAP"]                        = 0x015bEd3a7EBbB0Be03A35E0572E8a7B0BA2AA0fB;
+        addr["MCD_FLAP"]                        = 0x8E4B877d7eD4584b22e1508ffDAA8Ae4f6927397;
         addr["MCD_FLOP"]                        = 0x742D041dFBA61110Bd886509CB299DF6A521B352;
         addr["MCD_PAUSE"]                       = 0xefcd235B1f13e7fC5eab1d05C910d3c390b3439F;
         addr["MCD_PAUSE_PROXY"]                 = 0x5DCdbD3cCF9B09EAAD03bc5f50fA2B3d3ACA0121;
@@ -305,15 +305,5 @@ contract Addresses {
         addr["MCD_CLIP_CALC_GUNIV3DAIUSDC2_A"]  = 0xbF87fbA8ec2190E50Da297815A9A6Ae668306aFE;
         addr["PIP_GUNIV3DAIUSDC2"]              = 0x6Fb18806ff87B45220C2DB0941709142f2395069;
         addr["PIP_DAI"]                         = 0xe7A915f8Db97f0dE219e0cEf60fF7886305a14ef;
-        addr["MCD_CHARTER"]                     = 0x7ea0d7ea31C544a472b55D19112e016Ba6708288;
-        addr["MCD_CHARTER_IMP"]                 = 0xf6a9bD36553208ee02049Dc8A9c44919383C9a6b;
-        addr["PROXY_ACTIONS_CHARTER"]           = 0xfFb896D7BEf704DF73abc9A2EBf295CE236c5919;
-        addr["PROXY_ACTIONS_END_CHARTER"]       = 0xDAdE5a1bAC92c539B886eeC82738Ff26b66Dc484;
-        addr["MCD_JOIN_INST_ETH_A"]             = 0x99507A436aC9E8eB5A89001a2dFc80E343D82122;
-        addr["MCD_CLIP_INST_ETH_A"]             = 0x6ECc35a9237a73022697976891Def7bAd87Be408;
-        addr["MCD_CLIP_CALC_INST_ETH_A"]        = 0xea999A6381e78311Ff176751e00F46360F1562e9;
-        addr["MCD_JOIN_INST_WBTC_A"]            = 0xbd5978308C9BbF6d8d1D26cD1df9AA3EA83F782a;
-        addr["MCD_CLIP_INST_WBTC_A"]            = 0x81Bf27c821F24b6FC9Bcc0F7d4D7cc2651712E3c;
-        addr["MCD_CLIP_CALC_INST_WBTC_A"]       = 0x32ff6F008eB4aA5780efF2e0436b7adCDECb213a;
     }
 }
