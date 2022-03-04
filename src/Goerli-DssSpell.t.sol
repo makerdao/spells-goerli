@@ -391,13 +391,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testFail_new_flapper_exeed_limit() public {
-        setFlaps();
-
-        vow.flap();
-        vow.flap();
-        vow.flap();
-        vow.flap();
-        vow.flap();
+        test_new_flapper();
         vow.flap();
     }
 }

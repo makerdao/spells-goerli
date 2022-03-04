@@ -41,6 +41,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
     function actions() public override {
         // Replace Flapper with rate limit one
+        // https://vote.makerdao.com/polling/Qmdd4Pg7
         address MCD_VOW = DssExecLib.vow();
         address MCD_FLAP_OLD = DssExecLib.flap();
         DssExecLib.setValue(MCD_FLAP, "beg", FlapAbstract(MCD_FLAP_OLD).beg());
