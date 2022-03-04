@@ -55,26 +55,12 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
-    function testRemoveChainlogValues() public {
+    function testRemoveChainlogValues() private {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        try chainLog.getAddress("MCD_FLIP_ETH_A") {
-            assertTrue(false);
-        } catch Error(string memory errmsg) {
-            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
-        } catch {
-            assertTrue(false);
-        }
-        try chainLog.getAddress("MCD_FLIP_BAT_A") {
-            assertTrue(false);
-        } catch Error(string memory errmsg) {
-            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
-        } catch {
-            assertTrue(false);
-        }
-        try chainLog.getAddress("MCD_FLIP_USDC_A") {
+        try chainLog.getAddress("XXX") {
             assertTrue(false);
         } catch Error(string memory errmsg) {
             assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
@@ -302,11 +288,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(MedianAbstract(TOKENUSD_MED).bud(SET_TOKEN), 1);
     }
 
-    function test_auth() private { // make public to use
+    function test_auth() public { // make public to use
         checkAuth(false);
     }
 
-    function test_auth_in_sources() private { // make public to use
+    function test_auth_in_sources() public { // make public to use
         checkAuth(true);
     }
 
