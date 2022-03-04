@@ -359,9 +359,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     function setFlaps() internal {
         vote(address(spell));
-        spell.schedule();
-        hevm.warp(spell.nextCastTime());
-        spell.cast();
+        scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
         // Force creation of 1B surplus
         hevm.store(
