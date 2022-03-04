@@ -388,6 +388,10 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(flap.tau(), values.flap_tau, "TestError/flap-tau");
         assertTrue(flap.tau() > 0 && flap.tau() < 2678400, "TestError/flap-tau-range"); // gt 0 && lt 1 month
         assertTrue(flap.tau() >= flap.ttl(), "TestError/flap-tau-ttl");
+        // Check flap lid and sanity checks
+        uint256 normalizedLid = values.flap_lid * RAD;
+        assertEq(flap.lid(), normalizedLid, "TestError/flap-lid");
+        assertTrue(flap.lid() > 0 && flap.lid() <= MILLION * RAD, "TestError/flap-lid-range");
     }
 
     function checkCollateralValues(SystemValues storage values) internal {

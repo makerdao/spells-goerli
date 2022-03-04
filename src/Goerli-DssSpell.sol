@@ -30,9 +30,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
-    uint256 public constant RAD = 10**45;
+    uint256 constant RAD = 10**45;
 
-    address public constant MCD_FLAP = 0x015bEd3a7EBbB0Be03A35E0572E8a7B0BA2AA0fB;
+    address constant MCD_FLAP = 0x015bEd3a7EBbB0Be03A35E0572E8a7B0BA2AA0fB;
 
     // Turn office hours off
     function officeHours() public override returns (bool) {
