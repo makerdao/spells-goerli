@@ -15,6 +15,16 @@ hat=$(seth call "$MCD_ADM" 'hat()(address)')
 approvals=$(seth call "$MCD_ADM" 'approvals(address)(uint256)' "$hat")
 deposits=$(seth call "$MCD_ADM" 'deposits(address)(uint256)' "$ETH_FROM")
 
+ETH_NONCE=$(seth nonce "$ETH_FROM")
+
+sethSend() {
+    set -e
+    echo "seth send $*"
+    ETH_NONCE="$ETH_NONCE" seth send "$@"
+    ETH_NONCE=$((ETH_NONCE + 1))
+    echo ""
+}
+
 if [[ -z "$1" ]];
 then
     echo "Please specify the Goerli Spell Address"
@@ -28,26 +38,24 @@ else
         lockAmt=$(echo "$target - $deposits" | bc)
         [[ "$(echo "$(seth call "$MCD_GOV" 'balanceOf(address)(uint256)' "$ETH_FROM") >= $lockAmt" | bc)" == 1 ]] || { echo "$ETH_FROM: Insufficient MKR Balance"; exit 1; }
 
-        seth send "$MCD_GOV" 'approve(address,uint256)' "$MCD_ADM" "$lockAmt"
-        seth send "$MCD_ADM" 'lock(uint256)' "$lockAmt"
+        sethSend "$MCD_GOV" 'approve(address,uint256)' "$MCD_ADM" "$lockAmt"
+        sethSend "$MCD_ADM" 'lock(uint256)' "$lockAmt"
 
         deposits=$(seth call "$MCD_ADM" 'deposits(address)(uint256)' "$ETH_FROM")
     fi
 
-    seth send "$MCD_ADM" 'vote(address[] memory)' ["$1"]
-    seth send "$MCD_ADM" 'lift(address)' "$1"
+    sethSend "$MCD_ADM" 'vote(address[] memory)' ["$1"]
+    sethSend "$MCD_ADM" 'lift(address)' "$1"
 
-    seth send "$1" 'schedule()'
+    sethSend "$1" 'schedule()'
 
-    sleep 120s
-
-    seth send "$1" 'cast()'
+    sethSend "$1" 'cast()'
 
     if [[ "$(echo "$deposits > $DESIRED_HAT_APPROVALS" | bc)" == 1 ]]; then
         freeAmt=$(echo "$deposits - $DESIRED_HAT_APPROVALS" | bc)
         [[ "$(echo "$(seth call "$MCD_IOU" 'balanceOf(address)(uint256)' "$ETH_FROM") >= $freeAmt" | bc)" == 1 ]] || { echo "$ETH_FROM: Insufficient IOU Balance"; exit 1; }
-        seth send "$MCD_IOU" 'approve(address,uint256)' "$MCD_ADM" "$freeAmt"
-        seth send "$MCD_ADM" 'free(uint256)' "$freeAmt"
+        sethSend "$MCD_IOU" 'approve(address,uint256)' "$MCD_ADM" "$freeAmt"
+        sethSend "$MCD_ADM" 'free(uint256)' "$freeAmt"
     fi
 
     echo "Goerli Spell Cast: https://goerli.etherscan.io/address/$1"
