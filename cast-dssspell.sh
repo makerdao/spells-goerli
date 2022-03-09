@@ -20,7 +20,7 @@ ETH_NONCE=$(seth nonce "$ETH_FROM")
 sethSend() {
     set -e
     echo "seth send $*"
-    ETH_NONCE="$ETH_NONCE" seth send "$@"
+    ETH_NONCE="$ETH_NONCE" ETH_GAS=$(seth estimate "$@") seth send "$@"
     ETH_NONCE=$((ETH_NONCE + 1))
     echo ""
 }
