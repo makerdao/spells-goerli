@@ -49,6 +49,8 @@ else
 
     sethSend "$1" 'schedule()'
 
+    sleep 120s
+
     sethSend "$1" 'cast()'
 
     if [[ "$(echo "$deposits > $DESIRED_HAT_APPROVALS" | bc)" == 1 ]]; then
