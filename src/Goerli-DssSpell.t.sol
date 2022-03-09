@@ -123,9 +123,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        assertEq(chainLog.getAddress("MCD_FLAP"), addr.addr("MCD_FLAP"));
-
-        assertEq(chainLog.version(), "1.10.1");
+        assertEq(chainLog.getAddress("FLASH_KILLER"), addr.addr("FLASH_KILLER"));
+        assertEq(chainLog.version(), "1.11.0");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
@@ -288,11 +287,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(MedianAbstract(TOKENUSD_MED).bud(SET_TOKEN), 1);
     }
 
-    function test_auth() public { // make public to use
+    function test_auth() private { // make public to use
         checkAuth(false);
     }
 
-    function test_auth_in_sources() public { // make public to use
+    function test_auth_in_sources() private { // make public to use
         checkAuth(true);
     }
 
@@ -343,41 +342,39 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(expectedHash, actualHash);
     }
 
-    function setFlaps() internal {
+    function test_flashKiller() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
-        // Force creation of 1B surplus
+
+        FlashAbstract flash = FlashAbstract(addr.addr("MCD_FLASH"));
+        address killer = addr.addr("FLASH_KILLER");
+
+        assertEq(flash.wards(killer), 1);
+
+        // Emulate Global Settlement
         hevm.store(
-            address(vat),
-            bytes32(uint256(keccak256(abi.encode(address(vow), uint256(5))))),
-            bytes32(uint256(1_000_000_000 * RAD))
-        );
-        assertEq(vat.dai(address(vow)), 1_000_000_000 * RAD);
-        vow.heal(vat.sin(address(vow)) - vow.Sin() - vow.Ash());
+            address(end),
+            keccak256(abi.encode(address(this), uint256(0))),
+            bytes32(uint256(1)));
+        end.cage();
+
+        assertTrue(flash.max() > 0);
+        FlashKillerLike(killer).kill();
+        assertEq(flash.max(), 0);
     }
 
-    function test_new_flapper() public {
-        setFlaps();
+    function testFail_flashKiller() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
 
-        assertEq(vow.flapper(), addr.addr("MCD_FLAP"));
-        assertEq(address(flap), addr.addr("MCD_FLAP"));
+        address killer = addr.addr("FLASH_KILLER");
 
-        assertEq(flap.fill(), 0);
-        vow.flap();
-        assertEq(flap.fill(), 30_000 * RAD);
-        vow.flap();
-        assertEq(flap.fill(), 60_000 * RAD);
-        vow.flap();
-        assertEq(flap.fill(), 90_000 * RAD);
-        vow.flap();
-        assertEq(flap.fill(), 120_000 * RAD);
-        vow.flap();
-        assertEq(flap.fill(), 150_000 * RAD);
+        FlashKillerLike(killer).kill();
     }
+}
 
-    function testFail_new_flapper_exeed_limit() public {
-        test_new_flapper();
-        vow.flap();
-    }
+interface FlashKillerLike {
+    function kill() external;
 }

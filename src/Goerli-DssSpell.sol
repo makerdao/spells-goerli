@@ -18,21 +18,21 @@
 pragma solidity 0.6.12;
 // Enable ABIEncoderV2 when onboarding collateral
 //pragma experimental ABIEncoderV2;
-
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
-import "dss-interfaces/dss/FlapAbstract.sol";
-import "dss-interfaces/dss/ChainlogAbstract.sol";
 
 import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
+
+interface FlashKillerLike {
+    function vat() external view returns (address);
+    function flash() external view returns (address);
+}
 
 contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
-    uint256 constant RAD = 10**45;
-
-    address constant MCD_FLAP = 0x015bEd3a7EBbB0Be03A35E0572E8a7B0BA2AA0fB;
+    address constant FLASH_KILLER = 0xa95FaD7948079df3c579DDb0752E39dC29Eb1AFf;
 
     // Turn office hours off
     function officeHours() public override returns (bool) {
@@ -40,21 +40,14 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     }
 
     function actions() public override {
-        // Replace Flapper with rate limit one
-        // https://vote.makerdao.com/polling/Qmdd4Pg7
-        address MCD_VOW = DssExecLib.vow();
-        address MCD_FLAP_OLD = DssExecLib.flap();
-        DssExecLib.setValue(MCD_FLAP, "beg", FlapAbstract(MCD_FLAP_OLD).beg());
-        DssExecLib.setValue(MCD_FLAP, "ttl", FlapAbstract(MCD_FLAP_OLD).ttl());
-        DssExecLib.setValue(MCD_FLAP, "tau", FlapAbstract(MCD_FLAP_OLD).tau());
-        DssExecLib.setValue(MCD_FLAP, "lid", 150_000 * RAD);
-        DssExecLib.deauthorize(MCD_FLAP_OLD, MCD_VOW);
-        DssExecLib.authorize(MCD_FLAP, MCD_VOW);
-        DssExecLib.setContract(MCD_VOW, "flapper", MCD_FLAP);
-
-        // Changelog updates
-        DssExecLib.setChangelogAddress("MCD_FLAP", MCD_FLAP);
-        DssExecLib.setChangelogVersion("1.10.1");
+        require(FlashKillerLike(FLASH_KILLER).vat() == DssExecLib.vat(), "DssSpell/non-matching-vat");
+        address flash = DssExecLib.getChangelogAddress("MCD_FLASH");
+        require(FlashKillerLike(FLASH_KILLER).flash() == flash, "DssSpell/non-matching-flash");
+        DssExecLib.authorize(flash, FLASH_KILLER);
+        DssExecLib.setChangelogAddress("FLASH_KILLER", FLASH_KILLER);
+        // This spell should actually be 1.10.1. However the prev spell bumped to that version (which should have been 1.11.0).
+        // Then now we are going to bump to it (simulating order that is happenning on mainnet)
+        DssExecLib.setChangelogVersion("1.11.0");
     }
 }
 
