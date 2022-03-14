@@ -26,11 +26,9 @@ contract Addresses {
         addr["MULTICALL"]                       = 0xb8c864B60e9467398800Df34da39BF4f0c459461;
         addr["FAUCET"]                          = 0xa473CdDD6E4FAc72481dc36f39A409D86980D187;
         addr["MCD_DEPLOY"]                      = 0xc09880a0D6d06fa18C8bDC9dF2E203F0d0124fa1;
-        addr["JOIN_FAB"]                        = 0x0aaA1E0f026c194E0F951a7763F9edc796c6eDeE;
         addr["FLIP_FAB"]                        = 0x333Ec4d92b546d6107Dc931156139A76dFAfD938;
         addr["CLIP_FAB"]                        = 0xcfAab43101A01548A95F0f7dBB0CeF6f6490A389;
         addr["CALC_FAB"]                        = 0x579f007Fb7151162e3095606232ef9029E090366;
-        addr["LERP_FAB"]                        = 0xE7988B75a19D8690272D65882Ab0D07D492f7002;
         addr["MCD_GOV"]                         = 0xc5E4eaB513A7CD12b2335e8a0D57273e13D499f7;
         addr["GOV_GUARD"]                       = 0xB9b861e8F9b29322815260B6883Bbe1DBC91dA8A;
         addr["MCD_IOU"]                         = 0x651D1B91e4F657392a51Dba7A6A1A1a72eC6aD1c;
@@ -43,7 +41,7 @@ contract Addresses {
         addr["MCD_DOG"]                         = 0x5cf85A37Dbd28A239698B4F9aA9a03D55C04F292;
         addr["MCD_VOW"]                         = 0x23f78612769b9013b3145E43896Fa1578cAa2c2a;
         addr["MCD_JOIN_DAI"]                    = 0x6a60b7070befb2bfc964F646efDF70388320f4E0;
-        addr["MCD_FLAP"]                        = 0x015bEd3a7EBbB0Be03A35E0572E8a7B0BA2AA0fB;
+        addr["MCD_FLAP"]                        = 0x8E4B877d7eD4584b22e1508ffDAA8Ae4f6927397;
         addr["MCD_FLOP"]                        = 0x742D041dFBA61110Bd886509CB299DF6A521B352;
         addr["MCD_PAUSE"]                       = 0xefcd235B1f13e7fC5eab1d05C910d3c390b3439F;
         addr["MCD_PAUSE_PROXY"]                 = 0x5DCdbD3cCF9B09EAAD03bc5f50fA2B3d3ACA0121;
@@ -65,7 +63,6 @@ contract Addresses {
         addr["CLIPPER_MOM"]                     = 0xC67fFD490903521F778b2A3B2A13D0FC0Be96F98;
         addr["MCD_IAM_AUTO_LINE"]               = 0x21DaD87779D9FfA8Ed3E1036cBEA8784cec4fB83;
         addr["MCD_FLASH"]                       = 0x0a6861D6200B519a8B9CFA1E7Edd582DD1573581;
-        addr["FLASH_KILLER"]                    = 0xa95FaD7948079df3c579DDb0752E39dC29Eb1AFf;
         addr["PROXY_FACTORY"]                   = 0x84eFB9c18059394172D0d69A3E58B03320001871;
         addr["PROXY_REGISTRY"]                  = 0x46759093D8158db8BB555aC7C6F98070c56169ce;
         addr["MCD_VEST_DAI"]                    = 0x59B1a603cAC9e38EA2AC2C479FFE42Ce48123Fd4;
@@ -295,6 +292,8 @@ contract Addresses {
         addr["RWA006_A_OUTPUT_CONDUIT"]         = 0xd2Ef07535267D17d2314894f7821A43e9700A02e;
         addr["PROXY_PAUSE_ACTIONS"]             = 0x8D1187FCa9A104211bd25c689C08718AD8730C83;
         addr["PROXY_DEPLOYER"]                  = 0xc9476Fd378de5b0de5C4280D4323f6F89f723c15;
+        addr["LERP_FAB"]                        = 0xE7988B75a19D8690272D65882Ab0D07D492f7002;
+        addr["JOIN_FAB"]                        = 0x0aaA1E0f026c194E0F951a7763F9edc796c6eDeE;
         addr["GUNIV3DAIUSDC1"]                  = 0xc5D83e829Ecdce4d67645EE1a1317451e0b4c68d;
         addr["PIP_GUNIV3DAIUSDC1"]              = 0xF953cdebbbf63607EeBc556438d86F2e1d47C8aA;
         addr["MCD_JOIN_GUNIV3DAIUSDC1_A"]       = 0xFBF4e3bB9B86d24F91Da185E6F4C8D903Fb63C86;
