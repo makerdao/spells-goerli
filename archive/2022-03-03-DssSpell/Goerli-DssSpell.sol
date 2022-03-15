@@ -18,21 +18,18 @@
 pragma solidity 0.6.12;
 // Enable ABIEncoderV2 when onboarding collateral
 //pragma experimental ABIEncoderV2;
+
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
+import "dss-interfaces/dss/ChainlogAbstract.sol";
 
 import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
-
-interface FlashKillerLike {
-    function vat() external view returns (address);
-    function flash() external view returns (address);
-}
 
 contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
-    address constant FLASH_KILLER = 0xa95FaD7948079df3c579DDb0752E39dC29Eb1AFf;
+    uint256 constant MILLION = 10**6;
 
     // Turn office hours off
     function officeHours() public override returns (bool) {
@@ -40,14 +37,27 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     }
 
     function actions() public override {
-        require(FlashKillerLike(FLASH_KILLER).vat() == DssExecLib.vat(), "DssSpell/non-matching-vat");
-        address flash = DssExecLib.getChangelogAddress("MCD_FLASH");
-        require(FlashKillerLike(FLASH_KILLER).flash() == flash, "DssSpell/non-matching-flash");
-        DssExecLib.authorize(flash, FLASH_KILLER);
-        DssExecLib.setChangelogAddress("FLASH_KILLER", FLASH_KILLER);
-        // This spell should actually be 1.10.1. However the prev spell bumped to that version (which should have been 1.11.0).
-        // Then now we are going to bump to it (simulating order that is happenning on mainnet)
-        DssExecLib.setChangelogVersion("1.11.0");
+        // Housekeeping: PE-872 2022-02-25 Executive Spell
+        // Increase PSM-GUSD-A max debt ceiling from 10M to 60M
+        DssExecLib.setIlkAutoLineDebtCeiling("PSM-GUSD-A", 60 * MILLION);
+        // Update Chainlog
+        ChainlogAbstract(DssExecLib.LOG).removeAddress("MCD_FLIP_ETH_A");
+        ChainlogAbstract(DssExecLib.LOG).removeAddress("MCD_FLIP_BAT_A");
+        ChainlogAbstract(DssExecLib.LOG).removeAddress("MCD_FLIP_USDC_A");
+
+        // --- Open Market Committee Proposal ---
+        // https://vote.makerdao.com/polling/QmPhbQ3B
+        //
+        // Increase WSTETH-A AutoLine (line) from 200 million DAI to 300 million DAI
+        // Increase WSTETH-A Autoline (gap) from 20 million DAI to 30 million DAI.
+        DssExecLib.setIlkAutoLineParameters("WSTETH-A", 300 * MILLION, 30 * MILLION, 6 hours);
+
+        // Increase DIRECT-AAVEV2-DAI AutoLine (line) from 220 million DAI to 300 million DAI.
+        // Increase DIRECT-AAVEV2-DAI AutoLine (gap) from 50 million DAI to 65 million DAI.
+        // DssExecLib.setIlkAutoLineParameters("DIRECT-AAVEV2-DAI", 300 * MILLION, 65 * MILLION, 12 hours);
+
+        // Decrease DIRECT-AAVEV2-DAI Target Borrow Rate (bar) from 3.5% to 2.85%.
+        // DssExecLib.setD3MTargetInterestRate(DssExecLib.getChangelogAddress("MCD_JOIN_DIRECT_AAVEV2_DAI"), 285); // 2.85%
     }
 }
 

@@ -40,7 +40,6 @@ contract Config {
         uint256 flap_beg;
         uint256 flap_ttl;
         uint256 flap_tau;
-        uint256 flap_lid;
         uint256 cat_box;
         uint256 dog_Hole;
         uint256 esm_min;
@@ -99,8 +98,8 @@ contract Config {
         // Values for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0x689eEC3a37529C7a16C5686DCf407fe0F8a12e3A),        // populate with deployed spell if deployed
-            deployed_spell_created:         1646846971,        // use get-created-timestamp.sh if deployed
+            deployed_spell:                 address(0x894a6293B4c50b9b24d34e7465eC48ac8aDcf685),        // populate with deployed spell if deployed
+            deployed_spell_created:         1646331313,        // use get-created-timestamp.sh if deployed
             previous_spell:                 address(0),        // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           false,             // true if officehours is expected to be enabled in the spell
             expiration_threshold:           weekly_expiration  // (weekly_expiration,monthly_expiration) if weekly or monthly spell
@@ -122,7 +121,6 @@ contract Config {
             flap_beg:              400,                     // in basis points
             flap_ttl:              30 minutes,              // in seconds
             flap_tau:              72 hours,                // in seconds
-            flap_lid:              150 * THOUSAND,          // in whole Dai units
             cat_box:               20 * MILLION,            // In whole Dai units
             dog_Hole:              100 * MILLION,           // In whole Dai units
             esm_min:               100 * THOUSAND,          // In whole MKR units
@@ -130,7 +128,7 @@ contract Config {
             osm_mom_authority:     chief,                   // OsmMom authority
             flipper_mom_authority: chief,                   // FlipperMom authority
             clipper_mom_authority: chief,                   // ClipperMom authority
-            ilk_count:             49                       // Num expected in system
+            ilk_count:             47                       // Num expected in system
         });
 
         //
@@ -1578,66 +1576,6 @@ contract Config {
             calc_tau:     0,
             calc_step:    120,
             calc_cut:     9990,
-            lerp:         false
-        });
-        afterSpell.collaterals["INST-ETH-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      900 * MILLION,
-            aL_gap:       50 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          150,
-            mat:          12000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         2000,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     50 * MILLION,
-            clip_buf:     12000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900,
-            lerp:         false
-        });
-        afterSpell.collaterals["INST-WBTC-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      600 * MILLION,
-            aL_gap:       50 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         10 * THOUSAND,
-            pct:          150,
-            mat:          12000,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         2000,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     30 * MILLION,
-            clip_buf:     12000,
-            clip_tail:    140 minutes,
-            clip_cusp:    4000,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900,
             lerp:         false
         });
     }

@@ -55,12 +55,26 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
-    function testRemoveChainlogValues() private {
+    function testRemoveChainlogValues() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        try chainLog.getAddress("XXX") {
+        try chainLog.getAddress("MCD_FLIP_ETH_A") {
+            assertTrue(false);
+        } catch Error(string memory errmsg) {
+            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
+        } catch {
+            assertTrue(false);
+        }
+        try chainLog.getAddress("MCD_FLIP_BAT_A") {
+            assertTrue(false);
+        } catch Error(string memory errmsg) {
+            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
+        } catch {
+            assertTrue(false);
+        }
+        try chainLog.getAddress("MCD_FLIP_USDC_A") {
             assertTrue(false);
         } catch Error(string memory errmsg) {
             assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
@@ -117,14 +131,16 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() public { // make public to use
+    function testNewChainlogValues() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        assertEq(chainLog.getAddress("FLASH_KILLER"), addr.addr("FLASH_KILLER"));
-        assertEq(chainLog.version(), "1.11.0");
+        assertEq(chainLog.getAddress("MCD_JOIN_TOKEN_X"), addr.addr("MCD_JOIN_TOKEN_X"));
+        assertEq(chainLog.getAddress("MCD_CLIP_TOKEN_X"), addr.addr("MCD_CLIP_TOKEN_X"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_TOKEN_X"), addr.addr("MCD_CLIP_CALC_TOKEN_X"));
+        assertEq(chainLog.version(), "X.X.X");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
@@ -341,40 +357,4 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         }
         assertEq(expectedHash, actualHash);
     }
-
-    function test_flashKiller() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        FlashAbstract flash = FlashAbstract(addr.addr("MCD_FLASH"));
-        address killer = addr.addr("FLASH_KILLER");
-
-        assertEq(flash.wards(killer), 1);
-
-        // Emulate Global Settlement
-        hevm.store(
-            address(end),
-            keccak256(abi.encode(address(this), uint256(0))),
-            bytes32(uint256(1)));
-        end.cage();
-
-        assertTrue(flash.max() > 0);
-        FlashKillerLike(killer).kill();
-        assertEq(flash.max(), 0);
-    }
-
-    function testFail_flashKiller() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        address killer = addr.addr("FLASH_KILLER");
-
-        FlashKillerLike(killer).kill();
-    }
-}
-
-interface FlashKillerLike {
-    function kill() external;
 }

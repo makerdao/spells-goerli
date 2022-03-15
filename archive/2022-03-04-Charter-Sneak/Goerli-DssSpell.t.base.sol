@@ -34,12 +34,18 @@ interface DirectDepositLike is GemJoinAbstract {
     function king() external view returns (address);
 }
 
-interface FlapLike is FlapAbstract {
-    function fill() external view returns (uint256);
-    function lid() external view returns (uint256);
-}
-
 contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
+
+    struct SpellValues {
+        address deployed_spell;
+        uint256 deployed_spell_created;
+        address previous_spell;
+        bool    office_hours_enabled;
+        uint256 expiration_threshold;
+    }
+
+    SpellValues  spellValues;
+
     Hevm hevm;
 
     Rates         rates = new Rates();
@@ -64,7 +70,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     EndAbstract              end = EndAbstract(        addr.addr("MCD_END"));
     ESMAbstract              esm = ESMAbstract(        addr.addr("MCD_ESM"));
     IlkRegistryAbstract      reg = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
-    FlapLike                flap = FlapLike(           addr.addr("MCD_FLAP"));
+    FlapAbstract            flap = FlapAbstract(       addr.addr("MCD_FLAP"));
 
     OsmMomAbstract           osmMom = OsmMomAbstract(     addr.addr("OSM_MOM"));
     FlipperMomAbstract      flipMom = FlipperMomAbstract( addr.addr("FLIPPER_MOM"));
@@ -86,6 +92,9 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     // uint256 constant WAD        = 10 ** 18; // provided by ds-math
     // uint256 constant RAY        = 10 ** 27; // provided by ds-math
     uint256 constant RAD        = 10 ** 45;
+
+    uint256 constant monthly_expiration = 4 days;
+    uint256 constant weekly_expiration = 30 days;
 
     event Debug(uint256 index, uint256 val);
     event Debug(uint256 index, address addr);
@@ -138,10 +147,6 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         }
     }
 
-    function cmpStr(string memory a, string memory b) internal pure returns (bool) {
-         return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
-    }
-
     // Not currently used
     // function bytes32ToStr(bytes32 _bytes32) internal pure returns (string memory) {
     //     bytes memory bytesArray = new bytes(32);
@@ -189,12 +194,49 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     function setUp() public {
         hevm = Hevm(address(CHEAT_CODE));
 
-        setValues(address(chief));
-
+        //
+        // Test for spell-specific parameters
+        //
+        spellValues = SpellValues({
+            deployed_spell:                 address(0x3c92639df63Ae7c9835cA0127150d1451d5551eF),        // populate with deployed spell if deployed
+            deployed_spell_created:         1646433809,        // use get-created-timestamp.sh if deployed
+            previous_spell:                 address(0),        // supply if there is a need to test prior to its cast() function being called on-chain.
+            office_hours_enabled:           false,             // true if officehours is expected to be enabled in the spell
+            expiration_threshold:           weekly_expiration  // (weekly_expiration,monthly_expiration) if weekly or monthly spell
+        });
         spellValues.deployed_spell_created = spellValues.deployed_spell != address(0) ? spellValues.deployed_spell_created : block.timestamp;
         castPreviousSpell();
         spell = spellValues.deployed_spell != address(0) ?
             DssSpell(spellValues.deployed_spell) : new DssSpell();
+
+        //
+        // Test for all system configuration changes
+        //
+        afterSpell = SystemValues({
+            line_offset:           500 * MILLION,           // Offset between the global line against the sum of local lines
+            pot_dsr:               1,                       // In basis points
+            pause_delay:           60 seconds,              // In seconds
+            vow_wait:              156 hours,               // In seconds
+            vow_dump:              250,                     // In whole Dai units
+            vow_sump:              50 * THOUSAND,           // In whole Dai units
+            vow_bump:              30 * THOUSAND,           // In whole Dai units
+            vow_hump_min:          250 * MILLION,           // In whole Dai units
+            vow_hump_max:          250 * MILLION,           // In whole Dai units
+            flap_beg:              400,                     // in basis points
+            flap_ttl:              30 minutes,              // in seconds
+            flap_tau:              72 hours,                // in seconds
+            cat_box:               20 * MILLION,            // In whole Dai units
+            dog_Hole:              100 * MILLION,           // In whole Dai units
+            esm_min:               100 * THOUSAND,          // In whole MKR units
+            pause_authority:       address(chief),          // Pause authority
+            osm_mom_authority:     address(chief),          // OsmMom authority
+            flipper_mom_authority: address(chief),          // FlipperMom authority
+            clipper_mom_authority: address(chief),          // ClipperMom authority
+            ilk_count:             49                       // Num expected in system
+        });
+
+        setCollateralValues();
+
     }
 
     function scheduleWaitAndCastFailDay() public {
@@ -388,10 +430,6 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(flap.tau(), values.flap_tau, "TestError/flap-tau");
         assertTrue(flap.tau() > 0 && flap.tau() < 2678400, "TestError/flap-tau-range"); // gt 0 && lt 1 month
         assertTrue(flap.tau() >= flap.ttl(), "TestError/flap-tau-ttl");
-        // Check flap lid and sanity checks
-        uint256 normalizedLid = values.flap_lid * RAD;
-        assertEq(flap.lid(), normalizedLid, "TestError/flap-lid");
-        assertTrue(flap.lid() > 0 && flap.lid() <= MILLION * RAD, "TestError/flap-lid-range");
     }
 
     function checkCollateralValues(SystemValues storage values) internal {
@@ -941,25 +979,11 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(token.balanceOf(address(join)), 0);
     }
 
-    function checkDaiVest(
-        uint256 _index,
-        address _wallet,
-        uint256 _start,
-        uint256 _cliff,
-        uint256 _end,
-        address _manager,
-        uint256 _restricted,
-        uint256 _reward,
-        uint256 _claimed
-        ) public {
-        assertEq(vestDai.usr(_index), _wallet,     "usr");
-        assertEq(vestDai.bgn(_index), _start,      "bgn");
-        assertEq(vestDai.clf(_index), _cliff,      "clf");
-        assertEq(vestDai.fin(_index), _end,        "fin");
-        assertEq(vestDai.mgr(_index), _manager,    "mgr");
-        assertEq(vestDai.res(_index), _restricted, "res");
-        assertEq(vestDai.tot(_index), _reward,     "tot");
-        assertEq(vestDai.rxd(_index), _claimed,    "rxd");
+    function checkDaiVest(uint256 _index, address _wallet, uint256 _start, uint256 _end, uint256 _amount) public {
+        assertEq(vestDai.usr(_index), _wallet);
+        assertEq(vestDai.bgn(_index), _start);
+        assertEq(vestDai.fin(_index), _end);
+        assertEq(vestDai.tot(_index), _amount * WAD);
     }
 
     function getMat(bytes32 _ilk) internal view returns (uint256 mat) {
