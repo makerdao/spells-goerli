@@ -238,7 +238,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
     function vote(address spell_) internal {
         if (chief.hat() != spell_) {
-            giveTokens(gov, 999999999999 ether);
+            giveTokens(address(gov), 999999999999 ether);
             gov.approve(address(chief), uint256(-1));
             chief.lock(999999999999 ether);
 
@@ -596,9 +596,9 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         return price;
     }
 
-    function giveTokens(DSTokenAbstract token, uint256 amount) internal {
+    function giveTokens(address token, uint256 amount) internal {
         // Edge case - balance is already set for some reason
-        if (token.balanceOf(address(this)) == amount) return;
+        if (GemAbstract(token).balanceOf(address(this)) == amount) return;
 
         for (uint256 i = 0; i < 200; i++) {
             // Scan the storage for the balance storage slot
@@ -611,7 +611,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
                 keccak256(abi.encode(address(this), uint256(i))),
                 bytes32(amount)
             );
-            if (token.balanceOf(address(this)) == amount) {
+            if (GemAbstract(token).balanceOf(address(this)) == amount) {
                 // Found it
                 return;
             } else {
@@ -698,7 +698,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         dust /= RAY;
         uint256 amount = 2 * dust * 10**token.decimals() / (_isOSM ? getOSMPrice(pip) : uint256(DSValueAbstract(pip).read()));
         uint256 amount18 = token.decimals() == 18 ? amount : amount * 10**(18 - token.decimals());
-        giveTokens(token, amount);
+        giveTokens(address(token), amount);
 
         assertEq(token.balanceOf(address(this)), amount);
         assertEq(vat.gem(_ilk, address(this)), 0);
@@ -793,7 +793,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         (,,,, uint256 dust) = vat.ilks(_ilk);
         dust /= RAY;
         uint256 amount = 2 * dust * WAD / getUNIV2LPPrice(address(pip));
-        giveTokens(token, amount);
+        giveTokens(address(token), amount);
 
         assertEq(token.balanceOf(address(this)), amount);
         assertEq(vat.gem(_ilk, address(this)), 0);
@@ -868,7 +868,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(psm.tout(), tout);
 
         uint256 amount = 1000 * (10 ** token.decimals());
-        giveTokens(token, amount);
+        giveTokens(address(token), amount);
 
         // Approvals
         token.approve(address(join), amount);
