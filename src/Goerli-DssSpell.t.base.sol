@@ -671,7 +671,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         bool _checkLiquidations,
         bool _transferFee
     ) public {
-        DSTokenAbstract token = DSTokenAbstract(join.gem());
+        GemAbstract token = GemAbstract(join.gem());
 
         hevm.warp(block.timestamp + 3601); // Avoid OSM delay errors on Görli
         if (_isOSM) OsmAbstract(pip).poke();
@@ -696,8 +696,8 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
         (,,,, uint256 dust) = vat.ilks(_ilk);
         dust /= RAY;
-        uint256 amount = 2 * dust * 10**token.decimals() / (_isOSM ? getOSMPrice(pip) : uint256(DSValueAbstract(pip).read()));
-        uint256 amount18 = token.decimals() == 18 ? amount : amount * 10**(18 - token.decimals());
+        uint256 amount = 2 * dust * 10 ** uint256(token.decimals()) / (_isOSM ? getOSMPrice(pip) : uint256(DSValueAbstract(pip).read()));
+        uint256 amount18 = token.decimals() == 18 ? amount : amount * 10**(18 - uint256(token.decimals()));
         giveTokens(address(token), amount);
 
         assertEq(token.balanceOf(address(this)), amount);
@@ -768,7 +768,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         bool _isMedian2,
         bool _checkLiquidations
     ) public {
-        DSTokenAbstract token = DSTokenAbstract(join.gem());
+        GemAbstract token = GemAbstract(join.gem());
 
         pip.poke();
         hevm.warp(block.timestamp + 3601);
@@ -850,7 +850,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         uint256 tin,
         uint256 tout
     ) public {
-        DSTokenAbstract token = DSTokenAbstract(join.gem());
+        GemAbstract token = GemAbstract(join.gem());
 
         assertTrue(pip != address(0));
 
@@ -867,7 +867,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(psm.tin(), tin);
         assertEq(psm.tout(), tout);
 
-        uint256 amount = 1000 * (10 ** token.decimals());
+        uint256 amount = 1000 * (10 ** uint256(token.decimals()));
         giveTokens(address(token), amount);
 
         // Approvals
@@ -878,7 +878,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         psm.sellGem(address(this), amount);
         amount -= amount * tin / WAD;
         assertEq(token.balanceOf(address(this)), 0);
-        assertEq(dai.balanceOf(address(this)), amount * (10 ** (18 - token.decimals())));
+        assertEq(dai.balanceOf(address(this)), amount * (10 ** (18 - uint256(token.decimals()))));
 
         // Convert all DAI to TOKEN
         amount -= amount * tout / WAD;
@@ -898,7 +898,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         uint256 bar,
         uint256 tau
     ) public {
-        DSTokenAbstract token = DSTokenAbstract(join.gem());
+        GemAbstract token = GemAbstract(join.gem());
         assertTrue(pip != address(0));
 
         spotter.poke(_ilk);
