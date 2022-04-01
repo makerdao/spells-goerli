@@ -37,9 +37,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     address constant public OAZO_OLD_ADDR = 0x0F1AE882272032D494926D5D983E4FBE253CB544;
 
     function actions() public override {
-        DssExecLib.removeReaderFromWhitelist(DssExecLib.getChangelogAddress("PIP_ETH"), OAZO_ADDR);
-        DssExecLib.removeReaderFromWhitelist(DssExecLib.getChangelogAddress("PIP_WBTC"), OAZO_ADDR);
-        DssExecLib.removeReaderFromWhitelist(DssExecLib.getChangelogAddress("PIP_WSTETH"), OAZO_ADDR);
+        DssExecLib.removeReaderFromWhitelist(DssExecLib.getChangelogAddress("PIP_ETH"), OAZO_OLD_ADDR);
+        DssExecLib.removeReaderFromWhitelist(DssExecLib.getChangelogAddress("PIP_WBTC"), OAZO_OLD_ADDR);
+        DssExecLib.removeReaderFromWhitelist(DssExecLib.getChangelogAddress("PIP_WSTETH"), OAZO_OLD_ADDR);
 
         DssExecLib.addReaderToWhitelist(DssExecLib.getChangelogAddress("PIP_ETH"), OAZO_ADDR);
         DssExecLib.addReaderToWhitelist(DssExecLib.getChangelogAddress("PIP_WBTC"), OAZO_ADDR);
