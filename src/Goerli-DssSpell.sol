@@ -23,31 +23,27 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
 
-interface FlashKillerLike {
-    function vat() external view returns (address);
-    function flash() external view returns (address);
-}
 
 contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
-
-    address constant FLASH_KILLER = 0xa95FaD7948079df3c579DDb0752E39dC29Eb1AFf;
 
     // Turn office hours off
     function officeHours() public override returns (bool) {
         return false;
     }
 
+    address constant public OAZO_ADDR     = 0xb0724B07883DF9e9276a77CD73acd00FE5F86F55;
+    address constant public OAZO_OLD_ADDR = 0x0F1AE882272032D494926D5D983E4FBE253CB544;
+
     function actions() public override {
-        require(FlashKillerLike(FLASH_KILLER).vat() == DssExecLib.vat(), "DssSpell/non-matching-vat");
-        address flash = DssExecLib.getChangelogAddress("MCD_FLASH");
-        require(FlashKillerLike(FLASH_KILLER).flash() == flash, "DssSpell/non-matching-flash");
-        DssExecLib.authorize(flash, FLASH_KILLER);
-        DssExecLib.setChangelogAddress("FLASH_KILLER", FLASH_KILLER);
-        // This spell should actually be 1.10.1. However the prev spell bumped to that version (which should have been 1.11.0).
-        // Then now we are going to bump to it (simulating order that is happenning on mainnet)
-        DssExecLib.setChangelogVersion("1.11.0");
+        DssExecLib.removeReaderFromWhitelist(DssExecLib.getChangelogAddress("PIP_ETH"), OAZO_ADDR);
+        DssExecLib.removeReaderFromWhitelist(DssExecLib.getChangelogAddress("PIP_WBTC"), OAZO_ADDR);
+        DssExecLib.removeReaderFromWhitelist(DssExecLib.getChangelogAddress("PIP_WSTETH"), OAZO_ADDR);
+
+        DssExecLib.addReaderToWhitelist(DssExecLib.getChangelogAddress("PIP_ETH"), OAZO_ADDR);
+        DssExecLib.addReaderToWhitelist(DssExecLib.getChangelogAddress("PIP_WBTC"), OAZO_ADDR);
+        DssExecLib.addReaderToWhitelist(DssExecLib.getChangelogAddress("PIP_WSTETH"), OAZO_ADDR);
     }
 }
 

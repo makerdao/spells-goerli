@@ -263,17 +263,29 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(castTime, spell.eta());
     }
 
-    function test_OSMs() private { // make public to use
-        address READER_ADDR = address(0);
+    function test_OSMs() public { // make public to use
+        address OAZO_ADDR     = 0xb0724B07883DF9e9276a77CD73acd00FE5F86F55;
+        address OAZO_OLD_ADDR = 0x0F1AE882272032D494926D5D983E4FBE253CB544;
 
-        // Track OSM authorizations here
-        assertEq(OsmAbstract(addr.addr("PIP_TOKEN")).bud(READER_ADDR), 0);
+        assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(OAZO_OLD_ADDR), 1);
+        assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(OAZO_OLD_ADDR), 1);
+        assertEq(OsmAbstract(addr.addr("PIP_WSTETH")).bud(OAZO_OLD_ADDR), 1);
+
+        assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(OAZO_ADDR), 0);
+        assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(OAZO_ADDR), 0);
+        assertEq(OsmAbstract(addr.addr("PIP_WSTETH")).bud(OAZO_ADDR), 0);
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        assertEq(OsmAbstract(addr.addr("PIP_TOKEN")).bud(READER_ADDR), 1);
+        assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(OAZO_OLD_ADDR), 0);
+        assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(OAZO_OLD_ADDR), 0);
+        assertEq(OsmAbstract(addr.addr("PIP_WSTETH")).bud(OAZO_OLD_ADDR), 0);
+
+        assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(OAZO_ADDR), 1);
+        assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(OAZO_ADDR), 1);
+        assertEq(OsmAbstract(addr.addr("PIP_WSTETH")).bud(OAZO_ADDR), 1);
     }
 
     function test_Medianizers() private { // make public to use
@@ -341,40 +353,4 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         }
         assertEq(expectedHash, actualHash);
     }
-
-    function test_flashKiller() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        FlashAbstract flash = FlashAbstract(addr.addr("MCD_FLASH"));
-        address killer = addr.addr("FLASH_KILLER");
-
-        assertEq(flash.wards(killer), 1);
-
-        // Emulate Global Settlement
-        hevm.store(
-            address(end),
-            keccak256(abi.encode(address(this), uint256(0))),
-            bytes32(uint256(1)));
-        end.cage();
-
-        assertTrue(flash.max() > 0);
-        FlashKillerLike(killer).kill();
-        assertEq(flash.max(), 0);
-    }
-
-    function testFail_flashKiller() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        address killer = addr.addr("FLASH_KILLER");
-
-        FlashKillerLike(killer).kill();
-    }
-}
-
-interface FlashKillerLike {
-    function kill() external;
 }
