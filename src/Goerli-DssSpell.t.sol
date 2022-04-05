@@ -136,7 +136,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(reg.pos("TOKEN-X"), 47);
         assertEq(reg.join("TOKEN-X"), addr.addr("MCD_JOIN_TOKEN_X"));
         assertEq(reg.gem("TOKEN-X"), addr.addr("TOKEN"));
-        assertEq(reg.dec("TOKEN-X"), DSTokenAbstract(addr.addr("TOKEN")).decimals());
+        assertEq(reg.dec("TOKEN-X"), GemAbstract(addr.addr("TOKEN")).decimals());
         assertEq(reg.class("TOKEN-X"), 1);
         assertEq(reg.pip("TOKEN-X"), addr.addr("PIP_TOKEN"));
         assertEq(reg.xlip("TOKEN-X"), addr.addr("MCD_CLIP_TOKEN_X"));
