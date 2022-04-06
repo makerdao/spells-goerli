@@ -57,6 +57,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     address constant public ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
     address constant public ORACLE_WALLET02 = 0x1f42e41A34B71606FcC60b4e624243b365D99745;
 
+    // Turn office hours off
     function officeHours() public override returns (bool) {
         return false;
     }
