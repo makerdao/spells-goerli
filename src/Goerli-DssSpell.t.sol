@@ -25,6 +25,223 @@ interface DenyProxyLike {
 
 contract DssSpellTest is GoerliDssSpellTestBase {
 
+    function test_OSM_auth() public {
+        address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
+        address ORACLE_WALLET02 = 0x1f42e41A34B71606FcC60b4e624243b365D99745;
+
+        // validate the spell does what we told it to
+        bytes32[] memory ilks = reg.list();
+
+        for(uint256 i = 0; i < ilks.length; i++) {
+            uint256 class = reg.class(ilks[i]);
+            if (class != 1) { continue; }
+
+            address pip = reg.pip(ilks[i]);
+            // skip USDC, TUSD, PAXUSD, GUSD
+            if (pip == 0x838212865E2c2f4F7226fCc0A3EFc3EB139eC661 ||
+                pip == 0x0ce19eA2C568890e63083652f205554C927a0caa ||
+                pip == 0xdF8474337c9D3f66C0b71d31C7D3596E4F517457 ||
+                pip == 0x57A00620Ba1f5f81F20565ce72df4Ad695B389d7) {
+                continue;
+            }
+
+            assertEq(OsmAbstract(pip).wards(ORACLE_WALLET01), 0);
+            assertEq(OsmAbstract(pip).wards(ORACLE_WALLET02), 0);
+        }
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        for(uint256 i = 0; i < ilks.length; i++) {
+            uint256 class = reg.class(ilks[i]);
+            if (class != 1) { continue; }
+
+            address pip = reg.pip(ilks[i]);
+            // skip USDC, TUSD, PAXUSD, GUSD
+            if (pip == 0x838212865E2c2f4F7226fCc0A3EFc3EB139eC661 ||
+                pip == 0x0ce19eA2C568890e63083652f205554C927a0caa ||
+                pip == 0xdF8474337c9D3f66C0b71d31C7D3596E4F517457 ||
+                pip == 0x57A00620Ba1f5f81F20565ce72df4Ad695B389d7) {
+                continue;
+            }
+
+            assertEq(OsmAbstract(pip).wards(ORACLE_WALLET01), 1);
+            assertEq(OsmAbstract(pip).wards(ORACLE_WALLET02), 1);
+        }
+    }
+
+    function test_oracle_list() public {
+        address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
+        address ORACLE_WALLET02 = 0x1f42e41A34B71606FcC60b4e624243b365D99745;
+
+        // validate the spell does what Oracle's wanted
+        // https://discord.com/channels/893112320329396265/897479589171986434/960944481157390336
+        assertEq(OsmAbstract(0xF15993A5C5BE496b8e1c9657Fd2233b579Cd3Bc6).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0x2BA78cb27044edCb715b03685D4bf74261170a70).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0xc3d677a5451cAFED13f748d822418098593D3599).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0x94588e35fF4d2E99ffb8D5095F35d1E37d6dDf12).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0xF953cdebbbf63607EeBc556438d86F2e1d47C8aA).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0x6Fb18806ff87B45220C2DB0941709142f2395069).wards(ORACLE_WALLET01), 0);
+        // assertEq(OsmAbstract(0x57A00620Ba1f5f81F20565ce72df4Ad695B389d7).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0xCB772363E2DEc06942edbc5E697F4A9114B5989c).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0x75B4e743772D25a7998F4230cb016ddCF2c52629).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0x5AD3A560BB125d00db8E94915232BA8f6166967C).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0x001eDD66a5Cc9268159Cf24F3dC0AdcE456AAAAb).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0xDe112F61b823e776B3439f2F39AfF41f57993045).wards(ORACLE_WALLET01), 0);
+        // assertEq(OsmAbstract(0xdF8474337c9D3f66C0b71d31C7D3596E4F517457).wards(ORACLE_WALLET01), 0);
+        // assertEq(OsmAbstract(0xdF8474337c9D3f66C0b71d31C7D3596E4F517457).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0xE7de200a3a29E9049E378b52BD36701A0Ce68C3b).wards(ORACLE_WALLET01), 0);
+        // assertEq(OsmAbstract(0x95282c2cDE88b93F784E2485f885580275551387).wards(ORACLE_WALLET01), 0);
+        // assertEq(OsmAbstract(0xF1E8E72AE116193A9fA551beC1cda965147b31DA).wards(ORACLE_WALLET01), 0);
+        // assertEq(OsmAbstract(0x27E599C9D69e02477f5ffF4c8E4E42B97777eE52).wards(ORACLE_WALLET01), 0);
+        // assertEq(OsmAbstract(0x3C191d5a74800A99D8747fdffAea42F60f7d3Bff).wards(ORACLE_WALLET01), 0);
+        // assertEq(OsmAbstract(0xa6A7f2408949cAbD13f254F8e77ad5C9896725aB).wards(ORACLE_WALLET01), 0);
+        // assertEq(OsmAbstract(0xA410A66313F943d022b79f2943C9A37CefdE2371).wards(ORACLE_WALLET01), 0);
+        // assertEq(OsmAbstract(0x0ce19eA2C568890e63083652f205554C927a0caa).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0xf1a5b808fbA8fF80982dACe88020d4a80c91aFe6).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0xFADF05B56E4b211877248cF11C0847e7F8924e10).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0x044c9aeD56369aA3f696c898AEd0C38dC53c6C3D).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0xEf22289E240cFcCCdCD2B98fdefF167da10f452d).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0x2fc2706C61Fba5b941381e8838bC646908845db6).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0x974f7f4dC6D91f144c87cc03749c98f85F997bc7).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0x11C884B3FEE1494A666Bb20b6F6144387beAf4A6).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0xB18BC24e52C23A77225E7cf088756581EE257Ad8).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0x54ADcaB9B99b1B548764dAB637db751eC66835F0).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0x916fc346910fd25867c81874f7F982a1FB69aac7).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0xD375daC26f7eF991878136b387ca959b9ac1DDaF).wards(ORACLE_WALLET01), 0);
+        // assertEq(OsmAbstract(0x838212865E2c2f4F7226fCc0A3EFc3EB139eC661).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0x1fA3B8DAeE1BCEe33990f66F1a99993daD14D855).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0xE7de200a3a29E9049E378b52BD36701A0Ce68C3b).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0x323eac5246d5BcB33d66e260E882fC9bF4B6bf41).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0xAafF0066D05cEe0D6a38b4dac77e73d9E0a5Cf46).wards(ORACLE_WALLET01), 0);
+        assertEq(OsmAbstract(0xe9245D25F3265E9A36DcCDC72B0B5dE1eeACD4cD).wards(ORACLE_WALLET01), 0);
+
+        assertEq(OsmAbstract(0xF15993A5C5BE496b8e1c9657Fd2233b579Cd3Bc6).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0x2BA78cb27044edCb715b03685D4bf74261170a70).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0xc3d677a5451cAFED13f748d822418098593D3599).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0x94588e35fF4d2E99ffb8D5095F35d1E37d6dDf12).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0xF953cdebbbf63607EeBc556438d86F2e1d47C8aA).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0x6Fb18806ff87B45220C2DB0941709142f2395069).wards(ORACLE_WALLET02), 0);
+        // assertEq(OsmAbstract(0x57A00620Ba1f5f81F20565ce72df4Ad695B389d7).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0xCB772363E2DEc06942edbc5E697F4A9114B5989c).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0x75B4e743772D25a7998F4230cb016ddCF2c52629).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0x5AD3A560BB125d00db8E94915232BA8f6166967C).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0x001eDD66a5Cc9268159Cf24F3dC0AdcE456AAAAb).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0xDe112F61b823e776B3439f2F39AfF41f57993045).wards(ORACLE_WALLET02), 0);
+        // assertEq(OsmAbstract(0xdF8474337c9D3f66C0b71d31C7D3596E4F517457).wards(ORACLE_WALLET02), 0);
+        // assertEq(OsmAbstract(0xdF8474337c9D3f66C0b71d31C7D3596E4F517457).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0xE7de200a3a29E9049E378b52BD36701A0Ce68C3b).wards(ORACLE_WALLET02), 0);
+        // assertEq(OsmAbstract(0x95282c2cDE88b93F784E2485f885580275551387).wards(ORACLE_WALLET02), 0);
+        // assertEq(OsmAbstract(0xF1E8E72AE116193A9fA551beC1cda965147b31DA).wards(ORACLE_WALLET02), 0);
+        // assertEq(OsmAbstract(0x27E599C9D69e02477f5ffF4c8E4E42B97777eE52).wards(ORACLE_WALLET02), 0);
+        // assertEq(OsmAbstract(0x3C191d5a74800A99D8747fdffAea42F60f7d3Bff).wards(ORACLE_WALLET02), 0);
+        // assertEq(OsmAbstract(0xa6A7f2408949cAbD13f254F8e77ad5C9896725aB).wards(ORACLE_WALLET02), 0);
+        // assertEq(OsmAbstract(0xA410A66313F943d022b79f2943C9A37CefdE2371).wards(ORACLE_WALLET02), 0);
+        // assertEq(OsmAbstract(0x0ce19eA2C568890e63083652f205554C927a0caa).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0xf1a5b808fbA8fF80982dACe88020d4a80c91aFe6).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0xFADF05B56E4b211877248cF11C0847e7F8924e10).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0x044c9aeD56369aA3f696c898AEd0C38dC53c6C3D).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0xEf22289E240cFcCCdCD2B98fdefF167da10f452d).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0x2fc2706C61Fba5b941381e8838bC646908845db6).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0x974f7f4dC6D91f144c87cc03749c98f85F997bc7).wards(ORACLE_WALLET02), 0);
+        // assertEq(OsmAbstract(0x11C884B3FEE1494A666Bb20b6F6144387beAf4A6).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0xB18BC24e52C23A77225E7cf088756581EE257Ad8).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0x54ADcaB9B99b1B548764dAB637db751eC66835F0).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0x916fc346910fd25867c81874f7F982a1FB69aac7).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0xD375daC26f7eF991878136b387ca959b9ac1DDaF).wards(ORACLE_WALLET02), 0);
+        // assertEq(OsmAbstract(0x838212865E2c2f4F7226fCc0A3EFc3EB139eC661).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0x1fA3B8DAeE1BCEe33990f66F1a99993daD14D855).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0xE7de200a3a29E9049E378b52BD36701A0Ce68C3b).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0x323eac5246d5BcB33d66e260E882fC9bF4B6bf41).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0xAafF0066D05cEe0D6a38b4dac77e73d9E0a5Cf46).wards(ORACLE_WALLET02), 0);
+        assertEq(OsmAbstract(0xe9245D25F3265E9A36DcCDC72B0B5dE1eeACD4cD).wards(ORACLE_WALLET02), 0);
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(OsmAbstract(0xF15993A5C5BE496b8e1c9657Fd2233b579Cd3Bc6).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0x2BA78cb27044edCb715b03685D4bf74261170a70).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0xc3d677a5451cAFED13f748d822418098593D3599).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0x94588e35fF4d2E99ffb8D5095F35d1E37d6dDf12).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0xF953cdebbbf63607EeBc556438d86F2e1d47C8aA).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0x6Fb18806ff87B45220C2DB0941709142f2395069).wards(ORACLE_WALLET01), 1);
+        // assertEq(OsmAbstract(0x57A00620Ba1f5f81F20565ce72df4Ad695B389d7).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0xCB772363E2DEc06942edbc5E697F4A9114B5989c).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0x75B4e743772D25a7998F4230cb016ddCF2c52629).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0x5AD3A560BB125d00db8E94915232BA8f6166967C).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0x001eDD66a5Cc9268159Cf24F3dC0AdcE456AAAAb).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0xDe112F61b823e776B3439f2F39AfF41f57993045).wards(ORACLE_WALLET01), 1);
+        // assertEq(OsmAbstract(0xdF8474337c9D3f66C0b71d31C7D3596E4F517457).wards(ORACLE_WALLET01), 1);
+        // assertEq(OsmAbstract(0xdF8474337c9D3f66C0b71d31C7D3596E4F517457).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0xE7de200a3a29E9049E378b52BD36701A0Ce68C3b).wards(ORACLE_WALLET01), 1);
+        // assertEq(OsmAbstract(0x95282c2cDE88b93F784E2485f885580275551387).wards(ORACLE_WALLET01), 1);
+        // assertEq(OsmAbstract(0xF1E8E72AE116193A9fA551beC1cda965147b31DA).wards(ORACLE_WALLET01), 1);
+        // assertEq(OsmAbstract(0x27E599C9D69e02477f5ffF4c8E4E42B97777eE52).wards(ORACLE_WALLET01), 1);
+        // assertEq(OsmAbstract(0x3C191d5a74800A99D8747fdffAea42F60f7d3Bff).wards(ORACLE_WALLET01), 1);
+        // assertEq(OsmAbstract(0xa6A7f2408949cAbD13f254F8e77ad5C9896725aB).wards(ORACLE_WALLET01), 1);
+        // assertEq(OsmAbstract(0xA410A66313F943d022b79f2943C9A37CefdE2371).wards(ORACLE_WALLET01), 1);
+        // assertEq(OsmAbstract(0x0ce19eA2C568890e63083652f205554C927a0caa).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0xf1a5b808fbA8fF80982dACe88020d4a80c91aFe6).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0xFADF05B56E4b211877248cF11C0847e7F8924e10).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0x044c9aeD56369aA3f696c898AEd0C38dC53c6C3D).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0xEf22289E240cFcCCdCD2B98fdefF167da10f452d).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0x2fc2706C61Fba5b941381e8838bC646908845db6).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0x974f7f4dC6D91f144c87cc03749c98f85F997bc7).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0x11C884B3FEE1494A666Bb20b6F6144387beAf4A6).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0xB18BC24e52C23A77225E7cf088756581EE257Ad8).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0x54ADcaB9B99b1B548764dAB637db751eC66835F0).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0x916fc346910fd25867c81874f7F982a1FB69aac7).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0xD375daC26f7eF991878136b387ca959b9ac1DDaF).wards(ORACLE_WALLET01), 1);
+        // assertEq(OsmAbstract(0x838212865E2c2f4F7226fCc0A3EFc3EB139eC661).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0x1fA3B8DAeE1BCEe33990f66F1a99993daD14D855).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0xE7de200a3a29E9049E378b52BD36701A0Ce68C3b).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0x323eac5246d5BcB33d66e260E882fC9bF4B6bf41).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0xAafF0066D05cEe0D6a38b4dac77e73d9E0a5Cf46).wards(ORACLE_WALLET01), 1);
+        assertEq(OsmAbstract(0xe9245D25F3265E9A36DcCDC72B0B5dE1eeACD4cD).wards(ORACLE_WALLET01), 1);
+
+        assertEq(OsmAbstract(0xF15993A5C5BE496b8e1c9657Fd2233b579Cd3Bc6).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0x2BA78cb27044edCb715b03685D4bf74261170a70).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0xc3d677a5451cAFED13f748d822418098593D3599).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0x94588e35fF4d2E99ffb8D5095F35d1E37d6dDf12).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0xF953cdebbbf63607EeBc556438d86F2e1d47C8aA).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0x6Fb18806ff87B45220C2DB0941709142f2395069).wards(ORACLE_WALLET02), 1);
+        // assertEq(OsmAbstract(0x57A00620Ba1f5f81F20565ce72df4Ad695B389d7).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0xCB772363E2DEc06942edbc5E697F4A9114B5989c).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0x75B4e743772D25a7998F4230cb016ddCF2c52629).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0x5AD3A560BB125d00db8E94915232BA8f6166967C).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0x001eDD66a5Cc9268159Cf24F3dC0AdcE456AAAAb).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0xDe112F61b823e776B3439f2F39AfF41f57993045).wards(ORACLE_WALLET02), 1);
+        // assertEq(OsmAbstract(0xdF8474337c9D3f66C0b71d31C7D3596E4F517457).wards(ORACLE_WALLET02), 1);
+        // assertEq(OsmAbstract(0xdF8474337c9D3f66C0b71d31C7D3596E4F517457).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0xE7de200a3a29E9049E378b52BD36701A0Ce68C3b).wards(ORACLE_WALLET02), 1);
+        // assertEq(OsmAbstract(0x95282c2cDE88b93F784E2485f885580275551387).wards(ORACLE_WALLET02), 1);
+        // assertEq(OsmAbstract(0xF1E8E72AE116193A9fA551beC1cda965147b31DA).wards(ORACLE_WALLET02), 1);
+        // assertEq(OsmAbstract(0x27E599C9D69e02477f5ffF4c8E4E42B97777eE52).wards(ORACLE_WALLET02), 1);
+        // assertEq(OsmAbstract(0x3C191d5a74800A99D8747fdffAea42F60f7d3Bff).wards(ORACLE_WALLET02), 1);
+        // assertEq(OsmAbstract(0xa6A7f2408949cAbD13f254F8e77ad5C9896725aB).wards(ORACLE_WALLET02), 1);
+        // assertEq(OsmAbstract(0xA410A66313F943d022b79f2943C9A37CefdE2371).wards(ORACLE_WALLET02), 1);
+        // assertEq(OsmAbstract(0x0ce19eA2C568890e63083652f205554C927a0caa).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0xf1a5b808fbA8fF80982dACe88020d4a80c91aFe6).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0xFADF05B56E4b211877248cF11C0847e7F8924e10).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0x044c9aeD56369aA3f696c898AEd0C38dC53c6C3D).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0xEf22289E240cFcCCdCD2B98fdefF167da10f452d).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0x2fc2706C61Fba5b941381e8838bC646908845db6).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0x974f7f4dC6D91f144c87cc03749c98f85F997bc7).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0x11C884B3FEE1494A666Bb20b6F6144387beAf4A6).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0xB18BC24e52C23A77225E7cf088756581EE257Ad8).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0x54ADcaB9B99b1B548764dAB637db751eC66835F0).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0x916fc346910fd25867c81874f7F982a1FB69aac7).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0xD375daC26f7eF991878136b387ca959b9ac1DDaF).wards(ORACLE_WALLET02), 1);
+        // assertEq(OsmAbstract(0x838212865E2c2f4F7226fCc0A3EFc3EB139eC661).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0x1fA3B8DAeE1BCEe33990f66F1a99993daD14D855).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0xE7de200a3a29E9049E378b52BD36701A0Ce68C3b).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0x323eac5246d5BcB33d66e260E882fC9bF4B6bf41).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0xAafF0066D05cEe0D6a38b4dac77e73d9E0a5Cf46).wards(ORACLE_WALLET02), 1);
+        assertEq(OsmAbstract(0xe9245D25F3265E9A36DcCDC72B0B5dE1eeACD4cD).wards(ORACLE_WALLET02), 1);
+    }
+
     function testSpellIsCast_GENERAL() public {
         string memory description = new DssSpell().description();
         assertTrue(bytes(description).length > 0, "TestError/spell-description-length");
@@ -68,17 +285,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             assertTrue(false);
         }
     }
-
-    // function testAAVEDirectBarChange() public {
-    //     DirectDepositLike join = DirectDepositLike(addr.addr("MCD_JOIN_DIRECT_AAVEV2_DAI"));
-    //     assertEq(join.bar(), 3.5 * 10**27 / 100);
-    //
-    //     vote(address(spell));
-    //     scheduleWaitAndCast(address(spell));
-    //     assertTrue(spell.done());
-    //
-    //     assertEq(join.bar(), 2.85 * 10**27 / 100);
-    // }
 
     function testCollateralIntegrations() private { // make public to use
         vote(address(spell));
@@ -263,31 +469,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(castTime, spell.eta());
     }
 
-    function test_OSMs() public { // make public to use
-        address OAZO_ADDR     = 0xb0724B07883DF9e9276a77CD73acd00FE5F86F55;
-        address OAZO_OLD_ADDR = 0x0F1AE882272032D494926D5D983E4FBE253CB544;
-
-        assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(OAZO_OLD_ADDR), 1);
-        assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(OAZO_OLD_ADDR), 1);
-        assertEq(OsmAbstract(addr.addr("PIP_WSTETH")).bud(OAZO_OLD_ADDR), 1);
-
-        assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(OAZO_ADDR), 0);
-        assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(OAZO_ADDR), 0);
-        assertEq(OsmAbstract(addr.addr("PIP_WSTETH")).bud(OAZO_ADDR), 0);
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(OAZO_OLD_ADDR), 0);
-        assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(OAZO_OLD_ADDR), 0);
-        assertEq(OsmAbstract(addr.addr("PIP_WSTETH")).bud(OAZO_OLD_ADDR), 0);
-
-        assertEq(OsmAbstract(addr.addr("PIP_ETH")).bud(OAZO_ADDR), 1);
-        assertEq(OsmAbstract(addr.addr("PIP_WBTC")).bud(OAZO_ADDR), 1);
-        assertEq(OsmAbstract(addr.addr("PIP_WSTETH")).bud(OAZO_ADDR), 1);
-    }
-
     function test_Medianizers() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
@@ -299,11 +480,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(MedianAbstract(TOKENUSD_MED).bud(SET_TOKEN), 1);
     }
 
-    function test_auth() private { // make public to use
+    function test_auth() public {
         checkAuth(false);
     }
 
-    function test_auth_in_sources() private { // make public to use
+    function test_auth_in_sources() public {
         checkAuth(true);
     }
 

@@ -99,8 +99,8 @@ contract Config {
         // Values for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0xb16712C7F4E2031c159dbe2d5AF84cb1865be0Ac),        // populate with deployed spell if deployed
-            deployed_spell_created:         1648810472,        // use get-created-timestamp.sh if deployed
+            deployed_spell:                 address(0),        // populate with deployed spell if deployed
+            deployed_spell_created:         0,                 // use get-created-timestamp.sh if deployed
             previous_spell:                 address(0),        // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           false,             // true if officehours is expected to be enabled in the spell
             expiration_threshold:           weekly_expiration  // (weekly_expiration,monthly_expiration) if weekly or monthly spell
@@ -328,7 +328,7 @@ contract Config {
             aL_ttl:       6 hours,
             line:         0,
             dust:         15 * THOUSAND,
-            pct:          375,
+            pct:          325,
             mat:          14500,
             liqType:      "clip",
             liqOn:        true,
@@ -358,7 +358,7 @@ contract Config {
             aL_ttl:       8 hours,
             line:         0,
             dust:         30 * THOUSAND,
-            pct:          500,
+            pct:          450,
             mat:          13000,
             liqType:      "clip",
             liqOn:        true,
@@ -1433,12 +1433,12 @@ contract Config {
         });
         afterSpell.collaterals["GUNIV3DAIUSDC1-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      100 * MILLION,
-            aL_gap:       10 * MILLION,
+            aL_line:      750 * MILLION,
+            aL_gap:       50 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
             dust:         15 * THOUSAND,
-            pct:          10,
+            pct:          0,
             mat:          10200,
             liqType:      "clip",
             liqOn:        false,
@@ -1468,7 +1468,7 @@ contract Config {
             aL_ttl:       6 hours,
             line:         0,
             dust:         15 * THOUSAND,
-            pct:          250,
+            pct:          225,
             mat:          16000,
             liqType:      "clip",
             liqOn:        true,
@@ -1552,12 +1552,12 @@ contract Config {
         });
         afterSpell.collaterals["GUNIV3DAIUSDC2-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      750 * MILLION,
+            aL_line:      1 * BILLION,
             aL_gap:       50 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
             dust:         15 * THOUSAND,
-            pct:          25,
+            pct:          5,
             mat:          10200,
             liqType:      "clip",
             liqOn:        false,
