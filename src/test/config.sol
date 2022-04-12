@@ -431,7 +431,7 @@ contract Config {
             dog_hole:     5 * MILLION,
             clip_buf:     10000,
             clip_tail:    432_000,
-            clip_cusp:    9000,
+            clip_cusp:    9800,
             clip_chip:    0,
             clip_tip:     500,
             clipper_mom:  1,
