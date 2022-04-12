@@ -59,7 +59,33 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
         // ----------------- Offboard TUSD-A -----------------
         // https://vote.makerdao.com/polling/QmVkRdjg#poll-detail
+        bytes32 _ilk  = bytes32("TUSD-A");
+        address _clip = DssExecLib.getChangelogAddress("MCD_CLIP_TUSD_A");
+        //
+        // Enable liquidations for TUSD-A
+        DssExecLib.setValue(_clip, "stopped", 0);
+        // Use Abacus/LinearDecrease
+        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_TUSD_A", MCD_CLIP_CALC_TUSD_A);
+        DssExecLib.setContract(_clip, "calc", MCD_CLIP_CALC_TUSD_A);
+        // Set Liquidation Penalty to 0
+        DssExecLib.setIlkLiquidationPenalty(_ilk, 0);
+        // Set Liquidation Ratio to 150%
+        DssExecLib.setIlkLiquidationRatio(_ilk, 15000);
+        // Set Auction Price Multiplier (buf) to 1
+        DssExecLib.setStartingPriceMultiplicativeFactor(_ilk, 10000);
+        // Set Local Liquidation Limit (ilk.hole) to 5 million DAI
+        DssExecLib.setIlkMaxLiquidationAmount(_ilk, 5 * MILLION);
+        // Set tau for Abacus/LinearDecrease to 21,600,000 second (estimated 10bps drop per 6 hours = 250 days till 0)
+        DssExecLib.setLinearDecrease(MCD_CLIP_CALC_TUSD_A, 21_600_000);
+        // Set Max Auction Duration (tail) to 432,000 seconds (5 days, implies minimum price of 0.98)
+        DssExecLib.setAuctionTimeBeforeReset(_ilk, 432_000);
+        // Set Proportional Kick Incentive (chip) to 0
+        DssExecLib.setKeeperIncentivePercent(_ilk, 0);
+        // Set Flat Kick Incentive (tip) to 500
+        DssExecLib.setKeeperIncentiveFlatRate(_ilk, 500);
 
+
+        // Update calc in changelog
         DssExecLib.setChangelogAddress("MCD_CLIP_CALC_TUSD_A", MCD_CLIP_CALC_TUSD_A);
     }
 }
