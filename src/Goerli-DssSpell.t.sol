@@ -126,20 +126,30 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         }
     }
 
-    function testCollateralIntegrations() private { // make public to use
+    function testCollateralIntegrations() public { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new collateral tests here
+        // checkIlkIntegration(
+        //     "TOKEN-X",
+        //     GemJoinAbstract(addr.addr("MCD_JOIN_TOKEN_X")),
+        //     ClipAbstract(addr.addr("MCD_CLIP_TOKEN_X")),
+        //     addr.addr("PIP_TOKEN"),
+        //     true,
+        //     true,
+        //     false
+        // );
+
         checkIlkIntegration(
-            "TOKEN-X",
-            GemJoinAbstract(addr.addr("MCD_JOIN_TOKEN_X")),
-            ClipAbstract(addr.addr("MCD_CLIP_TOKEN_X")),
-            addr.addr("PIP_TOKEN"),
-            true,
-            true,
-            false
+             "TUSD-A",
+             GemJoinAbstract(addr.addr("MCD_JOIN_TUSD_A")),
+             ClipAbstract(addr.addr("MCD_CLIP_TUSD_A")),
+             addr.addr("PIP_TUSD"),
+             false,  // TODO: true on mainnet
+             true,
+             false
         );
     }
 

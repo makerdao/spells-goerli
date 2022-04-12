@@ -434,7 +434,7 @@ contract Config {
             clip_cusp:    9000,
             clip_chip:    0,
             clip_tip:     500,
-            clipper_mom:  0,
+            clipper_mom:  1,
             cm_tolerance: 9500,
             calc_tau:     21_600_000,
             calc_step:    0,
