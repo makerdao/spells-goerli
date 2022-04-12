@@ -63,9 +63,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         address _clip = DssExecLib.getChangelogAddress("MCD_CLIP_TUSD_A");
         //
         // Enable liquidations for TUSD-A
+        DssExecLib.authorize(_clip, DssExecLib.clipperMom());
         DssExecLib.setValue(_clip, "stopped", 0);
         // Use Abacus/LinearDecrease
-        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_TUSD_A", MCD_CLIP_CALC_TUSD_A);
         DssExecLib.setContract(_clip, "calc", MCD_CLIP_CALC_TUSD_A);
         // Set Liquidation Penalty to 0
         DssExecLib.setIlkLiquidationPenalty(_ilk, 0);
@@ -83,7 +83,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         DssExecLib.setKeeperIncentivePercent(_ilk, 0);
         // Set Flat Kick Incentive (tip) to 500
         DssExecLib.setKeeperIncentiveFlatRate(_ilk, 500);
-
 
         // Update calc in changelog
         DssExecLib.setChangelogAddress("MCD_CLIP_CALC_TUSD_A", MCD_CLIP_CALC_TUSD_A);
