@@ -103,7 +103,7 @@ contract Addresses {
         addr["PIP_TUSD"]                        = 0x0ce19eA2C568890e63083652f205554C927a0caa;
         addr["MCD_JOIN_TUSD_A"]                 = 0x5BC597f00d74fAcEE53Be784f0B7Ace63b4e2EBe;
         addr["MCD_CLIP_TUSD_A"]                 = 0x22d843aE7121F399604D5C00863B95F9Af7e7E9C;
-        addr["MCD_CLIP_CALC_TUSD_A"]            = 0xddD44166CdCd051AFa053A716608Cdc42C0C30D4;
+        addr["MCD_CLIP_CALC_TUSD_A"]            = 0xD4443E7CcB1Cf40DbE4E27C60Aef82054c7d27B3;
         addr["WBTC"]                            = 0x7ccF0411c7932B99FC3704d68575250F032e3bB7;
         addr["PIP_WBTC"]                        = 0xE7de200a3a29E9049E378b52BD36701A0Ce68C3b;
         addr["MCD_JOIN_WBTC_A"]                 = 0x3cbE712a12e651eEAF430472c0C1BF1a2a18939D;
@@ -316,5 +316,9 @@ contract Addresses {
         addr["MCD_JOIN_INST_WBTC_A"]            = 0xbd5978308C9BbF6d8d1D26cD1df9AA3EA83F782a;
         addr["MCD_CLIP_INST_WBTC_A"]            = 0x81Bf27c821F24b6FC9Bcc0F7d4D7cc2651712E3c;
         addr["MCD_CLIP_CALC_INST_WBTC_A"]       = 0x32ff6F008eB4aA5780efF2e0436b7adCDECb213a;
+        addr["VAL_ETH"]                         = 0xccdC6e1F64Bd46Ca80f42A1e27f85b250a40eDeA;
+        addr["VAL_BAT"]                         = 0x936Df20e494fe5f280f07c240FC24b15643D5FbB;
+        addr["VAL_USDC"]                        = 0x1F0135afC0e2f199ef4465b57Fd4dA5DF95Da203;
+        addr["DEPLOYER"]                        = 0x9EE5e175D09895b8E1E28c22b961345e1dF4B5aE;
     }
 }

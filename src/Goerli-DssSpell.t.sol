@@ -108,6 +108,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkSystemValues(afterSpell);
 
         checkCollateralValues(afterSpell);
+
+        checkChainlogValues();
     }
 
     function testRemoveChainlogValues() private {

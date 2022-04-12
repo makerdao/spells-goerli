@@ -1081,4 +1081,13 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             else checkWards(_addr, contractName);
         }
     }
+
+    // Validate addresses in test harness match chainlog
+    function checkChainlogValues() internal {
+
+        for(uint256 i = 0; i < chainLog.count(); i++) {
+            (bytes32 _key, address _val) = chainLog.get(i);
+            assertEq(_val, addr.addr(_key), string(abi.encodePacked("TestError/chainlog-addr-mismatch-", _key)));
+        }
+    }
 }

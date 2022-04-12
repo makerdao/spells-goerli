@@ -23,11 +23,6 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
 
-interface RegistryLike {
-    function list() external view returns (bytes32[] memory);
-    function pip(bytes32 ilk) external view returns (address);
-    function class(bytes32 ilk) external view returns (uint256);
-}
 
 contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // Provides a descriptive tag for bot consumption
@@ -36,6 +31,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // Math
     uint256 constant internal MILLION  = 10 ** 6;
     uint256 constant internal BILLION  = 10 ** 9;
+
+    address constant internal MCD_CLIP_CALC_TUSD_A = 0xD4443E7CcB1Cf40DbE4E27C60Aef82054c7d27B3;
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -60,6 +57,10 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         // Includes changes from the DssSpellCollateralOnboardingAction
         // onboardNewCollaterals();
 
+        // ----------------- Offboard TUSD-A -----------------
+        // https://vote.makerdao.com/polling/QmVkRdjg#poll-detail
+
+        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_TUSD_A", MCD_CLIP_CALC_TUSD_A);
     }
 }
 
