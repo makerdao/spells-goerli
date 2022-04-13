@@ -108,8 +108,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkSystemValues(afterSpell);
 
         checkCollateralValues(afterSpell);
-
-        checkChainlogValues();
     }
 
     function testRemoveChainlogValues() private {
@@ -383,5 +381,53 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             actualHash := keccak256(ptr, size)
         }
         assertEq(expectedHash, actualHash);
+    }
+
+    // Validate addresses in test harness match chainlog
+    function test_chainlog_values() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        for(uint256 i = 0; i < chainLog.count(); i++) {
+            (bytes32 _key, address _val) = chainLog.get(i);
+            assertEq(_val, addr.addr(_key), concat("TestError/chainlog-addr-mismatch-", _key));
+        }
+    }
+
+    // Ensure version is updated if chainlog changes
+    function test_chainlog_version_bump() public {
+
+        uint256                   _count = chainLog.count();
+        string    memory        _version = chainLog.version();
+        address[] memory _chainlog_addrs = new address[](_count);
+
+        for(uint256 i = 0; i < _count; i++) {
+            (, address _val) = chainLog.get(i);
+            _chainlog_addrs[i] = _val;
+        }
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        if (_count != chainLog.count()) {
+            if (keccak256(abi.encodePacked(_version)) == keccak256(abi.encodePacked(chainLog.version()))) {
+                emit log_named_string("Error", concat("TestError/chainlog-version-not-updated-count-change-", _version));
+                fail();
+            }
+        }
+
+        for(uint256 i = 0; i < _count; i++) {
+            (, address _val) = chainLog.get(i);
+            // If the address arrays don't match it's due to a change in the changelog. Fail if the version is not updated.
+            if (_chainlog_addrs[i] != _val) {
+                if (keccak256(abi.encodePacked(_version)) == keccak256(abi.encodePacked(chainLog.version()))) {
+                    emit log_named_string("Error", concat("TestError/chainlog-version-not-updated-address-change-", _version));
+                    fail();
+                }
+            }
+        }
+
     }
 }

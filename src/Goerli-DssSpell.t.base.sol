@@ -142,7 +142,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
          return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
     }
 
-    function concat(string memory a, string calldata b) internal pure returns (string memory) {
+    function concat(string memory a, string memory b) internal pure returns (string memory) {
         return string(abi.encodePacked(a, b));
     }
 
@@ -1141,15 +1141,6 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             );
             if (onlySource) checkSource(_addr, contractName);
             else checkWards(_addr, contractName);
-        }
-    }
-
-    // Validate addresses in test harness match chainlog
-    function checkChainlogValues() internal {
-
-        for(uint256 i = 0; i < chainLog.count(); i++) {
-            (bytes32 _key, address _val) = chainLog.get(i);
-            assertEq(_val, addr.addr(_key), concat("TestError/chainlog-addr-mismatch-", _key));
         }
     }
 }

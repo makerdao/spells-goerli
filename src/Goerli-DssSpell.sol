@@ -86,6 +86,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
         // Update calc in changelog
         DssExecLib.setChangelogAddress("MCD_CLIP_CALC_TUSD_A", MCD_CLIP_CALC_TUSD_A);
+
+        // Update changelog version
+        DssExecLib.setChangelogVersion("1.11.1");
     }
 }
 
