@@ -89,6 +89,24 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
         // Update changelog version
         DssExecLib.setChangelogVersion("1.11.1");
+
+
+        // Skip the following on Goerli
+
+        // Core Unit Budgets
+        // https://mips.makerdao.com/mips/details/MIP40c3SP37#budget-implementation
+        // Skip on Goerli
+
+        // CRVV1ETHSTETH-A
+        // https://vote.makerdao.com/polling/QmeTfgKP#poll-detail
+
+        // Replace Gelato Keeper Top Up Contract Stream
+        // https://forum.makerdao.com/t/update-to-the-gelato-keeper-network-top-up-contract/14524
+
+        // Fund Ambassador Program
+        // https://vote.makerdao.com/polling/QmPpQ49p#poll-detail
+
+
     }
 }
 
