@@ -30,7 +30,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
     // Math
     uint256 constant internal MILLION  = 10 ** 6;
-    uint256 constant internal BILLION  = 10 ** 9;
 
     address constant internal MCD_CLIP_CALC_TUSD_A = 0xD4443E7CcB1Cf40DbE4E27C60Aef82054c7d27B3;
 
