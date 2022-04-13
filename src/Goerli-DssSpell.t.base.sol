@@ -693,8 +693,12 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         // Authorization
         assertEq(join.wards(pauseProxy), 1, concat("TestError/checkIlkIntegration-pauseProxy-not-auth-on-join-", _ilk));
         assertEq(vat.wards(address(join)), 1, concat("TestError/checkIlkIntegration-join-not-auth-on-vat-", _ilk));
+        assertEq(vat.wards(address(clip)), 1, concat("TestError/checkIlkIntegration-clip-not-auth-on-vat-", _ilk));
+        assertEq(dog.wards(address(clip)), 1, concat("TestError/checkIlkIntegration-clip-not-auth-on-dog-", _ilk));
+        assertEq(clip.wards(address(dog)), 1, concat("TestError/checkIlkIntegration-dog-not-auth-on-clip-", _ilk));
         assertEq(clip.wards(address(end)), 1, concat("TestError/checkIlkIntegration-end-not-auth-on-clip-", _ilk));
         assertEq(clip.wards(address(clipMom)), 1, concat("TestError/checkIlkIntegration-clipMom-not-auth-on-clip-", _ilk));
+        assertEq(clip.wards(address(esm)), 1, concat("TestError/checkIlkIntegration-esm-not-auth-on-clip-", _ilk));
         if (_isOSM) {
             assertEq(OsmAbstract(pip).wards(address(osmMom)), 1, concat("TestError/checkIlkIntegration-osmMom-not-auth-on-pip-", _ilk));
             assertEq(OsmAbstract(pip).bud(address(spotter)), 1, concat("TestError/checkIlkIntegration-spot-not-bud-on-pip-", _ilk));
