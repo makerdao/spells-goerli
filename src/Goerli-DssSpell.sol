@@ -62,7 +62,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         address _clip = DssExecLib.getChangelogAddress("MCD_CLIP_TUSD_A");
         //
         // Enable liquidations for TUSD-A
-        DssExecLib.authorize(_clip, DssExecLib.clipperMom());
+        // TODO: Enable clipperMom authorization on mainnet
+        // DssExecLib.authorize(_clip, DssExecLib.clipperMom());
         DssExecLib.setValue(_clip, "stopped", 0);
         // Use Abacus/LinearDecrease
         DssExecLib.setContract(_clip, "calc", MCD_CLIP_CALC_TUSD_A);
