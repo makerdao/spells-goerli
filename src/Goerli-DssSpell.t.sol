@@ -145,7 +145,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
              GemJoinAbstract(addr.addr("MCD_JOIN_TUSD_A")),
              ClipAbstract(addr.addr("MCD_CLIP_TUSD_A")),
              addr.addr("PIP_TUSD"),
-             false,  // TODO: true on mainnet
+             false,
              true,
              false
         );
