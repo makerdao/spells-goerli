@@ -771,7 +771,6 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         jug.drip(_ilk);
         assertEq(clip.kicks(), 0);
         if (_checkLiquidations) {
-            assertEq(getIlkDuty(_ilk), rates.rates(0));
             if (getIlkDuty(_ilk) == rates.rates(0)) {
                 // Rates wont accrue if 0, raise the mat to make the vault unsafe
                 setIlkMat(_ilk, 100000 * RAY);
