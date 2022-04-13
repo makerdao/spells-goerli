@@ -430,7 +430,7 @@ contract Config {
             flipper_mom:  0,
             dog_hole:     5 * MILLION,
             clip_buf:     10000,
-            clip_tail:    432_000,
+            clip_tail:    120 hours,
             clip_cusp:    9800,
             clip_chip:    0,
             clip_tip:     500,
