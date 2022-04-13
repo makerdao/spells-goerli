@@ -436,7 +436,7 @@ contract Config {
             clip_tip:     500,
             clipper_mom:  1,
             cm_tolerance: 9500,
-            calc_tau:     21_600_000,
+            calc_tau:     250 days,
             calc_step:    0,
             calc_cut:     0,
             lerp:         false
