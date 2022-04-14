@@ -67,6 +67,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         address _clip = DssExecLib.getChangelogAddress("MCD_CLIP_TUSD_A");
         //
         // Enable liquidations for TUSD-A
+        // Note: ClipperMom cannot circuit-break on a DS-Value but we're adding
+        //       the rely for consistency with other collaterals and in case the PIP
+        //       changes to an OSM.
         DssExecLib.authorize(_clip, DssExecLib.clipperMom());
         DssExecLib.setValue(_clip, "stopped", 0);
         // Use Abacus/LinearDecrease
