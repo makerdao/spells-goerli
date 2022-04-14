@@ -115,7 +115,39 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        try chainLog.getAddress("XXX") {
+        // try chainLog.getAddress("XXX") {
+        //     assertTrue(false);
+        // } catch Error(string memory errmsg) {
+        //     assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
+        // } catch {
+        //     assertTrue(false);
+        // }
+
+        try chainLog.getAddress("VAL_ETH") {
+            assertTrue(false);
+        } catch Error(string memory errmsg) {
+            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
+        } catch {
+            assertTrue(false);
+        }
+
+        try chainLog.getAddress("VAL_BAT") {
+            assertTrue(false);
+        } catch Error(string memory errmsg) {
+            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
+        } catch {
+            assertTrue(false);
+        }
+
+        try chainLog.getAddress("VAL_USDC") {
+            assertTrue(false);
+        } catch Error(string memory errmsg) {
+            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
+        } catch {
+            assertTrue(false);
+        }
+
+        try chainLog.getAddress("DEPLOYER") {
             assertTrue(false);
         } catch Error(string memory errmsg) {
             assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
