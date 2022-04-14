@@ -91,7 +91,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         DssExecLib.setKeeperIncentivePercent(_ilk, 0);
         // Set Flat Kick Incentive (tip) to 500
         DssExecLib.setKeeperIncentiveFlatRate(_ilk, 500);
-
+        // Update spotter price
+        DssExecLib.updateCollateralPrice(_ilk);
         // Update calc in changelog
         DssExecLib.setChangelogAddress("MCD_CLIP_CALC_TUSD_A", MCD_CLIP_CALC_TUSD_A);
 
