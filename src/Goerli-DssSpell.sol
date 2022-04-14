@@ -23,6 +23,9 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
 
+interface ChainlogLike {
+    function removeAddress(bytes32) external;
+}
 
 contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // Provides a descriptive tag for bot consumption
@@ -30,6 +33,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
     // Math
     uint256 constant internal MILLION  = 10 ** 6;
+
+    ChainlogLike constant internal CHAINLOG = ChainlogLike(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
 
     address constant internal MCD_CLIP_CALC_TUSD_A = 0xD4443E7CcB1Cf40DbE4E27C60Aef82054c7d27B3;
 
@@ -86,6 +91,12 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
         // Update calc in changelog
         DssExecLib.setChangelogAddress("MCD_CLIP_CALC_TUSD_A", MCD_CLIP_CALC_TUSD_A);
+
+        // Remove some residual chainlog keys.
+        CHAINLOG.removeAddress("VAL_ETH");
+        CHAINLOG.removeAddress("VAL_BAT");
+        CHAINLOG.removeAddress("VAL_USDC");
+        CHAINLOG.removeAddress("DEPLOYER");
 
         // Update changelog version
         DssExecLib.setChangelogVersion("1.11.1");

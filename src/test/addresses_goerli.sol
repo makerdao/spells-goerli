@@ -316,9 +316,5 @@ contract Addresses {
         addr["MCD_JOIN_INST_WBTC_A"]            = 0xbd5978308C9BbF6d8d1D26cD1df9AA3EA83F782a;
         addr["MCD_CLIP_INST_WBTC_A"]            = 0x81Bf27c821F24b6FC9Bcc0F7d4D7cc2651712E3c;
         addr["MCD_CLIP_CALC_INST_WBTC_A"]       = 0x32ff6F008eB4aA5780efF2e0436b7adCDECb213a;
-        addr["VAL_ETH"]                         = 0xccdC6e1F64Bd46Ca80f42A1e27f85b250a40eDeA;
-        addr["VAL_BAT"]                         = 0x936Df20e494fe5f280f07c240FC24b15643D5FbB;
-        addr["VAL_USDC"]                        = 0x1F0135afC0e2f199ef4465b57Fd4dA5DF95Da203;
-        addr["DEPLOYER"]                        = 0x9EE5e175D09895b8E1E28c22b961345e1dF4B5aE;
     }
 }
