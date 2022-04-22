@@ -46,7 +46,7 @@ contract DssSpellCollateralOnboardingAction {
 
     function onboardNewCollaterals() internal {
         // ----------------------------- Collateral onboarding -----------------------------
-        //  Add WSTETH-C as a new Vault Type
+        //  Add WSTETH-B as a new Vault Type
         //  Poll Link: TBD
 
         DssExecLib.addNewCollateral(CollateralOpts({
