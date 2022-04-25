@@ -47,7 +47,7 @@ contract DssSpellCollateralOnboardingAction {
     function onboardNewCollaterals() internal {
         // ----------------------------- Collateral onboarding -----------------------------
         //  Add WSTETH-B as a new Vault Type
-        //  Poll Link: TBD
+        //  Poll Link: https://vote.makerdao.com/polling/QmaE5doB#poll-detail
 
         DssExecLib.addNewCollateral(CollateralOpts({
             ilk:                   "WSTETH-B",
