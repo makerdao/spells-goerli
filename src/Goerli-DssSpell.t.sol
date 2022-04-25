@@ -448,6 +448,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             if (_count != chainLog.count()) {
                 emit log_named_string("Error", concat("TestError/chainlog-version-not-updated-count-change-", _version));
                 fail();
+                return;
             }
             // Fail if the chainlog is the same size but local keys don't match the chainlog.
             for(uint256 i = 0; i < _count; i++) {
@@ -455,6 +456,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
                 if (_chainlog_addrs[i] != _val) {
                     emit log_named_string("Error", concat("TestError/chainlog-version-not-updated-address-change-", _version));
                     fail();
+                    return;
                 }
             }
         }
