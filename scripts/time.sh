@@ -14,7 +14,13 @@ do
 done
 
 if [[ -z "$STAMP" && -z "$DATE" ]]; then
-    date --utc # return current date in UTC by default
+cat <&2 <<.
+Please use the date or stamp flag, ex:
+    ${0##*/} date="1 May 2022 UTC"
+        or
+    ${0##*/} stamp="1651363200"
+.
+    exit 1
 elif [[ -z "$DATE" ]]; then
     date --utc --date=@"$STAMP"
 else
