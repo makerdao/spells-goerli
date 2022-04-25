@@ -16,7 +16,7 @@ done
 if [[ -z "$STAMP" && -z "$DATE" ]]; then
 cat <&2 <<.
 Please use the date or stamp flag, ex:
-    ${0##*/} date="1 May 2022 UTC"
+    ${0##*/} date="1 May 2022"
         or
     ${0##*/} stamp="1651363200"
 .
@@ -24,5 +24,5 @@ Please use the date or stamp flag, ex:
 elif [[ -z "$DATE" ]]; then
     date --utc --date=@"$STAMP"
 else
-    date --date "$DATE" +%s
+    date --utc --date "$DATE" +%s
 fi
