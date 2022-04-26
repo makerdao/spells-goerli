@@ -22,7 +22,7 @@ Please use the date or stamp flag, ex:
 .
     exit 1
 elif [[ -z "$DATE" ]]; then
-    date --utc --date=@"$STAMP"
+    date -u -d @"$STAMP"
 else
-    date --utc --date "$DATE" +%s
+    date --utc --date="$DATE" +%s
 fi
