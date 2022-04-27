@@ -110,7 +110,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
-    function testRemoveChainlogValues() private {
+    function testRemoveChainlogValues() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -156,7 +156,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         }
     }
 
-    function testCollateralIntegrations() public { // make public to use
+    function testCollateralIntegrations() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -173,11 +173,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // );
 
         checkIlkIntegration(
-             "TUSD-A",
-             GemJoinAbstract(addr.addr("MCD_JOIN_TUSD_A")),
-             ClipAbstract(addr.addr("MCD_CLIP_TUSD_A")),
-             addr.addr("PIP_TUSD"),
-             false,
+             "WSTETH-B",
+             GemJoinAbstract(addr.addr("MCD_JOIN_WSTETH_B")),
+             ClipAbstract(addr.addr("MCD_CLIP_WSTETH_B")),
+             addr.addr("PIP_WSTETH"),
+             true,
              true,
              false
         );
@@ -209,25 +209,27 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_TUSD_A"), addr.addr("MCD_CLIP_CALC_TUSD_A"));
-        assertEq(chainLog.version(), "1.11.1");
+        assertEq(chainLog.getAddress("MCD_JOIN_WSTETH_B"), addr.addr("MCD_JOIN_WSTETH_B"));
+        assertEq(chainLog.getAddress("MCD_CLIP_WSTETH_B"), addr.addr("MCD_CLIP_WSTETH_B"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WSTETH_B"), addr.addr("MCD_CLIP_CALC_WSTETH_B"));
+        assertEq(chainLog.version(), "1.11.2");
     }
 
-    function testNewIlkRegistryValues() private { // make public to use
+    function testNewIlkRegistryValues() public { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        assertEq(reg.pos("TOKEN-X"), 47);
-        assertEq(reg.join("TOKEN-X"), addr.addr("MCD_JOIN_TOKEN_X"));
-        assertEq(reg.gem("TOKEN-X"), addr.addr("TOKEN"));
-        assertEq(reg.dec("TOKEN-X"), GemAbstract(addr.addr("TOKEN")).decimals());
-        assertEq(reg.class("TOKEN-X"), 1);
-        assertEq(reg.pip("TOKEN-X"), addr.addr("PIP_TOKEN"));
-        assertEq(reg.xlip("TOKEN-X"), addr.addr("MCD_CLIP_TOKEN_X"));
+        assertEq(reg.pos("WSTETH-B"), 49);
+        assertEq(reg.join("WSTETH-B"), addr.addr("MCD_JOIN_WSTETH_B"));
+        assertEq(reg.gem("WSTETH-B"), addr.addr("WSTETH"));
+        assertEq(reg.dec("WSTETH-B"), GemAbstract(addr.addr("WSTETH")).decimals());
+        assertEq(reg.class("WSTETH-B"), 1);
+        assertEq(reg.pip("WSTETH-B"), addr.addr("PIP_WSTETH"));
+        assertEq(reg.xlip("WSTETH-B"), addr.addr("MCD_CLIP_WSTETH_B"));
         //assertEq(reg.name("TOKEN-X"), "NAME"); // Token Name Not Present (DSToken, ONLY ON GOERLI)
-        assertEq(reg.symbol("TOKEN-X"), "SYMBOL");
+        assertEq(reg.symbol("WSTETH-B"), "wstETH");
     }
 
     function testFailWrongDay() public {
@@ -443,23 +445,22 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        if (_count != chainLog.count()) {
-            if (keccak256(abi.encodePacked(_version)) == keccak256(abi.encodePacked(chainLog.version()))) {
+        if (keccak256(abi.encodePacked(_version)) == keccak256(abi.encodePacked(chainLog.version()))) {
+            // Fail if the version is not updated and the chainlog count has changed
+            if (_count != chainLog.count()) {
                 emit log_named_string("Error", concat("TestError/chainlog-version-not-updated-count-change-", _version));
                 fail();
+                return;
             }
-        }
-
-        for(uint256 i = 0; i < chainLog.count(); i++) {
-            (, address _val) = chainLog.get(i);
-            // If the address arrays don't match it's due to a change in the changelog. Fail if the version is not updated.
-            if (_chainlog_addrs[i] != _val) {
-                if (keccak256(abi.encodePacked(_version)) == keccak256(abi.encodePacked(chainLog.version()))) {
+            // Fail if the chainlog is the same size but local keys don't match the chainlog.
+            for(uint256 i = 0; i < _count; i++) {
+                (, address _val) = chainLog.get(i);
+                if (_chainlog_addrs[i] != _val) {
                     emit log_named_string("Error", concat("TestError/chainlog-version-not-updated-address-change-", _version));
                     fail();
+                    return;
                 }
             }
         }
-
     }
 }
