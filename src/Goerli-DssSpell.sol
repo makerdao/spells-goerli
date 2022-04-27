@@ -57,6 +57,10 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     }
 
     function actions() public override {
+        // ---------------------------------------------------------------------
+        // Includes changes from the DssSpellCollateralOnboardingAction
+        // onboardNewCollaterals();
+
         address MCD_VEST_DAI_LEGACY = DssExecLib.getChangelogAddress("MCD_VEST_DAI");
         DssVestLike(MCD_VEST_DAI_LEGACY).rely(DssExecLib.getChangelogAddress("MCD_ESM"));
 
