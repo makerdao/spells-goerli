@@ -209,8 +209,9 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_TUSD_A"), addr.addr("MCD_CLIP_CALC_TUSD_A"));
-        assertEq(chainLog.version(), "1.11.1");
+        assertEq(chainLog.getAddress("MCD_VEST_DAI"), addr.addr("MCD_VEST_DAI"));
+        assertEq(chainLog.getAddress("MCD_VEST_DAI_LEGACY"), addr.addr("MCD_VEST_DAI_LEGACY"));
+        assertEq(chainLog.version(), "1.11.3");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
@@ -460,5 +461,60 @@ contract DssSpellTest is GoerliDssSpellTestBase {
                 }
             }
         }
+    }
+
+    function tryVest(address vest, uint256 id) internal returns (bool ok) {
+        (ok,) = vest.call(abi.encodeWithSignature("vest(uint256)", id));
+    }
+
+    function testVestDAI() public {
+        VestAbstract vest = VestAbstract(addr.addr("MCD_VEST_DAI"));
+
+        assertEq(vest.ids(), 0);
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(vest.ids(), 1);
+
+        assertEq(vest.cap(), 1 * MILLION * WAD / 30 days);
+
+        assertEq(vest.usr(1), address(pauseProxy));
+        assertEq(vest.bgn(1), block.timestamp - 1 days);
+        assertEq(vest.clf(1), block.timestamp - 1 days);
+        assertEq(vest.fin(1), block.timestamp);
+        assertEq(vest.mgr(1), address(0));
+        assertEq(vest.res(1), 0);
+        assertEq(vest.tot(1), WAD);
+        assertEq(vest.rxd(1), 0);
+
+        uint256 prevBalance = dai.balanceOf(address(pauseProxy));
+        assertTrue(tryVest(address(vest), 1));
+        assertEq(dai.balanceOf(address(pauseProxy)), prevBalance + WAD);
+
+        assertEq(vest.rxd(1), WAD);
+    }
+
+    function testVestDAIFails() public {
+        VestAbstract vest  = VestAbstract(addr.addr("MCD_VEST_DAI"));
+        VestAbstract vestL = VestAbstract(addr.addr("MCD_VEST_DAI_LEGACY"));
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        giveTokens(address(gov), 999999999999 ether);
+        gov.approve(address(esm), type(uint256).max);
+        esm.join(999999999999 ether);
+        assertEq(vat.live(), 1);
+        esm.fire();
+        assertEq(vat.live(), 0);
+
+        assertTrue(!tryVest(address(vest), 1));
+
+        assertEq(vestL.wards(address(pauseProxy)), 1);
+        esm.denyProxy(address(vestL));
+        assertEq(vestL.wards(address(pauseProxy)), 0);
     }
 }

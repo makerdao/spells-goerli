@@ -68,7 +68,8 @@ contract Addresses {
         addr["FLASH_KILLER"]                    = 0xa95FaD7948079df3c579DDb0752E39dC29Eb1AFf;
         addr["PROXY_FACTORY"]                   = 0x84eFB9c18059394172D0d69A3E58B03320001871;
         addr["PROXY_REGISTRY"]                  = 0x46759093D8158db8BB555aC7C6F98070c56169ce;
-        addr["MCD_VEST_DAI"]                    = 0x59B1a603cAC9e38EA2AC2C479FFE42Ce48123Fd4;
+        addr["MCD_VEST_DAI"]                    = 0x7520970Bd0f63D4EA4AA5E4Be05F22e0b8b09BD4;
+        addr["MCD_VEST_DAI_LEGACY"]             = 0x59B1a603cAC9e38EA2AC2C479FFE42Ce48123Fd4;
         addr["MCD_VEST_MKR"]                    = 0x183bE7a75B8b5F35236270b060e95C65D82f5fF9;
         addr["MCD_VEST_MKR_TREASURY"]           = 0xd1B8dFF41F3268fAC524869f4C7dA27232044916;
         addr["ETH"]                             = 0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6;
