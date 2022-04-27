@@ -156,7 +156,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         }
     }
 
-    function testCollateralIntegrations() public { // make public to use
+    function testCollateralIntegrations() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
