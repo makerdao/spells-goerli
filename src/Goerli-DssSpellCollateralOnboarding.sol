@@ -34,7 +34,8 @@ contract DssSpellCollateralOnboardingAction {
 
     // --- Math ---
     uint256 constant MILLION = 10**6;
-    uint256 constant ZERO_SEVEN_FIVE_PCT_RATE     = 1000000000236936036262880196;
+
+    uint256 constant ZERO_SEVEN_FIVE_PCT_RATE = 1000000000236936036262880196;
 
     // --- DEPLOYED COLLATERAL ADDRESSES ---
     //address constant STETH                    = 0x1643E812aE58766192Cf7D2Cf9567dF2C37e9B7F;
@@ -62,15 +63,15 @@ contract DssSpellCollateralOnboardingAction {
             ilkDebtCeiling:        0,
             minVaultAmount:        5000,
             maxLiquidationAmount:  10 * MILLION,
-            liquidationPenalty:    1300,        // 13% penalty fee
+            liquidationPenalty:    1300,                     // 13% penalty fee
             ilkStabilityFee:       ZERO_SEVEN_FIVE_PCT_RATE, //0.75% stability fee
-            startingPriceFactor:   12000,       // Auction price begins at 120% of oracle
-            breakerTolerance:      5000,        // Allows for a 50% hourly price drop before disabling liquidations
-            auctionDuration:       140 minutes, 
-            permittedDrop:         4000,        // 40% price drop before reset
-            liquidationRatio:      18500,       // 185% collateralization
-            kprFlatReward:         300,         // 300 Dai
-            kprPctReward:          10           // chip 0.1%
+            startingPriceFactor:   12000,                    // Auction price begins at 120% of oracle
+            breakerTolerance:      5000,                     // Allows for a 50% hourly price drop before disabling liquidations
+            auctionDuration:       140 minutes,
+            permittedDrop:         4000,                     // 40% price drop before reset
+            liquidationRatio:      18500,                    // 185% collateralization
+            kprFlatReward:         300,                      // 300 Dai
+            kprPctReward:          10                        // chip 0.1%
         }));
 
         DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_WSTETH_B, 90 seconds, 9900);
@@ -78,8 +79,8 @@ contract DssSpellCollateralOnboardingAction {
 
         // ChainLog Updates
         // Add the new join, clip, and abacus to the Chainlog
-        DssExecLib.setChangelogAddress("MCD_JOIN_WSTETH_B", MCD_JOIN_WSTETH_B);
-        DssExecLib.setChangelogAddress("MCD_CLIP_WSTETH_B", MCD_CLIP_WSTETH_B);
+        DssExecLib.setChangelogAddress("MCD_JOIN_WSTETH_B",      MCD_JOIN_WSTETH_B);
+        DssExecLib.setChangelogAddress("MCD_CLIP_WSTETH_B",      MCD_CLIP_WSTETH_B);
         DssExecLib.setChangelogAddress("MCD_CLIP_CALC_WSTETH_B", MCD_CLIP_CALC_WSTETH_B);
         DssExecLib.setChangelogVersion("1.11.2");
     }
