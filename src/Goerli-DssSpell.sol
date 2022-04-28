@@ -39,6 +39,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     //    https://ipfs.io/ipfs/QmPgPVrVxDCGyNR5rGp9JC5AUxppLzUAqvncRJDcxQnX1u
     //
 
+    // --- Rates ---
+    // uint256 constant FOUR_FIVE_PCT_RATE      = 1000000001395766281313196627;
+
     // Turn office hours off
     function officeHours() public override returns (bool) {
         return false;
