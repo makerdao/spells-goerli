@@ -23,24 +23,20 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
 
-interface DssVestLike {
-    function cap() external view returns (uint256);
-    function chainlog() external view returns (address);
-    function daiJoin() external view returns (address);
-    function ids() external view returns (uint256);
-    function vat() external view returns (address);
-    function create(address, uint256, uint256, uint256, uint256, address) external returns (uint256);
-    function file(bytes32, uint256) external;
-    function rely(address) external;
+interface ChainlogLike {
+    function removeAddress(bytes32) external;
 }
 
 contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
-    address constant MCD_VEST_DAI = 0x7520970Bd0f63D4EA4AA5E4Be05F22e0b8b09BD4;
+    // Math
+    uint256 constant internal MILLION  = 10 ** 6;
 
-    uint256 constant WAD = 10 ** 18;
+    ChainlogLike constant internal CHAINLOG = ChainlogLike(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
+
+    address constant internal MCD_CLIP_CALC_TUSD_A = 0xD4443E7CcB1Cf40DbE4E27C60Aef82054c7d27B3;
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -55,37 +51,13 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // --- Rates ---
     // uint256 constant FOUR_FIVE_PCT_RATE      = 1000000001395766281313196627;
 
-    // Turn office hours off
-    function officeHours() public override returns (bool) {
-        return false;
-    }
 
     function actions() public override {
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralOnboardingAction
-        // onboardNewCollaterals();
+        onboardNewCollaterals();
 
-        // Verify new vesting contract was correctly deployed
-        address MCD_VEST_DAI_LEGACY = DssExecLib.getChangelogAddress("MCD_VEST_DAI");
-        require(DssVestLike(MCD_VEST_DAI).ids() == 0, "DssSpell/non-empty-vesting-contract");
-        require(DssVestLike(MCD_VEST_DAI).chainlog() == DssVestLike(MCD_VEST_DAI_LEGACY).chainlog(), "DssSpell/non-matching-chainlog");
-        require(DssVestLike(MCD_VEST_DAI).vat() == DssVestLike(MCD_VEST_DAI_LEGACY).vat(), "DssSpell/non-matching-vat");
-        require(DssVestLike(MCD_VEST_DAI).daiJoin() == DssVestLike(MCD_VEST_DAI_LEGACY).daiJoin(), "DssSpell/non-matching-daiJoin");
-
-        // Rely ESM in old vesting contract
-        DssVestLike(MCD_VEST_DAI_LEGACY).rely(DssExecLib.getChangelogAddress("MCD_ESM"));
-
-        // Set up new vesting contract
-        DssExecLib.authorize(DssExecLib.vat(), MCD_VEST_DAI);
-        DssVestLike(MCD_VEST_DAI).file("cap", DssVestLike(MCD_VEST_DAI_LEGACY).cap());
-
-        // Replace vesting in the chainlog and bump version
-        DssExecLib.setChangelogAddress("MCD_VEST_DAI", MCD_VEST_DAI);
-        DssExecLib.setChangelogAddress("MCD_VEST_DAI_LEGACY", MCD_VEST_DAI_LEGACY);
-        DssExecLib.setChangelogVersion("1.12.0");
-
-        // Test DAI payment in new vesting contract
-        DssVestLike(MCD_VEST_DAI).create(address(this), WAD, block.timestamp - 1 days, 1 days, 0, address(0));
+        // TODO: update changelog
     }
 }
 
