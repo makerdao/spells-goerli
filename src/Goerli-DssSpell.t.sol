@@ -211,7 +211,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // Insert new chainlog values tests here
         assertEq(chainLog.getAddress("MCD_VEST_DAI"), addr.addr("MCD_VEST_DAI"));
         assertEq(chainLog.getAddress("MCD_VEST_DAI_LEGACY"), addr.addr("MCD_VEST_DAI_LEGACY"));
-        assertEq(chainLog.version(), "1.11.3");
+        assertEq(chainLog.version(), "1.12.0");
     }
 
     function testNewIlkRegistryValues() private { // make public to use

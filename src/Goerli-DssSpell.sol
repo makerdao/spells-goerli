@@ -73,7 +73,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
         DssExecLib.setChangelogAddress("MCD_VEST_DAI", MCD_VEST_DAI);
         DssExecLib.setChangelogAddress("MCD_VEST_DAI_LEGACY", MCD_VEST_DAI_LEGACY);
-        DssExecLib.setChangelogVersion("1.11.3");
+        DssExecLib.setChangelogVersion("1.12.0");
 
         // Test DAI payment in new vesting contract
         DssVestLike(MCD_VEST_DAI).create(address(this), WAD, block.timestamp - 1 days, 1 days, 0, address(0));
