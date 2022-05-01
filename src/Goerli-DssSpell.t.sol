@@ -467,7 +467,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         (ok,) = vest.call(abi.encodeWithSignature("vest(uint256)", id));
     }
 
-    function testVestDAI() public {
+    function testVestDAI() private { // make public to use
         VestAbstract vest = VestAbstract(addr.addr("MCD_VEST_DAI"));
 
         assertEq(vest.ids(), 0);
@@ -496,7 +496,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(vest.rxd(1), WAD);
     }
 
-    function testVestDAIFails() public {
+    function testVestDAIFails() private { // make public to use
         VestAbstract vest  = VestAbstract(addr.addr("MCD_VEST_DAI"));
         VestAbstract vestL = VestAbstract(addr.addr("MCD_VEST_DAI_LEGACY"));
 
