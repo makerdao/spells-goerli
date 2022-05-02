@@ -38,7 +38,6 @@ contract DssSpellCollateralOnboardingAction {
     uint256 constant ZERO_SEVEN_FIVE_PCT_RATE = 1000000000236936036262880196;
 
     // --- DEPLOYED COLLATERAL ADDRESSES ---
-    // address constant STETH                  = 0x1643E812aE58766192Cf7D2Cf9567dF2C37e9B7F;
     address constant WSTETH                 = 0x6320cD32aA674d2898A68ec82e869385Fc5f7E2f;
     address constant PIP_WSTETH             = 0x323eac5246d5BcB33d66e260E882fC9bF4B6bf41;
     address constant MCD_JOIN_WSTETH_B      = 0x4a2dfbdFb0ea68823265FaB4dE55E22f751eD12C;
