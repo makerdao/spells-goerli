@@ -42,10 +42,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // --- Rates ---
     // uint256 constant FOUR_FIVE_PCT_RATE      = 1000000001395766281313196627;
 
-    // Turn office hours off
-    function officeHours() public override returns (bool) {
-        return false;
-    }
 
     function actions() public override {
         // ---------------------------------------------------------------------
@@ -53,6 +49,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         onboardNewCollaterals();
 
         DssExecLib.setChangelogVersion("1.12.1");
+
     }
 }
 

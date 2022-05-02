@@ -110,7 +110,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
-    function testRemoveChainlogValues() private { // make public to use
+    function testRemoveChainlogValues() private {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -156,7 +156,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         }
     }
 
-    function testCollateralIntegrations() public {
+    function testCollateralIntegrations() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -173,11 +173,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // );
 
         checkIlkIntegration(
-             "WSTETH-B",
-             GemJoinAbstract(addr.addr("MCD_JOIN_WSTETH_B")),
-             ClipAbstract(addr.addr("MCD_CLIP_WSTETH_B")),
-             addr.addr("PIP_WSTETH"),
-             true,
+             "TUSD-A",
+             GemJoinAbstract(addr.addr("MCD_JOIN_TUSD_A")),
+             ClipAbstract(addr.addr("MCD_CLIP_TUSD_A")),
+             addr.addr("PIP_TUSD"),
+             false,
              true,
              false
         );
@@ -209,27 +209,26 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        assertEq(chainLog.getAddress("MCD_JOIN_WSTETH_B"), addr.addr("MCD_JOIN_WSTETH_B"));
-        assertEq(chainLog.getAddress("MCD_CLIP_WSTETH_B"), addr.addr("MCD_CLIP_WSTETH_B"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WSTETH_B"), addr.addr("MCD_CLIP_CALC_WSTETH_B"));
-        assertEq(chainLog.version(), "1.12.1");
+        assertEq(chainLog.getAddress("MCD_VEST_DAI"), addr.addr("MCD_VEST_DAI"));
+        assertEq(chainLog.getAddress("MCD_VEST_DAI_LEGACY"), addr.addr("MCD_VEST_DAI_LEGACY"));
+        assertEq(chainLog.version(), "1.12.0");
     }
 
-    function testNewIlkRegistryValues() public { // make public to use
+    function testNewIlkRegistryValues() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        assertEq(reg.pos("WSTETH-B"), 49);
-        assertEq(reg.join("WSTETH-B"), addr.addr("MCD_JOIN_WSTETH_B"));
-        assertEq(reg.gem("WSTETH-B"), addr.addr("WSTETH"));
-        assertEq(reg.dec("WSTETH-B"), GemAbstract(addr.addr("WSTETH")).decimals());
-        assertEq(reg.class("WSTETH-B"), 1);
-        assertEq(reg.pip("WSTETH-B"), addr.addr("PIP_WSTETH"));
-        assertEq(reg.xlip("WSTETH-B"), addr.addr("MCD_CLIP_WSTETH_B"));
+        assertEq(reg.pos("TOKEN-X"), 47);
+        assertEq(reg.join("TOKEN-X"), addr.addr("MCD_JOIN_TOKEN_X"));
+        assertEq(reg.gem("TOKEN-X"), addr.addr("TOKEN"));
+        assertEq(reg.dec("TOKEN-X"), GemAbstract(addr.addr("TOKEN")).decimals());
+        assertEq(reg.class("TOKEN-X"), 1);
+        assertEq(reg.pip("TOKEN-X"), addr.addr("PIP_TOKEN"));
+        assertEq(reg.xlip("TOKEN-X"), addr.addr("MCD_CLIP_TOKEN_X"));
         //assertEq(reg.name("TOKEN-X"), "NAME"); // Token Name Not Present (DSToken, ONLY ON GOERLI)
-        assertEq(reg.symbol("WSTETH-B"), "wstETH");
+        assertEq(reg.symbol("TOKEN-X"), "SYMBOL");
     }
 
     function testFailWrongDay() public {
@@ -468,7 +467,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         (ok,) = vest.call(abi.encodeWithSignature("vest(uint256)", id));
     }
 
-    function testVestDAI() private { // make public to use
+    function testVestDAI() public {
         VestAbstract vest = VestAbstract(addr.addr("MCD_VEST_DAI"));
 
         assertEq(vest.ids(), 0);
@@ -497,7 +496,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(vest.rxd(1), WAD);
     }
 
-    function testVestDAIFails() private { // make public to use
+    function testVestDAIFails() public {
         VestAbstract vest  = VestAbstract(addr.addr("MCD_VEST_DAI"));
         VestAbstract vestL = VestAbstract(addr.addr("MCD_VEST_DAI_LEGACY"));
 

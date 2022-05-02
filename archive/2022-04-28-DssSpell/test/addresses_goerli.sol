@@ -317,8 +317,5 @@ contract Addresses {
         addr["MCD_JOIN_INST_WBTC_A"]            = 0xbd5978308C9BbF6d8d1D26cD1df9AA3EA83F782a;
         addr["MCD_CLIP_INST_WBTC_A"]            = 0x81Bf27c821F24b6FC9Bcc0F7d4D7cc2651712E3c;
         addr["MCD_CLIP_CALC_INST_WBTC_A"]       = 0x32ff6F008eB4aA5780efF2e0436b7adCDECb213a;
-        addr["MCD_JOIN_WSTETH_B"]               = 0x4a2dfbdFb0ea68823265FaB4dE55E22f751eD12C;
-        addr["MCD_CLIP_WSTETH_B"]               = 0x11D962d87EB3718C8012b0A71627d60c923d36a8;
-        addr["MCD_CLIP_CALC_WSTETH_B"]          = 0xF4ffD00E0821C28aE673B4134D142FD8e479b061;
     }
 }
