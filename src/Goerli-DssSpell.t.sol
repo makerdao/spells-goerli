@@ -110,7 +110,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
-    function testRemoveChainlogValues() private {
+    function testRemoveChainlogValues() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -156,7 +156,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         }
     }
 
-    function testCollateralIntegrations() private { // make public to use
+    function testCollateralIntegrations() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -173,11 +173,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // );
 
         checkIlkIntegration(
-             "TUSD-A",
-             GemJoinAbstract(addr.addr("MCD_JOIN_TUSD_A")),
-             ClipAbstract(addr.addr("MCD_CLIP_TUSD_A")),
-             addr.addr("PIP_TUSD"),
-             false,
+             "WSTETH-B",
+             GemJoinAbstract(addr.addr("MCD_JOIN_WSTETH_B")),
+             ClipAbstract(addr.addr("MCD_CLIP_WSTETH_B")),
+             addr.addr("PIP_WSTETH"),
+             true,
              true,
              false
         );
@@ -209,26 +209,27 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        assertEq(chainLog.getAddress("MCD_VEST_DAI"), addr.addr("MCD_VEST_DAI"));
-        assertEq(chainLog.getAddress("MCD_VEST_DAI_LEGACY"), addr.addr("MCD_VEST_DAI_LEGACY"));
-        assertEq(chainLog.version(), "1.12.0");
+        assertEq(chainLog.getAddress("MCD_JOIN_WSTETH_B"), addr.addr("MCD_JOIN_WSTETH_B"));
+        assertEq(chainLog.getAddress("MCD_CLIP_WSTETH_B"), addr.addr("MCD_CLIP_WSTETH_B"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WSTETH_B"), addr.addr("MCD_CLIP_CALC_WSTETH_B"));
+        assertEq(chainLog.version(), "1.12.1");
     }
 
-    function testNewIlkRegistryValues() private { // make public to use
+    function testNewIlkRegistryValues() public { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        assertEq(reg.pos("TOKEN-X"), 47);
-        assertEq(reg.join("TOKEN-X"), addr.addr("MCD_JOIN_TOKEN_X"));
-        assertEq(reg.gem("TOKEN-X"), addr.addr("TOKEN"));
-        assertEq(reg.dec("TOKEN-X"), GemAbstract(addr.addr("TOKEN")).decimals());
-        assertEq(reg.class("TOKEN-X"), 1);
-        assertEq(reg.pip("TOKEN-X"), addr.addr("PIP_TOKEN"));
-        assertEq(reg.xlip("TOKEN-X"), addr.addr("MCD_CLIP_TOKEN_X"));
+        assertEq(reg.pos("WSTETH-B"), 49);
+        assertEq(reg.join("WSTETH-B"), addr.addr("MCD_JOIN_WSTETH_B"));
+        assertEq(reg.gem("WSTETH-B"), addr.addr("WSTETH"));
+        assertEq(reg.dec("WSTETH-B"), GemAbstract(addr.addr("WSTETH")).decimals());
+        assertEq(reg.class("WSTETH-B"), 1);
+        assertEq(reg.pip("WSTETH-B"), addr.addr("PIP_WSTETH"));
+        assertEq(reg.xlip("WSTETH-B"), addr.addr("MCD_CLIP_WSTETH_B"));
         //assertEq(reg.name("TOKEN-X"), "NAME"); // Token Name Not Present (DSToken, ONLY ON GOERLI)
-        assertEq(reg.symbol("TOKEN-X"), "SYMBOL");
+        assertEq(reg.symbol("WSTETH-B"), "wstETH");
     }
 
     function testFailWrongDay() public {

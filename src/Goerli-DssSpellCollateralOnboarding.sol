@@ -33,58 +33,53 @@ contract DssSpellCollateralOnboardingAction {
     //
 
     // --- Math ---
+    uint256 constant MILLION = 10 ** 6;
+
+    uint256 constant ZERO_SEVEN_FIVE_PCT_RATE = 1000000000236936036262880196;
 
     // --- DEPLOYED COLLATERAL ADDRESSES ---
+    address constant WSTETH                 = 0x6320cD32aA674d2898A68ec82e869385Fc5f7E2f;
+    address constant PIP_WSTETH             = 0x323eac5246d5BcB33d66e260E882fC9bF4B6bf41;
+    address constant MCD_JOIN_WSTETH_B      = 0x4a2dfbdFb0ea68823265FaB4dE55E22f751eD12C;
+    address constant MCD_CLIP_WSTETH_B      = 0x11D962d87EB3718C8012b0A71627d60c923d36a8;
+    address constant MCD_CLIP_CALC_WSTETH_B = 0xF4ffD00E0821C28aE673B4134D142FD8e479b061;
 
     function onboardNewCollaterals() internal {
         // ----------------------------- Collateral onboarding -----------------------------
-        //  Add ______________ as a new Vault Type
-        //  Poll Link:
+        //  Add WSTETH-B as a new Vault Type
+        //  Poll Link: https://vote.makerdao.com/polling/QmaE5doB#poll-detail
 
-        // DssExecLib.addNewCollateral(
-        //     CollateralOpts({
-        //         ilk:                   ,
-        //         gem:                   ,
-        //         join:                  ,
-        //         clip:                  ,
-        //         calc:                  ,
-        //         pip:                   ,
-        //         isLiquidatable:        ,
-        //         isOSM:                 ,
-        //         whitelistOSM:          ,
-        //         ilkDebtCeiling:        ,
-        //         minVaultAmount:        ,
-        //         maxLiquidationAmount:  ,
-        //         liquidationPenalty:    ,
-        //         ilkStabilityFee:       ,
-        //         startingPriceFactor:   ,
-        //         breakerTolerance:      ,
-        //         auctionDuration:       ,
-        //         permittedDrop:         ,
-        //         liquidationRatio:      ,
-        //         kprFlatReward:         ,
-        //         kprPctReward:
-        //     })
-        // );
+        DssExecLib.addNewCollateral(CollateralOpts({
+            ilk:                   "WSTETH-B",
+            gem:                   WSTETH,
+            join:                  MCD_JOIN_WSTETH_B,
+            clip:                  MCD_CLIP_WSTETH_B,
+            calc:                  MCD_CLIP_CALC_WSTETH_B,
+            pip:                   PIP_WSTETH,
+            isLiquidatable:        true,
+            isOSM:                 true,
+            whitelistOSM:          false,
+            ilkDebtCeiling:        15 * MILLION,
+            minVaultAmount:        5000,
+            maxLiquidationAmount:  10 * MILLION,
+            liquidationPenalty:    1300,                     // 13% penalty fee
+            ilkStabilityFee:       ZERO_SEVEN_FIVE_PCT_RATE, //0.75% stability fee
+            startingPriceFactor:   12000,                    // Auction price begins at 120% of oracle
+            breakerTolerance:      5000,                     // Allows for a 50% hourly price drop before disabling liquidations
+            auctionDuration:       140 minutes,
+            permittedDrop:         4000,                     // 40% price drop before reset
+            liquidationRatio:      18500,                    // 185% collateralization
+            kprFlatReward:         300,                      // 300 Dai
+            kprPctReward:          10                        // chip 0.1%
+        }));
 
-        // DssExecLib.setStairstepExponentialDecrease(
-        //     CALC_ADDR,
-        //     DURATION,
-        //     PCT_BPS
-        // );
-
-        // DssExecLib.setIlkAutoLineParameters(
-        //     ILK,
-        //     AMOUNT,
-        //     GAP,
-        //     TTL
-        // );
+        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_WSTETH_B, 90 seconds, 9900);
+        DssExecLib.setIlkAutoLineParameters("WSTETH-B", 150 * MILLION, 15 * MILLION, 8 hours);
 
         // ChainLog Updates
-        // Add the new flip and join to the Chainlog
-        // address constant CHAINLOG        = DssExecLib.LOG();
-        // ChainlogAbstract(CHAINLOG).setAddress("<join-name>", <join-address>);
-        // ChainlogAbstract(CHAINLOG).setAddress("<clip-name>", <clip-address>);
-        // ChainlogAbstract(CHAINLOG).setVersion("<new-version>");
+        // Add the new join, clip, and abacus to the Chainlog
+        DssExecLib.setChangelogAddress("MCD_JOIN_WSTETH_B",      MCD_JOIN_WSTETH_B);
+        DssExecLib.setChangelogAddress("MCD_CLIP_WSTETH_B",      MCD_CLIP_WSTETH_B);
+        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_WSTETH_B", MCD_CLIP_CALC_WSTETH_B);
     }
 }

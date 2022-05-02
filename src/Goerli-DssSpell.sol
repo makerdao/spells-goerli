@@ -17,26 +17,17 @@
 
 pragma solidity 0.6.12;
 // Enable ABIEncoderV2 when onboarding collateral
-//pragma experimental ABIEncoderV2;
+pragma experimental ABIEncoderV2;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
-
-interface ChainlogLike {
-    function removeAddress(bytes32) external;
-}
 
 contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
     // Math
-    uint256 constant internal MILLION  = 10 ** 6;
-
-    ChainlogLike constant internal CHAINLOG = ChainlogLike(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
-
-    address constant internal MCD_CLIP_CALC_TUSD_A = 0xD4443E7CcB1Cf40DbE4E27C60Aef82054c7d27B3;
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -57,7 +48,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         // Includes changes from the DssSpellCollateralOnboardingAction
         onboardNewCollaterals();
 
-        // TODO: update changelog
+        DssExecLib.setChangelogVersion("1.12.1");
+
     }
 }
 
