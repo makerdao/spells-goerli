@@ -50,6 +50,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         onboardNewCollaterals();
 
         // MOMC Proposal
+        // https://vote.makerdao.com/polling/QmTmehbz#poll-detail
 
         //Lower the WBTC-A Stability Fee from 3.25% to 2.25%.
         DssExecLib.setIlkStabilityFee("WBTC-A", TWO_TWO_FIVE_PCT_RATE, true);
