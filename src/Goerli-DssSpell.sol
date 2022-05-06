@@ -44,6 +44,11 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     uint256 constant TWO_TWO_FIVE_PCT_RATE = 1000000000705562181084137268;
     uint256 constant FOUR_PCT_RATE         = 1000000001243680656318820312;
 
+    // Turn office hours off
+    function officeHours() public override returns (bool) {
+        return false;
+    }
+
     function actions() public override {
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralOnboardingAction
