@@ -496,26 +496,4 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         assertEq(vest.rxd(1), WAD);
     }
-
-    function testVestDAIFails() private { // make public to use
-        VestAbstract vest  = VestAbstract(addr.addr("MCD_VEST_DAI"));
-        VestAbstract vestL = VestAbstract(addr.addr("MCD_VEST_DAI_LEGACY"));
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        giveTokens(address(gov), 999999999999 ether);
-        gov.approve(address(esm), type(uint256).max);
-        esm.join(999999999999 ether);
-        assertEq(vat.live(), 1);
-        esm.fire();
-        assertEq(vat.live(), 0);
-
-        assertTrue(!tryVest(address(vest), 1));
-
-        assertEq(vestL.wards(address(pauseProxy)), 1);
-        esm.denyProxy(address(vestL));
-        assertEq(vestL.wards(address(pauseProxy)), 0);
-    }
 }
