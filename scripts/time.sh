@@ -23,6 +23,8 @@ Please use the date or stamp flag, ex:
     exit 1
 elif [[ -z "$DATE" ]]; then
     date -u -d @"$STAMP"
+    date -u -d @"$STAMP" +%s
 else
+    date --utc --date="$DATE"
     date --utc --date="$DATE" +%s
 fi
