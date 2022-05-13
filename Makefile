@@ -13,5 +13,5 @@ flatten            :; hevm flatten --source-file "src/Goerli-DssSpell.sol" > out
 cast-spell         :; ./scripts/cast-dssspell.sh $(spell)
 archive-spell      :; ./scripts/archive-dssspell.sh "$(if $(date),$(date),$(shell date +'%Y-%m-%d'))"
 diff-archive-spell :; ./scripts/diff-archive-dssspell.sh "$(if $(date),$(date),$(shell date +'%Y-%m-%d'))"
-wards              :; ./scripts/wards.sh $(target)
+wards              :; ./scripts/wards.sh $(target) $(flip)
 time               :; ./scripts/time.sh date="$(date)" stamp="$(stamp)"
