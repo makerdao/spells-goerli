@@ -51,8 +51,9 @@ contract Addresses {
         addr["MCD_DAI"]                         = 0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844;
         addr["MCD_SPOT"]                        = 0xACe2A9106ec175bd56ec05C9E38FE1FDa8a1d758;
         addr["MCD_POT"]                         = 0x50672F0a14B40051B65958818a7AcA3D54Bd81Af;
-        addr["MCD_END"]                         = 0xDb1d3edb80d3faA1B7257Ab4018A609E327FA50D;
+        addr["MCD_END"]                         = 0xb82F60bAf6980b9fE035A82cF6Acb770C06d3896;
         addr["MCD_ESM"]                         = 0x023A960cb9BE7eDE35B433256f4AfE9013334b55;
+        addr["MCD_CURE"]                        = 0xFA5d993DdA243A57eefbbF86Cb3a1c817Dfc7e4E;
         addr["PROXY_ACTIONS"]                   = 0x4023f89983Ece35e227c49806aFc13Bc0248d178;
         addr["PROXY_ACTIONS_END"]               = 0xBbA4aBF0a12738f093cFD2199C5497044bAa68A8;
         addr["PROXY_ACTIONS_DSR"]               = 0x15679CdbDb284fe07Eff3809150126697c6e3Dd6;
@@ -64,7 +65,8 @@ contract Addresses {
         addr["FLIPPER_MOM"]                     = 0x7ceCdf6b214a3eBA1589eB8B844fB6Cb12B67Bd7;
         addr["CLIPPER_MOM"]                     = 0xC67fFD490903521F778b2A3B2A13D0FC0Be96F98;
         addr["MCD_IAM_AUTO_LINE"]               = 0x21DaD87779D9FfA8Ed3E1036cBEA8784cec4fB83;
-        addr["MCD_FLASH"]                       = 0x0a6861D6200B519a8B9CFA1E7Edd582DD1573581;
+        addr["MCD_FLASH"]                       = 0xAa5F7d5b29Fa366BB04F6E4c39ACF569d5214075;
+        addr["MCD_FLASH_LEGACY"]                = 0x0a6861D6200B519a8B9CFA1E7Edd582DD1573581;
         addr["FLASH_KILLER"]                    = 0xa95FaD7948079df3c579DDb0752E39dC29Eb1AFf;
         addr["PROXY_FACTORY"]                   = 0x84eFB9c18059394172D0d69A3E58B03320001871;
         addr["PROXY_REGISTRY"]                  = 0x46759093D8158db8BB555aC7C6F98070c56169ce;
