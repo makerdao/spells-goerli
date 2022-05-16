@@ -549,6 +549,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(vow.wards(endOld), 0);
         assertEq(pot.wards(endOld), 0);
         assertEq(spotter.wards(endOld), 0);
+        assertEq(CureAbstract(cure).wards(endOld), 0);
 
         assertEq(EndAbstract(endOld).wards(address(esm)), 0);
 
@@ -558,6 +559,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(vow.wards(address(end)), 1);
         assertEq(pot.wards(address(end)), 1);
         assertEq(spotter.wards(address(end)), 1);
+        assertEq(CureAbstract(cure).wards(address(end)), 1);
 
         assertEq(end.wards(address(esm)), 1);
     }
@@ -723,16 +725,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         end.cash("LINK-A", daiToRedeem);
     }
 
-    function testCure() public {
-        assertEq(CureAbstract(cure).wards(address(end)), 0);
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        assertEq(CureAbstract(cure).wards(address(end)), 1);
-    }
-
     function testFlashLegacy() public {
         FlashAbstract flash = FlashAbstract(addr.addr("MCD_FLASH_LEGACY"));
         assertEq(flash.max(), 500_000_000 * WAD);
@@ -786,7 +778,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(amount, 1 * MILLION * WAD);
         assertEq(fee, 0);
 
-        dai.approve(msg.sender, 1_000_000 * WAD);
+        dai.approve(msg.sender, amount);
 
         return keccak256("ERC3156FlashBorrower.onFlashLoan");
     }
@@ -801,7 +793,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(amount, 1 * MILLION * RAD);
         assertEq(fee, 0);
 
-        vat.move(address(this), msg.sender, 1_000_000 * RAD);
+        vat.move(address(this), msg.sender, amount);
 
         return keccak256("VatDaiFlashBorrower.onVatDaiFlashLoan");
     }

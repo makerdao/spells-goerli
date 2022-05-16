@@ -18,7 +18,7 @@
 pragma solidity 0.6.12;
 
 // Enable ABIEncoderV2 when onboarding collateral
-pragma experimental ABIEncoderV2;
+// pragma experimental ABIEncoderV2;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
@@ -71,6 +71,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         // onboardNewCollaterals();
 
         // -------------------------- Cure + New End ---------------------------
+        require(EndAbstract(MCD_END_OLD).live() == 1, "system-is-caged");
         DssExecLib.setValue(MCD_END, "wait", EndAbstract(MCD_END_OLD).wait());
         DssExecLib.setContract(MCD_END, "cure", MCD_CURE);
         DssExecLib.authorize(MCD_CURE, MCD_END);
