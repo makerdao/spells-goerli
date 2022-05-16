@@ -52,8 +52,8 @@ contract Addresses {
         addr["MCD_SPOT"]                        = 0xACe2A9106ec175bd56ec05C9E38FE1FDa8a1d758;
         addr["MCD_POT"]                         = 0x50672F0a14B40051B65958818a7AcA3D54Bd81Af;
         addr["MCD_END"]                         = 0xb82F60bAf6980b9fE035A82cF6Acb770C06d3896;
-        addr["MCD_ESM"]                         = 0x023A960cb9BE7eDE35B433256f4AfE9013334b55;
         addr["MCD_CURE"]                        = 0xFA5d993DdA243A57eefbbF86Cb3a1c817Dfc7e4E;
+        addr["MCD_ESM"]                         = 0x023A960cb9BE7eDE35B433256f4AfE9013334b55;
         addr["PROXY_ACTIONS"]                   = 0x4023f89983Ece35e227c49806aFc13Bc0248d178;
         addr["PROXY_ACTIONS_END"]               = 0xBbA4aBF0a12738f093cFD2199C5497044bAa68A8;
         addr["PROXY_ACTIONS_DSR"]               = 0x15679CdbDb284fe07Eff3809150126697c6e3Dd6;
