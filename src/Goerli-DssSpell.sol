@@ -30,6 +30,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     string public constant override description = "Goerli Spell";
 
     // Math
+    uint256 constant WAD = 10 ** 18;
     uint256 constant RAD = 10 ** 45;
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -62,6 +63,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         DssExecLib.setValue(MCD_FLAP, "lid", 30_000 * RAD);
 
         // ------------------------------ ESM Min ------------------------------
+        DssExecLib.setValue(MCD_ESM, "min", 150_000 * WAD);
 
         // ---------------------------- Transfer MKR ---------------------------
 
