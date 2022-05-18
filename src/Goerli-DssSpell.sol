@@ -49,9 +49,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
     address immutable MCD_FLAP = DssExecLib.flap();
     address immutable MCD_ESM = DssExecLib.esm();
-    address immutable MCD_GOV = DssExecLib.mkr();
 
     // No Transfer on Goerli
+    // address immutable MCD_GOV = DssExecLib.mkr();
     // address immutable DUX_WALLET =        ;
     // address immutable SIDESTREAM_WALLET = ;
 
