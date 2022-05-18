@@ -51,6 +51,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     address immutable MCD_ESM = DssExecLib.esm();
     address immutable MCD_GOV = DssExecLib.mkr();
 
+    // No Transfer on Goerli
     // address immutable DUX_WALLET =        ;
     // address immutable SIDESTREAM_WALLET = ;
 
@@ -66,6 +67,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         DssExecLib.setValue(MCD_ESM, "min", 150_000 * WAD);
 
         // ---------------------------- Transfer MKR ---------------------------
+        // No Transfer on Goerli
 
     }
 }
