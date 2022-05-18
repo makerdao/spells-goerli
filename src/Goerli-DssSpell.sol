@@ -24,17 +24,13 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
 
-import "dss-interfaces/dss/EndAbstract.sol";
-import "dss-interfaces/dss/IlkRegistryAbstract.sol";
-import "dss-interfaces/dss/FlashAbstract.sol";
-
 contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
     // Math
-
+    uint256 constant RAD = 10 ** 45;
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
     // To check this yourself, use the following rate calculation (example 8%):
@@ -50,11 +46,12 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         return false;
     }
 
+    address immutable MCD_FLAP = DssExecLib.flap();
     address immutable MCD_ESM = DssExecLib.esm();
     address immutable MCD_GOV = DssExecLib.mkr();
 
-    address immutable DUX_WALLET =        ;
-    address immutable SIDESTREAM_WALLET = ;
+    // address immutable DUX_WALLET =        ;
+    // address immutable SIDESTREAM_WALLET = ;
 
     function actions() public override {
         // ---------------------------------------------------------------------
@@ -62,6 +59,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         // onboardNewCollaterals();
 
         // ---------------------------- Lid for Flap ---------------------------
+        DssExecLib.setValue(MCD_FLAP, "lid", 30_000 * RAD);
 
         // ------------------------------ ESM Min ------------------------------
 
