@@ -25,10 +25,8 @@ for key in $(echo -e "$list" | sed "s/,/ /g")
 do
     contractName=$(seth --to-ascii "$key" | sed 's/\x0/ /g')
     contract=$(seth call "$CHANGELOG" 'getAddress(bytes32)(address)' "$key")
-    wards=$(seth call "$contract" 'wards(address)(uint256)' "$target" 2>/dev/null) || continue
-    [[ "$wards" == "1" ]] && echo "${contractName// } -> $1"
-    wards=$(seth call "$target" 'wards(address)(uint256)' "$contract" 2>/dev/null) || continue
-    [[ "$wards" == "1" ]] && echo "$1 -> $contractName"
+    [[ $(seth call "$target" 'wards(address)(uint256)' "$contract" 2>/dev/null) == "1" ]] && echo "$1 -> $contractName"
+    [[ $(seth call "$contract" 'wards(address)(uint256)' "$target" 2>/dev/null) == "1" ]] && echo "${contractName// } -> $1"
     src=$(seth call "$contract" 'src()(address)' 2>/dev/null) || continue
     srcWards=$(seth call "$src" 'wards(address)(uint256)' "$target" 2>/dev/null) || continue
     [[ "$srcWards" == "1" ]] && echo -e "source of $contractName\n$src"
