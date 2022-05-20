@@ -28,6 +28,5 @@ do
     [[ $(seth call "$target" 'wards(address)(uint256)' "$contract" 2>/dev/null) == "1" ]] && echo "$1 -> $contractName"
     [[ $(seth call "$contract" 'wards(address)(uint256)' "$target" 2>/dev/null) == "1" ]] && echo "${contractName// } -> $1"
     src=$(seth call "$contract" 'src()(address)' 2>/dev/null) || continue
-    srcWards=$(seth call "$src" 'wards(address)(uint256)' "$target" 2>/dev/null) || continue
-    [[ "$srcWards" == "1" ]] && echo -e "source of $contractName\n$src"
+    [[ $(seth call "$src" 'wards(address)(uint256)' "$target" 2>/dev/null) == "1" ]] && echo -e "$src (source of ${contractName// }) -> $1"
 done
