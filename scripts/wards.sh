@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-[[ "$ETH_RPC_URL" ]] || { echo "Please set a ETH_RPC_URL"; [[ -v PS1 ]] && return || exit 1; }
+[[ "$ETH_RPC_URL" ]] || { echo "Please set a ETH_RPC_URL"; [ -v PS1 ] && return || exit 1; }
 
-[[ "$1" ]] || { echo "Please specify the Target Address (e.g. target=0xB966002DDAa2Baf48369f5015329750019736031) or ChainLog Key (e.g. target=MCD_VAT) to inspect"; [ -v PS1 ]  && return || exit 1; }
+[[ "$1" ]] || { echo "Please specify the Target Address (e.g. target=0xB966002DDAa2Baf48369f5015329750019736031) or ChainLog Key (e.g. target=MCD_VAT) to inspect"; [ -v PS1 ] && return || exit 1; }
 
 for ARGUMENT in "$@"
 do
