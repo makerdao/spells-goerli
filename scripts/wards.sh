@@ -3,7 +3,18 @@ set -e
 
 [[ "$ETH_RPC_URL" ]] || { echo "Please set a ETH_RPC_URL"; exit 1; }
 
-[[ "$1" ]] || { echo "Please specify the Target Address or ChainLog Key (ASCII) to inspect"; exit 1; }
+[[ "$1" ]] || { echo "Please specify the Target Address (e.g. (target=)0xB966002DDAa2Baf48369f5015329750019736031) or ChainLog Key (e.g. (target=)MCD_VAT) to inspect"; exit 1; }
+
+for ARGUMENT in "$@"
+do
+    KEY=$(echo "$ARGUMENT" | cut -f1 -d=)
+    VALUE=$(echo "$ARGUMENT" | cut -f2 -d=)
+
+    case "$KEY" in
+            target)      TARGET="$VALUE" ;;
+            *)           TARGET="$KEY"   ;;
+    esac
+done
 
 ### Override maxFeePerGas to avoid spikes
 baseFee=$(seth basefee)
@@ -12,11 +23,11 @@ baseFee=$(seth basefee)
 
 CHANGELOG=0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F
 
-if [[ "$1" =~ 0x* ]]; then
-    target=$1
+if [[ "$TARGET" =~ 0x* ]]; then
+    target=$TARGET
 else
-    KEY=$(seth --to-bytes32 "$(seth --from-ascii "$1")")
-    target=$(seth call "$CHANGELOG" 'getAddress(bytes32)(address)' "$KEY")
+    key=$(seth --to-bytes32 "$(seth --from-ascii "$TARGET")")
+    target=$(seth call "$CHANGELOG" 'getAddress(bytes32)(address)' "$key")
 fi
 
 echo -e "Network: $(seth chain)"
