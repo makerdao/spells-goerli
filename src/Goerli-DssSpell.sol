@@ -47,28 +47,10 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         return false;
     }
 
-    address immutable MCD_FLAP = DssExecLib.flap();
-    address immutable MCD_ESM = DssExecLib.esm();
-
-    // No Transfer on Goerli
-    // address immutable MCD_GOV = DssExecLib.mkr();
-    // address immutable DUX_WALLET =        ;
-    // address immutable SIDESTREAM_WALLET = ;
-
     function actions() public override {
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralOnboardingAction
         // onboardNewCollaterals();
-
-        // ---------------------------- Lid for Flap ---------------------------
-        DssExecLib.setValue(MCD_FLAP, "lid", 30_000 * RAD);
-
-        // ------------------------------ ESM Min ------------------------------
-        DssExecLib.setValue(MCD_ESM, "min", 150_000 * WAD);
-
-        // ---------------------------- Transfer MKR ---------------------------
-        // No Transfer on Goerli
-
     }
 }
 
