@@ -124,37 +124,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         //     assertTrue(false);
         // }
 
-        try chainLog.getAddress("VAL_ETH") {
-            assertTrue(false);
-        } catch Error(string memory errmsg) {
-            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
-        } catch {
-            assertTrue(false);
-        }
-
-        try chainLog.getAddress("VAL_BAT") {
-            assertTrue(false);
-        } catch Error(string memory errmsg) {
-            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
-        } catch {
-            assertTrue(false);
-        }
-
-        try chainLog.getAddress("VAL_USDC") {
-            assertTrue(false);
-        } catch Error(string memory errmsg) {
-            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
-        } catch {
-            assertTrue(false);
-        }
-
-        try chainLog.getAddress("DEPLOYER") {
-            assertTrue(false);
-        } catch Error(string memory errmsg) {
-            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
-        } catch {
-            assertTrue(false);
-        }
     }
 
     function testCollateralIntegrations() private {
@@ -173,15 +142,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         //     false
         // );
 
-        checkIlkIntegration(
-             "WSTETH-B",
-             GemJoinAbstract(addr.addr("MCD_JOIN_WSTETH_B")),
-             ClipAbstract(addr.addr("MCD_CLIP_WSTETH_B")),
-             addr.addr("PIP_WSTETH"),
-             true,
-             true,
-             false
-        );
+
     }
 
     function testLerpSurplusBuffer() private { // make public to use
