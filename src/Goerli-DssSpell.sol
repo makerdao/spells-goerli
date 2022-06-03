@@ -43,8 +43,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     uint256 constant WAD     = 10 ** 18;
     uint256 constant RAD     = 10 ** 45;
 
-    function _sub(uint x, uint y) internal pure returns (uint z) {
-        require((z = x - y) <= x, "ds-math-sub-underflow");
+    function _sub(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        require((z = x - y) <= x, "sub-underflow");
     }
 
     // Many of the settings that change weekly rely on the rate accumulator
