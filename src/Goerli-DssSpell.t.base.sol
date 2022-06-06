@@ -1165,4 +1165,12 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             else checkWards(_addr, contractName);
         }
     }
+
+    function checkChainlogKey(bytes32 key) internal {
+        assertEq(chainLog.getAddress(key), addr.addr(key), concat("TestError/Chainlog-key-mismatch-", key));
+    }
+
+    function checkChainlogVersion(string memory key) internal {
+        assertEq(chainLog.version(), key, concat("TestError/Chainlog-version-mismatch-", key));
+    }
 }
