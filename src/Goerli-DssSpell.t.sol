@@ -32,6 +32,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     function testStarknetUpdates() public {
 
+        address OLD_ESM = 0x105BF37e7D81917b6fEACd6171335B4838e53D5e;
+
         // Test before spell
         // Currently 1M on Goerli, 100k on mainnet
         assertEq(
@@ -44,6 +46,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             DSAuthAbstract(addr.addr("STARKNET_ESCROW_MOM")).authority(),
             address(0)
         );
+
+        assertEq(WardsAbstract(addr.addr("STARKNET_ESCROW")).wards(OLD_ESM), 1);
+        assertEq(WardsAbstract(addr.addr("STARKNET_DAI_BRIDGE")).wards(OLD_ESM), 1);
+        assertEq(WardsAbstract(addr.addr("STARKNET_GOV_RELAY")).wards(OLD_ESM), 1);
+        assertEq(WardsAbstract(addr.addr("STARKNET_ESCROW")).wards(addr.addr("MCD_ESM")), 0);
+        assertEq(WardsAbstract(addr.addr("STARKNET_DAI_BRIDGE")).wards(addr.addr("MCD_ESM")), 0);
+        assertEq(WardsAbstract(addr.addr("STARKNET_GOV_RELAY")).wards(addr.addr("MCD_ESM")), 0);
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
@@ -60,6 +69,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             DSAuthAbstract(addr.addr("STARKNET_ESCROW_MOM")).authority(),
             addr.addr("MCD_ADM")
         );
+
+        assertEq(WardsAbstract(addr.addr("STARKNET_ESCROW")).wards(OLD_ESM), 0);
+        assertEq(WardsAbstract(addr.addr("STARKNET_DAI_BRIDGE")).wards(OLD_ESM), 0);
+        assertEq(WardsAbstract(addr.addr("STARKNET_GOV_RELAY")).wards(OLD_ESM), 0);
+        assertEq(WardsAbstract(addr.addr("STARKNET_ESCROW")).wards(addr.addr("MCD_ESM")), 1);
+        assertEq(WardsAbstract(addr.addr("STARKNET_DAI_BRIDGE")).wards(addr.addr("MCD_ESM")), 1);
+        assertEq(WardsAbstract(addr.addr("STARKNET_GOV_RELAY")).wards(addr.addr("MCD_ESM")), 1);
     }
 
 

@@ -45,6 +45,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     address constant STARKNET_DAI_BRIDGE    = 0xd8beAa22894Cd33F24075459cFba287a10a104E4;
     address constant STARKNET_GOV_RELAY     = 0x73c0049Dd6560E644984Fa3Af30A55a02a7D81fB;
 
+    address constant  OLD_MCD_ESM           = 0x105BF37e7D81917b6fEACd6171335B4838e53D5e;
+    address immutable NEW_MCD_ESM           = DssExecLib.getChangelogAddress("MCD_ESM");
+
     VatLike immutable vat = VatLike(DssExecLib.vat());
 
     // Math
@@ -203,6 +206,13 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         //    Give DSChief control over L1EscrowMom
         DssExecLib.setAuthority(STARKNET_ESCROW_MOM, DssExecLib.getChangelogAddress("MCD_ADM"));
 
+        // Old MCD_ESM is authed on Starknet contracts, auth new one instead
+        DssExecLib.deauthorize(STARKNET_ESCROW, OLD_MCD_ESM);
+        DssExecLib.authorize(STARKNET_ESCROW, NEW_MCD_ESM);
+        DssExecLib.deauthorize(STARKNET_DAI_BRIDGE, OLD_MCD_ESM);
+        DssExecLib.authorize(STARKNET_DAI_BRIDGE, NEW_MCD_ESM);
+        DssExecLib.deauthorize(STARKNET_GOV_RELAY, OLD_MCD_ESM);
+        DssExecLib.authorize(STARKNET_GOV_RELAY, NEW_MCD_ESM);
 
         // Changelog
         DssExecLib.setChangelogAddress("STARKNET_ESCROW_MOM", STARKNET_ESCROW_MOM);
