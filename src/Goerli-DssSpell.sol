@@ -31,10 +31,19 @@ interface VatLike {
     function ilks(bytes32) external returns (uint256 Art, uint256 rate, uint256 spot, uint256 line, uint256 dust);
 }
 
+interface StarknetLike {
+    function setCeiling(uint256) external;
+}
+
 contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
+
+    address constant STARKNET_ESCROW_MOM    = 0x464379BD1aC523DdA45b7B78eCB1F703661cad2a;
+    address constant STARKNET_ESCROW        = 0x38c3DDF1eF3e045abDDEb94f4e7a1a0d5440EB44;
+    address constant STARKNET_DAI_BRIDGE    = 0xd8beAa22894Cd33F24075459cFba287a10a104E4;
+    address constant STARKNET_GOV_RELAY     = 0x73c0049Dd6560E644984Fa3Af30A55a02a7D81fB;
 
     VatLike immutable vat = VatLike(DssExecLib.vat());
 
@@ -190,10 +199,17 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         // https://forum.makerdao.com/t/details-about-spells-to-be-included-in-june-8th-2022-executive-vote/15532
         //
         //    Increase Starknet Bridge Limit from 100,000 DAI to 200,000 DAI
-        // MAINNET ONLY
+        StarknetLike(STARKNET_DAI_BRIDGE).setCeiling(200_000 * WAD);
         //    Give DSChief control over L1EscrowMom
-        // MAINNET ONLY
+        DssExecLib.setAuthority(STARKNET_ESCROW_MOM, DssExecLib.getChangelogAddress("MCD_ADM"));
 
+
+        // Changelog
+        DssExecLib.setChangelogAddress("STARKNET_ESCROW_MOM", STARKNET_ESCROW_MOM);
+        DssExecLib.setChangelogAddress("STARKNET_ESCROW", STARKNET_ESCROW);
+        DssExecLib.setChangelogAddress("STARKNET_DAI_BRIDGE", STARKNET_DAI_BRIDGE);
+        DssExecLib.setChangelogAddress("STARKNET_GOV_RELAY", STARKNET_GOV_RELAY);
+        DssExecLib.setChangelogVersion("1.13.1");
     }
 }
 
