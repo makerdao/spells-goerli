@@ -1133,8 +1133,8 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             if (ward > 0) {
                 if (skipWards(_addr, deployers.addr(i))) continue; // ONLY ON GOERLI
                 emit log("Error: Bad Auth");
-                emit log_named_address(" Deployer Address: ", deployers.addr(i));
-                emit log_named_string( "Affected Contract: ", contractName);
+                emit log_named_address("   Deployer Address", deployers.addr(i));
+                emit log_named_string("  Affected Contract", contractName);
                 fail();
             }
         }
