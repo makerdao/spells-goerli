@@ -107,7 +107,6 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     event Debug(uint256 index, uint256 val);
     event Debug(uint256 index, address addr);
     event Debug(uint256 index, bytes32 what);
-    event Log(string message, address deployer, string contractName);
 
     // not provided in DSMath
     function rpow(uint256 x, uint256 n, uint256 b) internal pure returns (uint256 z) {
@@ -1133,7 +1132,9 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             uint256 ward = abi.decode(data, (uint256));
             if (ward > 0) {
                 if (skipWards(_addr, deployers.addr(i))) continue; // ONLY ON GOERLI
-                emit Log("Bad auth", deployers.addr(i), contractName);
+                emit log("Error: Bad Auth");
+                emit log_named_address(" Deployer Address: ", deployers.addr(i));
+                emit log_named_string( "Affected Contract: ", contractName);
                 fail();
             }
         }
