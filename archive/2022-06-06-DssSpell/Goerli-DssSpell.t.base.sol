@@ -1116,13 +1116,10 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     // ONLY ON GOERLI
     function skipWards(address target, address deployer) internal view returns (bool ok) {
         ok = (
-            target   == address(chainLog) &&
+            target   == address(chainLog)    &&
             deployer == deployers.addr(2) ||
             deployer == deployers.addr(3) ||
             deployer == deployers.addr(4)
-        ) ||
-        (
-            deployer == deployers.addr(6)  // Oracles
         );
     }
 
