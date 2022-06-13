@@ -30,55 +30,6 @@ interface StarknetLike {
 
 contract DssSpellTest is GoerliDssSpellTestBase {
 
-    function testStarknetUpdates() public {
-
-        address OLD_ESM = 0x105BF37e7D81917b6fEACd6171335B4838e53D5e;
-
-        // Test before spell
-        // Currently 1M on Goerli, 100k on mainnet
-        assertEq(
-            StarknetLike(addr.addr("STARKNET_DAI_BRIDGE")).ceiling(),
-            50000000000000000000
-        );
-
-        // authority is currently unset
-        assertEq(
-            DSAuthAbstract(addr.addr("STARKNET_ESCROW_MOM")).authority(),
-            address(0)
-        );
-
-        assertEq(WardsAbstract(addr.addr("STARKNET_ESCROW")).wards(OLD_ESM), 1);
-        assertEq(WardsAbstract(addr.addr("STARKNET_DAI_BRIDGE")).wards(OLD_ESM), 1);
-        assertEq(WardsAbstract(addr.addr("STARKNET_GOV_RELAY")).wards(OLD_ESM), 1);
-        assertEq(WardsAbstract(addr.addr("STARKNET_ESCROW")).wards(addr.addr("MCD_ESM")), 0);
-        assertEq(WardsAbstract(addr.addr("STARKNET_DAI_BRIDGE")).wards(addr.addr("MCD_ESM")), 0);
-        assertEq(WardsAbstract(addr.addr("STARKNET_GOV_RELAY")).wards(addr.addr("MCD_ESM")), 0);
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        // Ensure Dai bridge value changed
-        assertEq(
-            StarknetLike(addr.addr("STARKNET_DAI_BRIDGE")).ceiling(),
-            200_000 * WAD
-        );
-
-        // Ensure authority is set to DSChief
-        assertEq(
-            DSAuthAbstract(addr.addr("STARKNET_ESCROW_MOM")).authority(),
-            addr.addr("MCD_ADM")
-        );
-
-        assertEq(WardsAbstract(addr.addr("STARKNET_ESCROW")).wards(OLD_ESM), 0);
-        assertEq(WardsAbstract(addr.addr("STARKNET_DAI_BRIDGE")).wards(OLD_ESM), 0);
-        assertEq(WardsAbstract(addr.addr("STARKNET_GOV_RELAY")).wards(OLD_ESM), 0);
-        assertEq(WardsAbstract(addr.addr("STARKNET_ESCROW")).wards(addr.addr("MCD_ESM")), 1);
-        assertEq(WardsAbstract(addr.addr("STARKNET_DAI_BRIDGE")).wards(addr.addr("MCD_ESM")), 1);
-        assertEq(WardsAbstract(addr.addr("STARKNET_GOV_RELAY")).wards(addr.addr("MCD_ESM")), 1);
-    }
-
-
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
 
@@ -218,7 +169,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() public { // make public to use
+    function testNewChainlogValues() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -226,11 +177,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // Insert new chainlog values tests here
         // checkChainlogKey("CONTRACT_KEY");
         // checkChainlogVersion("X.XX.X");
-        checkChainlogKey("STARKNET_ESCROW_MOM");
-        checkChainlogKey("STARKNET_ESCROW");
-        checkChainlogKey("STARKNET_DAI_BRIDGE");
-        checkChainlogKey("STARKNET_GOV_RELAY");
-        checkChainlogVersion("1.13.1");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
