@@ -1,4 +1,3 @@
-// SPDX-FileCopyrightText: © 2021-2022 Dai Foundation <www.daifoundation.org>
 // SPDX-License-Identifier: AGPL-3.0-or-later
 //
 // Copyright (C) 2021-2022 Dai Foundation
@@ -17,22 +16,22 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
-pragma experimental ABIEncoderV2;
 
+// Enable ABIEncoderV2 when onboarding collateral
+// pragma experimental ABIEncoderV2;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
 
 contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
+
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
-    // Turn office hours off
-    function officeHours() public override returns (bool) {
-        return false;
-    }
-
+    // Math
+    uint256 constant WAD = 10 ** 18;
+    uint256 constant RAD = 10 ** 45;
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
     // To check this yourself, use the following rate calculation (example 8%):
@@ -40,16 +39,35 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     // $ bc -l <<< 'scale=27; e( l(1.08)/(60 * 60 * 24 * 365) )'
     //
     // A table of rates can be found at
-    //    https://ipfs.io/ipfs/QmefQMseb3AiTapiAKKexdKHig8wroKuZbmLtPLv4u2YwW
+    //    https://ipfs.io/ipfs/QmPgPVrVxDCGyNR5rGp9JC5AUxppLzUAqvncRJDcxQnX1u
     //
 
-    // --- Rates ---
-    //uint256 constant THREE_PCT_RATE          = 1000000000937303470807876289;
+    // Turn office hours off
+    function officeHours() public override returns (bool) {
+        return false;
+    }
 
-    // Math
-    //uint256 constant MILLION = 10**6;
+    address immutable MCD_FLAP = DssExecLib.flap();
+    address immutable MCD_ESM = DssExecLib.esm();
+
+    // No Transfer on Goerli
+    // address immutable MCD_GOV = DssExecLib.mkr();
+    // address immutable DUX_WALLET =        ;
+    // address immutable SIDESTREAM_WALLET = ;
 
     function actions() public override {
+        // ---------------------------------------------------------------------
+        // Includes changes from the DssSpellCollateralOnboardingAction
+        // onboardNewCollaterals();
+
+        // ---------------------------- Lid for Flap ---------------------------
+        DssExecLib.setValue(MCD_FLAP, "lid", 30_000 * RAD);
+
+        // ------------------------------ ESM Min ------------------------------
+        DssExecLib.setValue(MCD_ESM, "min", 150_000 * WAD);
+
+        // ---------------------------- Transfer MKR ---------------------------
+        // No Transfer on Goerli
 
     }
 }

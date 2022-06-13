@@ -1,4 +1,3 @@
-// SPDX-FileCopyrightText: © 2021-2022 Dai Foundation <www.daifoundation.org>
 // SPDX-License-Identifier: AGPL-3.0-or-later
 //
 // Copyright (C) 2021-2022 Dai Foundation
@@ -100,8 +99,8 @@ contract Config {
         // Values for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0xc1cC492A132a1c4E00B9259a156CcD61A9d9D297),        // populate with deployed spell if deployed
-            deployed_spell_created:         1654547734,                 // use tx=<deploy tx> make deploy-stamp
+            deployed_spell:                 address(0xEf3a5E35cCAAd837781e2cA933EB92E3b3f4BAE5),        // populate with deployed spell if deployed
+            deployed_spell_created:         1653063314,        // use tx=<deploy tx> make deploy-stamp
             previous_spell:                 address(0),        // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           false,             // true if officehours is expected to be enabled in the spell
             expiration_threshold:           weekly_expiration  // (weekly_expiration,monthly_expiration) if weekly or monthly spell
@@ -504,7 +503,7 @@ contract Config {
         });
         afterSpell.collaterals["MANA-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      15 * MILLION,
+            aL_line:      10 * MILLION,
             aL_gap:       1 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
@@ -654,7 +653,7 @@ contract Config {
         });
         afterSpell.collaterals["LINK-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      50 * MILLION,
+            aL_line:      100 * MILLION,
             aL_gap:       7 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
@@ -773,10 +772,10 @@ contract Config {
             lerp:         false
         });
         afterSpell.collaterals["UNI-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
+            aL_enabled:   true,
+            aL_line:      25 * MILLION,
+            aL_gap:       5 * MILLION,
+            aL_ttl:       8 hours,
             line:         0,
             dust:         15 * THOUSAND,
             pct:          300,
@@ -863,10 +862,10 @@ contract Config {
             lerp:         true
         });
         afterSpell.collaterals["UNIV2DAIETH-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
+            aL_enabled:   true,
+            aL_line:      50 * MILLION,
+            aL_gap:       5 * MILLION,
+            aL_ttl:       8 hours,
             line:         0,
             dust:         60 * THOUSAND,
             pct:          100,
@@ -923,10 +922,10 @@ contract Config {
             lerp:         false
         });
         afterSpell.collaterals["UNIV2WBTCETH-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
+            aL_enabled:   true,
+            aL_line:      50 * MILLION,
+            aL_gap:       5 * MILLION,
+            aL_ttl:       8 hours,
             line:         0,
             dust:         25 * THOUSAND,
             pct:          200,
@@ -1073,10 +1072,10 @@ contract Config {
             lerp:         true
         });
         afterSpell.collaterals["UNIV2UNIETH-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
+            aL_enabled:   true,
+            aL_line:      5 * MILLION,
+            aL_gap:       3 * MILLION,
+            aL_ttl:       8 hours,
             line:         0,
             dust:         25 * THOUSAND,
             pct:          400,
@@ -1103,10 +1102,10 @@ contract Config {
             lerp:         false
         });
         afterSpell.collaterals["UNIV2WBTCDAI-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
+            aL_enabled:   true,
+            aL_line:      20 * MILLION,
+            aL_gap:       3 * MILLION,
+            aL_ttl:       8 hours,
             line:         0,
             dust:         60 * THOUSAND,
             pct:          0,
@@ -1464,7 +1463,7 @@ contract Config {
         });
         afterSpell.collaterals["WSTETH-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      200 * MILLION,
+            aL_line:      300 * MILLION,
             aL_gap:       30 * MILLION,
             aL_ttl:       6 hours,
             line:         0,
@@ -1644,7 +1643,7 @@ contract Config {
         afterSpell.collaterals["WSTETH-B"] = CollateralValues({
             aL_enabled:   true,
             aL_line:      150 * MILLION,
-            aL_gap:       30 * MILLION,
+            aL_gap:       15 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
             dust:         5 * THOUSAND,

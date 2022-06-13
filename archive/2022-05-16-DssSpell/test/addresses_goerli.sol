@@ -1,4 +1,3 @@
-// SPDX-FileCopyrightText: © 2021-2022 Dai Foundation <www.daifoundation.org>
 // SPDX-License-Identifier: AGPL-3.0-or-later
 //
 // Copyright (C) 2021-2022 Dai Foundation
@@ -323,9 +322,5 @@ contract Addresses {
         addr["MCD_JOIN_INST_WBTC_A"]            = 0xbd5978308C9BbF6d8d1D26cD1df9AA3EA83F782a;
         addr["MCD_CLIP_INST_WBTC_A"]            = 0x81Bf27c821F24b6FC9Bcc0F7d4D7cc2651712E3c;
         addr["MCD_CLIP_CALC_INST_WBTC_A"]       = 0x32ff6F008eB4aA5780efF2e0436b7adCDECb213a;
-        addr["STARKNET_ESCROW_MOM"]             = 0x464379BD1aC523DdA45b7B78eCB1F703661cad2a;
-        addr["STARKNET_ESCROW"]                 = 0x38c3DDF1eF3e045abDDEb94f4e7a1a0d5440EB44;
-        addr["STARKNET_DAI_BRIDGE"]             = 0xd8beAa22894Cd33F24075459cFba287a10a104E4;
-        addr["STARKNET_GOV_RELAY"]              = 0x73c0049Dd6560E644984Fa3Af30A55a02a7D81fB;
     }
 }
