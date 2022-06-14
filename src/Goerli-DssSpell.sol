@@ -48,7 +48,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
         // Includes changes from the DssSpellCollateralOnboardingAction
         onboardNewCollaterals();
 
-        DssExecLib.setChangelogVersion("1.12.1");
+        DssExecLib.setChangelogVersion("1.13.3");
 
     }
 }

@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: © 2021-2022 Dai Foundation <www.daifoundation.org>
 // SPDX-License-Identifier: AGPL-3.0-or-later
 //
 // Copyright (C) 2021-2022 Dai Foundation
@@ -100,7 +101,7 @@ contract Config {
         //
         spellValues = SpellValues({
             deployed_spell:                 address(0),        // populate with deployed spell if deployed
-            deployed_spell_created:         0,        // use tx=<deploy tx> make deploy-stamp
+            deployed_spell_created:         1654547734,        // use tx=<deploy tx> make deploy-stamp
             previous_spell:                 address(0),        // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           true,              // true if officehours is expected to be enabled in the spell
             expiration_threshold:           weekly_expiration  // (weekly_expiration,monthly_expiration) if weekly or monthly spell
@@ -122,15 +123,15 @@ contract Config {
             flap_beg:              400,                     // in basis points
             flap_ttl:              30 minutes,              // in seconds
             flap_tau:              72 hours,                // in seconds
-            flap_lid:              150 * THOUSAND,          // in whole Dai units
+            flap_lid:              30 * THOUSAND,           // in whole Dai units
             cat_box:               20 * MILLION,            // In whole Dai units
             dog_Hole:              100 * MILLION,           // In whole Dai units
-            esm_min:               100 * THOUSAND,          // In whole MKR units
+            esm_min:               150 * THOUSAND,          // In whole MKR units
             pause_authority:       chief,                   // Pause authority
             osm_mom_authority:     chief,                   // OsmMom authority
             flipper_mom_authority: chief,                   // FlipperMom authority
             clipper_mom_authority: chief,                   // ClipperMom authority
-            ilk_count:             50                       // Num expected in system
+            ilk_count:             51                       // Num expected in system
         });
 
         //
@@ -328,7 +329,7 @@ contract Config {
             aL_ttl:       6 hours,
             line:         0,
             dust:         15 * THOUSAND,
-            pct:          325,
+            pct:          225,
             mat:          14500,
             liqType:      "clip",
             liqOn:        true,
@@ -358,7 +359,7 @@ contract Config {
             aL_ttl:       8 hours,
             line:         0,
             dust:         30 * THOUSAND,
-            pct:          450,
+            pct:          400,
             mat:          13000,
             liqType:      "clip",
             liqOn:        true,
@@ -503,7 +504,7 @@ contract Config {
         });
         afterSpell.collaterals["MANA-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      10 * MILLION,
+            aL_line:      15 * MILLION,
             aL_gap:       1 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
@@ -653,7 +654,7 @@ contract Config {
         });
         afterSpell.collaterals["LINK-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      100 * MILLION,
+            aL_line:      50 * MILLION,
             aL_gap:       7 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
@@ -772,10 +773,10 @@ contract Config {
             lerp:         false
         });
         afterSpell.collaterals["UNI-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      25 * MILLION,
-            aL_gap:       5 * MILLION,
-            aL_ttl:       8 hours,
+            aL_enabled:   false,
+            aL_line:      0,
+            aL_gap:       0,
+            aL_ttl:       0,
             line:         0,
             dust:         15 * THOUSAND,
             pct:          300,
@@ -862,10 +863,10 @@ contract Config {
             lerp:         true
         });
         afterSpell.collaterals["UNIV2DAIETH-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      50 * MILLION,
-            aL_gap:       5 * MILLION,
-            aL_ttl:       8 hours,
+            aL_enabled:   false,
+            aL_line:      0,
+            aL_gap:       0,
+            aL_ttl:       0,
             line:         0,
             dust:         60 * THOUSAND,
             pct:          100,
@@ -922,10 +923,10 @@ contract Config {
             lerp:         false
         });
         afterSpell.collaterals["UNIV2WBTCETH-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      50 * MILLION,
-            aL_gap:       5 * MILLION,
-            aL_ttl:       8 hours,
+            aL_enabled:   false,
+            aL_line:      0,
+            aL_gap:       0,
+            aL_ttl:       0,
             line:         0,
             dust:         25 * THOUSAND,
             pct:          200,
@@ -1072,10 +1073,10 @@ contract Config {
             lerp:         true
         });
         afterSpell.collaterals["UNIV2UNIETH-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      5 * MILLION,
-            aL_gap:       3 * MILLION,
-            aL_ttl:       8 hours,
+            aL_enabled:   false,
+            aL_line:      0,
+            aL_gap:       0,
+            aL_ttl:       0,
             line:         0,
             dust:         25 * THOUSAND,
             pct:          400,
@@ -1102,10 +1103,10 @@ contract Config {
             lerp:         false
         });
         afterSpell.collaterals["UNIV2WBTCDAI-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      20 * MILLION,
-            aL_gap:       3 * MILLION,
-            aL_ttl:       8 hours,
+            aL_enabled:   false,
+            aL_line:      0,
+            aL_gap:       0,
+            aL_ttl:       0,
             line:         0,
             dust:         60 * THOUSAND,
             pct:          0,
@@ -1463,7 +1464,7 @@ contract Config {
         });
         afterSpell.collaterals["WSTETH-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      300 * MILLION,
+            aL_line:      200 * MILLION,
             aL_gap:       30 * MILLION,
             aL_ttl:       6 hours,
             line:         0,
@@ -1643,7 +1644,7 @@ contract Config {
         afterSpell.collaterals["WSTETH-B"] = CollateralValues({
             aL_enabled:   true,
             aL_line:      150 * MILLION,
-            aL_gap:       15 * MILLION,
+            aL_gap:       30 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
             dust:         5 * THOUSAND,
@@ -1658,6 +1659,36 @@ contract Config {
             flip_tau:     0,
             flipper_mom:  0,
             dog_hole:     10 * MILLION,
+            clip_buf:     12000,
+            clip_tail:    140 minutes,
+            clip_cusp:    4000,
+            clip_chip:    10,
+            clip_tip:     300,
+            clipper_mom:  1,
+            cm_tolerance: 5000,
+            calc_tau:     0,
+            calc_step:    90,
+            calc_cut:     9900,
+            lerp:         false
+        });
+        afterSpell.collaterals["RETH-A"] = CollateralValues({
+            aL_enabled:   true,
+            aL_line:      5 * MILLION,
+            aL_gap:       3 * MILLION,
+            aL_ttl:       8 hours,
+            line:         0,
+            dust:         15 * THOUSAND,
+            pct:          225,
+            mat:          17000,
+            liqType:      "",
+            liqOn:        false,
+            chop:         1300,
+            cat_dunk:     0,
+            flip_beg:     0,
+            flip_ttl:     0,
+            flip_tau:     0,
+            flipper_mom:  0,
+            dog_hole:     2 * MILLION,
             clip_buf:     12000,
             clip_tail:    140 minutes,
             clip_cusp:    4000,

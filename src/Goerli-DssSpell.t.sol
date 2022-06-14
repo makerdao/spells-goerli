@@ -173,10 +173,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // );
 
         checkIlkIntegration(
-             "WSTETH-B",
-             GemJoinAbstract(addr.addr("MCD_JOIN_WSTETH_B")),
-             ClipAbstract(addr.addr("MCD_CLIP_WSTETH_B")),
-             addr.addr("PIP_WSTETH"),
+             "RETH-A",
+             GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
+             ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
+             addr.addr("PIP_RETH"),
              true,
              true,
              false
@@ -209,10 +209,12 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        assertEq(chainLog.getAddress("MCD_JOIN_WSTETH_B"), addr.addr("MCD_JOIN_WSTETH_B"));
-        assertEq(chainLog.getAddress("MCD_CLIP_WSTETH_B"), addr.addr("MCD_CLIP_WSTETH_B"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_WSTETH_B"), addr.addr("MCD_CLIP_CALC_WSTETH_B"));
-        assertEq(chainLog.version(), "1.12.1");
+        assertEq(chainLog.getAddress("RETH"), addr.addr("RETH"));
+        assertEq(chainLog.getAddress("PIP_RETH"), addr.addr("PIP_RETH"));
+        assertEq(chainLog.getAddress("MCD_JOIN_RETH_A"), addr.addr("MCD_JOIN_RETH_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_RETH_A"), addr.addr("MCD_CLIP_RETH_A"));
+        assertEq(chainLog.getAddress("MCD_CLIP_CALC_RETH_A"), addr.addr("MCD_CLIP_CALC_RETH_A"));
+        assertEq(chainLog.version(), "1.13.3");
     }
 
     function testNewIlkRegistryValues() public { // make public to use
@@ -221,15 +223,15 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        assertEq(reg.pos("WSTETH-B"), 49);
-        assertEq(reg.join("WSTETH-B"), addr.addr("MCD_JOIN_WSTETH_B"));
-        assertEq(reg.gem("WSTETH-B"), addr.addr("WSTETH"));
-        assertEq(reg.dec("WSTETH-B"), GemAbstract(addr.addr("WSTETH")).decimals());
-        assertEq(reg.class("WSTETH-B"), 1);
-        assertEq(reg.pip("WSTETH-B"), addr.addr("PIP_WSTETH"));
-        assertEq(reg.xlip("WSTETH-B"), addr.addr("MCD_CLIP_WSTETH_B"));
+        assertEq(reg.pos("RETH-A"), 50);
+        assertEq(reg.join("RETH-A"), addr.addr("MCD_JOIN_RETH_A"));
+        assertEq(reg.gem("RETH-A"), addr.addr("RETH"));
+        assertEq(reg.dec("RETH-A"), GemAbstract(addr.addr("RETH")).decimals());
+        assertEq(reg.class("RETH-A"), 1);
+        assertEq(reg.pip("RETH-A"), addr.addr("PIP_RETH"));
+        assertEq(reg.xlip("RETH-A"), addr.addr("MCD_CLIP_RETH_A"));
         //assertEq(reg.name("TOKEN-X"), "NAME"); // Token Name Not Present (DSToken, ONLY ON GOERLI)
-        assertEq(reg.symbol("WSTETH-B"), "wstETH");
+        assertEq(reg.symbol("RETH-A"), "rETH");
     }
 
     function testFailWrongDay() public {
