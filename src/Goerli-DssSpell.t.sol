@@ -30,6 +30,26 @@ interface StarknetLike {
 
 contract DssSpellTest is GoerliDssSpellTestBase {
 
+    function testUNIALerpOffboardings() public {
+        checkIlkLerpOffboarding("UNI-A", "UNI-A Offboarding", 165, 900);
+    }
+
+    function testUNIV2DAIETHALerpOffboardings() public {
+        checkIlkLerpOffboarding("UNIV2DAIETH-A", "UNIV2DAIETH-A Offboarding", 120, 3100);
+    }
+
+    function testUNIV2WBTCETHALerpOffboardings() public {
+        checkIlkLerpOffboarding("UNIV2WBTCETH-A", "UNIV2WBTCETH-A Offboarding", 145, 5300);
+    }
+
+    function testUNIV2UNIETHALerpOffboardings() public {
+        checkIlkLerpOffboarding("UNIV2UNIETH-A", "UNIV2UNIETH-A Offboarding", 160, 700);
+    }
+
+    function testUNIV2WBTCDAIALerpOffboardings() public {
+        checkIlkLerpOffboarding("UNIV2WBTCDAI-A", "UNIV2WBTCDAI-A Offboarding", 120, 1000);
+    }
+
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
 
