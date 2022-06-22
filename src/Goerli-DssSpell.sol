@@ -23,7 +23,7 @@ pragma solidity 0.6.12;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
+import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
 interface VatLike {
     function Line() external view returns (uint256);
@@ -31,7 +31,7 @@ interface VatLike {
     function ilks(bytes32) external returns (uint256 Art, uint256 rate, uint256 spot, uint256 line, uint256 dust);
 }
 
-contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
+contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";

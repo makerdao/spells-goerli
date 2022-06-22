@@ -20,7 +20,7 @@ pragma solidity 0.6.12;
 
 import "dss-exec-lib/DssExecLib.sol";
 
-contract DssSpellCollateralOnboardingAction {
+contract DssSpellCollateralAction {
     // Math
     uint256 constant RAY  = 10 ** 27;
 
