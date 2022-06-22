@@ -49,7 +49,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     function actions() public override {
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralOnboardingAction
-        // onboardNewCollaterals();
+        onboardNewCollaterals();
     }
 }
 
