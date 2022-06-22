@@ -800,7 +800,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         false
+            lerp:         true
         });
         afterSpell.collaterals["RENBTC-A"] = CollateralValues({
             aL_enabled:   true,
@@ -890,7 +890,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    125,
             calc_cut:     9950,
-            lerp:         false
+            lerp:         true
         });
         afterSpell.collaterals["PSM-USDC-A"] = CollateralValues({
             aL_enabled:   true,
@@ -950,7 +950,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    130,
             calc_cut:     9900,
-            lerp:         false
+            lerp:         true
         });
         afterSpell.collaterals["UNIV2USDCETH-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1100,7 +1100,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    130,
             calc_cut:     9900,
-            lerp:         false
+            lerp:         true
         });
         afterSpell.collaterals["UNIV2WBTCDAI-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1130,7 +1130,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    125,
             calc_cut:     9950,
-            lerp:         false
+            lerp:         true
         });
         afterSpell.collaterals["UNIV2AAVEETH-A"] = CollateralValues({
             aL_enabled:   false,
