@@ -783,7 +783,7 @@ contract Config {
             mat:          16500,
             liqType:      "clip",
             liqOn:        true,
-            chop:         1300,
+            chop:         0,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -794,13 +794,13 @@ contract Config {
             clip_tail:    140 minutes,
             clip_cusp:    4000,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     0,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         false
+            lerp:         true
         });
         afterSpell.collaterals["RENBTC-A"] = CollateralValues({
             aL_enabled:   true,
@@ -873,7 +873,7 @@ contract Config {
             mat:          12000,
             liqType:      "clip",
             liqOn:        true,
-            chop:         1300,
+            chop:         0,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -884,13 +884,13 @@ contract Config {
             clip_tail:    215 minutes,
             clip_cusp:    6000,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     0,
             clipper_mom:  1,
             cm_tolerance: 7000,
             calc_tau:     0,
             calc_step:    125,
             calc_cut:     9950,
-            lerp:         false
+            lerp:         true
         });
         afterSpell.collaterals["PSM-USDC-A"] = CollateralValues({
             aL_enabled:   true,
@@ -933,7 +933,7 @@ contract Config {
             mat:          14500,
             liqType:      "clip",
             liqOn:        true,
-            chop:         1300,
+            chop:         0,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -944,13 +944,13 @@ contract Config {
             clip_tail:    200 minutes,
             clip_cusp:    4000,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     0,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    130,
             calc_cut:     9900,
-            lerp:         false
+            lerp:         true
         });
         afterSpell.collaterals["UNIV2USDCETH-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1083,7 +1083,7 @@ contract Config {
             mat:          16000,
             liqType:      "clip",
             liqOn:        true,
-            chop:         1300,
+            chop:         0,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -1094,13 +1094,13 @@ contract Config {
             clip_tail:    200 minutes,
             clip_cusp:    4000,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     0,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    130,
             calc_cut:     9900,
-            lerp:         false
+            lerp:         true
         });
         afterSpell.collaterals["UNIV2WBTCDAI-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1113,7 +1113,7 @@ contract Config {
             mat:          12000,
             liqType:      "clip",
             liqOn:        true,
-            chop:         1300,
+            chop:         0,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -1124,13 +1124,13 @@ contract Config {
             clip_tail:    215 minutes,
             clip_cusp:    6000,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     0,
             clipper_mom:  1,
             cm_tolerance: 7000,
             calc_tau:     0,
             calc_step:    125,
             calc_cut:     9950,
-            lerp:         false
+            lerp:         true
         });
         afterSpell.collaterals["UNIV2AAVEETH-A"] = CollateralValues({
             aL_enabled:   false,
