@@ -189,7 +189,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() private { // make public to use
+    function testNewChainlogValues() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -197,6 +197,9 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // Insert new chainlog values tests here
         // checkChainlogKey("CONTRACT_KEY");
         // checkChainlogVersion("X.XX.X");
+
+        checkChainlogKey("STARKNET_CORE");
+        checkChainlogVersion("1.13.2");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
