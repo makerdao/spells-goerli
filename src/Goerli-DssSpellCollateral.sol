@@ -21,7 +21,7 @@ pragma solidity 0.6.12;
 import "dss-exec-lib/DssExecLib.sol";
 
 contract DssSpellCollateralAction {
-    // Math
+    // --- Math ---
     uint256 constant RAY  = 10 ** 27;
 
     // --- Offboarding: Current Liquidation Ratio ---
