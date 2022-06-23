@@ -102,6 +102,9 @@ contract DssSpellCollateralAction {
     }
 
     function offboardCollaterals() internal {
+
+        address spotter = DssExecLib.spotter();
+
         // Offboard UNI-A
         // https://vote.makerdao.com/polling/QmSfLS6V#poll-detail
         // https://forum.makerdao.com/t/signal-request-offboard-uni-univ2daieth-univ2wbtceth-univ2unieth-and-univ2wbtcdai/15160
@@ -110,7 +113,7 @@ contract DssSpellCollateralAction {
         DssExecLib.setKeeperIncentiveFlatRate("UNI-A", 0);
         DssExecLib.linearInterpolation({
             _name:      "UNI-A Offboarding",
-            _target:    DssExecLib.spotter(),
+            _target:    spotter,
             _ilk:       "UNI-A",
             _what:      "mat",
             _startTime: block.timestamp,
@@ -127,7 +130,7 @@ contract DssSpellCollateralAction {
         DssExecLib.setKeeperIncentiveFlatRate("UNIV2DAIETH-A", 0);
         DssExecLib.linearInterpolation({
             _name:      "UNIV2DAIETH-A Offboarding",
-            _target:    DssExecLib.spotter(),
+            _target:    spotter,
             _ilk:       "UNIV2DAIETH-A",
             _what:      "mat",
             _startTime: block.timestamp,
@@ -144,7 +147,7 @@ contract DssSpellCollateralAction {
         DssExecLib.setKeeperIncentiveFlatRate("UNIV2WBTCETH-A", 0);
         DssExecLib.linearInterpolation({
             _name:      "UNIV2WBTCETH-A Offboarding",
-            _target:    DssExecLib.spotter(),
+            _target:    spotter,
             _ilk:       "UNIV2WBTCETH-A",
             _what:      "mat",
             _startTime: block.timestamp,
@@ -161,7 +164,7 @@ contract DssSpellCollateralAction {
         DssExecLib.setKeeperIncentiveFlatRate("UNIV2UNIETH-A", 0);
         DssExecLib.linearInterpolation({
             _name:      "UNIV2UNIETH-A Offboarding",
-            _target:    DssExecLib.spotter(),
+            _target:    spotter,
             _ilk:       "UNIV2UNIETH-A",
             _what:      "mat",
             _startTime: block.timestamp,
@@ -178,7 +181,7 @@ contract DssSpellCollateralAction {
         DssExecLib.setKeeperIncentiveFlatRate("UNIV2WBTCDAI-A", 0);
         DssExecLib.linearInterpolation({
             _name:      "UNIV2WBTCDAI-A Offboarding",
-            _target:    DssExecLib.spotter(),
+            _target:    spotter,
             _ilk:       "UNIV2WBTCDAI-A",
             _what:      "mat",
             _startTime: block.timestamp,
