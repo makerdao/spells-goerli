@@ -49,8 +49,6 @@ contract DssSpellCollateralAction {
     //    https://ipfs.io/ipfs/QmTRiQ3GqjCiRhh1ojzKzgScmSsiwQPLyjhgYSxZASQekj
     //
 
-    // --- Math ---
-
     function onboardNewCollaterals() internal {
         // ----------------------------- Collateral onboarding -----------------------------
         //  Add ______________ as a new Vault Type
