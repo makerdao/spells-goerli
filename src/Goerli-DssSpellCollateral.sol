@@ -28,15 +28,13 @@ contract DssSpellCollateralAction {
     uint256 constant CURRENT_UNI_A_MAT              =  165 * RAY / 100;
     uint256 constant CURRENT_UNIV2DAIETH_A_MAT      =  120 * RAY / 100;
     uint256 constant CURRENT_UNIV2WBTCETH_A_MAT     =  145 * RAY / 100;
-    uint256 constant CURRENT_UNIV2UNIETH_A_MAT      =  160 * RAY / 100;
     uint256 constant CURRENT_UNIV2WBTCDAI_A_MAT     =  120 * RAY / 100;
 
     // --- Offboarding: Target Liquidation Ratio ---
-    uint256 constant TARGET_UNI_A_MAT               = 900 * RAY / 100;
-    uint256 constant TARGET_UNIV2DAIETH_A_MAT       = 3100 * RAY / 100;
-    uint256 constant TARGET_UNIV2WBTCETH_A_MAT      = 5300 * RAY / 100;
-    uint256 constant TARGET_UNIV2UNIETH_A_MAT       = 700 * RAY / 100;
-    uint256 constant TARGET_UNIV2WBTCDAI_A_MAT      = 1000 * RAY / 100;
+    uint256 constant TARGET_UNI_A_MAT               = 1_300 * RAY / 100;
+    uint256 constant TARGET_UNIV2DAIETH_A_MAT       = 2_000 * RAY / 100;
+    uint256 constant TARGET_UNIV2WBTCETH_A_MAT      = 2_400 * RAY / 100;
+    uint256 constant TARGET_UNIV2WBTCDAI_A_MAT      = 800 * RAY / 100;
 
     // --- Rates ---
     // Many of the settings that change weekly rely on the rate accumulator
@@ -162,16 +160,6 @@ contract DssSpellCollateralAction {
 
         DssExecLib.setIlkLiquidationPenalty("UNIV2UNIETH-A", 0);
         DssExecLib.setKeeperIncentiveFlatRate("UNIV2UNIETH-A", 0);
-        DssExecLib.linearInterpolation({
-            _name:      "UNIV2UNIETH-A Offboarding",
-            _target:    spotter,
-            _ilk:       "UNIV2UNIETH-A",
-            _what:      "mat",
-            _startTime: block.timestamp,
-            _start:     CURRENT_UNIV2UNIETH_A_MAT,
-            _end:       TARGET_UNIV2UNIETH_A_MAT,
-            _duration:  30 days
-        });
 
         // Offboard UNIV2WBTCDAI-A
         // https://vote.makerdao.com/polling/QmZHNkip#poll-detail

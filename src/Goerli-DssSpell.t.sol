@@ -31,23 +31,19 @@ interface StarknetLike {
 contract DssSpellTest is GoerliDssSpellTestBase {
 
     function testUNIALerpOffboarding() public {
-        checkIlkLerpOffboarding("UNI-A", "UNI-A Offboarding", 165, 900);
+        checkIlkLerpOffboarding("UNI-A", "UNI-A Offboarding", 165, 1_300);
     }
 
     function testUNIV2DAIETHALerpOffboarding() public {
-        checkIlkLerpOffboarding("UNIV2DAIETH-A", "UNIV2DAIETH-A Offboarding", 120, 3100);
+        checkIlkLerpOffboarding("UNIV2DAIETH-A", "UNIV2DAIETH-A Offboarding", 120, 2_000);
     }
 
     function testUNIV2WBTCETHALerpOffboarding() public {
-        checkIlkLerpOffboarding("UNIV2WBTCETH-A", "UNIV2WBTCETH-A Offboarding", 145, 5300);
-    }
-
-    function testUNIV2UNIETHALerpOffboarding() public {
-        checkIlkLerpOffboarding("UNIV2UNIETH-A", "UNIV2UNIETH-A Offboarding", 160, 700);
+        checkIlkLerpOffboarding("UNIV2WBTCETH-A", "UNIV2WBTCETH-A Offboarding", 145, 2_400);
     }
 
     function testUNIV2WBTCDAIALerpOffboarding() public {
-        checkIlkLerpOffboarding("UNIV2WBTCDAI-A", "UNIV2WBTCDAI-A Offboarding", 120, 1000);
+        checkIlkLerpOffboarding("UNIV2WBTCDAI-A", "UNIV2WBTCDAI-A Offboarding", 120, 800);
     }
 
     function test_OSM_auth() private {  // make public to use
