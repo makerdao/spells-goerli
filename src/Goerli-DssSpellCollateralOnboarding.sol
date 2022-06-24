@@ -34,56 +34,65 @@ contract DssSpellCollateralOnboardingAction {
     //
 
     // --- Math ---
+    uint256 constant MILLION  = 10 ** 6;
+    uint256 constant THOUSAND = 10 ** 3;
+
+    uint256 constant TWO_TWO_FIVE_PCT_RATE    = 1000000000705562181084137268;
+
+    // --- DEPLOYED COLLATERAL ADDRESSES ---
+    address constant RETH                     = 0x178E141a0E3b34152f73Ff610437A7bf9B83267A;
+    // TODO: Update these once oracles and clip and calc fabs finalized
+    address constant PIP_RETH                 = 0x7CA0b14534D3dA1D77dcbc083caA9980a157C2c5;
+    address constant MCD_JOIN_RETH_A          = 0xBA59579287e146384C7dBcb29b7cfd8FDe86d0aD;
+    address constant MCD_CLIP_RETH_A          = 0x35846FDa6Add5C34ECe9F7d13d3711865A39e155;
+    address constant MCD_CLIP_CALC_RETH_A     = 0xC3A95477616c9Db6C772179e74a9A717E8B148a7;
+
+
 
     function onboardNewCollaterals() internal {
         // ----------------------------- Collateral onboarding -----------------------------
-        //  Add ______________ as a new Vault Type
-        //  Poll Link:
+        //  Add RETH-A as a new Vault Type
+        //  Poll Link: https://vote.makerdao.com/polling/QmfMswF2
 
-        // DssExecLib.addNewCollateral(
-        //     CollateralOpts({
-        //         ilk:                   ,
-        //         gem:                   ,
-        //         join:                  ,
-        //         clip:                  ,
-        //         calc:                  ,
-        //         pip:                   ,
-        //         isLiquidatable:        ,
-        //         isOSM:                 ,
-        //         whitelistOSM:          ,
-        //         ilkDebtCeiling:        ,
-        //         minVaultAmount:        ,
-        //         maxLiquidationAmount:  ,
-        //         liquidationPenalty:    ,
-        //         ilkStabilityFee:       ,
-        //         startingPriceFactor:   ,
-        //         breakerTolerance:      ,
-        //         auctionDuration:       ,
-        //         permittedDrop:         ,
-        //         liquidationRatio:      ,
-        //         kprFlatReward:         ,
-        //         kprPctReward:
-        //     })
-        // );
+        DssExecLib.addNewCollateral(
+            CollateralOpts({
+                ilk:                   "RETH-A",
+                gem:                   RETH,
+                join:                  MCD_JOIN_RETH_A,
+                clip:                  MCD_CLIP_RETH_A,
+                calc:                  MCD_CLIP_CALC_RETH_A,
+                pip:                   PIP_RETH,
+                isLiquidatable:        true,
+                isOSM:                 true,
+                whitelistOSM:          true,
+                ilkDebtCeiling:        5 * MILLION,
+                minVaultAmount:        15 * THOUSAND,                // debt floor - dust in DAI
+                maxLiquidationAmount:  2 * MILLION,
+                liquidationPenalty:    1300,                         // 13% penalty on liquidation
+                ilkStabilityFee:       TWO_TWO_FIVE_PCT_RATE,        // 2.25% stability fee
+                startingPriceFactor:   12000,                        // Auction price begins at 120% of oracle price
+                breakerTolerance:      5000,                         // Allows for a 50% hourly price drop before disabling liquidation
+                auctionDuration:       140 minutes,
+                permittedDrop:         4000,                         // 40% price drop before reset
+                liquidationRatio:      17000,                        // 170% collateralization
+                kprFlatReward:         300,                          // 300 DAI tip - flat fee per kpr
+                kprPctReward:          1000                          // 10% chip - per kpr
+            })
+        );
 
-        // DssExecLib.setStairstepExponentialDecrease(
-        //     CALC_ADDR,
-        //     DURATION,
-        //     PCT_BPS
-        // );
-
-        // DssExecLib.setIlkAutoLineParameters(
-        //     ILK,
-        //     AMOUNT,
-        //     GAP,
-        //     TTL
-        // );
+        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_RETH_A, 90 seconds, 9900);
+        DssExecLib.setIlkAutoLineParameters("RETH-A", 5 * MILLION, 3 * MILLION, 8 hours);
 
         // ChainLog Updates
-        // Add the new flip and join to the Chainlog
-        // address constant CHAINLOG        = DssExecLib.LOG();
-        // ChainlogAbstract(CHAINLOG).setAddress("<join-name>", <join-address>);
-        // ChainlogAbstract(CHAINLOG).setAddress("<clip-name>", <clip-address>);
-        // ChainlogAbstract(CHAINLOG).setVersion("<new-version>");
+        // Add the new join, clip, and abacus to the Chainlog
+        DssExecLib.setChangelogAddress("RETH",                 RETH);
+        DssExecLib.setChangelogAddress("PIP_RETH",             PIP_RETH);
+        DssExecLib.setChangelogAddress("MCD_JOIN_RETH_A",      MCD_JOIN_RETH_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_RETH_A",      MCD_CLIP_RETH_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_RETH_A", MCD_CLIP_CALC_RETH_A);
+
+          // Rely Median to Oracles team
+
+        // DssExecLib.authorize(OsmAbstract(PIP_RETH).src(),  0x1f42e41A34B71606FcC60b4e624243b365D99745);
     }
 }
