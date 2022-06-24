@@ -327,11 +327,5 @@ contract Addresses {
         addr["STARKNET_ESCROW"]                 = 0x38c3DDF1eF3e045abDDEb94f4e7a1a0d5440EB44;
         addr["STARKNET_DAI_BRIDGE"]             = 0xd8beAa22894Cd33F24075459cFba287a10a104E4;
         addr["STARKNET_GOV_RELAY"]              = 0x73c0049Dd6560E644984Fa3Af30A55a02a7D81fB;
-        addr["RETH"]                            = 0x178E141a0E3b34152f73Ff610437A7bf9B83267A;
-        addr["PIP_RETH"]                        = 0x7CA0b14534D3dA1D77dcbc083caA9980a157C2c5;
-        addr["MCD_JOIN_RETH_A"]                 = 0xBA59579287e146384C7dBcb29b7cfd8FDe86d0aD;
-        addr["MCD_CLIP_RETH_A"]                 = 0x35846FDa6Add5C34ECe9F7d13d3711865A39e155;
-        addr["MCD_CLIP_CALC_RETH_A"]            = 0xC3A95477616c9Db6C772179e74a9A717E8B148a7;
-
     }
 }

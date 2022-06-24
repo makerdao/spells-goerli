@@ -1,20 +1,4 @@
-// SPDX-FileCopyrightText: © 2021-2022 Dai Foundation <www.daifoundation.org>
 // SPDX-License-Identifier: AGPL-3.0-or-later
-//
-// Copyright (C) 2021-2022 Dai Foundation
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU Affero General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Affero General Public License for more details.
-//
-// You should have received a copy of the GNU Affero General Public License
-// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
 
@@ -107,6 +91,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     event Debug(uint256 index, uint256 val);
     event Debug(uint256 index, address addr);
     event Debug(uint256 index, bytes32 what);
+    event Log(string message, address deployer, string contractName);
 
     // not provided in DSMath
     function rpow(uint256 x, uint256 n, uint256 b) internal pure returns (uint256 z) {
@@ -1132,9 +1117,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             uint256 ward = abi.decode(data, (uint256));
             if (ward > 0) {
                 if (skipWards(_addr, deployers.addr(i))) continue; // ONLY ON GOERLI
-                emit log("Error: Bad Auth");
-                emit log_named_address("   Deployer Address", deployers.addr(i));
-                emit log_named_string("  Affected Contract", contractName);
+                emit Log("Bad auth", deployers.addr(i), contractName);
                 fail();
             }
         }
@@ -1165,13 +1148,5 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             if (onlySource) checkSource(_addr, contractName);
             else checkWards(_addr, contractName);
         }
-    }
-
-    function checkChainlogKey(bytes32 key) internal {
-        assertEq(chainLog.getAddress(key), addr.addr(key), concat("TestError/Chainlog-key-mismatch-", key));
-    }
-
-    function checkChainlogVersion(string memory key) internal {
-        assertEq(chainLog.version(), key, concat("TestError/Chainlog-version-mismatch-", key));
     }
 }

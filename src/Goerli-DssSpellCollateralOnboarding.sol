@@ -1,3 +1,4 @@
+// SPDX-FileCopyrightText: © 2021-2022 Dai Foundation <www.daifoundation.org>
 // SPDX-License-Identifier: AGPL-3.0-or-later
 //
 // Copyright (C) 2021-2022 Dai Foundation
@@ -41,11 +42,11 @@ contract DssSpellCollateralOnboardingAction {
     // --- DEPLOYED COLLATERAL ADDRESSES ---
     address constant RETH                     = 0x178E141a0E3b34152f73Ff610437A7bf9B83267A;
     // TODO: Update these once oracles and clip and calc fabs finalized
-    // address constant PIP_RETH                 = 0x25b49A09f41725972249989Ebc7C78AA7A2d3426;
     address constant PIP_RETH                 = 0x7CA0b14534D3dA1D77dcbc083caA9980a157C2c5;
     address constant MCD_JOIN_RETH_A          = 0xBA59579287e146384C7dBcb29b7cfd8FDe86d0aD;
     address constant MCD_CLIP_RETH_A          = 0x35846FDa6Add5C34ECe9F7d13d3711865A39e155;
     address constant MCD_CLIP_CALC_RETH_A     = 0xC3A95477616c9Db6C772179e74a9A717E8B148a7;
+
 
 
     function onboardNewCollaterals() internal {

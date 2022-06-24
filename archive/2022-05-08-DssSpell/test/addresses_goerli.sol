@@ -1,4 +1,3 @@
-// SPDX-FileCopyrightText: © 2021-2022 Dai Foundation <www.daifoundation.org>
 // SPDX-License-Identifier: AGPL-3.0-or-later
 //
 // Copyright (C) 2021-2022 Dai Foundation
@@ -52,8 +51,7 @@ contract Addresses {
         addr["MCD_DAI"]                         = 0x11fE4B6AE13d2a6055C8D9cF65c55bac32B5d844;
         addr["MCD_SPOT"]                        = 0xACe2A9106ec175bd56ec05C9E38FE1FDa8a1d758;
         addr["MCD_POT"]                         = 0x50672F0a14B40051B65958818a7AcA3D54Bd81Af;
-        addr["MCD_END"]                         = 0xb82F60bAf6980b9fE035A82cF6Acb770C06d3896;
-        addr["MCD_CURE"]                        = 0xFA5d993DdA243A57eefbbF86Cb3a1c817Dfc7e4E;
+        addr["MCD_END"]                         = 0xDb1d3edb80d3faA1B7257Ab4018A609E327FA50D;
         addr["MCD_ESM"]                         = 0x023A960cb9BE7eDE35B433256f4AfE9013334b55;
         addr["PROXY_ACTIONS"]                   = 0x4023f89983Ece35e227c49806aFc13Bc0248d178;
         addr["PROXY_ACTIONS_END"]               = 0xBbA4aBF0a12738f093cFD2199C5497044bAa68A8;
@@ -66,8 +64,7 @@ contract Addresses {
         addr["FLIPPER_MOM"]                     = 0x7ceCdf6b214a3eBA1589eB8B844fB6Cb12B67Bd7;
         addr["CLIPPER_MOM"]                     = 0xC67fFD490903521F778b2A3B2A13D0FC0Be96F98;
         addr["MCD_IAM_AUTO_LINE"]               = 0x21DaD87779D9FfA8Ed3E1036cBEA8784cec4fB83;
-        addr["MCD_FLASH"]                       = 0xAa5F7d5b29Fa366BB04F6E4c39ACF569d5214075;
-        addr["MCD_FLASH_LEGACY"]                = 0x0a6861D6200B519a8B9CFA1E7Edd582DD1573581;
+        addr["MCD_FLASH"]                       = 0x0a6861D6200B519a8B9CFA1E7Edd582DD1573581;
         addr["FLASH_KILLER"]                    = 0xa95FaD7948079df3c579DDb0752E39dC29Eb1AFf;
         addr["PROXY_FACTORY"]                   = 0x84eFB9c18059394172D0d69A3E58B03320001871;
         addr["PROXY_REGISTRY"]                  = 0x46759093D8158db8BB555aC7C6F98070c56169ce;
@@ -323,15 +320,5 @@ contract Addresses {
         addr["MCD_JOIN_INST_WBTC_A"]            = 0xbd5978308C9BbF6d8d1D26cD1df9AA3EA83F782a;
         addr["MCD_CLIP_INST_WBTC_A"]            = 0x81Bf27c821F24b6FC9Bcc0F7d4D7cc2651712E3c;
         addr["MCD_CLIP_CALC_INST_WBTC_A"]       = 0x32ff6F008eB4aA5780efF2e0436b7adCDECb213a;
-        addr["STARKNET_ESCROW_MOM"]             = 0x464379BD1aC523DdA45b7B78eCB1F703661cad2a;
-        addr["STARKNET_ESCROW"]                 = 0x38c3DDF1eF3e045abDDEb94f4e7a1a0d5440EB44;
-        addr["STARKNET_DAI_BRIDGE"]             = 0xd8beAa22894Cd33F24075459cFba287a10a104E4;
-        addr["STARKNET_GOV_RELAY"]              = 0x73c0049Dd6560E644984Fa3Af30A55a02a7D81fB;
-        addr["RETH"]                            = 0x178E141a0E3b34152f73Ff610437A7bf9B83267A;
-        addr["PIP_RETH"]                        = 0x7CA0b14534D3dA1D77dcbc083caA9980a157C2c5;
-        addr["MCD_JOIN_RETH_A"]                 = 0xBA59579287e146384C7dBcb29b7cfd8FDe86d0aD;
-        addr["MCD_CLIP_RETH_A"]                 = 0x35846FDa6Add5C34ECe9F7d13d3711865A39e155;
-        addr["MCD_CLIP_CALC_RETH_A"]            = 0xC3A95477616c9Db6C772179e74a9A717E8B148a7;
-
     }
 }

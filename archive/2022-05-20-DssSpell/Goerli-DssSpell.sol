@@ -1,4 +1,3 @@
-// SPDX-FileCopyrightText: © 2021-2022 Dai Foundation <www.daifoundation.org>
 // SPDX-License-Identifier: AGPL-3.0-or-later
 //
 // Copyright (C) 2021-2022 Dai Foundation
@@ -19,13 +18,11 @@
 pragma solidity 0.6.12;
 
 // Enable ABIEncoderV2 when onboarding collateral
-pragma experimental ABIEncoderV2;
-
+// pragma experimental ABIEncoderV2;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralOnboardingAction } from "./Goerli-DssSpellCollateralOnboarding.sol";
-
 
 contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
 
@@ -33,7 +30,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     string public constant override description = "Goerli Spell";
 
     // Math
-
+    uint256 constant WAD = 10 ** 18;
+    uint256 constant RAD = 10 ** 45;
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
     // To check this yourself, use the following rate calculation (example 8%):
@@ -44,16 +42,32 @@ contract DssSpellAction is DssAction, DssSpellCollateralOnboardingAction {
     //    https://ipfs.io/ipfs/QmPgPVrVxDCGyNR5rGp9JC5AUxppLzUAqvncRJDcxQnX1u
     //
 
-    // --- Rates ---
-    // uint256 constant FOUR_FIVE_PCT_RATE      = 1000000001395766281313196627;
+    // Turn office hours off
+    function officeHours() public override returns (bool) {
+        return false;
+    }
 
+    address immutable MCD_FLAP = DssExecLib.flap();
+    address immutable MCD_ESM = DssExecLib.esm();
+
+    // No Transfer on Goerli
+    // address immutable MCD_GOV = DssExecLib.mkr();
+    // address immutable DUX_WALLET =        ;
+    // address immutable SIDESTREAM_WALLET = ;
 
     function actions() public override {
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralOnboardingAction
-        onboardNewCollaterals();
+        // onboardNewCollaterals();
 
-        DssExecLib.setChangelogVersion("1.13.3");
+        // ---------------------------- Lid for Flap ---------------------------
+        DssExecLib.setValue(MCD_FLAP, "lid", 30_000 * RAD);
+
+        // ------------------------------ ESM Min ------------------------------
+        DssExecLib.setValue(MCD_ESM, "min", 150_000 * WAD);
+
+        // ---------------------------- Transfer MKR ---------------------------
+        // No Transfer on Goerli
 
     }
 }

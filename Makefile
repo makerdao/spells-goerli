@@ -14,3 +14,4 @@ cast-spell         :; ./scripts/cast-dssspell.sh $(spell)
 archive-spell      :; ./scripts/archive-dssspell.sh "$(if $(date),$(date),$(shell date +'%Y-%m-%d'))"
 diff-archive-spell :; ./scripts/diff-archive-dssspell.sh "$(if $(date),$(date),$(shell date +'%Y-%m-%d'))"
 wards              :; ./scripts/wards.sh $(target)
+time               :; ./scripts/time.sh date="$(date)" stamp="$(stamp)"

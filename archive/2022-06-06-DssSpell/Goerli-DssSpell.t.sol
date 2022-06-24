@@ -179,8 +179,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     }
 
-    function testCollateralIntegrations() public {
-
+    function testCollateralIntegrations() private {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -196,15 +195,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         //     false
         // );
 
-        checkIlkIntegration(
-             "RETH-A",
-             GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
-             ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
-             addr.addr("PIP_RETH"),
-             true,
-             true,
-             false
-        );
 
     }
 
@@ -234,31 +224,30 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        assertEq(chainLog.getAddress("RETH"), addr.addr("RETH"));
-        assertEq(chainLog.getAddress("PIP_RETH"), addr.addr("PIP_RETH"));
-        assertEq(chainLog.getAddress("MCD_JOIN_RETH_A"), addr.addr("MCD_JOIN_RETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_RETH_A"), addr.addr("MCD_CLIP_RETH_A"));
-        assertEq(chainLog.getAddress("MCD_CLIP_CALC_RETH_A"), addr.addr("MCD_CLIP_CALC_RETH_A"));
-        assertEq(chainLog.version(), "1.13.3");
-
+        // checkChainlogKey("CONTRACT_KEY");
+        // checkChainlogVersion("X.XX.X");
+        checkChainlogKey("STARKNET_ESCROW_MOM");
+        checkChainlogKey("STARKNET_ESCROW");
+        checkChainlogKey("STARKNET_DAI_BRIDGE");
+        checkChainlogKey("STARKNET_GOV_RELAY");
+        checkChainlogVersion("1.13.1");
     }
 
-    function testNewIlkRegistryValues() public { // make public to use
+    function testNewIlkRegistryValues() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        assertEq(reg.pos("RETH-A"), 50);
-        assertEq(reg.join("RETH-A"), addr.addr("MCD_JOIN_RETH_A"));
-        assertEq(reg.gem("RETH-A"), addr.addr("RETH"));
-        assertEq(reg.dec("RETH-A"), GemAbstract(addr.addr("RETH")).decimals());
-        assertEq(reg.class("RETH-A"), 1);
-        assertEq(reg.pip("RETH-A"), addr.addr("PIP_RETH"));
-        assertEq(reg.xlip("RETH-A"), addr.addr("MCD_CLIP_RETH_A"));
-        //assertEq(reg.name("TOKEN-X"), "NAME"); // Token Name Not Present (DSToken, ONLY ON GOERLI)
-        assertEq(reg.symbol("RETH-A"), "rETH");
-
+        assertEq(reg.pos("WSTETH-B"), 49);
+        assertEq(reg.join("WSTETH-B"), addr.addr("MCD_JOIN_WSTETH_B"));
+        assertEq(reg.gem("WSTETH-B"), addr.addr("WSTETH"));
+        assertEq(reg.dec("WSTETH-B"), GemAbstract(addr.addr("WSTETH")).decimals());
+        assertEq(reg.class("WSTETH-B"), 1);
+        assertEq(reg.pip("WSTETH-B"), addr.addr("PIP_WSTETH"));
+        assertEq(reg.xlip("WSTETH-B"), addr.addr("MCD_CLIP_WSTETH_B"));
+        assertEq(reg.name("WSTETH-B"), "Wrapped liquid staked Ether 2.0");
+        assertEq(reg.symbol("WSTETH-B"), "wstETH");
     }
 
     function testFailWrongDay() public {
@@ -525,27 +514,4 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         assertEq(vest.rxd(1), WAD);
     }
-
-    function testVestDAIFails() private { // make public to use
-        VestAbstract vest  = VestAbstract(addr.addr("MCD_VEST_DAI"));
-        VestAbstract vestL = VestAbstract(addr.addr("MCD_VEST_DAI_LEGACY"));
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        giveTokens(address(gov), 999999999999 ether);
-        gov.approve(address(esm), type(uint256).max);
-        esm.join(999999999999 ether);
-        assertEq(vat.live(), 1);
-        esm.fire();
-        assertEq(vat.live(), 0);
-
-        assertTrue(!tryVest(address(vest), 1));
-
-        assertEq(vestL.wards(address(pauseProxy)), 1);
-        esm.denyProxy(address(vestL));
-        assertEq(vestL.wards(address(pauseProxy)), 0);
-    }
-
 }
