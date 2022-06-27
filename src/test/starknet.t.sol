@@ -59,6 +59,7 @@ interface StarknetDaiBridgeLike {
     function maxDeposit() external returns (uint256);
     function dai() external returns (address);
     function starkNet() external returns (address);
+    function escrow() external returns (address);
 }
 
 interface StarknetGovRelayLike {
@@ -67,25 +68,7 @@ interface StarknetGovRelayLike {
 }
 
 interface StarknetCoreLike {
-    function PROXY_VERSION() external returns (string memory);
-    function getUpgradeActivationDelay() external returns (uint256);
     function implementation() external returns (address);
-    function isNotFinalized() external returns (address);
-    function configHash() external returns (uint256);
-    function identify() external returns (string memory);
-    function isFinalized() external returns (bool);
-    function isFrozen() external returns (bool);
-    function isOperator(address) external returns (bool);
-    function l1ToL2MessageCancellations(bytes32) external returns (uint256);
-    function l1ToL2MessageNonce() external returns (uint256);
-    function l1ToL2Messages(bytes32) external returns (uint256);
-    function l2ToL1Messages(bytes32) external returns (uint256);
-    function proxyIsGovernor(address) external returns (bool);
-    function messageCancellationDelay() external returns (uint256);
-    function programHash() external returns (uint256);
-    function starknetIsGovernor(address) external returns (address);
-    function stateBlockNumber() external returns (int256);
-    function stateRoot() external returns (uint256);
 }
 
 interface DaiLike {
@@ -111,17 +94,17 @@ contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
     function checkStarknetEscrowMom() public {
         StarknetEscrowMomLike escrowMom = StarknetEscrowMomLike(addr.addr("STARKNET_ESCROW_MOM"));
 
-        assertEq(escrowMom.owner(), addr.addr("MCD_PAUSE_PROXY"), "StarknetTest/pause-proxy-not-owner-on-escrow-mom");
+        assertEq(escrowMom.owner(),     addr.addr("MCD_PAUSE_PROXY"), "StarknetTest/pause-proxy-not-owner-on-escrow-mom");
         assertEq(escrowMom.authority(), addr.addr("MCD_ADM"), "StarknetTest/chief-not-authority-on-escrow-mom");
-        assertEq(escrowMom.escrow(), addr.addr("STARKNET_ESCROW"), "StarknetTest/unexpected-escrow-on-escrow-mom");
-        assertEq(escrowMom.token(), addr.addr("MCD_DAI"), "StarknetTest/unexpected-dai-on-escrow-mom");
+        assertEq(escrowMom.escrow(),    addr.addr("STARKNET_ESCROW"), "StarknetTest/unexpected-escrow-on-escrow-mom");
+        assertEq(escrowMom.token(),     addr.addr("MCD_DAI"), "StarknetTest/unexpected-dai-on-escrow-mom");
     }
 
     function checkStarknetEscrow() public {
         StarknetEscrowLike escrow = StarknetEscrowLike(addr.addr("STARKNET_ESCROW"));
 
-        assertEq(escrow.wards(addr.addr("MCD_PAUSE_PROXY")), 1, "StarknetTest/pause-proxy-not-ward-on-escrow");
-        assertEq(escrow.wards(addr.addr("MCD_ESM")), 1, "StarknetTest/esm-not-ward-on-escrow");
+        assertEq(escrow.wards(addr.addr("MCD_PAUSE_PROXY")),     1, "StarknetTest/pause-proxy-not-ward-on-escrow");
+        assertEq(escrow.wards(addr.addr("MCD_ESM")),             1, "StarknetTest/esm-not-ward-on-escrow");
         assertEq(escrow.wards(addr.addr("STARKNET_ESCROW_MOM")), 1, "StarknetTest/escrow-mom-not-ward-on-escrow");
 
         DaiLike dai = DaiLike(addr.addr("MCD_DAI"));
@@ -132,21 +115,24 @@ contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
     function checkStarknetDaiBridge() public {
         StarknetDaiBridgeLike daiBridge = StarknetDaiBridgeLike(addr.addr("STARKNET_DAI_BRIDGE"));
 
-        assertEq(daiBridge.isOpen(), starknetValues.dai_bridge_isOpen, "StarknetTestError/dai-bridge-isOpen-unexpected");
-        assertEq(daiBridge.ceiling(), starknetValues.dai_bridge_ceiling * WAD, "StarknetTestError/dai-bridge-ceiling-unexpected");
+        assertEq(daiBridge.isOpen(),     starknetValues.dai_bridge_isOpen, "StarknetTestError/dai-bridge-isOpen-unexpected");
+        assertEq(daiBridge.ceiling(),    starknetValues.dai_bridge_ceiling * WAD, "StarknetTestError/dai-bridge-ceiling-unexpected");
         assertEq(daiBridge.maxDeposit(), starknetValues.dai_bridge_maxDeposit * WAD, "StarknetTestError/dai-bridge-maxDeposit-unexpected");
 
-        assertEq(daiBridge.dai(), addr.addr("MCD_DAI"), "StarknetTest/dai-bridge-dai");
+        assertEq(daiBridge.dai(),      addr.addr("MCD_DAI"), "StarknetTest/dai-bridge-dai");
         assertEq(daiBridge.starkNet(), addr.addr("STARKNET_CORE"), "StarknetTest/dai-bridge-core");
+        assertEq(daiBridge.escrow(),   addr.addr("STARKNET_ESCROW"), "StarknetTest/dai-bridge-escrow");
+
         assertEq(daiBridge.wards(addr.addr("MCD_PAUSE_PROXY")), 1, "StarknetTest/pause-proxy-not-ward-on-dai-bridge");
-        assertEq(daiBridge.wards(addr.addr("MCD_ESM")), 1, "StarknetTest/esm-not-ward-on-dai-bridge");
+        assertEq(daiBridge.wards(addr.addr("MCD_ESM")),         1, "StarknetTest/esm-not-ward-on-dai-bridge");
     }
 
     function checkStarknetGovRelay() public {
         StarknetGovRelayLike govRelay = StarknetGovRelayLike(addr.addr("STARKNET_GOV_RELAY"));
 
         assertEq(govRelay.wards(addr.addr("MCD_PAUSE_PROXY")), 1, "StarknetTest/pause-proxy-not-ward-on-gov-relay");
-        assertEq(govRelay.wards(addr.addr("MCD_ESM")), 1, "StarknetTest/esm-not-ward-on-gov-relay");
+        assertEq(govRelay.wards(addr.addr("MCD_ESM")),         1, "StarknetTest/esm-not-ward-on-gov-relay");
+
         assertEq(govRelay.starkNet(), addr.addr("STARKNET_CORE"), "StarknetTest/unexpected-starknet-core-on-gov-relay");
     }
 
