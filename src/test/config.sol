@@ -1,8 +1,6 @@
 // SPDX-FileCopyrightText: © 2021-2022 Dai Foundation <www.daifoundation.org>
 // SPDX-License-Identifier: AGPL-3.0-or-later
 //
-// Copyright (C) 2021-2022 Dai Foundation
-//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -1100,7 +1098,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    130,
             calc_cut:     9900,
-            lerp:         true
+            lerp:         false
         });
         afterSpell.collaterals["UNIV2WBTCDAI-A"] = CollateralValues({
             aL_enabled:   false,
