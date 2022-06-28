@@ -49,6 +49,7 @@ else
 
     sethSend "$1" 'schedule()'
 
+    echo "waiting for two minutes before casting…"
     sleep 120
 
     sethSend "$1" 'cast()'
