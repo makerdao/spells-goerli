@@ -29,7 +29,6 @@ If the weekly executive needs to offboard collaterals:
 2. Update the values in `src/test/config.sol`
 3. Add `offboardCollaterals();` in the `actions()` function in `DssSpellAction`
 
-
 ### Build
 
 ```bash
