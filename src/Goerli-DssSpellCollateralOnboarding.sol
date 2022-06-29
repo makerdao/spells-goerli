@@ -231,6 +231,9 @@ contract DssSpellCollateralOnboardingAction {
         RwaUrnLike(RWA009_A_URN).lock(1 * WAD);
         RwaUrnLike(RWA009_A_URN).nope(address(this));
 
+        // draw DAI to outputConduit // TODO 
+        RwaUrnLike(RWA009_A_URN).draw(100 * MILLION * WAD);
+
         // Add RWA009 contract to the changelog
         CHANGELOG.setAddress("RWA009",                  RWA009);
         CHANGELOG.setAddress("MCD_JOIN_RWA009_A",       MCD_JOIN_RWA009_A);
