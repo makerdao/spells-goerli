@@ -127,12 +127,12 @@ contract DssSpellCollateralOnboardingAction {
     address constant MCD_JOIN_RWA009_A        = 0x0000000000000000000000000000000000000000;
     address constant RWA009_A_URN             = 0x0000000000000000000000000000000000000000;
     address constant RWA009_A_JAR             = 0x0000000000000000000000000000000000000000;
-    address constant RWA009_A_OUTPUT_CONDUIT  = 0x0000000000000000000000000000000000000000;
     address constant RWA009_A_OPERATOR        = 0x0000000000000000000000000000000000000000;
-    address constant RWA009_A_MATE            = 0x0000000000000000000000000000000000000000;
+
+    uint256 constant DRAW_AMOUNT              = 100 * MILLION * WAD;
 
     // MIP21_LIQUIDATION_ORACLE params
-    uint256 constant RWA009_A_INITIAL_DC      = 100000000 * RAD; // TODO
+    uint256 constant RWA009_A_INITIAL_DC      = 100 * MILLION * RAD; // TODO
     uint256 constant RWA009_A_INITIAL_PRICE   = 100 * MILLION * WAD; // TODO RWA team should provide
     uint48  constant RWA009_A_TAU             = 0;
 
@@ -197,7 +197,7 @@ contract DssSpellCollateralOnboardingAction {
         // Allow RwaLiquidationOracle2 to modify Vat registry
         VatAbstract(MCD_VAT).rely(MIP21_LIQUIDATION_ORACLE);
 
-        // 1000 debt ceiling
+        // 100m debt ceiling
         VatAbstract(MCD_VAT).file(ilk, "line", RWA009_A_INITIAL_DC);
         VatAbstract(MCD_VAT).file("Line", VatAbstract(MCD_VAT).Line() + RWA009_A_INITIAL_DC);
 
@@ -219,20 +219,13 @@ contract DssSpellCollateralOnboardingAction {
         // set up the urn
         RwaUrnLike(RWA009_A_URN).hope(RWA009_A_OPERATOR);
 
-        // set up output conduit
-        RwaOutputConduitLike(RWA009_A_OUTPUT_CONDUIT).hope(RWA009_A_OPERATOR);
-
-        // whitelist in the conduits
-        RwaOutputConduitLike(RWA009_A_OUTPUT_CONDUIT).mate(RWA009_A_MATE);
-
         // lock RWA009 Token in the URN
         ERC20Like(RWA009).approve(RWA009_A_URN, 1 * WAD);
         RwaUrnLike(RWA009_A_URN).hope(address(this));
         RwaUrnLike(RWA009_A_URN).lock(1 * WAD);
-        RwaUrnLike(RWA009_A_URN).nope(address(this));
 
-        // draw DAI to outputConduit // TODO 
-        RwaUrnLike(RWA009_A_URN).draw(100 * MILLION * WAD);
+        // draw DAI to outputConduit
+        RwaUrnLike(RWA009_A_URN).draw(DRAW_AMOUNT);
 
         // Add RWA009 contract to the changelog
         CHANGELOG.setAddress("RWA009",                  RWA009);
