@@ -460,4 +460,160 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         assertEq(vest.rxd(1), WAD);
     }
+
+    function testSpellIsCast_RWA009AT1_INTEGRATION_BUMP() public {
+        if (!spell.done()) {
+            vote(address(spell));
+            scheduleWaitAndCast(address(spell));
+            assertTrue(spell.done());
+        }
+
+        bumpSpell = new BumpSpell();
+        vote(address(bumpSpell));
+
+        bumpSpell.schedule();
+
+        uint256 castTime = block.timestamp + pause.delay();
+        hevm.warp(castTime);
+        (, address pip, , ) = oracle.ilks("RWA009AT1-A");
+
+        assertEq(DSValueAbstract(pip).read(), bytes32(100 * MILLION * WAD));
+        bumpSpell.cast();
+        assertEq(DSValueAbstract(pip).read(), bytes32(110 * MILLION * WAD));
+    }
+
+    function testSpellIsCast_RWA009AT1_INTEGRATION_TELL() public {
+        if (!spell.done()) {
+            vote(address(spell));
+            scheduleWaitAndCast(address(spell));
+            assertTrue(spell.done());
+        }
+
+        tellSpell = new TellSpell();
+        vote(address(tellSpell));
+
+        tellSpell.schedule();
+
+        uint256 castTime = block.timestamp + pause.delay();
+        hevm.warp(castTime);
+        (, , , uint48 tocPre) = oracle.ilks("RWA009AT1-A");
+        assertTrue(tocPre == 0);
+        assertTrue(oracle.good("RWA009AT1-A"));
+        tellSpell.cast();
+        (, , , uint48 tocPost) = oracle.ilks("RWA009AT1-A");
+        assertTrue(tocPost > 0);
+        // should be not good as we have TAU 0
+        assertTrue(!oracle.good("RWA009AT1-A"));
+        hevm.warp(block.timestamp + 2 weeks);
+        assertTrue(!oracle.good("RWA009AT1-A"));
+    }
+
+    function testSpellIsCast_RWA009AT1_INTEGRATION_TELL_CULL() public {
+        if (!spell.done()) {
+            vote(address(spell));
+            scheduleWaitAndCast(address(spell));
+            assertTrue(spell.done());
+        }
+        assertTrue(oracle.good("RWA009AT1-A"));
+
+        tellSpell = new TellSpell();
+        vote(address(tellSpell));
+
+        tellSpell.schedule();
+
+        uint256 castTime = block.timestamp + pause.delay();
+        hevm.warp(castTime);
+        tellSpell.cast();
+        // not good as we have TAU 0
+        assertTrue(!oracle.good("RWA009AT1-A"));
+        hevm.warp(block.timestamp + 2 weeks);
+        assertTrue(!oracle.good("RWA009AT1-A"));
+
+        cullSpell = new CullSpell();
+        vote(address(cullSpell));
+
+        cullSpell.schedule();
+        castTime = block.timestamp + pause.delay();
+        hevm.warp(castTime);
+        cullSpell.cast();
+        assertTrue(!oracle.good("RWA009AT1-A"));
+        (, address pip, , ) = oracle.ilks("RWA009AT1-A");
+        assertEq(DSValueAbstract(pip).read(), bytes32(0));
+    }
+
+    function testSpellIsCast_RWA009AT1_OPERATOR_DRAW_CONDUITS_WIPE_FREE() public {
+        if (!spell.done()) {
+            vote(address(spell));
+            scheduleWaitAndCast(address(spell));
+            assertTrue(spell.done());
+        }
+
+        hevm.warp(now + 10 days); // Let rate be > 1
+
+        // setting address(this) as operator
+        hevm.store(address(rwaurn), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
+
+        (uint256 preInk, uint256 preArt) = vat.urns(ilk, address(rwaurn));
+
+        // Check if spell lock 1 * WAD of RWA009
+        assertEq(rwagem.balanceOf(address(rwajoin)), 1 * WAD);
+
+        // address(this) is operator
+        assertEq(rwaurn.can(address(this)), 1);
+
+        // conduit is empty as we don't draw anything yet
+        assertEq(dai.balanceOf(address(rwaconduitout)), 0);
+
+        // draw DAI
+        uint256 drawAmount = 1 * WAD;
+        rwaurn.draw(drawAmount);
+
+        (, uint256 rate, , , ) = vat.ilks("RWA009AT1-A");
+        uint256 dustInVat = vat.dai(address(rwaurn));
+
+        (uint256 ink, uint256 art) = vat.urns(ilk, address(rwaurn));
+        uint256 currArt = ((1 * RAD + dustInVat) / rate) + preArt;
+        assertTrue(art >= currArt - 2 && art <= currArt + 2); // approximation for vat rounding
+
+        // conduit has DAI after Draw
+        assertEq(dai.balanceOf(address(rwaconduitout)), 1 * WAD);
+
+        // Add authroziation for address(this) to conduit
+        // wards
+        hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
+        // can
+        hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(2))), bytes32(uint256(1)));
+        // may
+        hevm.store(address(rwaconduitout), keccak256(abi.encode(address(this), uint256(6))), bytes32(uint256(1)));
+
+        // pick address and push dai to that address
+        rwaconduitout.pick(address(this));
+        rwaconduitout.push();
+
+        // check if get DAI from conduit
+        assertEq(dai.balanceOf(address(rwaconduitout)), 0);
+        assertEq(dai.balanceOf(address(this)), 1 * WAD, "conduit.push: adress(this) don't have DAI");
+
+        hevm.warp(now + 10 days);
+
+        // Check if we have outstanding dept in VAT
+        (ink, art) = vat.urns(ilk, address(rwaurn));
+        assertEq(art, 1 * WAD + preArt, "After DRAW: Art !== drawAmount + preArt");
+
+        // as we have SF 0 we need to pay exectly the same amount of DAI is we drawn
+        uint256 daiToPay = drawAmount;
+
+        // transfer DAI to the URN
+        dai.transfer(address(rwaurn), daiToPay);
+        assertEq(dai.balanceOf(address(rwaurn)), daiToPay, "Balance of the URN doesnt match");
+
+        // repay dept and free our collateral
+        rwaurn.wipe(daiToPay);
+        rwaurn.free(1 * WAD);
+
+        // check if we have 0 collateral and outstanding deplt in the VAT
+        (ink, art) = vat.urns(ilk, address(rwaurn));
+        assertEq(ink, 0, "INK != preINK");
+        assertEq(art, preArt, "ART != preART");
+    }
 }
