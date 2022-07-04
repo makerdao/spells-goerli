@@ -80,44 +80,19 @@ interface RwaUrnLike {
     function free(uint256) external;
 }
 
-interface RwaOutputConduitLike {
-    function wards(address) external returns (uint256);
-
-    function can(address) external returns (uint256);
-
-    function may(address) external view returns (uint256);
-
-    function rely(address) external;
-
-    function deny(address) external;
-
-    function hope(address) external;
-
-    function mate(address) external;
-
-    function nope(address) external;
-
-    function bud(address) external returns (uint256);
-
-    function pick(address) external;
-
-    function push() external;
-}
-
 contract DssSpellTest is GoerliDssSpellTestBase {
-    bytes32 constant ilk = "RWA009AT1-A";
-    DSTokenAbstract rwagem = DSTokenAbstract(addr.addr("RWA009AT1"));
-    GemJoinAbstract rwajoin = GemJoinAbstract(addr.addr("MCD_JOIN_RWA009AT1_A"));
+    bytes32 constant ilk = "RWA009-A";
+    DSTokenAbstract rwagem = DSTokenAbstract(addr.addr("RWA009"));
+    GemJoinAbstract rwajoin = GemJoinAbstract(addr.addr("MCD_JOIN_RWA009_A"));
     RwaLiquidationLike oracle = RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
-    RwaUrnLike rwaurn = RwaUrnLike(addr.addr("RWA009AT1_A_URN"));
+    RwaUrnLike rwaurn = RwaUrnLike(addr.addr("RWA009_A_URN"));
+    address RWA009_GENESIS = RwaUrnLike(addr.addr("RWA009_GENESIS"));
 
     address makerDeployer06 = 0xda0fab060e6cc7b1C0AA105d29Bd50D71f036711;
 
     BumpSpell bumpSpell;
     TellSpell tellSpell;
-    CureSpell cureSpell;
     CullSpell cullSpell;
-    EndSpell endSpell;
 
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -268,21 +243,20 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // checkChainlogVersion("X.XX.X");
     }
 
-    function testNewIlkRegistryValues() private { // make public to use
+    function testNewIlkRegistryValues() public { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        assertEq(reg.pos("WSTETH-B"), 49);
-        assertEq(reg.join("WSTETH-B"), addr.addr("MCD_JOIN_WSTETH_B"));
-        assertEq(reg.gem("WSTETH-B"), addr.addr("WSTETH"));
-        assertEq(reg.dec("WSTETH-B"), GemAbstract(addr.addr("WSTETH")).decimals());
-        assertEq(reg.class("WSTETH-B"), 1);
-        assertEq(reg.pip("WSTETH-B"), addr.addr("PIP_WSTETH"));
-        assertEq(reg.xlip("WSTETH-B"), addr.addr("MCD_CLIP_WSTETH_B"));
-        assertEq(reg.name("WSTETH-B"), "Wrapped liquid staked Ether 2.0");
-        assertEq(reg.symbol("WSTETH-B"), "wstETH");
+        assertEq(reg.pos("RWA009-A"), 49);
+        assertEq(reg.join("RWA009-A"), addr.addr("MCD_JOIN_RWA009_A"));
+        assertEq(reg.gem("RWA009-A"), addr.addr("RWA009-A"));
+        assertEq(reg.dec("RWA009-A"), GemAbstract(addr.addr("RWA009-A")).decimals());
+        assertEq(reg.class("RWA009-A"), 3);
+        // assertEq(reg.pip("RWA009-A"), addr.addr("PIP_WSTETH"));
+        assertEq(reg.name("RWA009-A"), "RWA-009");
+        assertEq(reg.symbol("RWA009-A"), "RWA009");
     }
 
     function testFailWrongDay() public {
@@ -550,7 +524,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(vest.rxd(1), WAD);
     }
 
-    function testSpellIsCast_RWA009AT1_INTEGRATION_BUMP() public {
+    function testSpellIsCast_RWA009_INTEGRATION_BUMP() public {
         if (!spell.done()) {
             vote(address(spell));
             scheduleWaitAndCast(address(spell));
@@ -564,14 +538,14 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         uint256 castTime = block.timestamp + pause.delay();
         hevm.warp(castTime);
-        (, address pip, , ) = oracle.ilks("RWA009AT1-A");
+        (, address pip, , ) = oracle.ilks("RWA009-A");
 
         assertEq(DSValueAbstract(pip).read(), bytes32(100 * MILLION * WAD));
         bumpSpell.cast();
         assertEq(DSValueAbstract(pip).read(), bytes32(110 * MILLION * WAD));
     }
 
-    function testSpellIsCast_RWA009AT1_INTEGRATION_TELL() public {
+    function testSpellIsCast_RWA009_INTEGRATION_TELL() public {
         if (!spell.done()) {
             vote(address(spell));
             scheduleWaitAndCast(address(spell));
@@ -585,25 +559,24 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         uint256 castTime = block.timestamp + pause.delay();
         hevm.warp(castTime);
-        (, , , uint48 tocPre) = oracle.ilks("RWA009AT1-A");
+        (, , , uint48 tocPre) = oracle.ilks("RWA009-A");
         assertTrue(tocPre == 0);
-        assertTrue(oracle.good("RWA009AT1-A"));
+        assertTrue(oracle.good("RWA009-A"));
         tellSpell.cast();
-        (, , , uint48 tocPost) = oracle.ilks("RWA009AT1-A");
+        (, , , uint48 tocPost) = oracle.ilks("RWA009-A");
         assertTrue(tocPost > 0);
-        // should be not good as we have TAU 0
-        assertTrue(!oracle.good("RWA009AT1-A"));
+        assertTrue(!oracle.good("RWA009-A"));
         hevm.warp(block.timestamp + 2 weeks);
-        assertTrue(!oracle.good("RWA009AT1-A"));
+        assertTrue(!oracle.good("RWA009-A"));
     }
 
-    function testSpellIsCast_RWA009AT1_INTEGRATION_TELL_CULL() public {
+    function testSpellIsCast_RWA009_INTEGRATION_TELL_CULL() public {
         if (!spell.done()) {
             vote(address(spell));
             scheduleWaitAndCast(address(spell));
             assertTrue(spell.done());
         }
-        assertTrue(oracle.good("RWA009AT1-A"));
+        assertTrue(oracle.good("RWA009-A"));
 
         tellSpell = new TellSpell();
         vote(address(tellSpell));
@@ -613,10 +586,9 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         uint256 castTime = block.timestamp + pause.delay();
         hevm.warp(castTime);
         tellSpell.cast();
-        // not good as we have TAU 0
-        assertTrue(!oracle.good("RWA009AT1-A"));
+        assertTrue(!oracle.good("RWA009-A"));
         hevm.warp(block.timestamp + 2 weeks);
-        assertTrue(!oracle.good("RWA009AT1-A"));
+        assertTrue(!oracle.good("RWA009-A"));
 
         cullSpell = new CullSpell();
         vote(address(cullSpell));
@@ -625,12 +597,12 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         castTime = block.timestamp + pause.delay();
         hevm.warp(castTime);
         cullSpell.cast();
-        assertTrue(!oracle.good("RWA009AT1-A"));
-        (, address pip, , ) = oracle.ilks("RWA009AT1-A");
+        assertTrue(!oracle.good("RWA009-A"));
+        (, address pip, , ) = oracle.ilks("RWA009-A");
         assertEq(DSValueAbstract(pip).read(), bytes32(0));
     }
 
-    function testSpellIsCast_RWA009AT1_SPELL_LOCK_DRAW_OPERATOR_WIPE_FREE() public {
+    function testSpellIsCast_RWA009_SPELL_LOCK_DRAW_OPERATOR_WIPE_FREE() public {
         if (!spell.done()) {
             vote(address(spell));
             scheduleWaitAndCast(address(spell));
@@ -647,13 +619,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // Check if spell lock 1 * WAD of RWA009
         assertEq(rwagem.balanceOf(address(rwajoin)), 1 * WAD);
 
-        // Check if spell draw DAI to OPERATOR
-        assertEq(rwagem.balanceOf(address(rwajoin)), 1 * WAD);
+        // Check if spell draw 25mm DAI to GENESIS
+        assertEq(dai.balanceOf(address(RWA009_GENESIS)), 25_000_000 * WAD);
 
         // address(this) is operator
         assertEq(rwaurn.can(address(this)), 1);
 
-        (, uint256 rate, , , ) = vat.ilks("RWA009AT1-A");
+        (, uint256 rate, , , ) = vat.ilks("RWA009-A");
         uint256 dustInVat = vat.dai(address(rwaurn));
 
         (uint256 ink, uint256 art) = vat.urns(ilk, address(rwaurn));
@@ -684,16 +656,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 }
 
-contract EndSpellAction {
-    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0x7EafEEa64bF6F79A79853F4A660e0960c821BA50);
-
-    function execute() public {
-        EndAbstract(CHANGELOG.getAddress("MCD_END")).cage();
-    }
-}
-
 contract TestSpell {
-    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0x7EafEEa64bF6F79A79853F4A660e0960c821BA50);
+    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
     DSPauseAbstract public pause = DSPauseAbstract(CHANGELOG.getAddress("MCD_PAUSE"));
     address public action;
     bytes32 public tag;
@@ -728,21 +692,14 @@ contract TestSpell {
     }
 }
 
-contract EndSpell is TestSpell {
-    constructor() public {
-        action = address(new EndSpellAction());
-        setTag();
-    }
-}
-
 contract CullSpellAction {
-    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0x7EafEEa64bF6F79A79853F4A660e0960c821BA50);
-    bytes32 constant ilk = "RWA009AT1-A";
+    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
+    bytes32 constant ilk = "RWA009-A";
 
     function execute() public {
         RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).cull(
             ilk,
-            CHANGELOG.getAddress("RWA009AT1_A_URN")
+            CHANGELOG.getAddress("RWA009_A_URN")
         );
     }
 }
@@ -754,25 +711,9 @@ contract CullSpell is TestSpell {
     }
 }
 
-contract CureSpellAction {
-    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0x7EafEEa64bF6F79A79853F4A660e0960c821BA50);
-    bytes32 constant ilk = "RWA009AT1-A";
-
-    function execute() public {
-        RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).cure(ilk);
-    }
-}
-
-contract CureSpell is TestSpell {
-    constructor() public {
-        action = address(new CureSpellAction());
-        setTag();
-    }
-}
-
 contract TellSpellAction {
-    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0x7EafEEa64bF6F79A79853F4A660e0960c821BA50);
-    bytes32 constant ilk = "RWA009AT1-A";
+    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
+    bytes32 constant ilk = "RWA009-A";
 
     function execute() public {
         VatAbstract(CHANGELOG.getAddress("MCD_VAT")).file(ilk, "line", 0);
@@ -788,8 +729,8 @@ contract TellSpell is TestSpell {
 }
 
 contract BumpSpellAction {
-    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0x7EafEEa64bF6F79A79853F4A660e0960c821BA50);
-    bytes32 constant ilk = "RWA009AT1-A";
+    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
+    bytes32 constant ilk = "RWA009-A";
     uint256 constant WAD = 10**18;
     uint256 constant MILLION = 10**6;
 

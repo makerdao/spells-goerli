@@ -127,9 +127,9 @@ contract DssSpellCollateralOnboardingAction {
     address constant MCD_JOIN_RWA009_A        = 0x0000000000000000000000000000000000000000;
     address constant RWA009_A_URN             = 0x0000000000000000000000000000000000000000;
     address constant RWA009_A_JAR             = 0x0000000000000000000000000000000000000000;
-    address constant RWA009_A_OPERATOR        = 0x0000000000000000000000000000000000000000;
+    address constant RWA009_A_GENESIS         = 0x0000000000000000000000000000000000000000;
 
-    uint256 constant DRAW_AMOUNT              = 100 * MILLION * WAD;
+    uint256 constant DRAW_AMOUNT              = 25 * MILLION * WAD;
 
     // MIP21_LIQUIDATION_ORACLE params
     uint256 constant RWA009_A_INITIAL_DC      = 100 * MILLION * RAD; // TODO
@@ -138,7 +138,7 @@ contract DssSpellCollateralOnboardingAction {
 
     uint256 constant REG_CLASS_RWA            = 3;
 
-    address constant RWA_TOKEN_FAB            = 0x0000000000000000000000000000000000000000;
+    address constant RWA_TOKEN_FAB            = 0xbb650C2a8eD0CCB7A4516d71e22ACE387714ddE1;
 
     /**
      * @notice MIP13c3-SP4 Declaration of Intent & Commercial Points -
@@ -160,8 +160,6 @@ contract DssSpellCollateralOnboardingAction {
         address MCD_VAT                     = CHANGELOG.getAddress("MCD_VAT");
         address MCD_JUG                     = CHANGELOG.getAddress("MCD_JUG");
         address MCD_SPOT                    = CHANGELOG.getAddress("MCD_SPOT");
-
-        // RWA009-A collateral deploy
 
         // Set ilk bytes32 variable
         bytes32 ilk = "RWA009-A";
@@ -208,7 +206,7 @@ contract DssSpellCollateralOnboardingAction {
         JugAbstract(MCD_JUG).file(ilk, "duty", ZERO_PCT_RATE);
 
         // collateralization ratio 100%
-        SpotAbstract(MCD_SPOT).file(ilk, "mat", RAY); // TODO Should get from RWA team
+        SpotAbstract(MCD_SPOT).file(ilk, "mat", RAY);
 
         // poke the spotter to pull in a price
         SpotAbstract(MCD_SPOT).poke(ilk);
@@ -216,15 +214,14 @@ contract DssSpellCollateralOnboardingAction {
         // give the urn permissions on the join adapter
         GemJoinAbstract(MCD_JOIN_RWA009_A).rely(RWA009_A_URN);
 
-        // set up the urn
-        RwaUrnLike(RWA009_A_URN).hope(RWA009_A_OPERATOR);
+        // DSS_PAUSE_PROXY permission on URN
+        RwaUrnLike(RWA009_A_URN).hope(address(this));
 
         // lock RWA009 Token in the URN
         ERC20Like(RWA009).approve(RWA009_A_URN, 1 * WAD);
-        RwaUrnLike(RWA009_A_URN).hope(address(this));
         RwaUrnLike(RWA009_A_URN).lock(1 * WAD);
 
-        // draw DAI to outputConduit
+        // draw DAI to genesis address
         RwaUrnLike(RWA009_A_URN).draw(DRAW_AMOUNT);
 
         // Add RWA009 contract to the changelog
