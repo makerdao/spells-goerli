@@ -64,34 +64,14 @@ interface RwaLiquidationLike {
     function good(bytes32) external view;
 }
 
-interface RwaOutputConduitLike {
-    function wards(address) external returns (uint256);
-
-    function can(address) external returns (uint256);
-
-    function rely(address) external;
-
-    function deny(address) external;
-
-    function hope(address) external;
-
-    function mate(address) external;
-
-    function nope(address) external;
-
-    function bud(address) external returns (uint256);
-
-    function pick(address) external;
-
-    function push() external;
-}
-
 interface RwaUrnLike {
     function hope(address) external;
 
     function lock(uint256) external;
 
     function nope(address) external;
+
+    function draw(uint256) external;
 }
 
 interface TokenDetailsLike {
@@ -123,11 +103,11 @@ contract DssSpellCollateralOnboardingAction {
     uint256 public constant RAD               = 10**45;
 
     // MIP21 components
-    address constant RWA009                   = 0x0000000000000000000000000000000000000000;
-    address constant MCD_JOIN_RWA009_A        = 0x0000000000000000000000000000000000000000;
-    address constant RWA009_A_URN             = 0x0000000000000000000000000000000000000000;
-    address constant RWA009_A_JAR             = 0x0000000000000000000000000000000000000000;
-    address constant RWA009_A_GENESIS         = 0x0000000000000000000000000000000000000000;
+    address constant RWA009                   = 0xDFAa5BD4d07af3001533711D5AFEe73F3edfA94F;
+    address constant MCD_JOIN_RWA009_A        = 0xc29691528C03517DeEF0a86bAb3a0370d78D49d6;
+    address constant RWA009_A_URN             = 0x4BC4a1D84F1AA43FF6d169B5F34C9dCFde86245C;
+    address constant RWA009_A_JAR             = 0x84D4f4989f14EE3a5bcCab407555ce83Da0A48Af;
+    address constant RWA009_A_GENESIS         = 0x508D982e13263Fc8e1b5A4E6bf59b335202e36b4;
 
     uint256 constant DRAW_AMOUNT              = 25 * MILLION * WAD;
 
@@ -162,7 +142,7 @@ contract DssSpellCollateralOnboardingAction {
         address MCD_SPOT                    = CHANGELOG.getAddress("MCD_SPOT");
 
         // Set ilk bytes32 variable
-        bytes32 ilk = "RWA009-A";
+        bytes32 ilk = "RWA009AT1-A";
 
         // Sanity checks
         require(GemJoinAbstract(MCD_JOIN_RWA009_A).vat() == MCD_VAT,   "join-vat-not-match");
@@ -179,7 +159,7 @@ contract DssSpellCollateralOnboardingAction {
         // TODO: this should be verified with RWA Team (5 min for testing is good)
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA009_A_INITIAL_PRICE, DOC, RWA009_A_TAU);
         (, address pip, , ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
-        CHANGELOG.setAddress("PIP_RWA009", pip);
+        CHANGELOG.setAddress("PIP_RWA009AT1", pip);
 
         // Set price feed for RWA009
         SpotAbstract(MCD_SPOT).file(ilk, "pip", pip);
@@ -225,25 +205,25 @@ contract DssSpellCollateralOnboardingAction {
         RwaUrnLike(RWA009_A_URN).draw(DRAW_AMOUNT);
 
         // Add RWA009 contract to the changelog
-        CHANGELOG.setAddress("RWA009",                  RWA009);
-        CHANGELOG.setAddress("MCD_JOIN_RWA009_A",       MCD_JOIN_RWA009_A);
-        CHANGELOG.setAddress("RWA009_A_URN",            RWA009_A_URN);
-        CHANGELOG.setAddress("RWA009_A_JAR",            RWA009_A_JAR);
-        CHANGELOG.setAddress("RWA009_A_OUTPUT_CONDUIT", RWA009_A_OUTPUT_CONDUIT);
+        CHANGELOG.setAddress("RWA009AT1",                  RWA009);
+        CHANGELOG.setAddress("MCD_JOIN_RWA009AT1_A",       MCD_JOIN_RWA009_A);
+        CHANGELOG.setAddress("RWA009AT1_A_URN",            RWA009_A_URN);
+        CHANGELOG.setAddress("RWA009AT1_A_JAR",            RWA009_A_JAR);
+        CHANGELOG.setAddress("RWA009AT1_A_OUTPUT_CONDUIT", RWA009_A_GENESIS);
 
         // Add RWA_TOKEN_FAB to changelog
         CHANGELOG.setAddress("RWA_TOKEN_FAB", RWA_TOKEN_FAB);
 
         // Add RWA009 to ILK REGISTRY
         REGISTRY.put(
-            "RWA009-A",
+            "RWA009AT1-A",
             MCD_JOIN_RWA009_A,
             RWA009,
             GemJoinAbstract(MCD_JOIN_RWA009_A).dec(),
             REG_CLASS_RWA,
             pip,
             address(0),
-            "RWA009-A: H. V. Bank",
+            "RWA009AT1-A: H. V. Bank",
             TokenDetailsLike(RWA009).symbol()
         );
     }

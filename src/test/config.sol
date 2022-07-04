@@ -1,8 +1,6 @@
 // SPDX-FileCopyrightText: © 2021-2022 Dai Foundation <www.daifoundation.org>
 // SPDX-License-Identifier: AGPL-3.0-or-later
 //
-// Copyright (C) 2021-2022 Dai Foundation
-//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -101,7 +99,7 @@ contract Config {
         //
         spellValues = SpellValues({
             deployed_spell:                 address(0),        // populate with deployed spell if deployed
-            deployed_spell_created:         1654547734,        // use tx=<deploy tx> make deploy-stamp
+            deployed_spell_created:         1656097654,        // use tx=<deploy tx> make deploy-stamp
             previous_spell:                 address(0),        // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           true,              // true if officehours is expected to be enabled in the spell
             expiration_threshold:           weekly_expiration  // (weekly_expiration,monthly_expiration) if weekly or monthly spell
@@ -127,11 +125,11 @@ contract Config {
             cat_box:               20 * MILLION,            // In whole Dai units
             dog_Hole:              100 * MILLION,           // In whole Dai units
             esm_min:               150 * THOUSAND,          // In whole MKR units
-            pause_authority:       chief,                   // Pause authority
-            osm_mom_authority:     chief,                   // OsmMom authority
-            flipper_mom_authority: chief,                   // FlipperMom authority
-            clipper_mom_authority: chief,                   // ClipperMom authority
-            ilk_count:             50                       // Num expected in system
+            pause_authority:       chief,                  // Pause authority
+            osm_mom_authority:     chief,                  // OsmMom authority
+            flipper_mom_authority: chief,                  // FlipperMom authority
+            clipper_mom_authority: chief,                  // ClipperMom authority
+            ilk_count:             51                       // Num expected in system
         });
 
         //
@@ -780,10 +778,10 @@ contract Config {
             line:         0,
             dust:         15 * THOUSAND,
             pct:          300,
-            mat:          16500,
+            mat:          1300_00,
             liqType:      "clip",
             liqOn:        true,
-            chop:         1300,
+            chop:         0,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -794,13 +792,13 @@ contract Config {
             clip_tail:    140 minutes,
             clip_cusp:    4000,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     0,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         false
+            lerp:         true
         });
         afterSpell.collaterals["RENBTC-A"] = CollateralValues({
             aL_enabled:   true,
@@ -870,10 +868,10 @@ contract Config {
             line:         0,
             dust:         60 * THOUSAND,
             pct:          100,
-            mat:          12000,
+            mat:          2000_00,
             liqType:      "clip",
             liqOn:        true,
-            chop:         1300,
+            chop:         0,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -884,13 +882,13 @@ contract Config {
             clip_tail:    215 minutes,
             clip_cusp:    6000,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     0,
             clipper_mom:  1,
             cm_tolerance: 7000,
             calc_tau:     0,
             calc_step:    125,
             calc_cut:     9950,
-            lerp:         false
+            lerp:         true
         });
         afterSpell.collaterals["PSM-USDC-A"] = CollateralValues({
             aL_enabled:   true,
@@ -930,10 +928,10 @@ contract Config {
             line:         0,
             dust:         25 * THOUSAND,
             pct:          200,
-            mat:          14500,
+            mat:          2400_00,
             liqType:      "clip",
             liqOn:        true,
-            chop:         1300,
+            chop:         0,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -944,13 +942,13 @@ contract Config {
             clip_tail:    200 minutes,
             clip_cusp:    4000,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     0,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    130,
             calc_cut:     9900,
-            lerp:         false
+            lerp:         true
         });
         afterSpell.collaterals["UNIV2USDCETH-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1083,7 +1081,7 @@ contract Config {
             mat:          16000,
             liqType:      "clip",
             liqOn:        true,
-            chop:         1300,
+            chop:         0,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -1094,7 +1092,7 @@ contract Config {
             clip_tail:    200 minutes,
             clip_cusp:    4000,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     0,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
@@ -1110,10 +1108,10 @@ contract Config {
             line:         0,
             dust:         60 * THOUSAND,
             pct:          0,
-            mat:          12000,
+            mat:          800_00,
             liqType:      "clip",
             liqOn:        true,
-            chop:         1300,
+            chop:         0,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -1124,13 +1122,13 @@ contract Config {
             clip_tail:    215 minutes,
             clip_cusp:    6000,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     0,
             clipper_mom:  1,
             cm_tolerance: 7000,
             calc_tau:     0,
             calc_step:    125,
             calc_cut:     9950,
-            lerp:         false
+            lerp:         true
         });
         afterSpell.collaterals["UNIV2AAVEETH-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1670,6 +1668,36 @@ contract Config {
             calc_step:    90,
             calc_cut:     9900,
             lerp:         false
+        });
+        afterSpell.collaterals["RWA009AT1-A"] = CollateralValues({
+            aL_enabled: false, // DssAutoLine is enabled?
+            aL_line: 0, // In whole Dai units
+            aL_gap: 0, // In whole Dai units
+            aL_ttl: 1 hours, // In seconds
+            line: 100 * MILLION, // In whole Dai units  // Not checked here as there is auto line
+            dust: 0, // In whole Dai units
+            pct: 0, // In basis points
+            mat: 10 * THOUSAND, // In basis points
+            liqType: "", // "" or "flip" or "clip"
+            liqOn: false, // If liquidations are enabled
+            chop: 1300, // In basis points
+            cat_dunk: 0, // In whole Dai units
+            flip_beg: 0, // In basis points
+            flip_ttl: 0, // In seconds
+            flip_tau: 0, // In seconds
+            flipper_mom: 0, // 1 if circuit breaker enabled
+            dog_hole: 3 * MILLION,
+            clip_buf: 13000,
+            clip_tail: 140 minutes,
+            clip_cusp: 4000,
+            clip_chip: 10,
+            clip_tip: 300,
+            clipper_mom: 1,
+            cm_tolerance: 5000,
+            calc_tau: 0,
+            calc_step: 90,
+            calc_cut: 9900,
+            lerp: false
         });
     }
 }

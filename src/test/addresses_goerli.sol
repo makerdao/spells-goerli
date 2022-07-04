@@ -327,5 +327,13 @@ contract Addresses {
         addr["STARKNET_ESCROW"]                 = 0x38c3DDF1eF3e045abDDEb94f4e7a1a0d5440EB44;
         addr["STARKNET_DAI_BRIDGE"]             = 0xd8beAa22894Cd33F24075459cFba287a10a104E4;
         addr["STARKNET_GOV_RELAY"]              = 0x73c0049Dd6560E644984Fa3Af30A55a02a7D81fB;
+        addr["STARKNET_CORE"]                   = 0xde29d060D45901Fb19ED6C6e959EB22d8626708e;
+        addr["RWA009AT1_A_JAR"]                 = 0x84D4f4989f14EE3a5bcCab407555ce83Da0A48Af;
+        addr["RWA009AT1"]                       = 0xDFAa5BD4d07af3001533711D5AFEe73F3edfA94F;
+        addr["PIP_RWA009AT1"]                   = 0x98e62fFAf27C022283cB492f1bB05AfdE877b5ac;
+        addr["MCD_JOIN_RWA009AT1_A"]            = 0xc29691528C03517DeEF0a86bAb3a0370d78D49d6;
+        addr["RWA009AT1_A_URN"]                 = 0x4BC4a1D84F1AA43FF6d169B5F34C9dCFde86245C;
+        addr["RWA009AT1_A_OUTPUT_CONDUIT"]      = 0x508D982e13263Fc8e1b5A4E6bf59b335202e36b4;
+        addr["RWA_TOKEN_FAB"]                   = 0xbb650C2a8eD0CCB7A4516d71e22ACE387714ddE1;
     }
 }
