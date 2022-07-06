@@ -104,16 +104,16 @@ contract DssSpellCollateralOnboardingAction {
 
     // MIP21 components
     address constant RWA009                   = 0xDFAa5BD4d07af3001533711D5AFEe73F3edfA94F;
-    address constant MCD_JOIN_RWA009_A        = 0xc29691528C03517DeEF0a86bAb3a0370d78D49d6;
-    address constant RWA009_A_URN             = 0x4BC4a1D84F1AA43FF6d169B5F34C9dCFde86245C;
+    address constant MCD_JOIN_RWA009_A        = 0xAeB8E094012A1c887c8327763A3Daff6445370C4;
+    address constant RWA009_A_URN             = 0x01EB532d6fB2fD84F071635caDcc877031a68cd1;
     address constant RWA009_A_JAR             = 0x84D4f4989f14EE3a5bcCab407555ce83Da0A48Af;
-    address constant RWA009_A_GENESIS         = 0x508D982e13263Fc8e1b5A4E6bf59b335202e36b4;
+    address constant RWA009_A_OUTPUT_CONDUIT  = 0x7a3D23Dc73F7ead55399597aAE6e525b3DF95A88;
 
     uint256 constant DRAW_AMOUNT              = 25 * MILLION * WAD;
 
     // MIP21_LIQUIDATION_ORACLE params
-    uint256 constant RWA009_A_INITIAL_DC      = 100 * MILLION * RAD; // TODO
-    uint256 constant RWA009_A_INITIAL_PRICE   = 100 * MILLION * WAD; // TODO RWA team should provide
+    uint256 constant RWA009_A_INITIAL_DC      = 100 * MILLION * RAD;
+    uint256 constant RWA009_A_INITIAL_PRICE   = 100 * MILLION * WAD;
     uint48  constant RWA009_A_TAU             = 0;
 
     uint256 constant REG_CLASS_RWA            = 3;
@@ -209,7 +209,7 @@ contract DssSpellCollateralOnboardingAction {
         CHANGELOG.setAddress("MCD_JOIN_RWA009AT1_A",       MCD_JOIN_RWA009_A);
         CHANGELOG.setAddress("RWA009AT1_A_URN",            RWA009_A_URN);
         CHANGELOG.setAddress("RWA009AT1_A_JAR",            RWA009_A_JAR);
-        CHANGELOG.setAddress("RWA009AT1_A_OUTPUT_CONDUIT", RWA009_A_GENESIS);
+        CHANGELOG.setAddress("RWA009AT1_A_OUTPUT_CONDUIT", RWA009_A_OUTPUT_CONDUIT);
 
         // Add RWA_TOKEN_FAB to changelog
         CHANGELOG.setAddress("RWA_TOKEN_FAB", RWA_TOKEN_FAB);

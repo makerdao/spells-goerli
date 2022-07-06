@@ -331,9 +331,9 @@ contract Addresses {
         addr["RWA009AT1_A_JAR"]                 = 0x84D4f4989f14EE3a5bcCab407555ce83Da0A48Af;
         addr["RWA009AT1"]                       = 0xDFAa5BD4d07af3001533711D5AFEe73F3edfA94F;
         addr["PIP_RWA009AT1"]                   = 0x98e62fFAf27C022283cB492f1bB05AfdE877b5ac;
-        addr["MCD_JOIN_RWA009AT1_A"]            = 0xc29691528C03517DeEF0a86bAb3a0370d78D49d6;
-        addr["RWA009AT1_A_URN"]                 = 0x4BC4a1D84F1AA43FF6d169B5F34C9dCFde86245C;
-        addr["RWA009AT1_A_OUTPUT_CONDUIT"]      = 0x508D982e13263Fc8e1b5A4E6bf59b335202e36b4;
+        addr["MCD_JOIN_RWA009AT1_A"]            = 0xAeB8E094012A1c887c8327763A3Daff6445370C4;
+        addr["RWA009AT1_A_URN"]                 = 0x01EB532d6fB2fD84F071635caDcc877031a68cd1;
+        addr["RWA009AT1_A_OUTPUT_CONDUIT"]      = 0x7a3D23Dc73F7ead55399597aAE6e525b3DF95A88;
         addr["RWA_TOKEN_FAB"]                   = 0xbb650C2a8eD0CCB7A4516d71e22ACE387714ddE1;
     }
 }
