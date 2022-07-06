@@ -1669,7 +1669,7 @@ contract Config {
             calc_cut:     9900,
             lerp:         false
         });
-        afterSpell.collaterals["RWA009AT1-A"] = CollateralValues({
+        afterSpell.collaterals["RWA009-A"] = CollateralValues({
             aL_enabled: false, // DssAutoLine is enabled?
             aL_line: 0, // In whole Dai units
             aL_gap: 0, // In whole Dai units

@@ -103,10 +103,10 @@ contract DssSpellCollateralOnboardingAction {
     uint256 public constant RAD               = 10**45;
 
     // MIP21 components
-    address constant RWA009                   = 0xDFAa5BD4d07af3001533711D5AFEe73F3edfA94F;
-    address constant MCD_JOIN_RWA009_A        = 0xAeB8E094012A1c887c8327763A3Daff6445370C4;
-    address constant RWA009_A_URN             = 0x01EB532d6fB2fD84F071635caDcc877031a68cd1;
-    address constant RWA009_A_JAR             = 0x84D4f4989f14EE3a5bcCab407555ce83Da0A48Af;
+    address constant RWA009                   = 0xe4dEaE67031E6f159cE151be7ECBA0B50Dba66Fe;
+    address constant MCD_JOIN_RWA009_A        = 0xDf9dA30e1a80cC3532DF60caBbf488732E018095;
+    address constant RWA009_A_URN             = 0x5cF0cd96E21c634c8FA46FfFFB855A6AAe4AE47C;
+    address constant RWA009_A_JAR             = 0x7AAf3F8d07eF898e6fc55D3B7C88cCCFeb0275fF;
     address constant RWA009_A_OUTPUT_CONDUIT  = 0x7a3D23Dc73F7ead55399597aAE6e525b3DF95A88;
 
     uint256 constant DRAW_AMOUNT              = 25 * MILLION * WAD;
@@ -142,7 +142,7 @@ contract DssSpellCollateralOnboardingAction {
         address MCD_SPOT                    = CHANGELOG.getAddress("MCD_SPOT");
 
         // Set ilk bytes32 variable
-        bytes32 ilk = "RWA009AT1-A";
+        bytes32 ilk = "RWA009-A";
 
         // Sanity checks
         require(GemJoinAbstract(MCD_JOIN_RWA009_A).vat() == MCD_VAT,   "join-vat-not-match");
@@ -159,7 +159,7 @@ contract DssSpellCollateralOnboardingAction {
         // TODO: this should be verified with RWA Team (5 min for testing is good)
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA009_A_INITIAL_PRICE, DOC, RWA009_A_TAU);
         (, address pip, , ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
-        CHANGELOG.setAddress("PIP_RWA009AT1", pip);
+        CHANGELOG.setAddress("PIP_RWA009", pip);
 
         // Set price feed for RWA009
         SpotAbstract(MCD_SPOT).file(ilk, "pip", pip);
@@ -205,25 +205,25 @@ contract DssSpellCollateralOnboardingAction {
         RwaUrnLike(RWA009_A_URN).draw(DRAW_AMOUNT);
 
         // Add RWA009 contract to the changelog
-        CHANGELOG.setAddress("RWA009AT1",                  RWA009);
-        CHANGELOG.setAddress("MCD_JOIN_RWA009AT1_A",       MCD_JOIN_RWA009_A);
-        CHANGELOG.setAddress("RWA009AT1_A_URN",            RWA009_A_URN);
-        CHANGELOG.setAddress("RWA009AT1_A_JAR",            RWA009_A_JAR);
-        CHANGELOG.setAddress("RWA009AT1_A_OUTPUT_CONDUIT", RWA009_A_OUTPUT_CONDUIT);
+        CHANGELOG.setAddress("RWA009",                  RWA009);
+        CHANGELOG.setAddress("MCD_JOIN_RWA009_A",       MCD_JOIN_RWA009_A);
+        CHANGELOG.setAddress("RWA009_A_URN",            RWA009_A_URN);
+        CHANGELOG.setAddress("RWA009_A_JAR",            RWA009_A_JAR);
+        CHANGELOG.setAddress("RWA009_A_OUTPUT_CONDUIT", RWA009_A_OUTPUT_CONDUIT);
 
         // Add RWA_TOKEN_FAB to changelog
         CHANGELOG.setAddress("RWA_TOKEN_FAB", RWA_TOKEN_FAB);
 
         // Add RWA009 to ILK REGISTRY
         REGISTRY.put(
-            "RWA009AT1-A",
+            "RWA009-A",
             MCD_JOIN_RWA009_A,
             RWA009,
             GemJoinAbstract(MCD_JOIN_RWA009_A).dec(),
             REG_CLASS_RWA,
             pip,
             address(0),
-            "RWA009AT1-A: H. V. Bank",
+            "RWA009-A: H. V. Bank",
             TokenDetailsLike(RWA009).symbol()
         );
     }
