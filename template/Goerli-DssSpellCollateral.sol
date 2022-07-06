@@ -45,7 +45,7 @@ contract DssSpellCollateralAction {
     // address constant MCD_CLIP_XXX_A       = 0x0000000000000000000000000000000000000000;
     // address constant MCD_CLIP_CALC_XXX_A  = 0x0000000000000000000000000000000000000000;
 
-    function onboardNewCollaterals() internal {
+    function onboardCollaterals() internal {
         // ----------------------------- Collateral onboarding -----------------------------
         //  Add ______________ as a new Vault Type
         //  Poll Link:
