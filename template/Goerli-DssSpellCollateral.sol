@@ -45,6 +45,13 @@ contract DssSpellCollateralAction {
     // address constant MCD_CLIP_XXX_A       = 0x0000000000000000000000000000000000000000;
     // address constant MCD_CLIP_CALC_XXX_A  = 0x0000000000000000000000000000000000000000;
 
+    // --- Offboarding: Current Liquidation Ratio ---
+    // uint256 constant CURRENT_XXX_A_MAT              =  XYZ * RAY / 100;
+
+    // --- Offboarding: Target Liquidation Ratio ---
+    // uint256 constant TARGET_XXX_A_MAT               =  XYZ * RAY / 100;
+
+
     function onboardCollaterals() internal {
         // ----------------------------- Collateral onboarding -----------------------------
         //  Add ______________ as a new Vault Type
@@ -99,6 +106,63 @@ contract DssSpellCollateralAction {
 
     function offboardCollaterals() internal {
         // ----------------------------- Collateral offboarding -----------------------------
+
+        // 1st Stage of Collateral Offboarding Process
+        // Poll Link:
+        // uint256 line;
+        // uint256 lineReduction;
+
+        // Set XXX-A Maximum Debt Ceiling to 0
+        // (,,,line,) = vat.ilks("XXX-A");
+        // lineReduction += line;
+        // DssExecLib.removeIlkFromAutoLine("XXX-A");
+        // DssExecLib.setIlkDebtCeiling("XXX-A", 0);
+
+        // Set XXX-A Maximum Debt Ceiling to 0
+        // (,,,line,) = vat.ilks("XXX-A");
+        // lineReduction += line;
+        // DssExecLib.removeIlkFromAutoLine("XXX-A");
+        // DssExecLib.setIlkDebtCeiling("XXX-A", 0);
+
+        // Decrease Global Debt Ceiling by total amount of offboarded ilks
+        // vat.file("Line", _sub(vat.Line(), lineReduction));
+
+        // 2nd Stage of Collateral Offboarding Process
+        // address spotter = DssExecLib.spotter();
+
+        // Offboard XXX-A
+        // Poll Link:
+        // Forum Link:
+
+        // DssExecLib.setIlkLiquidationPenalty("XXX-A", 0);
+        // DssExecLib.setKeeperIncentiveFlatRate("XXX-A", 0);
+        // DssExecLib.linearInterpolation({
+        //     _name:      "XXX-A Offboarding",
+        //     _target:    spotter,
+        //     _ilk:       "XXX-A",
+        //     _what:      "mat",
+        //     _startTime: block.timestamp,
+        //     _start:     CURRENT_XXX_A_MAT,
+        //     _end:       TARGET_XXX_A_MAT,
+        //     _duration:  30 days
+        // });
+
+        // Offboard XXX-A
+        // Poll Link:
+        // Forum Link:
+
+        // DssExecLib.setIlkLiquidationPenalty("XXX-A", 0);
+        // DssExecLib.setKeeperIncentiveFlatRate("XXX-A", 0);
+        // DssExecLib.linearInterpolation({
+        //     _name:      "XXX-A Offboarding",
+        //     _target:    spotter,
+        //     _ilk:       "XXX-A",
+        //     _what:      "mat",
+        //     _startTime: block.timestamp,
+        //     _start:     CURRENT_XXX_A_MAT,
+        //     _end:       TARGET_XXX_A_MAT,
+        //     _duration:  30 days
+        // });
 
     }
 }
