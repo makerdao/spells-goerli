@@ -55,6 +55,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // onboardNewCollaterals();
         // offboardCollaterals();
 
+        // MOMC Parameter Changes
+        // https://vote.makerdao.com/polling/QmefrhsE#poll-detail
+
         // Increase the GUNIV3DAIUSDC1-A Stability Fee from 0% to 0.01%.
         DssExecLib.setIlkStabilityFee("GUNIV3DAIUSDC1-A", ONE_BPS_RATE, true);
 
