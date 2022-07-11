@@ -20,7 +20,7 @@ pragma solidity 0.6.12;
 
 import "dss-exec-lib/DssExecLib.sol";
 
-contract DssSpellCollateralOnboardingAction {
+contract DssSpellCollateralAction {
 
     // --- Rates ---
     // Many of the settings that change weekly rely on the rate accumulator
@@ -30,41 +30,56 @@ contract DssSpellCollateralOnboardingAction {
     // $ bc -l <<< 'scale=27; e( l(1.08)/(60 * 60 * 24 * 365) )'
     //
     // A table of rates can be found at
-    //    https://ipfs.io/ipfs/QmTRiQ3GqjCiRhh1ojzKzgScmSsiwQPLyjhgYSxZASQekj
+    // https://ipfs.io/ipfs/QmX2QMoM1SZq2XMoTbMak8pZP86Y2icpgPAKDjQg4r4YHn
     //
 
     // --- Math ---
+    // uint256 constant THOUSAND   = 10 ** 3;
+    // uint256 constant MILLION    = 10 ** 6;
+    // uint256 constant BILLION    = 10 ** 9;
 
     // --- DEPLOYED COLLATERAL ADDRESSES ---
+    // address constant XXX                  = 0x0000000000000000000000000000000000000000;
+    // address constant PIP_XXX              = 0x0000000000000000000000000000000000000000;
+    // address constant MCD_JOIN_XXX_A       = 0x0000000000000000000000000000000000000000;
+    // address constant MCD_CLIP_XXX_A       = 0x0000000000000000000000000000000000000000;
+    // address constant MCD_CLIP_CALC_XXX_A  = 0x0000000000000000000000000000000000000000;
 
-    function onboardNewCollaterals() internal {
+    // --- Offboarding: Current Liquidation Ratio ---
+    // uint256 constant CURRENT_XXX_A_MAT              =  XYZ * RAY / 100;
+
+    // --- Offboarding: Target Liquidation Ratio ---
+    // uint256 constant TARGET_XXX_A_MAT               =  XYZ * RAY / 100;
+
+
+    function onboardCollaterals() internal {
         // ----------------------------- Collateral onboarding -----------------------------
         //  Add ______________ as a new Vault Type
         //  Poll Link:
 
         // DssExecLib.addNewCollateral(
         //     CollateralOpts({
-        //         ilk:                   ,
-        //         gem:                   ,
-        //         join:                  ,
-        //         clip:                  ,
-        //         calc:                  ,
-        //         pip:                   ,
-        //         isLiquidatable:        ,
-        //         isOSM:                 ,
-        //         whitelistOSM:          ,
-        //         ilkDebtCeiling:        ,
-        //         minVaultAmount:        ,
-        //         maxLiquidationAmount:  ,
-        //         liquidationPenalty:    ,
-        //         ilkStabilityFee:       ,
-        //         startingPriceFactor:   ,
-        //         breakerTolerance:      ,
-        //         auctionDuration:       ,
-        //         permittedDrop:         ,
-        //         liquidationRatio:      ,
-        //         kprFlatReward:         ,
-        //         kprPctReward:
+        //         ilk:                   "XXX-A",
+        //         gem:                   XXX,
+        //         join:                  MCD_JOIN_XXX_A,
+        //         clip:                  MCD_CLIP_XXX_A,
+        //         calc:                  MCD_CLIP_CALC_XXX_A,
+        //         pip:                   PIP_XXX,
+        //         isLiquidatable:        BOOL,
+        //         isOSM:                 BOOL,
+        //         whitelistOSM:          BOOL,
+        //         ilkDebtCeiling:        line,
+        //         minVaultAmount:        dust,
+        //         maxLiquidationAmount:  hole,
+        //         liquidationPenalty:    chop,
+        //         ilkStabilityFee:       duty,
+        //         startingPriceFactor:   buf,
+        //         breakerTolerance:      tolerance,
+        //         auctionDuration:       tail,
+        //         permittedDrop:         cusp,
+        //         liquidationRatio:      mat,
+        //         kprFlatReward:         tip,
+        //         kprPctReward:          chip
         //     })
         // );
 
@@ -75,15 +90,79 @@ contract DssSpellCollateralOnboardingAction {
         // );
 
         // DssExecLib.setIlkAutoLineParameters(
-        //     ILK,
+        //     "XXX-A",
         //     AMOUNT,
         //     GAP,
         //     TTL
         // );
 
-        // address constant CHAINLOG        = DssExecLib.LOG();
-        // ChainlogAbstract(CHAINLOG).setAddress("<join-name>", <join-address>);
-        // ChainlogAbstract(CHAINLOG).setAddress("<clip-name>", <clip-address>);
-        // ChainlogAbstract(CHAINLOG).setVersion("<new-version>");
+        // ChainLog Updates
+        // DssExecLib.setChangelogAddress("XXX", XXX);
+        // DssExecLib.setChangelogAddress("PIP_XXX", PIP_XXX);
+        // DssExecLib.setChangelogAddress("MCD_JOIN_XXX_A", MCD_JOIN_XXX_A);
+        // DssExecLib.setChangelogAddress("MCD_CLIP_XXX_A", MCD_CLIP_XXX_A);
+        // DssExecLib.setChangelogAddress("MCD_CLIP_CALC_XXX_A", MCD_CLIP_CALC_XXX_A);
+    }
+
+    function offboardCollaterals() internal {
+        // ----------------------------- Collateral offboarding -----------------------------
+
+        // 1st Stage of Collateral Offboarding Process
+        // Poll Link:
+        // uint256 line;
+        // uint256 lineReduction;
+
+        // Set XXX-A Maximum Debt Ceiling to 0
+        // (,,,line,) = vat.ilks("XXX-A");
+        // lineReduction += line;
+        // DssExecLib.removeIlkFromAutoLine("XXX-A");
+        // DssExecLib.setIlkDebtCeiling("XXX-A", 0);
+
+        // Set XXX-A Maximum Debt Ceiling to 0
+        // (,,,line,) = vat.ilks("XXX-A");
+        // lineReduction += line;
+        // DssExecLib.removeIlkFromAutoLine("XXX-A");
+        // DssExecLib.setIlkDebtCeiling("XXX-A", 0);
+
+        // Decrease Global Debt Ceiling by total amount of offboarded ilks
+        // vat.file("Line", _sub(vat.Line(), lineReduction));
+
+        // 2nd Stage of Collateral Offboarding Process
+        // address spotter = DssExecLib.spotter();
+
+        // Offboard XXX-A
+        // Poll Link:
+        // Forum Link:
+
+        // DssExecLib.setIlkLiquidationPenalty("XXX-A", 0);
+        // DssExecLib.setKeeperIncentiveFlatRate("XXX-A", 0);
+        // DssExecLib.linearInterpolation({
+        //     _name:      "XXX-A Offboarding",
+        //     _target:    spotter,
+        //     _ilk:       "XXX-A",
+        //     _what:      "mat",
+        //     _startTime: block.timestamp,
+        //     _start:     CURRENT_XXX_A_MAT,
+        //     _end:       TARGET_XXX_A_MAT,
+        //     _duration:  30 days
+        // });
+
+        // Offboard XXX-A
+        // Poll Link:
+        // Forum Link:
+
+        // DssExecLib.setIlkLiquidationPenalty("XXX-A", 0);
+        // DssExecLib.setKeeperIncentiveFlatRate("XXX-A", 0);
+        // DssExecLib.linearInterpolation({
+        //     _name:      "XXX-A Offboarding",
+        //     _target:    spotter,
+        //     _ilk:       "XXX-A",
+        //     _what:      "mat",
+        //     _startTime: block.timestamp,
+        //     _start:     CURRENT_XXX_A_MAT,
+        //     _end:       TARGET_XXX_A_MAT,
+        //     _duration:  30 days
+        // });
+
     }
 }
