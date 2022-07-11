@@ -30,22 +30,6 @@ interface StarknetLike {
 
 contract DssSpellTest is GoerliDssSpellTestBase {
 
-    function testUNIALerpOffboarding() public {
-        checkIlkLerpOffboarding("UNI-A", "UNI-A Offboarding", 165, 1_300);
-    }
-
-    function testUNIV2DAIETHALerpOffboarding() public {
-        checkIlkLerpOffboarding("UNIV2DAIETH-A", "UNIV2DAIETH-A Offboarding", 120, 2_000);
-    }
-
-    function testUNIV2WBTCETHALerpOffboarding() public {
-        checkIlkLerpOffboarding("UNIV2WBTCETH-A", "UNIV2WBTCETH-A Offboarding", 145, 2_400);
-    }
-
-    function testUNIV2WBTCDAIALerpOffboarding() public {
-        checkIlkLerpOffboarding("UNIV2WBTCDAI-A", "UNIV2WBTCDAI-A Offboarding", 120, 800);
-    }
-
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
 
@@ -185,7 +169,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() public {
+    function testNewChainlogValues() private {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -193,9 +177,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // Insert new chainlog values tests here
         // checkChainlogKey("CONTRACT_KEY");
         // checkChainlogVersion("X.XX.X");
-
-        checkChainlogKey("STARKNET_CORE");
-        checkChainlogVersion("1.13.2");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
