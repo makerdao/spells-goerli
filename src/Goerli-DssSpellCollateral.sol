@@ -116,15 +116,7 @@ interface RwaInputConduitLike {
 
 
 contract DssSpellCollateralAction {
-
     address constant RWA_TOKEN_FAB            = 0xb7462C421D7EDF3455003F76125e812a66DdE187;
-
-    ChainlogAbstract CHANGELOG                = ChainlogAbstract(DssExecLib.LOG);
-    IlkRegistryAbstract REGISTRY              = IlkRegistryAbstract(DssExecLib.reg());
-    address MIP21_LIQUIDATION_ORACLE          = CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE");
-    address MCD_VAT                           = CHANGELOG.getAddress("MCD_VAT");
-    address MCD_JUG                           = CHANGELOG.getAddress("MCD_JUG");
-    address MCD_SPOT                          = CHANGELOG.getAddress("MCD_SPOT");
 
     // --- Rates ---
     // Many of the settings that change weekly rely on the rate accumulator
@@ -136,7 +128,6 @@ contract DssSpellCollateralAction {
     // A table of rates can be found at
     //    https://ipfs.io/ipfs/QmTRiQ3GqjCiRhh1ojzKzgScmSsiwQPLyjhgYSxZASQekj
     //
-
 
     uint256 constant ZERO_PCT_RATE            = 1000000000000000000000000000;
     uint256 constant ZERO_FIVE_PCT_RATE       = 1000000000015850933588756013;
@@ -175,19 +166,19 @@ contract DssSpellCollateralAction {
     // -- RWA009 END --
 
     // -- RWA008 MIP21 components --
-    address constant RWA_URN_PROXY_ACTIONS      = address(0);
+    address constant RWA_URN_PROXY_ACTIONS      = 0x741A0fc23AB643B1963E77B5136554b12a91f170;
 
-    address constant RWA008                     = address(0); 
-    address constant MCD_JOIN_RWA008_A          = address(0); 
-    address constant RWA008_A_URN               = address(0); 
-    address constant RWA008_A_INPUT_CONDUIT     = address(0); 
-    address constant RWA008_A_OUTPUT_CONDUIT    = address(0); 
-    address constant RWA008_A_OPERATOR_SOCGEN   = address(0); 
-    address constant RWA008_A_MATE_DIIS_GROUP   = address(0); 
+    address constant RWA008                     = 0xAd56c72774abE21bFf16bf32DD8ABf6676532E1C; 
+    address constant MCD_JOIN_RWA008_A          = 0x6D1D4ef7b0FF2539DC6565D9244B5C2C963e4dea; 
+    address constant RWA008_A_URN               = 0xAeBf8487A6434821702c0792DC7176909F88c7d0; 
+    address constant RWA008_A_INPUT_CONDUIT     = 0x8c2B6Ccd0c9A79AB0ca020F1ABB5b0e53a428268; 
+    address constant RWA008_A_OUTPUT_CONDUIT    = 0x5A817FDf51Da3e4cfcFe921FB0496228E8a607e2; 
+    address constant RWA008_A_OPERATOR          = 0x3F761335890721752476d4F210A7ad9BEf66fb45; 
+    address constant RWA008_A_MATE              = 0xb9444802F0831A3EB9f90E24EFe5FfA20138d684; 
 
     uint256 constant RWA008_A_INITIAL_DC        = 30 * MILLION * RAD;
     uint256 constant RWA008_A_INITIAL_PRICE     = 30_437_069 * WAD;
-    uint48 constant RWA008_A_TAU                = 0;
+    uint48 constant  RWA008_A_TAU               = 0;
 
     uint256 constant RWA008_REG_CLASS_RWA       = 3;
 
@@ -198,10 +189,17 @@ contract DssSpellCollateralAction {
      *
      * https://ipfs.io/ipfs/QmdmAUTU3sd9VkdfTZNQM6krc9jsKgF2pz7W1qvvfJo1xk
      */
-    string constant RWA008_DOC                 = "IPFS_HASH"; // TODO Reference to a documents which describe deal (should be uploaded to IPFS)
+    string constant RWA008_DOC                 = "IPFS_HASH"; // Reference to a documents which describe deal (should be uploaded to IPFS)
     // -- RWA008 end --
 
-    function onboardRwa009() internal {
+    function onboardRwa009(
+        ChainlogAbstract CHANGELOG,
+        IlkRegistryAbstract REGISTRY,
+        address MIP21_LIQUIDATION_ORACLE,
+        address MCD_VAT,
+        address MCD_JUG,
+        address MCD_SPOT
+    ) internal {
         // Set ilk bytes32 variable
         bytes32 ilk = "RWA009-A";
 
@@ -286,7 +284,14 @@ contract DssSpellCollateralAction {
         );
     }
 
-    function onboardRwa008() internal {
+    function onboardRwa008(
+        ChainlogAbstract CHANGELOG,
+        IlkRegistryAbstract REGISTRY,
+        address MIP21_LIQUIDATION_ORACLE,
+        address MCD_VAT,
+        address MCD_JUG,
+        address MCD_SPOT
+    ) internal {
         // RWA008-A collateral deploy
 
         // Set ilk bytes32 variable
@@ -342,30 +347,19 @@ contract DssSpellCollateralAction {
         // set up the urn
         RwaUrnLike(RWA008_A_URN).hope(RWA_URN_PROXY_ACTIONS);
 
-        RwaUrnLike(RWA008_A_URN).hope(RWA008_A_OPERATOR_SOCGEN);
+        RwaUrnLike(RWA008_A_URN).hope(RWA008_A_OPERATOR);
 
         // set up output conduit
-        RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).hope(RWA008_A_OPERATOR_SOCGEN);
+        RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).hope(RWA008_A_OPERATOR);
 
         // whitelist DIIS Group in the conduits
-        RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).mate(RWA008_A_MATE_DIIS_GROUP);
-        RwaInputConduitLike(RWA008_A_INPUT_CONDUIT).mate(RWA008_A_MATE_DIIS_GROUP);
+        RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).mate(RWA008_A_MATE);
+        RwaInputConduitLike(RWA008_A_INPUT_CONDUIT).mate(RWA008_A_MATE);
 
         // whitelist Socgen in the conduits 
-        RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).mate(RWA008_A_OPERATOR_SOCGEN);
-        RwaInputConduitLike(RWA008_A_INPUT_CONDUIT).mate(RWA008_A_OPERATOR_SOCGEN);
+        RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).mate(RWA008_A_OPERATOR);
+        RwaInputConduitLike(RWA008_A_INPUT_CONDUIT).mate(RWA008_A_OPERATOR);
 
-        // // sent RWA008AT6 to RWA008AT6_A_OPERATOR
-        // ERC20Like(RWA008AT6).transfer(RWA008AT6_A_OPERATOR, 1 * WAD);
-
-        // TODO: consider this approach:
-        // ERC20Like(RWA008AT6).approve(RWA008AT6_A_URN, 1 * WAD);
-        // RwaUrnLike(RWA00RWA008AT6_A_URN).hope(address(this));
-        // RwaUrnLike(RWA00RWA008AT6_A_URN).lock(1 * WAD);
-        // RwaUrnLike(RWA00RWA008AT6_A_URN).nope(address(this));
-
-        // ChainLog Updates
-        // CHANGELOG.setAddress("MIP21_LIQUIDATION_ORACLE", MIP21_LIQUIDATION_ORACLE);
         // Add RWA008 contract to the changelog
         CHANGELOG.setAddress("RWA008", RWA008);
         CHANGELOG.setAddress("MCD_JOIN_RWA008_A", MCD_JOIN_RWA008_A);
@@ -387,11 +381,19 @@ contract DssSpellCollateralAction {
     }
 
     function onboardNewCollaterals() internal {
+        ChainlogAbstract CHANGELOG                = ChainlogAbstract(DssExecLib.LOG);
+        IlkRegistryAbstract REGISTRY              = IlkRegistryAbstract(DssExecLib.reg());
+        address MIP21_LIQUIDATION_ORACLE          = CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE");
+        address MCD_VAT                           = CHANGELOG.getAddress("MCD_VAT");
+        address MCD_JUG                           = CHANGELOG.getAddress("MCD_JUG");
+        address MCD_SPOT                          = CHANGELOG.getAddress("MCD_SPOT");
         // --------------------------- RWA Collateral onboarding ---------------------------
-        // Onboard SocGen
-        onboardRwa008();
+        
         // Onboard HvB
-        onboardRwa009();
+        onboardRwa009(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT);
+        
+        // Onboard SocGen
+        onboardRwa008(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT);
 
         // Add RWA_TOKEN_FAB to changelog
         CHANGELOG.setAddress("RWA_TOKEN_FAB", RWA_TOKEN_FAB);
