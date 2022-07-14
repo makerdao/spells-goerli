@@ -335,5 +335,13 @@ contract Addresses {
         addr["RWA009_A_URN"]                    = 0x3c471786cFb1e4495E08de76D637762ad3772d4c;
         addr["RWA009_A_OUTPUT_CONDUIT"]         = 0x7a3D23Dc73F7ead55399597aAE6e525b3DF95A88;
         addr["RWA_TOKEN_FAB"]                   = 0xb7462C421D7EDF3455003F76125e812a66DdE187;
+        addr["RWA008"]                          = address(0);
+        addr["MCD_JOIN_RWA008_A"]               = address(0);
+        addr["RWA008_A_URN"]                    = address(0);
+        addr["RWA008_A_INPUT_CONDUIT"]          = address(0);
+        addr["RWA008_A_OUTPUT_CONDUIT"]         = address(0);
+        addr["RWA008_A_OPERATOR"]               = address(0);
+        addr["RWA008_A_MATE"]                   = address(0);
+        addr["RWA_URN_PROXY_ACTIONS"]           = address(0);
     }
 }
