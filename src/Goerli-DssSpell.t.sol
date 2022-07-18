@@ -114,7 +114,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     DSTokenAbstract   rwagem_009            = DSTokenAbstract(addr.addr("RWA009"));
     GemJoinAbstract   rwajoin_009           = GemJoinAbstract(addr.addr("MCD_JOIN_RWA009_A"));
     RwaUrnLike        rwaurn_009            = RwaUrnLike(addr.addr("RWA009_A_URN"));
-    address           RWA009_GENESIS        = addr.addr("RWA009_A_OUTPUT_CONDUIT");
+    address           RWA009_CES_MULTISIG  = addr.addr("RWA009_A_OUTPUT_CONDUIT");
 
     BumpSpellRwa009   bumpSpell_009;
     TellSpellRwa009   tellSpell_009;
@@ -280,14 +280,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // RWA009 
-        checkChainlogKey("RWA009_A_JAR");
-        checkChainlogKey("RWA009");
-        checkChainlogKey("MCD_JOIN_RWA009_A");
-        checkChainlogKey("RWA009_A_URN");
-        checkChainlogKey("RWA009_A_OUTPUT_CONDUIT");
-        checkChainlogKey("PIP_RWA009");
-        
         // RWA008
         checkChainlogKey("RWA008");
         checkChainlogKey("MCD_JOIN_RWA008_A");
@@ -296,6 +288,14 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkChainlogKey("RWA008_A_INPUT_CONDUIT");
         checkChainlogKey("PIP_RWA008");
 
+        // RWA009 
+        checkChainlogKey("RWA009_A_JAR");
+        checkChainlogKey("RWA009");
+        checkChainlogKey("MCD_JOIN_RWA009_A");
+        checkChainlogKey("RWA009_A_URN");
+        checkChainlogKey("RWA009_A_OUTPUT_CONDUIT");
+        checkChainlogKey("PIP_RWA009");
+        
         // RWA TOKEN FAB
         checkChainlogKey("RWA_TOKEN_FAB");
         // checkChainlogVersion("X.XX.X");
@@ -306,17 +306,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // RWA009
-        assertEq(reg.pos("RWA009-A"), 50);
-        assertEq(reg.join("RWA009-A"), addr.addr("MCD_JOIN_RWA009_A"));
-        assertEq(reg.gem("RWA009-A"), addr.addr("RWA009"));
-        assertEq(reg.dec("RWA009-A"), GemAbstract(addr.addr("RWA009")).decimals());
-        assertEq(reg.class("RWA009-A"), 3);
-        assertEq(reg.name("RWA009-A"), "RWA009-A: H. V. Bank");
-        assertEq(reg.symbol("RWA009-A"), GemAbstract(addr.addr("RWA009")).symbol());
-
         // RWA008
-        assertEq(reg.pos("RWA008-A"),    51);
+        assertEq(reg.pos("RWA008-A"),    50);
         assertEq(reg.join("RWA008-A"),   addr.addr("MCD_JOIN_RWA008_A"));
         assertEq(reg.gem("RWA008-A"),    addr.addr("RWA008"));
         assertEq(reg.dec("RWA008-A"),    DSTokenAbstract(addr.addr("RWA008")).decimals());
@@ -324,6 +315,15 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(reg.pip("RWA008-A"),    addr.addr("PIP_RWA008"));
         assertEq(reg.name("RWA008-A"), "RWA008-A: SG Forge OFH");
         assertEq(reg.symbol("RWA008-A"), "RWA008");
+
+        // RWA009
+        assertEq(reg.pos("RWA009-A"), 51);
+        assertEq(reg.join("RWA009-A"), addr.addr("MCD_JOIN_RWA009_A"));
+        assertEq(reg.gem("RWA009-A"), addr.addr("RWA009"));
+        assertEq(reg.dec("RWA009-A"), GemAbstract(addr.addr("RWA009")).decimals());
+        assertEq(reg.class("RWA009-A"), 3);
+        assertEq(reg.name("RWA009-A"), "RWA009-A: H. V. Bank");
+        assertEq(reg.symbol("RWA009-A"), GemAbstract(addr.addr("RWA009")).symbol());
     }
 
     function testFailWrongDay() public {
@@ -633,8 +633,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         (, , , uint48 tocPost) = oracle.ilks("RWA009-A");
         assertTrue(tocPost > 0);
         assertTrue(!oracle.good("RWA009-A"));
-        hevm.warp(block.timestamp + 2 weeks);
-        assertTrue(!oracle.good("RWA009-A"));
     }
 
     function testSpellIsCast_RWA009_INTEGRATION_TELL_CULL() public {
@@ -654,8 +652,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         hevm.warp(castTime);
         tellSpell_009.cast();
         assertTrue(!oracle.good("RWA009-A"));
-        hevm.warp(block.timestamp + 2 weeks);
-        assertTrue(!oracle.good("RWA009-A"));
 
         cullSpell_009 = new CullSpellRwa009();
         vote(address(cullSpell_009));
@@ -669,7 +665,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(DSValueAbstract(pip).read(), bytes32(0));
     }
 
-    function testSpellIsCast_RWA009_SPELL_LOCK_DRAW_OPERATOR_WIPE_FREE() public {
+    function testSpellIsCast_RWA009_SPELL_OPERATOR_WIPE_FREE() public {
         if (!spell.done()) {
             vote(address(spell));
             scheduleWaitAndCast(address(spell));
@@ -687,7 +683,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(rwagem_009.balanceOf(address(rwajoin_009)), 1 * WAD);
 
         // Check if spell draw 25mm DAI to GENESIS
-        assertEq(dai.balanceOf(address(RWA009_GENESIS)), drawAmount);
+        assertEq(dai.balanceOf(address(RWA009_CES_MULTISIG)), drawAmount);
 
         // address(this) is operator
         assertEq(rwaurn_009.can(address(this)), 1);
@@ -762,8 +758,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         (, , , uint48 tocPost) = oracle.ilks("RWA008-A");
         assertTrue(tocPost > 0);
         assertTrue(!oracle.good("RWA008-A"));
-        hevm.warp(block.timestamp + 2 weeks);
-        assertTrue(!oracle.good("RWA008-A"));
     }
 
     function testSpellIsCast_RWA008_INTEGRATION_TELL_CURE_GOOD() public {
@@ -781,8 +775,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         uint256 castTime = block.timestamp + pause.delay();
         hevm.warp(castTime);
         tellSpell_008.cast();
-        assertTrue(!oracle.good(ilk_008));
-        hevm.warp(block.timestamp + 2 weeks);
         assertTrue(!oracle.good(ilk_008));
 
         cureSpell_008 = new CureSpellRwa008();
@@ -829,8 +821,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         uint256 castTime = block.timestamp + pause.delay();
         hevm.warp(castTime);
         tellSpell_008.cast();
-        assertTrue(!oracle.good("RWA008-A"));
-        hevm.warp(block.timestamp + 2 weeks);
         assertTrue(!oracle.good("RWA008-A"));
 
         cullSpell_008 = new CullSpellRwa008();
@@ -906,9 +896,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         currArt = ((1 * RAD + dustInVat) / rate) + preArt;
         assertTrue(art >= currArt - 2 && art <= currArt + 2); // approximation for vat rounding
 
-        (ink, ) = vat.urns(ilk_008, address(this));
-        assertEq(ink, 0);
-
         jug.drip("RWA008-A");
 
         (, rate, , , ) = vat.ilks("RWA008-A");
@@ -942,6 +929,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         rwaurn_008.wipe(daiToPay);
         rwaurn_008.free(1 * WAD);
+
         (ink, art) = vat.urns(ilk_008, address(rwaurn_008));
         assertEq(ink, preInk);
         assertTrue(art < 4); // wad -> rad conversion in wipe leaves some dust

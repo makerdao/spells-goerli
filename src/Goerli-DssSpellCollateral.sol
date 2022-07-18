@@ -130,7 +130,7 @@ contract DssSpellCollateralAction {
     //
 
     uint256 constant ZERO_PCT_RATE            = 1000000000000000000000000000;
-    uint256 constant ZERO_FIVE_PCT_RATE       = 1000000000015850933588756013;
+    uint256 constant ZERO_ZERO_FIVE_PCT_RATE  = 1000000000015850933588756013;
 
     // --- Math ---
     uint256 public constant THOUSAND          = 10**3;
@@ -213,9 +213,8 @@ contract DssSpellCollateralAction {
         );
 
         /*
-         * init the RwaLiquidationOracle2
+         * init the RwaLiquidationOracle
          */
-        // TODO: this should be verified with RWA Team (5 min for testing is good)
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA009_A_INITIAL_PRICE, RWA009_DOC, RWA009_A_TAU);
         (, address pip, , ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
         CHANGELOG.setAddress("PIP_RWA009", pip);
@@ -325,7 +324,7 @@ contract DssSpellCollateralAction {
         // Allow RWA008 Join to modify Vat registry
         VatAbstract(MCD_VAT).rely(MCD_JOIN_RWA008_A);
 
-        // Allow RwaLiquidationOracle2 to modify Vat registry
+        // Allow RwaLiquidationOracle to modify Vat registry
         VatAbstract(MCD_VAT).rely(MIP21_LIQUIDATION_ORACLE);
 
         // debt ceiling
@@ -333,7 +332,7 @@ contract DssSpellCollateralAction {
         VatAbstract(MCD_VAT).file("Line", VatAbstract(MCD_VAT).Line() + RWA008_A_INITIAL_DC);
 
         // 0.05% stability fee
-        JugAbstract(MCD_JUG).file(ilk, "duty", ZERO_FIVE_PCT_RATE);
+        JugAbstract(MCD_JUG).file(ilk, "duty", ZERO_ZERO_FIVE_PCT_RATE);
 
         // collateralization ratio 100%
         SpotAbstract(MCD_SPOT).file(ilk, "mat", RAY);
@@ -389,11 +388,11 @@ contract DssSpellCollateralAction {
         address MCD_SPOT                          = CHANGELOG.getAddress("MCD_SPOT");
         // --------------------------- RWA Collateral onboarding ---------------------------
         
-        // Onboard HvB
-        onboardRwa009(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT);
-        
         // Onboard SocGen
         onboardRwa008(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT);
+
+        // Onboard HvB
+        onboardRwa009(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT);
 
         // Add RWA_TOKEN_FAB to changelog
         CHANGELOG.setAddress("RWA_TOKEN_FAB", RWA_TOKEN_FAB);
