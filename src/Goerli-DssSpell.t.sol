@@ -183,15 +183,15 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        assertEq(reg.pos("WSTETH-B"), 49);
-        assertEq(reg.join("WSTETH-B"), addr.addr("MCD_JOIN_WSTETH_B"));
-        assertEq(reg.gem("WSTETH-B"), addr.addr("WSTETH"));
-        assertEq(reg.dec("WSTETH-B"), GemAbstract(addr.addr("WSTETH")).decimals());
-        assertEq(reg.class("WSTETH-B"), 1);
-        assertEq(reg.pip("WSTETH-B"), addr.addr("PIP_WSTETH"));
-        assertEq(reg.xlip("WSTETH-B"), addr.addr("MCD_CLIP_WSTETH_B"));
-        assertEq(reg.name("WSTETH-B"), "Wrapped liquid staked Ether 2.0");
-        assertEq(reg.symbol("WSTETH-B"), "wstETH");
+        assertEq(reg.pos("TOKEN-X"), 50);
+        assertEq(reg.join("TOKEN-X"), addr.addr("MCD_JOIN_TOKEN_X"));
+        assertEq(reg.gem("TOKEN-X"), addr.addr("TOKEN"));
+        assertEq(reg.dec("TOKEN-X"), GemAbstract(addr.addr("TOKEN")).decimals());
+        assertEq(reg.class("TOKEN-X"), 3);
+        assertEq(reg.pip("TOKEN-X"), addr.addr("PIP_TOKEN"));
+        assertEq(reg.xlip("TOKEN-X"), address(0));
+        assertEq(reg.name("TOKEN-X"), "NAME");
+        assertEq(reg.symbol("TOKEN-X"), "SYMBOL");
     }
 
     function testFailWrongDay() public {

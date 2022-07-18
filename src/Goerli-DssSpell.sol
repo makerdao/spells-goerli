@@ -28,8 +28,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
-    uint256 constant MILLION = 10 ** 6;
-
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
     // To check this yourself, use the following rate calculation (example 8%):
@@ -39,9 +37,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // A table of rates can be found at
     //    https://ipfs.io/ipfs/QmX2QMoM1SZq2XMoTbMak8pZP86Y2icpgPAKDjQg4r4YHn
     //
-    uint256 constant ZERO_PCT_RATE     = 1000000000000000000000000000;
-    uint256 constant ONE_BPS_RATE      = 1000000000003170820659990704;
-    uint256 constant TWO_FIVE_PCT_RATE = 1000000000782997609082909351;
 
     function officeHours() public override returns (bool) {
         return false;
@@ -52,44 +47,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // Includes changes from the DssSpellCollateralAction
         // onboardNewCollaterals();
         // offboardCollaterals();
-
-        // MOMC Parameter Changes
-        // https://vote.makerdao.com/polling/QmefrhsE#poll-detail
-
-        // Increase the GUNIV3DAIUSDC1-A Stability Fee from 0% to 0.01%.
-        DssExecLib.setIlkStabilityFee("GUNIV3DAIUSDC1-A", ONE_BPS_RATE, true);
-
-        // Increase the UNIV2DAIUSDC-A Stability Fee from 0% to 0.01%.
-        DssExecLib.setIlkStabilityFee("UNIV2DAIUSDC-A", ONE_BPS_RATE, true);
-
-        // Increase the WSTETH-A Stability fee from 2.25% to 2.5%.
-        DssExecLib.setIlkStabilityFee("WSTETH-A", TWO_FIVE_PCT_RATE, true);
-
-        // Reduce the USDC-A Stability Fee from 1% to 0%.
-        DssExecLib.setIlkStabilityFee("USDC-A", ZERO_PCT_RATE, true);
-
-        // Reduce the PAXUSD-A Stability Fee from 1% to 0%.
-        DssExecLib.setIlkStabilityFee("PAXUSD-A", ZERO_PCT_RATE, true);
-
-        // Increase the UNIV2DAIUSDC-A Maximum Debt Ceiling from 250 million DAI to 300 million DAI.
-        // Increase the UNIV2DAIUSDC-A Target Available Debt from 10 million DAI to 20 million DAI.
-        DssExecLib.setIlkAutoLineParameters("UNIV2DAIUSDC-A", 300 * MILLION, 20 * MILLION, 8 hours);
-
-        // Reduce the LINK-A Maximum Debt Ceiling from 50 million DAI to 25 million DAI.
-        DssExecLib.setIlkAutoLineDebtCeiling("LINK-A", 25 * MILLION);
-
-        // Reduce the WSTETH-A Maximum Debt Ceiling from 200 million DAI to 150 million DAI.
-        DssExecLib.setIlkAutoLineDebtCeiling("WSTETH-A", 150 * MILLION);
-
-        // Reduce the WSTETH-B Maximum Debt Ceiling from 150 million DAI to 100 million DAI.
-        DssExecLib.setIlkAutoLineDebtCeiling("WSTETH-B", 100 * MILLION);
-
-        // Reduce the YFI-A Maximum Debt Ceiling from 50 million DAI to 25 million DAI.
-        DssExecLib.setIlkAutoLineDebtCeiling("YFI-A", 25 * MILLION);
-
-        // Reduce the MATIC-A Maximum Debt Ceiling from 35 million DAI to 20 million DAI.
-        // Reduce the MATIC-A Target Available Debt from 10 million DAI to 5 million DAI.
-        DssExecLib.setIlkAutoLineParameters("MATIC-A", 20 * MILLION, 5 * MILLION, 8 hours);
     }
 }
 
