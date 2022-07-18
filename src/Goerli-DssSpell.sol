@@ -15,33 +15,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
-// Enable ABIEncoderV2 when onboarding collateral through `DssExecLib.addNewCollateral()`
-// pragma experimental ABIEncoderV2;
 
+// Enable ABIEncoderV2 when onboarding collateral
+// pragma experimental ABIEncoderV2;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
-import "dss-interfaces/dapp/DSTokenAbstract.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
-
-interface StarknetLike {
-    function setMaxDeposit(uint256) external;
-}
-
-interface RwaUrnLike {
-    function hope(address) external;
-    function lock(uint256) external;
-    function draw(uint256) external;
-}
 
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
-
-    address constant RWA_TOKEN_FAB = 0xb7462C421D7EDF3455003F76125e812a66DdE187;
-
-    uint256 constant RWA009_DRAW_AMOUNT = 25_000_000 * WAD;
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -58,27 +43,10 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     }
 
     function actions() public override {
-        // Set Starknet bridge max deposit to get on sync with mainnet
-        StarknetLike(DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE")).setMaxDeposit(50 * WAD);
-
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
-        onboardNewCollaterals();
-        drawFromRWA009Urn();
-
-        // Add RWA_TOKEN_FAB to changelog
-        DssExecLib.setChangelogAddress("RWA_TOKEN_FAB", RWA_TOKEN_FAB);
-
-        DssExecLib.setChangelogVersion("1.13.3");
-    }
-
-    function drawFromRWA009Urn() internal {
-        // lock RWA009 Token in the URN
-        DSTokenAbstract(RWA009).approve(RWA009_A_URN, 1 * WAD);
-        RwaUrnLike(RWA009_A_URN).lock(1 * WAD);
-
-        // draw DAI to genesis address
-        RwaUrnLike(RWA009_A_URN).draw(RWA009_DRAW_AMOUNT);
+        // onboardNewCollaterals();
+        // offboardCollaterals();
     }
 }
 
