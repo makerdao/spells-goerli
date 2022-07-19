@@ -328,21 +328,21 @@ contract Addresses {
         addr["STARKNET_DAI_BRIDGE"]             = 0xd8beAa22894Cd33F24075459cFba287a10a104E4;
         addr["STARKNET_GOV_RELAY"]              = 0x73c0049Dd6560E644984Fa3Af30A55a02a7D81fB;
         addr["STARKNET_CORE"]                   = 0xde29d060D45901Fb19ED6C6e959EB22d8626708e;
-        addr["RWA009_A_JAR"]                    = 0x7AAf3F8d07eF898e6fc55D3B7C88cCCFeb0275fF;
-        addr["RWA009"]                          = 0x2E17564A02D7DA159192959F1AC03b600Bff4B4b;
-        addr["PIP_RWA009"]                      = 0x98e62fFAf27C022283cB492f1bB05AfdE877b5ac;
-        addr["MCD_JOIN_RWA009_A"]               = 0x4ecF6b3adaB86276222b58993b5107Ee1202A29C;
-        addr["RWA009_A_URN"]                    = 0x3c471786cFb1e4495E08de76D637762ad3772d4c;
+        addr["RWA_URN_PROXY_ACTIONS"]           = 0x741A0fc23AB643B1963E77B5136554b12a91f170;
+        addr["RWA008"]                          = 0x30434AA15F85598F45406d08A79dCdD9a79335e9;
+        addr["MCD_JOIN_RWA008_A"]               = 0x4ce65E856f824C2b4a2eeD88E79b839eB366967d;
+        addr["RWA008_A_URN"]                    = 0x6351915f840937Edba75656727f20165185FaB83;
+        addr["RWA008_A_INPUT_CONDUIT"]          = 0x6298a2498b4E3789bb8220Cf5f5b44f518509e2a;
+        addr["RWA008_A_OUTPUT_CONDUIT"]         = 0x1FE95E519F0CE8eCF1cdC885f4DeA7913e146149;
+        addr["RWA008_A_OPERATOR"]               = 0x3F761335890721752476d4F210A7ad9BEf66fb45;
+        addr["PIP_RWA008"]                      = 0x98e62fFAf27C022283cB492f1bB05AfdE877b5ac;
+        addr["RWA008_A_MATE"]                   = 0xb9444802F0831A3EB9f90E24EFe5FfA20138d684;
+        addr["RWA009"]                          = 0xd2B101854F64Df738bA601840279838568583F39;
+        addr["PIP_RWA009"]                      = 0xB78a90D7475e67F4e0Ac876C2e9b38AF2c538041;
+        addr["MCD_JOIN_RWA009_A"]               = 0x7122B934F02A15954282Ed41572Ada539864773a;
+        addr["RWA009_A_URN"]                    = 0xD2C8588C72026171Ec3a17369ad0f0734E30915d;
+        addr["RWA009_A_JAR"]                    = 0xa484C16D2Ca15706c4B875710d9e80b7F101572B;
         addr["RWA009_A_OUTPUT_CONDUIT"]         = 0x7a3D23Dc73F7ead55399597aAE6e525b3DF95A88;
         addr["RWA_TOKEN_FAB"]                   = 0xb7462C421D7EDF3455003F76125e812a66DdE187;
-        addr["RWA008"]                          = 0xAd56c72774abE21bFf16bf32DD8ABf6676532E1C;
-        addr["MCD_JOIN_RWA008_A"]               = 0x6D1D4ef7b0FF2539DC6565D9244B5C2C963e4dea;
-        addr["RWA008_A_URN"]                    = 0xAeBf8487A6434821702c0792DC7176909F88c7d0;
-        addr["RWA008_A_INPUT_CONDUIT"]          = 0x8c2B6Ccd0c9A79AB0ca020F1ABB5b0e53a428268;
-        addr["RWA008_A_OUTPUT_CONDUIT"]         = 0x5A817FDf51Da3e4cfcFe921FB0496228E8a607e2;
-        addr["RWA008_A_OPERATOR"]               = 0x3F761335890721752476d4F210A7ad9BEf66fb45;
-        addr["PIP_RWA008"]                      = 0xB78a90D7475e67F4e0Ac876C2e9b38AF2c538041;
-        addr["RWA008_A_MATE"]                   = 0xb9444802F0831A3EB9f90E24EFe5FfA20138d684;
-        addr["RWA_URN_PROXY_ACTIONS"]           = 0x741A0fc23AB643B1963E77B5136554b12a91f170;
     }
 }

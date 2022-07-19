@@ -116,7 +116,7 @@ interface RwaInputConduitLike {
 
 
 contract DssSpellCollateralAction {
-    address constant RWA_TOKEN_FAB            = 0xb7462C421D7EDF3455003F76125e812a66DdE187;
+    address constant RWA_TOKEN_FAB = 0xb7462C421D7EDF3455003F76125e812a66DdE187;
 
     // --- Rates ---
     // Many of the settings that change weekly rely on the rate accumulator
@@ -133,54 +133,28 @@ contract DssSpellCollateralAction {
     uint256 constant ZERO_ZERO_FIVE_PCT_RATE  = 1000000000015850933588756013;
 
     // --- Math ---
-    uint256 public constant THOUSAND          = 10**3;
-    uint256 public constant MILLION           = 10**6;
-    uint256 public constant WAD               = 10**18;
-    uint256 public constant RAY               = 10**27;
-    uint256 public constant RAD               = 10**45;
-
-    // -- RWA009 MIP21 components --
-    address constant RWA009                   = 0x2E17564A02D7DA159192959F1AC03b600Bff4B4b;
-    address constant MCD_JOIN_RWA009_A        = 0x4ecF6b3adaB86276222b58993b5107Ee1202A29C;
-    address constant RWA009_A_URN             = 0x3c471786cFb1e4495E08de76D637762ad3772d4c;
-    address constant RWA009_A_JAR             = 0x7AAf3F8d07eF898e6fc55D3B7C88cCCFeb0275fF;
-    address constant RWA009_A_OUTPUT_CONDUIT  = 0x7a3D23Dc73F7ead55399597aAE6e525b3DF95A88;
-
-    uint256 constant RWA009_DRAW_AMOUNT       = 25 * MILLION * WAD;
-
-    // MIP21_LIQUIDATION_ORACLE params
-    uint256 constant RWA009_A_INITIAL_DC      = 100 * MILLION * RAD;
-    uint256 constant RWA009_A_INITIAL_PRICE   = 100 * MILLION * WAD;
-    uint48  constant RWA009_A_TAU             = 0;
-
-    uint256 constant RWA009_REG_CLASS_RWA     = 3;
-
-    /**
-     * @notice MIP13c3-SP4 Declaration of Intent & Commercial Points -
-     *   Off-Chain Asset Backed Lender to onboard Real World Assets
-     *   as Collateral for a DAI loan
-     *
-     * https://ipfs.io/ipfs/QmdmAUTU3sd9VkdfTZNQM6krc9jsKgF2pz7W1qvvfJo1xk
-     */
-    string constant RWA009_DOC                 = "IPFS_HASH"; // TODO Reference to a documents which describe deal (should be uploaded to IPFS)
-    // -- RWA009 END --
+    uint256 public constant THOUSAND = 10**3;
+    uint256 public constant MILLION  = 10**6;
+    uint256 public constant WAD      = 10**18;
+    uint256 public constant RAY      = 10**27;
+    uint256 public constant RAD      = 10**45;
 
     // -- RWA008 MIP21 components --
-    address constant RWA_URN_PROXY_ACTIONS      = 0x741A0fc23AB643B1963E77B5136554b12a91f170;
+    address constant RWA_URN_PROXY_ACTIONS = 0x741A0fc23AB643B1963E77B5136554b12a91f170;
 
-    address constant RWA008                     = 0xAd56c72774abE21bFf16bf32DD8ABf6676532E1C; 
-    address constant MCD_JOIN_RWA008_A          = 0x6D1D4ef7b0FF2539DC6565D9244B5C2C963e4dea; 
-    address constant RWA008_A_URN               = 0xAeBf8487A6434821702c0792DC7176909F88c7d0; 
-    address constant RWA008_A_INPUT_CONDUIT     = 0x8c2B6Ccd0c9A79AB0ca020F1ABB5b0e53a428268; 
-    address constant RWA008_A_OUTPUT_CONDUIT    = 0x5A817FDf51Da3e4cfcFe921FB0496228E8a607e2; 
-    address constant RWA008_A_OPERATOR          = 0x3F761335890721752476d4F210A7ad9BEf66fb45; 
-    address constant RWA008_A_MATE              = 0xb9444802F0831A3EB9f90E24EFe5FfA20138d684; 
+    address constant RWA008                  = 0x30434AA15F85598F45406d08A79dCdD9a79335e9;
+    address constant MCD_JOIN_RWA008_A       = 0x4ce65E856f824C2b4a2eeD88E79b839eB366967d;
+    address constant RWA008_A_URN            = 0x6351915f840937Edba75656727f20165185FaB83;
+    address constant RWA008_A_INPUT_CONDUIT  = 0x6298a2498b4E3789bb8220Cf5f5b44f518509e2a;
+    address constant RWA008_A_OUTPUT_CONDUIT = 0x1FE95E519F0CE8eCF1cdC885f4DeA7913e146149;
+    address constant RWA008_A_OPERATOR       = 0x3F761335890721752476d4F210A7ad9BEf66fb45;
+    address constant RWA008_A_MATE           = 0xb9444802F0831A3EB9f90E24EFe5FfA20138d684;
 
-    uint256 constant RWA008_A_INITIAL_DC        = 30 * MILLION * RAD;
-    uint256 constant RWA008_A_INITIAL_PRICE     = 30_437_069 * WAD;
-    uint48 constant  RWA008_A_TAU               = 0;
+    uint256 constant RWA008_A_INITIAL_DC    = 30 * MILLION * RAD;
+    uint256 constant RWA008_A_INITIAL_PRICE = 30_437_069 * WAD;
+    uint48 constant  RWA008_A_TAU           = 0;
 
-    uint256 constant RWA008_REG_CLASS_RWA       = 3;
+    uint256 constant RWA008_REG_CLASS_RWA = 3;
 
     /**
      * @notice MIP13c3-SP4 Declaration of Intent & Commercial Points -
@@ -189,8 +163,130 @@ contract DssSpellCollateralAction {
      *
      * https://ipfs.io/ipfs/QmdmAUTU3sd9VkdfTZNQM6krc9jsKgF2pz7W1qvvfJo1xk
      */
-    string constant RWA008_DOC                 = "IPFS_HASH"; // Reference to a documents which describe deal (should be uploaded to IPFS)
+    string constant RWA008_DOC = "IPFS_HASH"; // Reference to a documents which describe deal (should be uploaded to IPFS)
     // -- RWA008 end --
+
+    // -- RWA009 MIP21 components --
+    address constant RWA009                  = 0xd2B101854F64Df738bA601840279838568583F39;
+    address constant MCD_JOIN_RWA009_A       = 0x7122B934F02A15954282Ed41572Ada539864773a;
+    address constant RWA009_A_URN            = 0xD2C8588C72026171Ec3a17369ad0f0734E30915d;
+    address constant RWA009_A_JAR            = 0xa484C16D2Ca15706c4B875710d9e80b7F101572B;
+    address constant RWA009_A_OUTPUT_CONDUIT = 0x7a3D23Dc73F7ead55399597aAE6e525b3DF95A88;
+
+    uint256 constant RWA009_DRAW_AMOUNT = 25 * MILLION * WAD;
+
+    // MIP21_LIQUIDATION_ORACLE params
+    uint256 constant RWA009_A_INITIAL_DC    = 100 * MILLION * RAD;
+    uint256 constant RWA009_A_INITIAL_PRICE = 100 * MILLION * WAD;
+    uint48  constant RWA009_A_TAU           = 0;
+
+    uint256 constant RWA009_REG_CLASS_RWA = 3;
+
+    /**
+     * @notice MIP13c3-SP4 Declaration of Intent & Commercial Points -
+     *   Off-Chain Asset Backed Lender to onboard Real World Assets
+     *   as Collateral for a DAI loan
+     *
+     * https://ipfs.io/ipfs/QmdmAUTU3sd9VkdfTZNQM6krc9jsKgF2pz7W1qvvfJo1xk
+     */
+    string constant RWA009_DOC = "IPFS_HASH"; // TODO Reference to a documents which describe deal (should be uploaded to IPFS)
+    // -- RWA009 END --
+
+    function onboardRwa008(
+        ChainlogAbstract CHANGELOG,
+        IlkRegistryAbstract REGISTRY,
+        address MIP21_LIQUIDATION_ORACLE,
+        address MCD_VAT,
+        address MCD_JUG,
+        address MCD_SPOT
+    ) internal {
+        // RWA008-A collateral deploy
+
+        // Set ilk bytes32 variable
+        bytes32 ilk = "RWA008-A";
+
+        // Sanity checks
+        require(GemJoinAbstract(MCD_JOIN_RWA008_A).vat() == MCD_VAT, "join-vat-not-match");
+        require(GemJoinAbstract(MCD_JOIN_RWA008_A).ilk() == ilk, "join-ilk-not-match");
+        require(GemJoinAbstract(MCD_JOIN_RWA008_A).gem() == RWA008, "join-gem-not-match");
+        require(
+            GemJoinAbstract(MCD_JOIN_RWA008_A).dec() == DSTokenAbstract(RWA008).decimals(),
+            "join-dec-not-match"
+        );
+
+        /*
+         * init the RwaLiquidationOracle2
+         */
+        // TODO: this should be verified with RWA Team (5 min for testing is good)
+        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA008_A_INITIAL_PRICE, RWA008_DOC, RWA008_A_TAU);
+        (, address pip, , ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
+        CHANGELOG.setAddress("PIP_RWA008", pip);
+
+        // Set price feed for RWA008
+        SpotAbstract(MCD_SPOT).file(ilk, "pip", pip);
+
+        // Init RWA008 in Vat
+        VatAbstract(MCD_VAT).init(ilk);
+        // Init RWA008 in Jug
+        JugAbstract(MCD_JUG).init(ilk);
+
+        // Allow RWA008 Join to modify Vat registry
+        VatAbstract(MCD_VAT).rely(MCD_JOIN_RWA008_A);
+
+        // Allow RwaLiquidationOracle to modify Vat registry
+        VatAbstract(MCD_VAT).rely(MIP21_LIQUIDATION_ORACLE);
+
+        // debt ceiling
+        VatAbstract(MCD_VAT).file(ilk, "line", RWA008_A_INITIAL_DC);
+        VatAbstract(MCD_VAT).file("Line", VatAbstract(MCD_VAT).Line() + RWA008_A_INITIAL_DC);
+
+        // 0.05% stability fee
+        JugAbstract(MCD_JUG).file(ilk, "duty", ZERO_ZERO_FIVE_PCT_RATE);
+
+        // collateralization ratio 100%
+        SpotAbstract(MCD_SPOT).file(ilk, "mat", RAY);
+
+        // poke the spotter to pull in a price
+        SpotAbstract(MCD_SPOT).poke(ilk);
+
+        // give the urn permissions on the join adapter
+        GemJoinAbstract(MCD_JOIN_RWA008_A).rely(RWA008_A_URN);
+
+        // set up the urn
+        RwaUrnLike(RWA008_A_URN).hope(RWA_URN_PROXY_ACTIONS);
+
+        RwaUrnLike(RWA008_A_URN).hope(RWA008_A_OPERATOR);
+
+        // set up output conduit
+        RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).hope(RWA008_A_OPERATOR);
+
+        // whitelist DIIS Group in the conduits
+        RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).mate(RWA008_A_MATE);
+        RwaInputConduitLike(RWA008_A_INPUT_CONDUIT)  .mate(RWA008_A_MATE);
+
+        // whitelist Socgen in the conduits
+        RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).mate(RWA008_A_OPERATOR);
+        RwaInputConduitLike(RWA008_A_INPUT_CONDUIT)  .mate(RWA008_A_OPERATOR);
+
+        // Add RWA008 contract to the changelog
+        CHANGELOG.setAddress("RWA008",                  RWA008);
+        CHANGELOG.setAddress("MCD_JOIN_RWA008_A",       MCD_JOIN_RWA008_A);
+        CHANGELOG.setAddress("RWA008_A_URN",            RWA008_A_URN);
+        CHANGELOG.setAddress("RWA008_A_INPUT_CONDUIT",  RWA008_A_INPUT_CONDUIT);
+        CHANGELOG.setAddress("RWA008_A_OUTPUT_CONDUIT", RWA008_A_OUTPUT_CONDUIT);
+
+        REGISTRY.put(
+            "RWA008-A",
+            MCD_JOIN_RWA008_A,
+            RWA008,
+            GemJoinAbstract(MCD_JOIN_RWA008_A).dec(),
+            RWA008_REG_CLASS_RWA,
+            pip,
+            address(0),
+            "RWA008-A: SG Forge OFH",
+            TokenDetailsLike(RWA008).symbol()
+        );
+    }
 
     function onboardRwa009(
         ChainlogAbstract CHANGELOG,
@@ -204,9 +300,9 @@ contract DssSpellCollateralAction {
         bytes32 ilk = "RWA009-A";
 
         // Sanity checks
-        require(GemJoinAbstract(MCD_JOIN_RWA009_A).vat() == MCD_VAT,   "join-vat-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA009_A).ilk() == ilk,       "join-ilk-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA009_A).gem() == RWA009,    "join-gem-not-match");
+        require(GemJoinAbstract(MCD_JOIN_RWA009_A).vat() == MCD_VAT, "join-vat-not-match");
+        require(GemJoinAbstract(MCD_JOIN_RWA009_A).ilk() == ilk,     "join-ilk-not-match");
+        require(GemJoinAbstract(MCD_JOIN_RWA009_A).gem() == RWA009,  "join-gem-not-match");
         require(
             GemJoinAbstract(MCD_JOIN_RWA009_A).dec() == DSTokenAbstract(RWA009).decimals(),
             "join-dec-not-match"
@@ -283,111 +379,15 @@ contract DssSpellCollateralAction {
         );
     }
 
-    function onboardRwa008(
-        ChainlogAbstract CHANGELOG,
-        IlkRegistryAbstract REGISTRY,
-        address MIP21_LIQUIDATION_ORACLE,
-        address MCD_VAT,
-        address MCD_JUG,
-        address MCD_SPOT
-    ) internal {
-        // RWA008-A collateral deploy
-
-        // Set ilk bytes32 variable
-        bytes32 ilk = "RWA008-A";
-
-        // Sanity checks
-        require(GemJoinAbstract(MCD_JOIN_RWA008_A).vat() == MCD_VAT, "join-vat-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA008_A).ilk() == ilk, "join-ilk-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA008_A).gem() == RWA008, "join-gem-not-match");
-        require(
-            GemJoinAbstract(MCD_JOIN_RWA008_A).dec() == DSTokenAbstract(RWA008).decimals(),
-            "join-dec-not-match"
-        );
-
-        /*
-         * init the RwaLiquidationOracle2
-         */
-        // TODO: this should be verified with RWA Team (5 min for testing is good)
-        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA008_A_INITIAL_PRICE, RWA008_DOC, RWA008_A_TAU);
-        (, address pip, , ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
-        CHANGELOG.setAddress("PIP_RWA008", pip);
-
-        // Set price feed for RWA008
-        SpotAbstract(MCD_SPOT).file(ilk, "pip", pip);
-
-        // Init RWA008 in Vat
-        VatAbstract(MCD_VAT).init(ilk);
-        // Init RWA008 in Jug
-        JugAbstract(MCD_JUG).init(ilk);
-
-        // Allow RWA008 Join to modify Vat registry
-        VatAbstract(MCD_VAT).rely(MCD_JOIN_RWA008_A);
-
-        // Allow RwaLiquidationOracle to modify Vat registry
-        VatAbstract(MCD_VAT).rely(MIP21_LIQUIDATION_ORACLE);
-
-        // debt ceiling
-        VatAbstract(MCD_VAT).file(ilk, "line", RWA008_A_INITIAL_DC);
-        VatAbstract(MCD_VAT).file("Line", VatAbstract(MCD_VAT).Line() + RWA008_A_INITIAL_DC);
-
-        // 0.05% stability fee
-        JugAbstract(MCD_JUG).file(ilk, "duty", ZERO_ZERO_FIVE_PCT_RATE);
-
-        // collateralization ratio 100%
-        SpotAbstract(MCD_SPOT).file(ilk, "mat", RAY);
-
-        // poke the spotter to pull in a price
-        SpotAbstract(MCD_SPOT).poke(ilk);
-
-        // give the urn permissions on the join adapter
-        GemJoinAbstract(MCD_JOIN_RWA008_A).rely(RWA008_A_URN);
-
-        // set up the urn
-        RwaUrnLike(RWA008_A_URN).hope(RWA_URN_PROXY_ACTIONS);
-
-        RwaUrnLike(RWA008_A_URN).hope(RWA008_A_OPERATOR);
-
-        // set up output conduit
-        RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).hope(RWA008_A_OPERATOR);
-
-        // whitelist DIIS Group in the conduits
-        RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).mate(RWA008_A_MATE);
-        RwaInputConduitLike(RWA008_A_INPUT_CONDUIT).mate(RWA008_A_MATE);
-
-        // whitelist Socgen in the conduits 
-        RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).mate(RWA008_A_OPERATOR);
-        RwaInputConduitLike(RWA008_A_INPUT_CONDUIT).mate(RWA008_A_OPERATOR);
-
-        // Add RWA008 contract to the changelog
-        CHANGELOG.setAddress("RWA008", RWA008);
-        CHANGELOG.setAddress("MCD_JOIN_RWA008_A", MCD_JOIN_RWA008_A);
-        CHANGELOG.setAddress("RWA008_A_URN", RWA008_A_URN);
-        CHANGELOG.setAddress("RWA008_A_INPUT_CONDUIT", RWA008_A_INPUT_CONDUIT);
-        CHANGELOG.setAddress("RWA008_A_OUTPUT_CONDUIT", RWA008_A_OUTPUT_CONDUIT);
-
-        REGISTRY.put(
-            "RWA008-A",
-            MCD_JOIN_RWA008_A,
-            RWA008,
-            GemJoinAbstract(MCD_JOIN_RWA008_A).dec(),
-            RWA008_REG_CLASS_RWA,
-            pip,
-            address(0),
-            "RWA008-A: SG Forge OFH",
-            TokenDetailsLike(RWA008).symbol()
-        );
-    }
-
     function onboardNewCollaterals() internal {
-        ChainlogAbstract CHANGELOG                = ChainlogAbstract(DssExecLib.LOG);
-        IlkRegistryAbstract REGISTRY              = IlkRegistryAbstract(DssExecLib.reg());
-        address MIP21_LIQUIDATION_ORACLE          = CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE");
-        address MCD_VAT                           = CHANGELOG.getAddress("MCD_VAT");
-        address MCD_JUG                           = CHANGELOG.getAddress("MCD_JUG");
-        address MCD_SPOT                          = CHANGELOG.getAddress("MCD_SPOT");
+        ChainlogAbstract CHANGELOG       = ChainlogAbstract(DssExecLib.LOG);
+        IlkRegistryAbstract REGISTRY     = IlkRegistryAbstract(DssExecLib.reg());
+        address MIP21_LIQUIDATION_ORACLE = 0x362dfE51E4f91a8257B8276435792095EE5d85C3;
+        address MCD_VAT                  = CHANGELOG.getAddress("MCD_VAT");
+        address MCD_JUG                  = CHANGELOG.getAddress("MCD_JUG");
+        address MCD_SPOT                 = CHANGELOG.getAddress("MCD_SPOT");
         // --------------------------- RWA Collateral onboarding ---------------------------
-        
+
         // Onboard SocGen
         onboardRwa008(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT);
 
