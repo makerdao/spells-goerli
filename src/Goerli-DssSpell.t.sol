@@ -285,6 +285,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         // RWA009
         (, address pipRwa009,,) = rwaLiquidationOracle.ilks("RWA009-A");
+
         assertEq(reg.pos("RWA009-A"),    51);
         assertEq(reg.join("RWA009-A"),   addr.addr("MCD_JOIN_RWA009_A"));
         assertEq(reg.gem("RWA009-A"),    addr.addr("RWA009"));
