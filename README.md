@@ -17,9 +17,17 @@ $ dapp update
 
 If the weekly executive needs to onboard a new collateral:
 
-1. Update the `onboardNewCollaterals()` function in `DssSpellCollateralOnboarding.sol`.
-2. Update the values in `src/tests/collaterals.sol`
-3. uncomment the `onboardNewCollaterals();` in the `actions()` function in `DssSpellAction`
+1. Update the `onboardNewCollaterals()` function in `Goerli-DssSpellCollateral.sol`
+2. Update the values in `src/test/config.sol`
+3. Add `onboardNewCollaterals();` in the `actions()` function in `DssSpellAction`
+
+### Removing Collaterals from the System
+
+If the weekly executive needs to offboard collaterals:
+
+1. Update the `offboardCollaterals()` function in `Goerli-DssSpellCollateral.sol`
+2. Update the values in `src/test/config.sol`
+3. Add `offboardCollaterals();` in the `actions()` function in `DssSpellAction`
 
 ### Build
 
@@ -27,7 +35,7 @@ If the weekly executive needs to onboard a new collateral:
 $ make
 ```
 
-### Test (DappTools with Optimizations)
+### Test (DappTools without Optimizations)
 
 Set `ETH_RPC_URL` to a Goerli node.
 
@@ -45,7 +53,7 @@ $ make test
 #### Operation
 Set `ETH_RPC_URL` to a Goerli node.
 
-```
+```bash
 $ export ETH_RPC_URL=<Goerli URL>
 $ make test-forge
 ```
@@ -59,5 +67,4 @@ $ export ETH_RPC_URL=<Goerli URL>
 $ export ETH_GAS=8000000
 $ export ETH_GAS_PRICE=$(seth --to-wei 3 "gwei")
 $ make deploy
-
 ```

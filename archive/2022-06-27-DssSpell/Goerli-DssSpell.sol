@@ -42,10 +42,13 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     function actions() public override {
         // ---------------------------------------------------------------------
-        // Includes changes from the DssSpellCollateralAction
-        onboardNewCollaterals();
+        // Includes changes from the DssSpellCollateralOnboardingAction
+        // onboardNewCollaterals();
+        offboardCollaterals();
 
-        DssExecLib.setChangelogVersion("1.13.3");
+        // Housekeeping - add Starknet core contract to Chainlog
+        DssExecLib.setChangelogAddress("STARKNET_CORE", 0xde29d060D45901Fb19ED6C6e959EB22d8626708e);
+        DssExecLib.setChangelogVersion("1.13.2");
     }
 }
 

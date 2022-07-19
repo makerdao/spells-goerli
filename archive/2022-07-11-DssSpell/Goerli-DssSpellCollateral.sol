@@ -1,5 +1,7 @@
-// SPDX-FileCopyrightText: © 2022 Dai Foundation <www.daifoundation.org>
+// SPDX-FileCopyrightText: © 2021-2022 Dai Foundation <www.daifoundation.org>
 // SPDX-License-Identifier: AGPL-3.0-or-later
+//
+// Copyright (C) 2021-2022 Dai Foundation
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -18,7 +20,7 @@ pragma solidity 0.6.12;
 
 import "dss-exec-lib/DssExecLib.sol";
 
-contract DssSpellCollateralOnboardingAction {
+contract DssSpellCollateralAction {
 
     // --- Rates ---
     // Many of the settings that change weekly rely on the rate accumulator
@@ -30,10 +32,6 @@ contract DssSpellCollateralOnboardingAction {
     // A table of rates can be found at
     //    https://ipfs.io/ipfs/QmTRiQ3GqjCiRhh1ojzKzgScmSsiwQPLyjhgYSxZASQekj
     //
-
-    // --- Math ---
-
-    // --- DEPLOYED COLLATERAL ADDRESSES ---
 
     function onboardNewCollaterals() internal {
         // ----------------------------- Collateral onboarding -----------------------------
@@ -79,9 +77,14 @@ contract DssSpellCollateralOnboardingAction {
         //     TTL
         // );
 
+        // ChainLog Updates
+        // Add the new flip and join to the Chainlog
         // address constant CHAINLOG        = DssExecLib.LOG();
         // ChainlogAbstract(CHAINLOG).setAddress("<join-name>", <join-address>);
         // ChainlogAbstract(CHAINLOG).setAddress("<clip-name>", <clip-address>);
         // ChainlogAbstract(CHAINLOG).setVersion("<new-version>");
+    }
+
+    function offboardCollaterals() internal {
     }
 }

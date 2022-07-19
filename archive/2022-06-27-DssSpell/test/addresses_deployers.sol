@@ -1,5 +1,7 @@
-// SPDX-FileCopyrightText: © 2021 Dai Foundation <www.daifoundation.org>
+// SPDX-FileCopyrightText: © 2021-2022 Dai Foundation <www.daifoundation.org>
 // SPDX-License-Identifier: AGPL-3.0-or-later
+//
+// Copyright (C) 2021-2022 Dai Foundation
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -28,7 +30,6 @@ contract Deployers {
             0xdB33dFD3D61308C33C63209845DaD3e6bfb2c674,
             0xDA01018eA05D98aBb66cb21a85d6019a311570eE,
             0xDA0111100cb6080b43926253AB88bE719C60Be13,
-            0x1f42e41A34B71606FcC60b4e624243b365D99745,  // Oracles
             0x8aa7c51A6D380F4d9E273adD4298D913416031Ec,  // Starknet
             0x38F8e3b67FA8329FE4BaA1775e5480807f78887B   // Starknet
         ];

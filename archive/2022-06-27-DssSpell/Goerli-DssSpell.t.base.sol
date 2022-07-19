@@ -1,5 +1,7 @@
-// SPDX-FileCopyrightText: © 2020 Dai Foundation <www.daifoundation.org>
+// SPDX-FileCopyrightText: © 2021-2022 Dai Foundation <www.daifoundation.org>
 // SPDX-License-Identifier: AGPL-3.0-or-later
+//
+// Copyright (C) 2021-2022 Dai Foundation
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -1114,13 +1116,10 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     // ONLY ON GOERLI
     function skipWards(address target, address deployer) internal view returns (bool ok) {
         ok = (
-            target   == address(chainLog) &&
+            target   == address(chainLog)    &&
             deployer == deployers.addr(2) ||
             deployer == deployers.addr(3) ||
             deployer == deployers.addr(4)
-        ) ||
-        (
-            deployer == deployers.addr(6)  // Oracles
         );
     }
 
