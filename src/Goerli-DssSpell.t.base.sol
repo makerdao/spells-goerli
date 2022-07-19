@@ -51,6 +51,8 @@ interface DirectDepositLike is GemJoinAbstract {
 }
 
 interface FlapLike is FlapAbstract {
+    function fill() external view returns (uint256);
+    function lid() external view returns (uint256);
 }
 
 contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
