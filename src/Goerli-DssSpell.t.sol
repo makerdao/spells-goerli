@@ -127,6 +127,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     CureSpellRwa008      cureSpell_008;
     CullSpellRwa008      cullSpell_008;
     EndSpellRwa008       endSpell_008;
+
     // -- RWA009 --
     bytes32 constant  ilk_009             = "RWA009-A";
     DSTokenAbstract   rwagem_009          = DSTokenAbstract(addr.addr("RWA009"));
