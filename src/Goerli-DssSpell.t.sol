@@ -28,56 +28,116 @@ interface StarknetLike {
     function ceiling() external returns (uint256);
 }
 
+interface ERC20Like {
+    function balanceOf (address) external returns (uint256);
+}
+
+interface WardsLike {
+    function wards(address) external view returns (uint256);
+}
+
+interface RwaLiquidationLike {
+    function wards(address) external returns (uint256);
+
+    function ilks(bytes32)
+        external
+        returns (
+            string memory,
+            address,
+            uint48 toc,
+            uint48 tau
+        );
+
+    function rely(address) external;
+
+    function deny(address) external;
+
+    function init(
+        bytes32,
+        uint256,
+        string calldata,
+        uint48
+    ) external;
+
+    function bump(bytes32 ilk, uint256 val) external;
+
+    function tell(bytes32) external;
+
+    function cure(bytes32) external;
+
+    function cull(bytes32, address) external;
+
+    function good(bytes32) external view returns (bool);
+}
+
+interface RwaUrnLike {
+    function hope(address) external;
+
+    function can(address) external view returns (uint256);
+
+    function lock(uint256) external;
+
+    function draw(uint256) external;
+
+    function wipe(uint256) external;
+
+    function free(uint256) external;
+}
+
+interface RwaOutputConduitLike {
+    function wards(address) external returns (uint256);
+    function can(address) external returns (uint256);
+    function rely(address) external;
+    function deny(address) external;
+    function hope(address) external;
+    function mate(address) external;
+    function nope(address) external;
+    function bud(address) external returns (uint256);
+    function pick(address) external;
+    function push() external;
+}
+
+interface RwaInputConduitLike {
+    function rely(address usr) external;
+    function deny(address usr) external;
+    function mate(address usr) external;
+    function hate(address usr) external;
+    function push() external;
+}
+
+interface MIP21LiquidationOracleLike {
+    function ilks(bytes32 ilk) external view returns (string calldata doc, address pip, uint48 tau, uint48 toc);
+}
+
 contract DssSpellTest is GoerliDssSpellTestBase {
+    RwaLiquidationLike oracle = RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
-    function testStarknetUpdates() public {
+    // -- RWA008 --
+    bytes32 constant     ilk_008             = "RWA008-A";
 
-        address OLD_ESM = 0x105BF37e7D81917b6fEACd6171335B4838e53D5e;
+    address              rwaOperator_008     = addr.addr("RWA008_A_OPERATOR");
+    DSTokenAbstract      rwagem_008          = DSTokenAbstract(addr.addr("RWA008"));
+    GemJoinAbstract      rwajoin_008         = GemJoinAbstract(addr.addr("MCD_JOIN_RWA008_A"));
+    RwaUrnLike           rwaurn_008          = RwaUrnLike(addr.addr("RWA008_A_URN"));
+    RwaInputConduitLike  rwaconduitin_008    = RwaInputConduitLike(addr.addr("RWA008_A_INPUT_CONDUIT"));
+    RwaOutputConduitLike rwaconduitout_008   = RwaOutputConduitLike(addr.addr("RWA008_A_OUTPUT_CONDUIT"));
 
-        // Test before spell
-        // Currently 1M on Goerli, 100k on mainnet
-        assertEq(
-            StarknetLike(addr.addr("STARKNET_DAI_BRIDGE")).ceiling(),
-            50000000000000000000
-        );
+    BumpSpellRwa008      bumpSpell_008;
+    TellSpellRwa008      tellSpell_008;
+    CureSpellRwa008      cureSpell_008;
+    CullSpellRwa008      cullSpell_008;
+    EndSpellRwa008       endSpell_008;
 
-        // authority is currently unset
-        assertEq(
-            DSAuthAbstract(addr.addr("STARKNET_ESCROW_MOM")).authority(),
-            address(0)
-        );
+    // -- RWA009 --
+    bytes32 constant     ilk_009             = "RWA009-A";
+    DSTokenAbstract      rwagem_009          = DSTokenAbstract(addr.addr("RWA009"));
+    GemJoinAbstract      rwajoin_009         = GemJoinAbstract(addr.addr("MCD_JOIN_RWA009_A"));
+    RwaUrnLike           rwaurn_009          = RwaUrnLike(addr.addr("RWA009_A_URN"));
+    address              RWA009_CES_MULTISIG = addr.addr("RWA009_A_OUTPUT_CONDUIT");
 
-        assertEq(WardsAbstract(addr.addr("STARKNET_ESCROW")).wards(OLD_ESM), 1);
-        assertEq(WardsAbstract(addr.addr("STARKNET_DAI_BRIDGE")).wards(OLD_ESM), 1);
-        assertEq(WardsAbstract(addr.addr("STARKNET_GOV_RELAY")).wards(OLD_ESM), 1);
-        assertEq(WardsAbstract(addr.addr("STARKNET_ESCROW")).wards(addr.addr("MCD_ESM")), 0);
-        assertEq(WardsAbstract(addr.addr("STARKNET_DAI_BRIDGE")).wards(addr.addr("MCD_ESM")), 0);
-        assertEq(WardsAbstract(addr.addr("STARKNET_GOV_RELAY")).wards(addr.addr("MCD_ESM")), 0);
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        // Ensure Dai bridge value changed
-        assertEq(
-            StarknetLike(addr.addr("STARKNET_DAI_BRIDGE")).ceiling(),
-            200_000 * WAD
-        );
-
-        // Ensure authority is set to DSChief
-        assertEq(
-            DSAuthAbstract(addr.addr("STARKNET_ESCROW_MOM")).authority(),
-            addr.addr("MCD_ADM")
-        );
-
-        assertEq(WardsAbstract(addr.addr("STARKNET_ESCROW")).wards(OLD_ESM), 0);
-        assertEq(WardsAbstract(addr.addr("STARKNET_DAI_BRIDGE")).wards(OLD_ESM), 0);
-        assertEq(WardsAbstract(addr.addr("STARKNET_GOV_RELAY")).wards(OLD_ESM), 0);
-        assertEq(WardsAbstract(addr.addr("STARKNET_ESCROW")).wards(addr.addr("MCD_ESM")), 1);
-        assertEq(WardsAbstract(addr.addr("STARKNET_DAI_BRIDGE")).wards(addr.addr("MCD_ESM")), 1);
-        assertEq(WardsAbstract(addr.addr("STARKNET_GOV_RELAY")).wards(addr.addr("MCD_ESM")), 1);
-    }
-
+    BumpSpellRwa009      bumpSpell_009;
+    TellSpellRwa009      tellSpell_009;
+    CullSpellRwa009      cullSpell_009;
 
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -223,31 +283,56 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // Insert new chainlog values tests here
-        // checkChainlogKey("CONTRACT_KEY");
+        // RWA008
+        checkChainlogKey("RWA008");
+        checkChainlogKey("MCD_JOIN_RWA008_A");
+        checkChainlogKey("RWA008_A_URN");
+        checkChainlogKey("RWA008_A_OUTPUT_CONDUIT");
+        checkChainlogKey("RWA008_A_INPUT_CONDUIT");
+        checkChainlogKey("PIP_RWA008");
+
+        // RWA009
+        checkChainlogKey("RWA009_A_JAR");
+        checkChainlogKey("RWA009");
+        checkChainlogKey("MCD_JOIN_RWA009_A");
+        checkChainlogKey("RWA009_A_URN");
+        checkChainlogKey("RWA009_A_OUTPUT_CONDUIT");
+        checkChainlogKey("PIP_RWA009");
+
+        // RWA TOKEN FAB
+        checkChainlogKey("RWA_TOKEN_FAB");
         // checkChainlogVersion("X.XX.X");
-        checkChainlogKey("STARKNET_ESCROW_MOM");
-        checkChainlogKey("STARKNET_ESCROW");
-        checkChainlogKey("STARKNET_DAI_BRIDGE");
-        checkChainlogKey("STARKNET_GOV_RELAY");
-        checkChainlogVersion("1.13.1");
     }
 
-    function testNewIlkRegistryValues() private { // make public to use
+    function testNewIlkRegistryValues() public { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // Insert new ilk registry values tests here
-        assertEq(reg.pos("WSTETH-B"), 49);
-        assertEq(reg.join("WSTETH-B"), addr.addr("MCD_JOIN_WSTETH_B"));
-        assertEq(reg.gem("WSTETH-B"), addr.addr("WSTETH"));
-        assertEq(reg.dec("WSTETH-B"), GemAbstract(addr.addr("WSTETH")).decimals());
-        assertEq(reg.class("WSTETH-B"), 1);
-        assertEq(reg.pip("WSTETH-B"), addr.addr("PIP_WSTETH"));
-        assertEq(reg.xlip("WSTETH-B"), addr.addr("MCD_CLIP_WSTETH_B"));
-        assertEq(reg.name("WSTETH-B"), "Wrapped liquid staked Ether 2.0");
-        assertEq(reg.symbol("WSTETH-B"), "wstETH");
+        MIP21LiquidationOracleLike rwaLiquidationOracle = MIP21LiquidationOracleLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
+
+        // RWA008
+        (, address pipRwa008,,) = rwaLiquidationOracle.ilks("RWA008-A");
+
+        assertEq(reg.pos("RWA008-A"),    50);
+        assertEq(reg.join("RWA008-A"),   addr.addr("MCD_JOIN_RWA008_A"));
+        assertEq(reg.gem("RWA008-A"),    addr.addr("RWA008"));
+        assertEq(reg.dec("RWA008-A"),    DSTokenAbstract(addr.addr("RWA008")).decimals());
+        assertEq(reg.class("RWA008-A"),  3);
+        assertEq(reg.pip("RWA008-A"),    pipRwa008);
+        assertEq(reg.name("RWA008-A"),   "RWA008-A: SG Forge OFH");
+        assertEq(reg.symbol("RWA008-A"), "RWA008");
+
+        // RWA009
+        (, address pipRwa009,,) = rwaLiquidationOracle.ilks("RWA009-A");
+        assertEq(reg.pos("RWA009-A"),    51);
+        assertEq(reg.join("RWA009-A"),   addr.addr("MCD_JOIN_RWA009_A"));
+        assertEq(reg.gem("RWA009-A"),    addr.addr("RWA009"));
+        assertEq(reg.dec("RWA009-A"),    GemAbstract(addr.addr("RWA009")).decimals());
+        assertEq(reg.class("RWA009-A"),  3);
+        assertEq(reg.pip("RWA009-A"),    pipRwa009);
+        assertEq(reg.name("RWA009-A"),   "RWA009-A: H. V. Bank");
+        assertEq(reg.symbol("RWA009-A"), GemAbstract(addr.addr("RWA009")).symbol());
     }
 
     function testFailWrongDay() public {
@@ -513,5 +598,539 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(dai.balanceOf(address(pauseProxy)), prevBalance + WAD);
 
         assertEq(vest.rxd(1), WAD);
+    }
+
+    function testSpellIsCast_RWA009_INTEGRATION_BUMP() public {
+        if (!spell.done()) {
+            vote(address(spell));
+            scheduleWaitAndCast(address(spell));
+            assertTrue(spell.done());
+        }
+
+        bumpSpell_009 = new BumpSpellRwa009();
+        vote(address(bumpSpell_009));
+
+        bumpSpell_009.schedule();
+
+        uint256 castTime = block.timestamp + pause.delay();
+        hevm.warp(castTime);
+        (, address pip, , ) = oracle.ilks("RWA009-A");
+
+        assertEq(DSValueAbstract(pip).read(), bytes32(100 * MILLION * WAD));
+        bumpSpell_009.cast();
+        assertEq(DSValueAbstract(pip).read(), bytes32(110 * MILLION * WAD));
+    }
+
+    function testSpellIsCast_RWA009_INTEGRATION_TELL() public {
+        if (!spell.done()) {
+            vote(address(spell));
+            scheduleWaitAndCast(address(spell));
+            assertTrue(spell.done());
+        }
+
+        tellSpell_009 = new TellSpellRwa009();
+        vote(address(tellSpell_009));
+
+        tellSpell_009.schedule();
+
+        uint256 castTime = block.timestamp + pause.delay();
+        hevm.warp(castTime);
+        (, , , uint48 tocPre) = oracle.ilks("RWA009-A");
+        assertTrue(tocPre == 0);
+        assertTrue(oracle.good("RWA009-A"));
+        tellSpell_009.cast();
+        (, , , uint48 tocPost) = oracle.ilks("RWA009-A");
+        assertTrue(tocPost > 0);
+        assertTrue(!oracle.good("RWA009-A"));
+    }
+
+    function testSpellIsCast_RWA009_INTEGRATION_TELL_CULL() public {
+        if (!spell.done()) {
+            vote(address(spell));
+            scheduleWaitAndCast(address(spell));
+            assertTrue(spell.done());
+        }
+        assertTrue(oracle.good("RWA009-A"));
+
+        tellSpell_009 = new TellSpellRwa009();
+        vote(address(tellSpell_009));
+
+        tellSpell_009.schedule();
+
+        uint256 castTime = block.timestamp + pause.delay();
+        hevm.warp(castTime);
+        tellSpell_009.cast();
+        assertTrue(!oracle.good("RWA009-A"));
+
+        cullSpell_009 = new CullSpellRwa009();
+        vote(address(cullSpell_009));
+
+        cullSpell_009.schedule();
+        castTime = block.timestamp + pause.delay();
+        hevm.warp(castTime);
+        cullSpell_009.cast();
+        assertTrue(!oracle.good("RWA009-A"));
+        (, address pip, , ) = oracle.ilks("RWA009-A");
+        assertEq(DSValueAbstract(pip).read(), bytes32(0));
+    }
+
+    function testSpellIsCast_RWA009_SPELL_OPERATOR_WIPE_FREE() public {
+        if (!spell.done()) {
+            vote(address(spell));
+            scheduleWaitAndCast(address(spell));
+            assertTrue(spell.done());
+        }
+
+        uint256 drawAmount = 25_000_000 * WAD;
+
+        hevm.warp(block.timestamp + 10 days); // Let rate be > 1
+
+        // setting address(this) as operator
+        hevm.store(address(rwaurn_009), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
+
+        // Check if spell lock 1 * WAD of RWA009
+        assertEq(rwagem_009.balanceOf(address(rwajoin_009)), 1 * WAD);
+
+        // Check if spell draw 25mm DAI to GENESIS
+        assertEq(dai.balanceOf(address(RWA009_CES_MULTISIG)), drawAmount);
+
+        // address(this) is operator
+        assertEq(rwaurn_009.can(address(this)), 1);
+
+        hevm.warp(block.timestamp + 10 days);
+
+        // Check if we have outstanding dept in VAT
+        (uint256 ink, uint256 art) = vat.urns(ilk_009, address(rwaurn_009));
+        assertEq(art, drawAmount, "After DRAW: Art !== 1 RWA009");
+        assertEq(ink, 1 * WAD, "After DRAW: Ink !== drawAmount");
+
+        // as we have SF 0 we need to pay exectly the same amount of DAI is we drawn
+        uint256 daiToPay = drawAmount;
+
+        // transfer DAI to the URN
+        giveTokens(address(dai), daiToPay);
+        dai.transfer(address(rwaurn_009), daiToPay);
+        assertEq(dai.balanceOf(address(rwaurn_009)), daiToPay, "Balance of the URN doesnt match");
+
+        // repay dept and free our collateral
+        rwaurn_009.wipe(daiToPay);
+        rwaurn_009.free(1 * WAD);
+
+        // check if MCD_PAUSE_PROXY have RWA009 Tokens
+        assertEq(rwagem_009.balanceOf(address(this)), 1 * WAD, "MCD_PAUSE_PROXY do not get back RWA009 Token");
+
+        // check if we have 0 collateral and outstanding deplt in the VAT
+        (ink, art) = vat.urns(ilk_009, address(rwaurn_009));
+        assertEq(ink, 0, "INK != preINK");
+        assertEq(art, 0, "ART != preART");
+    }
+
+    function testSpellIsCast_RWA008_INTEGRATION_BUMP() public {
+        if (!spell.done()) {
+            vote(address(spell));
+            scheduleWaitAndCast(address(spell));
+            assertTrue(spell.done());
+        }
+
+        bumpSpell_008 = new BumpSpellRwa008();
+        vote(address(bumpSpell_008));
+
+        bumpSpell_008.schedule();
+
+        uint256 castTime = block.timestamp + pause.delay();
+        hevm.warp(castTime);
+        (, address pip, , ) = oracle.ilks("RWA008-A");
+
+        assertEq(DSValueAbstract(pip).read(), bytes32(30_437_069 * WAD));
+        bumpSpell_008.cast();
+        assertEq(DSValueAbstract(pip).read(), bytes32(40 * MILLION * WAD));
+    }
+
+    function testSpellIsCast_RWA008_INTEGRATION_TELL() public {
+        if (!spell.done()) {
+            vote(address(spell));
+            scheduleWaitAndCast(address(spell));
+            assertTrue(spell.done());
+        }
+
+        tellSpell_008 = new TellSpellRwa008();
+        vote(address(tellSpell_008));
+
+        tellSpell_008.schedule();
+
+        uint256 castTime = block.timestamp + pause.delay();
+        hevm.warp(castTime);
+        (, , , uint48 tocPre) = oracle.ilks("RWA008-A");
+        assertTrue(tocPre == 0);
+        assertTrue(oracle.good("RWA008-A"));
+        tellSpell_008.cast();
+        (, , , uint48 tocPost) = oracle.ilks("RWA008-A");
+        assertTrue(tocPost > 0);
+        assertTrue(!oracle.good("RWA008-A"));
+    }
+
+    function testSpellIsCast_RWA008_INTEGRATION_TELL_CURE_GOOD() public {
+        if (!spell.done()) {
+            vote(address(spell));
+            scheduleWaitAndCast(address(spell));
+            assertTrue(spell.done());
+        }
+
+        tellSpell_008 = new TellSpellRwa008();
+        vote(address(tellSpell_008));
+
+        tellSpell_008.schedule();
+
+        uint256 castTime = block.timestamp + pause.delay();
+        hevm.warp(castTime);
+        tellSpell_008.cast();
+        assertTrue(!oracle.good(ilk_008));
+
+        cureSpell_008 = new CureSpellRwa008();
+        vote(address(cureSpell_008));
+
+        cureSpell_008.schedule();
+        castTime = block.timestamp + pause.delay();
+        hevm.warp(castTime);
+        cureSpell_008.cast();
+        assertTrue(oracle.good(ilk_008));
+        (, , , uint48 toc) = oracle.ilks(ilk_008);
+        assertEq(uint256(toc), 0);
+    }
+
+    function testFailSpellIsCast_RWA008_INTEGRATION_CURE() public {
+        if (!spell.done()) {
+            vote(address(spell));
+            scheduleWaitAndCast(address(spell));
+            assertTrue(spell.done());
+        }
+
+        cureSpell_008 = new CureSpellRwa008();
+        vote(address(cureSpell_008));
+
+        cureSpell_008.schedule();
+        uint256 castTime = block.timestamp + pause.delay();
+        hevm.warp(castTime);
+        cureSpell_008.cast();
+    }
+
+    function testSpellIsCast_RWA008_INTEGRATION_TELL_CULL() public {
+        if (!spell.done()) {
+            vote(address(spell));
+            scheduleWaitAndCast(address(spell));
+            assertTrue(spell.done());
+        }
+        assertTrue(oracle.good("RWA008-A"));
+
+        tellSpell_008 = new TellSpellRwa008();
+        vote(address(tellSpell_008));
+
+        tellSpell_008.schedule();
+
+        uint256 castTime = block.timestamp + pause.delay();
+        hevm.warp(castTime);
+        tellSpell_008.cast();
+        assertTrue(!oracle.good("RWA008-A"));
+
+        cullSpell_008 = new CullSpellRwa008();
+        vote(address(cullSpell_008));
+
+        cullSpell_008.schedule();
+        castTime = block.timestamp + pause.delay();
+        hevm.warp(castTime);
+        cullSpell_008.cast();
+        assertTrue(!oracle.good("RWA008-A"));
+        (, address pip, , ) = oracle.ilks("RWA008-A");
+        assertEq(DSValueAbstract(pip).read(), bytes32(0));
+    }
+
+    function testSpellIsCast_RWA008_OPERATOR_GET_RWA008_TOKEN() public {
+        assertEq(ERC20Like(address(rwagem_008)).balanceOf(rwaOperator_008), 1 * WAD);
+    }
+
+    function testSpellIsCast_RWA008_OPERATOR_LOCK_DRAW_CONDUITS_WIPE_FREE() public {
+        if (!spell.done()) {
+            vote(address(spell));
+            scheduleWaitAndCast(address(spell));
+            assertTrue(spell.done());
+        }
+
+        // TODO: Figure out why warping here makes this test fail
+        // hevm.warp(block.timestamp + 10 days); // Let rate be > 1
+
+        // set the balance of this contract
+        hevm.store(address(rwagem_008), keccak256(abi.encode(address(this), uint256(3))), bytes32(uint256(2 * WAD)));
+        // setting address(this) as operator
+        hevm.store(address(rwaurn_008), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
+
+        (uint256 preInk, uint256 preArt) = vat.urns(ilk_008, address(rwaurn_008));
+
+        assertEq(rwagem_008.balanceOf(address(this)), 2 * WAD);
+        assertEq(rwaurn_008.can(address(this)), 1);
+
+        rwagem_008.approve(address(rwaurn_008), 1 * WAD);
+        rwaurn_008.lock(1 * WAD);
+        assertEq(dai.balanceOf(address(rwaconduitout_008)), 0);
+        rwaurn_008.draw(1 * WAD);
+
+        (, uint256 rate, , , ) = vat.ilks("RWA008-A");
+
+        uint256 dustInVat = vat.dai(address(rwaurn_008));
+
+        (uint256 ink, uint256 art) = vat.urns(ilk_008, address(rwaurn_008));
+        assertEq(ink, 1 * WAD + preInk);
+        uint256 currArt = ((1 * RAD + dustInVat) / rate) + preArt;
+        assertTrue(art >= currArt - 2 && art <= currArt + 2); // approximation for vat rounding
+        assertEq(dai.balanceOf(address(rwaconduitout_008)), 1 * WAD);
+
+        // wards
+        hevm.store(address(rwaconduitout_008), keccak256(abi.encode(address(this), uint256(0))), bytes32(uint256(1)));
+        // can
+        hevm.store(address(rwaconduitout_008), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
+        // may
+        hevm.store(address(rwaconduitout_008), keccak256(abi.encode(address(this), uint256(6))), bytes32(uint256(1)));
+
+        assertEq(dai.balanceOf(address(rwaconduitout_008)), 1 * WAD);
+
+        rwaconduitout_008.pick(address(this));
+
+        rwaconduitout_008.push();
+
+        assertEq(dai.balanceOf(address(rwaconduitout_008)), 0);
+        assertEq(dai.balanceOf(address(this)), 1 * WAD);
+
+        hevm.warp(block.timestamp + 10 days);
+
+        (ink, art) = vat.urns(ilk_008, address(rwaurn_008));
+        assertEq(ink, 1 * WAD + preInk);
+        currArt = ((1 * RAD + dustInVat) / rate) + preArt;
+        assertTrue(art >= currArt - 2 && art <= currArt + 2); // approximation for vat rounding
+
+        jug.drip("RWA008-A");
+
+        (, rate, , , ) = vat.ilks("RWA008-A");
+
+        uint256 daiToPay = (art * rate - dustInVat) / RAY + 1; // extra wei rounding
+        uint256 vatDai = daiToPay * RAY;
+
+        uint256 currentDaiSupply = dai.totalSupply();
+
+        hevm.store(
+            address(vat),
+            keccak256(abi.encode(address(addr.addr("MCD_JOIN_DAI")), uint256(5))),
+            bytes32(vatDai)
+        ); // Forcing extra dai balance for MCD_JOIN_DAI on the Vat
+        hevm.store(address(dai), bytes32(uint256(1)), bytes32(currentDaiSupply + (daiToPay - art))); // Forcing extra DAI total supply to accomodate the accumulated fee
+        hevm.store(address(dai), keccak256(abi.encode(address(this), uint256(2))), bytes32(daiToPay)); // Forcing extra DAI balance to pay accumulated fee
+        // wards
+        hevm.store(address(rwaconduitin_008), keccak256(abi.encode(address(this), uint256(3))), bytes32(uint256(1)));
+        // may
+        hevm.store(address(rwaconduitin_008), keccak256(abi.encode(address(this), uint256(4))), bytes32(uint256(1)));
+
+        assertEq(dai.balanceOf(address(rwaconduitin_008)), 0);
+        dai.transfer(address(rwaconduitin_008), daiToPay);
+        assertEq(dai.balanceOf(address(rwaconduitin_008)), daiToPay);
+        rwaconduitin_008.push();
+
+        assertEq(dai.balanceOf(address(rwaurn_008)), daiToPay);
+        assertEq(dai.balanceOf(address(rwaconduitin_008)), 0);
+
+        assertEq(vat.dai(address(addr.addr("MCD_JOIN_DAI"))), vatDai);
+
+        rwaurn_008.wipe(daiToPay);
+        rwaurn_008.free(1 * WAD);
+
+        (ink, art) = vat.urns(ilk_008, address(rwaurn_008));
+        assertEq(ink, preInk);
+        assertTrue(art < 4); // wad -> rad conversion in wipe leaves some dust
+        (ink, ) = vat.urns(ilk_008, address(this));
+        assertEq(ink, 0);
+    }
+}
+
+contract TestSpell {
+    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
+    DSPauseAbstract public pause        = DSPauseAbstract(CHANGELOG.getAddress("MCD_PAUSE"));
+
+    address public action;
+    bytes32 public tag;
+    uint256 public eta;
+    bytes public sig;
+    uint256 public expiration;
+    bool public done;
+
+    constructor() public {
+        sig = abi.encodeWithSignature("execute()");
+    }
+
+    function setTag() internal {
+        bytes32 _tag;
+        address _action = action;
+        assembly {
+            _tag := extcodehash(_action)
+        }
+        tag = _tag;
+    }
+
+    function schedule() public {
+        require(eta == 0, "This spell has already been scheduled");
+        eta = block.timestamp + DSPauseAbstract(pause).delay();
+        pause.plot(action, tag, sig, eta);
+    }
+
+    function cast() public {
+        require(!done, "spell-already-cast");
+        done = true;
+        pause.exec(action, tag, sig, eta);
+    }
+}
+
+// RWA009 Test Spells
+
+contract CullSpellRwa009Action {
+    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
+
+    bytes32 constant ilk = "RWA009-A";
+
+    function execute() public {
+        RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).cull(
+            ilk,
+            CHANGELOG.getAddress("RWA009_A_URN")
+        );
+    }
+}
+
+contract CullSpellRwa009 is TestSpell {
+    constructor() public {
+        action = address(new CullSpellRwa009Action());
+        setTag();
+    }
+}
+
+contract TellSpellRwa009Action {
+    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
+
+    bytes32 constant ilk = "RWA009-A";
+
+    function execute() public {
+        VatAbstract(CHANGELOG.getAddress("MCD_VAT")).file(ilk, "line", 0);
+        RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).tell(ilk);
+    }
+}
+
+contract TellSpellRwa009 is TestSpell {
+    constructor() public {
+        action = address(new TellSpellRwa009Action());
+        setTag();
+    }
+}
+
+contract BumpSpellRwa009Action {
+    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
+
+    bytes32 constant ilk     = "RWA009-A";
+    uint256 constant WAD     = 10**18;
+    uint256 constant MILLION = 10**6;
+
+    function execute() public {
+        RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).bump(ilk, 110 * MILLION * WAD);
+    }
+}
+
+contract BumpSpellRwa009 is TestSpell {
+    constructor() public {
+        action = address(new BumpSpellRwa009Action());
+        setTag();
+    }
+}
+
+// RWA008 Test Spells
+
+contract EndSpellRwa008Action {
+    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
+
+    function execute() public {
+        EndAbstract(CHANGELOG.getAddress("MCD_END")).cage();
+    }
+}
+
+contract EndSpellRwa008 is TestSpell {
+    constructor() public {
+        action = address(new EndSpellRwa008Action());
+        setTag();
+    }
+}
+
+contract CullSpellRwa008Action {
+    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
+
+    bytes32 constant ilk = "RWA008-A";
+
+    function execute() public {
+        RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).cull(
+            ilk,
+            CHANGELOG.getAddress("RWA008_A_URN")
+        );
+    }
+}
+
+contract CullSpellRwa008 is TestSpell {
+    constructor() public {
+        action = address(new CullSpellRwa008Action());
+        setTag();
+    }
+}
+
+contract CureSpellRwa008Action {
+    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
+
+    bytes32 constant ilk = "RWA008-A";
+
+    function execute() public {
+        RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).cure(ilk);
+    }
+}
+
+contract CureSpellRwa008 is TestSpell {
+    constructor() public {
+        action = address(new CureSpellRwa008Action());
+        setTag();
+    }
+}
+
+contract TellSpellRwa008Action {
+    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
+
+    bytes32 constant ilk = "RWA008-A";
+
+    function execute() public {
+        VatAbstract(CHANGELOG.getAddress("MCD_VAT")).file(ilk, "line", 0);
+        RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).tell(ilk);
+    }
+}
+
+contract TellSpellRwa008 is TestSpell {
+    constructor() public {
+        action = address(new TellSpellRwa008Action());
+        setTag();
+    }
+}
+
+contract BumpSpellRwa008Action {
+    ChainlogAbstract constant CHANGELOG = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
+
+    bytes32 constant ilk     = "RWA008-A";
+    uint256 constant WAD     = 10**18;
+    uint256 constant MILLION = 10**6;
+
+    function execute() public {
+        RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).bump(ilk, 40 * MILLION * WAD);
+    }
+}
+
+contract BumpSpellRwa008 is TestSpell {
+    constructor() public {
+        action = address(new BumpSpellRwa008Action());
+        setTag();
     }
 }
