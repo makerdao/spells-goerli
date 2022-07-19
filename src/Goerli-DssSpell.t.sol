@@ -65,10 +65,6 @@ interface RwaInputConduitLike {
     function push() external;
 }
 
-interface MIP21LiquidationOracleLike {
-    function ilks(bytes32 ilk) external view returns (string calldata doc, address pip, uint48 tau, uint48 toc);
-}
-
 contract DssSpellTest is GoerliDssSpellTestBase {
     RwaLiquidationLike oracle = RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
@@ -269,10 +265,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        MIP21LiquidationOracleLike rwaLiquidationOracle = MIP21LiquidationOracleLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
-
         // RWA008
-        (, address pipRwa008,,) = rwaLiquidationOracle.ilks("RWA008-A");
+        (, address pipRwa008,,) = oracle.ilks("RWA008-A");
 
         assertEq(reg.pos("RWA008-A"),    50);
         assertEq(reg.join("RWA008-A"),   addr.addr("MCD_JOIN_RWA008_A"));
@@ -284,7 +278,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(reg.symbol("RWA008-A"), "RWA008");
 
         // RWA009
-        (, address pipRwa009,,) = rwaLiquidationOracle.ilks("RWA009-A");
+        (, address pipRwa009,,) = oracle.ilks("RWA009-A");
 
         assertEq(reg.pos("RWA009-A"),    51);
         assertEq(reg.join("RWA009-A"),   addr.addr("MCD_JOIN_RWA009_A"));

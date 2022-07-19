@@ -17,18 +17,14 @@
 pragma solidity 0.6.12;
 
 import "dss-exec-lib/DssExecLib.sol";
-import "dss-interfaces/dss/VatAbstract.sol";
-import "dss-interfaces/dapp/DSPauseAbstract.sol";
-import "dss-interfaces/dss/JugAbstract.sol";
-import "dss-interfaces/dss/SpotAbstract.sol";
-import "dss-interfaces/dss/GemJoinAbstract.sol";
 import "dss-interfaces/dapp/DSTokenAbstract.sol";
 import "dss-interfaces/dss/ChainlogAbstract.sol";
+import "dss-interfaces/dss/GemJoinAbstract.sol";
 import "dss-interfaces/dss/IlkRegistryAbstract.sol";
-
-interface ERC20Like {
-    function approve(address, uint256) external returns (bool);
-}
+import "dss-interfaces/dss/JugAbstract.sol";
+import "dss-interfaces/dss/SpotAbstract.sol";
+import "dss-interfaces/dss/VatAbstract.sol";
+import "dss-interfaces/ERC/GemAbstract.sol";
 
 interface RwaLiquidationLike {
     function wards(address) external returns (uint256);
@@ -47,11 +43,6 @@ interface RwaUrnLike {
     function lock(uint256) external;
     function nope(address) external;
     function draw(uint256) external;
-}
-
-interface TokenDetailsLike {
-    function name() external view returns (string memory);
-    function symbol() external view returns (string memory);
 }
 
 interface RwaOutputConduitLike {
@@ -86,7 +77,7 @@ contract DssSpellCollateralAction {
     // $ bc -l <<< 'scale=27; e( l(1.08)/(60 * 60 * 24 * 365) )'
     //
     // A table of rates can be found at
-    //    https://ipfs.io/ipfs/QmTRiQ3GqjCiRhh1ojzKzgScmSsiwQPLyjhgYSxZASQekj
+    //    https://ipfs.io/ipfs/QmX2QMoM1SZq2XMoTbMak8pZP86Y2icpgPAKDjQg4r4YHn
     //
 
     uint256 constant ZERO_PCT_RATE           = 1000000000000000000000000000;
@@ -125,7 +116,7 @@ contract DssSpellCollateralAction {
      *
      * https://ipfs.io/ipfs/QmdmAUTU3sd9VkdfTZNQM6krc9jsKgF2pz7W1qvvfJo1xk
      */
-    string constant RWA008_DOC               = "IPFS_HASH"; // Reference to a documents which describe deal (should be uploaded to IPFS)
+    string constant RWA008_DOC               = ""; // TODO: Reference to a documents which describe deal (should be uploaded to IPFS)
     // -- RWA008 end --
 
     // -- RWA009 MIP21 components --
@@ -152,7 +143,7 @@ contract DssSpellCollateralAction {
      *
      * https://ipfs.io/ipfs/QmdmAUTU3sd9VkdfTZNQM6krc9jsKgF2pz7W1qvvfJo1xk
      */
-    string constant RWA009_DOC               = "IPFS_HASH"; // TODO Reference to a documents which describe deal (should be uploaded to IPFS)
+    string constant RWA009_DOC               = ""; // TODO: Reference to a documents which describe deal (should be uploaded to IPFS)
     // -- RWA009 END --
 
     function onboardRwa008(
@@ -247,7 +238,7 @@ contract DssSpellCollateralAction {
             pip,
             address(0),
             "RWA008-A: SG Forge OFH",
-            TokenDetailsLike(RWA008).symbol()
+            GemAbstract(RWA008).symbol()
         );
     }
 
@@ -314,7 +305,7 @@ contract DssSpellCollateralAction {
         RwaUrnLike(RWA009_A_URN).hope(address(this));
 
         // lock RWA009 Token in the URN
-        ERC20Like(RWA009).approve(RWA009_A_URN, 1 * WAD);
+        DSTokenAbstract(RWA009).approve(RWA009_A_URN, 1 * WAD);
         RwaUrnLike(RWA009_A_URN).lock(1 * WAD);
 
         // draw DAI to genesis address
@@ -338,7 +329,7 @@ contract DssSpellCollateralAction {
             pip,
             address(0),
             "RWA009-A: H. V. Bank",
-            TokenDetailsLike(RWA009).symbol()
+            GemAbstract(RWA009).symbol()
         );
     }
 
