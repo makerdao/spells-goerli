@@ -1,7 +1,5 @@
-// SPDX-FileCopyrightText: © 2021-2022 Dai Foundation <www.daifoundation.org>
+// SPDX-FileCopyrightText: © 2022 Dai Foundation <www.daifoundation.org>
 // SPDX-License-Identifier: AGPL-3.0-or-later
-//
-// Copyright (C) 2021-2022 Dai Foundation
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -34,86 +32,48 @@ interface ERC20Like {
 
 interface RwaLiquidationLike {
     function wards(address) external returns (uint256);
-
-    function ilks(bytes32)
-        external
-        returns (
-            string memory,
-            address,
-            uint48,
-            uint48
-        );
-
+    function ilks(bytes32) external returns (string memory, address, uint48, uint48);
     function rely(address) external;
-
     function deny(address) external;
-
-    function init(
-        bytes32,
-        uint256,
-        string calldata,
-        uint48
-    ) external;
-
+    function init(bytes32, uint256, string calldata, uint48) external;
     function tell(bytes32) external;
-
     function cure(bytes32) external;
-
     function cull(bytes32) external;
-
     function good(bytes32) external view;
 }
 
 interface RwaUrnLike {
     function hope(address) external;
-
     function lock(uint256) external;
-
     function nope(address) external;
-
     function draw(uint256) external;
 }
 
 interface TokenDetailsLike {
     function name() external view returns (string memory);
-
     function symbol() external view returns (string memory);
 }
 
 interface RwaOutputConduitLike {
     function wards(address) external returns (uint256);
-
     function can(address) external returns (uint256);
-
     function rely(address) external;
-
     function deny(address) external;
-
     function hope(address) external;
-
     function mate(address) external;
-
     function nope(address) external;
-
     function bud(address) external returns (uint256);
-
     function pick(address) external;
-
     function push() external;
 }
 
 interface RwaInputConduitLike {
     function rely(address usr) external;
-
     function deny(address usr) external;
-
     function mate(address usr) external;
-
     function hate(address usr) external;
-
     function push() external;
 }
-
 
 contract DssSpellCollateralAction {
     address constant RWA_TOKEN_FAB = 0xb7462C421D7EDF3455003F76125e812a66DdE187;
@@ -223,7 +183,6 @@ contract DssSpellCollateralAction {
         // TODO: this should be verified with RWA Team (5 min for testing is good)
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA008_A_INITIAL_PRICE, RWA008_DOC, RWA008_A_TAU);
         (, address pip, , ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
-        CHANGELOG.setAddress("PIP_RWA008", pip);
 
         // Set price feed for RWA008
         SpotAbstract(MCD_SPOT).file(ilk, "pip", pip);
@@ -273,6 +232,7 @@ contract DssSpellCollateralAction {
 
         // Add RWA008 contract to the changelog
         CHANGELOG.setAddress("RWA008",                  RWA008);
+        CHANGELOG.setAddress("PIP_RWA008",              pip);
         CHANGELOG.setAddress("MCD_JOIN_RWA008_A",       MCD_JOIN_RWA008_A);
         CHANGELOG.setAddress("RWA008_A_URN",            RWA008_A_URN);
         CHANGELOG.setAddress("RWA008_A_INPUT_CONDUIT",  RWA008_A_INPUT_CONDUIT);
@@ -316,7 +276,6 @@ contract DssSpellCollateralAction {
          */
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA009_A_INITIAL_PRICE, RWA009_DOC, RWA009_A_TAU);
         (, address pip, , ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
-        CHANGELOG.setAddress("PIP_RWA009", pip);
 
         // Set price feed for RWA009
         SpotAbstract(MCD_SPOT).file(ilk, "pip", pip);
@@ -363,6 +322,7 @@ contract DssSpellCollateralAction {
 
         // Add RWA009 contract to the changelog
         CHANGELOG.setAddress("RWA009",                  RWA009);
+        CHANGELOG.setAddress("PIP_RWA009",              pip);
         CHANGELOG.setAddress("MCD_JOIN_RWA009_A",       MCD_JOIN_RWA009_A);
         CHANGELOG.setAddress("RWA009_A_URN",            RWA009_A_URN);
         CHANGELOG.setAddress("RWA009_A_JAR",            RWA009_A_JAR);

@@ -1,7 +1,5 @@
-// SPDX-FileCopyrightText: © 2021-2022 Dai Foundation <www.daifoundation.org>
+// SPDX-FileCopyrightText: © 2020 Dai Foundation <www.daifoundation.org>
 // SPDX-License-Identifier: AGPL-3.0-or-later
-//
-// Copyright (C) 2021-2022 Dai Foundation
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -20,67 +18,29 @@ pragma solidity 0.6.12;
 
 import "./Goerli-DssSpell.t.base.sol";
 
-interface DenyProxyLike {
-    function denyProxy(address) external;
-}
-
-interface StarknetLike {
-    function ceiling() external returns (uint256);
-}
-
 interface ERC20Like {
     function balanceOf (address) external returns (uint256);
 }
 
-interface WardsLike {
-    function wards(address) external view returns (uint256);
-}
-
 interface RwaLiquidationLike {
     function wards(address) external returns (uint256);
-
-    function ilks(bytes32)
-        external
-        returns (
-            string memory,
-            address,
-            uint48 toc,
-            uint48 tau
-        );
-
+    function ilks(bytes32) external returns (string memory, address, uint48 toc, uint48 tau);
     function rely(address) external;
-
     function deny(address) external;
-
-    function init(
-        bytes32,
-        uint256,
-        string calldata,
-        uint48
-    ) external;
-
+    function init(bytes32, uint256, string calldata, uint48) external;
     function bump(bytes32 ilk, uint256 val) external;
-
     function tell(bytes32) external;
-
     function cure(bytes32) external;
-
     function cull(bytes32, address) external;
-
     function good(bytes32) external view returns (bool);
 }
 
 interface RwaUrnLike {
     function hope(address) external;
-
     function can(address) external view returns (uint256);
-
     function lock(uint256) external;
-
     function draw(uint256) external;
-
     function wipe(uint256) external;
-
     function free(uint256) external;
 }
 
