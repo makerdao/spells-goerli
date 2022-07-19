@@ -147,7 +147,9 @@ contract DssSpellCollateralAction {
     address constant RWA008_A_URN            = 0x6351915f840937Edba75656727f20165185FaB83;
     address constant RWA008_A_INPUT_CONDUIT  = 0x6298a2498b4E3789bb8220Cf5f5b44f518509e2a;
     address constant RWA008_A_OUTPUT_CONDUIT = 0x1FE95E519F0CE8eCF1cdC885f4DeA7913e146149;
+    // SocGen's wallet
     address constant RWA008_A_OPERATOR       = 0x3F761335890721752476d4F210A7ad9BEf66fb45;
+    // DIIS Group wallet
     address constant RWA008_A_MATE           = 0xb9444802F0831A3EB9f90E24EFe5FfA20138d684;
 
     uint256 constant RWA008_A_INITIAL_DC     = 30 * MILLION * RAD;
@@ -171,6 +173,7 @@ contract DssSpellCollateralAction {
     address constant MCD_JOIN_RWA009_A       = 0x7122B934F02A15954282Ed41572Ada539864773a;
     address constant RWA009_A_URN            = 0xD2C8588C72026171Ec3a17369ad0f0734E30915d;
     address constant RWA009_A_JAR            = 0xa484C16D2Ca15706c4B875710d9e80b7F101572B;
+    // Goerli: CES Goerli Multisig / Mainnet: Genesis
     address constant RWA009_A_OUTPUT_CONDUIT = 0x7a3D23Dc73F7ead55399597aAE6e525b3DF95A88;
 
     uint256 constant RWA009_DRAW_AMOUNT      = 25 * MILLION * WAD;
