@@ -129,8 +129,8 @@ contract DssSpellCollateralAction {
     //    https://ipfs.io/ipfs/QmTRiQ3GqjCiRhh1ojzKzgScmSsiwQPLyjhgYSxZASQekj
     //
 
-    uint256 constant ZERO_PCT_RATE            = 1000000000000000000000000000;
-    uint256 constant ZERO_ZERO_FIVE_PCT_RATE  = 1000000000015850933588756013;
+    uint256 constant ZERO_PCT_RATE           = 1000000000000000000000000000;
+    uint256 constant ZERO_ZERO_FIVE_PCT_RATE = 1000000000015850933588756013;
 
     // --- Math ---
     uint256 public constant THOUSAND = 10**3;
@@ -140,7 +140,7 @@ contract DssSpellCollateralAction {
     uint256 public constant RAD      = 10**45;
 
     // -- RWA008 MIP21 components --
-    address constant RWA_URN_PROXY_ACTIONS = 0x741A0fc23AB643B1963E77B5136554b12a91f170;
+    address constant RWA_URN_PROXY_ACTIONS   = 0x741A0fc23AB643B1963E77B5136554b12a91f170;
 
     address constant RWA008                  = 0x30434AA15F85598F45406d08A79dCdD9a79335e9;
     address constant MCD_JOIN_RWA008_A       = 0x4ce65E856f824C2b4a2eeD88E79b839eB366967d;
@@ -150,11 +150,11 @@ contract DssSpellCollateralAction {
     address constant RWA008_A_OPERATOR       = 0x3F761335890721752476d4F210A7ad9BEf66fb45;
     address constant RWA008_A_MATE           = 0xb9444802F0831A3EB9f90E24EFe5FfA20138d684;
 
-    uint256 constant RWA008_A_INITIAL_DC    = 30 * MILLION * RAD;
-    uint256 constant RWA008_A_INITIAL_PRICE = 30_437_069 * WAD;
-    uint48 constant  RWA008_A_TAU           = 0;
+    uint256 constant RWA008_A_INITIAL_DC     = 30 * MILLION * RAD;
+    uint256 constant RWA008_A_INITIAL_PRICE  = 30_437_069 * WAD;
+    uint48 constant  RWA008_A_TAU            = 0;
 
-    uint256 constant RWA008_REG_CLASS_RWA = 3;
+    uint256 constant RWA008_REG_CLASS_RWA    = 3;
 
     /**
      * @notice MIP13c3-SP4 Declaration of Intent & Commercial Points -
@@ -163,7 +163,7 @@ contract DssSpellCollateralAction {
      *
      * https://ipfs.io/ipfs/QmdmAUTU3sd9VkdfTZNQM6krc9jsKgF2pz7W1qvvfJo1xk
      */
-    string constant RWA008_DOC = "IPFS_HASH"; // Reference to a documents which describe deal (should be uploaded to IPFS)
+    string constant RWA008_DOC               = "IPFS_HASH"; // Reference to a documents which describe deal (should be uploaded to IPFS)
     // -- RWA008 end --
 
     // -- RWA009 MIP21 components --
@@ -173,14 +173,14 @@ contract DssSpellCollateralAction {
     address constant RWA009_A_JAR            = 0xa484C16D2Ca15706c4B875710d9e80b7F101572B;
     address constant RWA009_A_OUTPUT_CONDUIT = 0x7a3D23Dc73F7ead55399597aAE6e525b3DF95A88;
 
-    uint256 constant RWA009_DRAW_AMOUNT = 25 * MILLION * WAD;
+    uint256 constant RWA009_DRAW_AMOUNT      = 25 * MILLION * WAD;
 
     // MIP21_LIQUIDATION_ORACLE params
-    uint256 constant RWA009_A_INITIAL_DC    = 100 * MILLION * RAD;
-    uint256 constant RWA009_A_INITIAL_PRICE = 100 * MILLION * WAD;
-    uint48  constant RWA009_A_TAU           = 0;
+    uint256 constant RWA009_A_INITIAL_DC     = 100 * MILLION * RAD;
+    uint256 constant RWA009_A_INITIAL_PRICE  = 100 * MILLION * WAD;
+    uint48  constant RWA009_A_TAU            = 0;
 
-    uint256 constant RWA009_REG_CLASS_RWA = 3;
+    uint256 constant RWA009_REG_CLASS_RWA    = 3;
 
     /**
      * @notice MIP13c3-SP4 Declaration of Intent & Commercial Points -
@@ -189,7 +189,7 @@ contract DssSpellCollateralAction {
      *
      * https://ipfs.io/ipfs/QmdmAUTU3sd9VkdfTZNQM6krc9jsKgF2pz7W1qvvfJo1xk
      */
-    string constant RWA009_DOC = "IPFS_HASH"; // TODO Reference to a documents which describe deal (should be uploaded to IPFS)
+    string constant RWA009_DOC               = "IPFS_HASH"; // TODO Reference to a documents which describe deal (should be uploaded to IPFS)
     // -- RWA009 END --
 
     function onboardRwa008(
@@ -207,8 +207,8 @@ contract DssSpellCollateralAction {
 
         // Sanity checks
         require(GemJoinAbstract(MCD_JOIN_RWA008_A).vat() == MCD_VAT, "join-vat-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA008_A).ilk() == ilk, "join-ilk-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA008_A).gem() == RWA008, "join-gem-not-match");
+        require(GemJoinAbstract(MCD_JOIN_RWA008_A).ilk() == ilk,     "join-ilk-not-match");
+        require(GemJoinAbstract(MCD_JOIN_RWA008_A).gem() == RWA008,  "join-gem-not-match");
         require(
             GemJoinAbstract(MCD_JOIN_RWA008_A).dec() == DSTokenAbstract(RWA008).decimals(),
             "join-dec-not-match"
@@ -382,7 +382,7 @@ contract DssSpellCollateralAction {
     function onboardNewCollaterals() internal {
         ChainlogAbstract CHANGELOG       = ChainlogAbstract(DssExecLib.LOG);
         IlkRegistryAbstract REGISTRY     = IlkRegistryAbstract(DssExecLib.reg());
-        address MIP21_LIQUIDATION_ORACLE = 0x362dfE51E4f91a8257B8276435792095EE5d85C3;
+        address MIP21_LIQUIDATION_ORACLE = CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE");
         address MCD_VAT                  = CHANGELOG.getAddress("MCD_VAT");
         address MCD_JUG                  = CHANGELOG.getAddress("MCD_JUG");
         address MCD_SPOT                 = CHANGELOG.getAddress("MCD_SPOT");

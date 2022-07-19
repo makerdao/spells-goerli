@@ -113,14 +113,14 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     RwaLiquidationLike oracle = RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
     // -- RWA008 --
-    bytes32 constant     ilk_008 = "RWA008-A";
+    bytes32 constant     ilk_008             = "RWA008-A";
 
-    address              rwaOperator_008   = addr.addr("RWA008_A_OPERATOR");
-    DSTokenAbstract      rwagem_008        = DSTokenAbstract(addr.addr("RWA008"));
-    GemJoinAbstract      rwajoin_008       = GemJoinAbstract(addr.addr("MCD_JOIN_RWA008_A"));
-    RwaUrnLike           rwaurn_008        = RwaUrnLike(addr.addr("RWA008_A_URN"));
-    RwaInputConduitLike  rwaconduitin_008  = RwaInputConduitLike(addr.addr("RWA008_A_INPUT_CONDUIT"));
-    RwaOutputConduitLike rwaconduitout_008 = RwaOutputConduitLike(addr.addr("RWA008_A_OUTPUT_CONDUIT"));
+    address              rwaOperator_008     = addr.addr("RWA008_A_OPERATOR");
+    DSTokenAbstract      rwagem_008          = DSTokenAbstract(addr.addr("RWA008"));
+    GemJoinAbstract      rwajoin_008         = GemJoinAbstract(addr.addr("MCD_JOIN_RWA008_A"));
+    RwaUrnLike           rwaurn_008          = RwaUrnLike(addr.addr("RWA008_A_URN"));
+    RwaInputConduitLike  rwaconduitin_008    = RwaInputConduitLike(addr.addr("RWA008_A_INPUT_CONDUIT"));
+    RwaOutputConduitLike rwaconduitout_008   = RwaOutputConduitLike(addr.addr("RWA008_A_OUTPUT_CONDUIT"));
 
     BumpSpellRwa008      bumpSpell_008;
     TellSpellRwa008      tellSpell_008;
@@ -129,15 +129,15 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     EndSpellRwa008       endSpell_008;
 
     // -- RWA009 --
-    bytes32 constant  ilk_009             = "RWA009-A";
-    DSTokenAbstract   rwagem_009          = DSTokenAbstract(addr.addr("RWA009"));
-    GemJoinAbstract   rwajoin_009         = GemJoinAbstract(addr.addr("MCD_JOIN_RWA009_A"));
-    RwaUrnLike        rwaurn_009          = RwaUrnLike(addr.addr("RWA009_A_URN"));
-    address           RWA009_CES_MULTISIG = addr.addr("RWA009_A_OUTPUT_CONDUIT");
+    bytes32 constant     ilk_009             = "RWA009-A";
+    DSTokenAbstract      rwagem_009          = DSTokenAbstract(addr.addr("RWA009"));
+    GemJoinAbstract      rwajoin_009         = GemJoinAbstract(addr.addr("MCD_JOIN_RWA009_A"));
+    RwaUrnLike           rwaurn_009          = RwaUrnLike(addr.addr("RWA009_A_URN"));
+    address              RWA009_CES_MULTISIG = addr.addr("RWA009_A_OUTPUT_CONDUIT");
 
-    BumpSpellRwa009   bumpSpell_009;
-    TellSpellRwa009   tellSpell_009;
-    CullSpellRwa009   cullSpell_009;
+    BumpSpellRwa009      bumpSpell_009;
+    TellSpellRwa009      tellSpell_009;
+    CullSpellRwa009      cullSpell_009;
 
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;

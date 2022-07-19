@@ -50,6 +50,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralOnboardingAction
         onboardNewCollaterals();
+
         DssExecLib.setChangelogVersion("1.13.3");
     }
 }
