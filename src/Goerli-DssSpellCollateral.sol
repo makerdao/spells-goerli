@@ -68,25 +68,24 @@ contract DssSpellCollateralAction {
     uint256 public constant RAD      = 10**45;
 
     // -- RWA008 MIP21 components --
-    address constant RWA008_A_URN_CLOSE_HELPER   = 0xb220461eFFa9c0b1D09047D08Bf116DfbD9814fA;
-
-    address constant RWA008                  = 0x30434AA15F85598F45406d08A79dCdD9a79335e9;
-    address constant MCD_JOIN_RWA008_A       = 0x4ce65E856f824C2b4a2eeD88E79b839eB366967d;
-    address constant RWA008_A_URN            = 0x6351915f840937Edba75656727f20165185FaB83;
-    address constant RWA008_A_INPUT_CONDUIT  = 0x6298a2498b4E3789bb8220Cf5f5b44f518509e2a;
-    address constant RWA008_A_OUTPUT_CONDUIT = 0x1FE95E519F0CE8eCF1cdC885f4DeA7913e146149;
+    address constant RWA008                    = 0x30434AA15F85598F45406d08A79dCdD9a79335e9;
+    address constant MCD_JOIN_RWA008_A         = 0x4ce65E856f824C2b4a2eeD88E79b839eB366967d;
+    address constant RWA008_A_URN              = 0x6351915f840937Edba75656727f20165185FaB83;
+    address constant RWA008_A_URN_CLOSE_HELPER = 0xb220461eFFa9c0b1D09047D08Bf116DfbD9814fA;
+    address constant RWA008_A_INPUT_CONDUIT    = 0x6298a2498b4E3789bb8220Cf5f5b44f518509e2a;
+    address constant RWA008_A_OUTPUT_CONDUIT   = 0x1FE95E519F0CE8eCF1cdC885f4DeA7913e146149;
     // SocGen's wallet
-    address constant RWA008_A_OPERATOR       = 0x3F761335890721752476d4F210A7ad9BEf66fb45;
+    address constant RWA008_A_OPERATOR         = 0x3F761335890721752476d4F210A7ad9BEf66fb45;
     // DIIS Group wallet
-    address constant RWA008_A_MATE           = 0xb9444802F0831A3EB9f90E24EFe5FfA20138d684;
+    address constant RWA008_A_MATE             = 0xb9444802F0831A3EB9f90E24EFe5FfA20138d684;
 
-    uint256 constant RWA008_A_INITIAL_DC     = 30 * MILLION * RAD;
-    uint256 constant RWA008_A_INITIAL_PRICE  = 30_437_069 * WAD;
-    uint48 constant  RWA008_A_TAU            = 0;
+    uint256 constant RWA008_A_INITIAL_DC       = 30 * MILLION * RAD;
+    uint256 constant RWA008_A_INITIAL_PRICE    = 30_437_069 * WAD;
+    uint48 constant  RWA008_A_TAU              = 0;
 
-    uint256 constant RWA008_REG_CLASS_RWA    = 3;
+    uint256 constant RWA008_REG_CLASS_RWA      = 3;
 
-    string constant RWA008_DOC               = "QmdfzY6p5EpkYMN8wcomF2a1GsJbhkPiRQVRYSPfS4NZtB";
+    string constant RWA008_DOC                 = "QmdfzY6p5EpkYMN8wcomF2a1GsJbhkPiRQVRYSPfS4NZtB";
     // -- RWA008 end --
 
     // -- RWA009 MIP21 components --
