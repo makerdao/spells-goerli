@@ -61,8 +61,6 @@ contract DssSpellCollateralAction {
     uint256 constant ZERO_ZERO_FIVE_PCT_RATE = 1000000000015850933588756013;
 
     // --- Math ---
-    uint256 public constant THOUSAND = 10**3;
-    uint256 public constant MILLION  = 10**6;
     uint256 public constant WAD      = 10**18;
     uint256 public constant RAY      = 10**27;
     uint256 public constant RAD      = 10**45;
@@ -79,7 +77,7 @@ contract DssSpellCollateralAction {
     // DIIS Group wallet
     address constant RWA008_A_MATE             = 0xb9444802F0831A3EB9f90E24EFe5FfA20138d684;
 
-    uint256 constant RWA008_A_INITIAL_DC       = 30 * MILLION * RAD;
+    uint256 constant RWA008_A_INITIAL_DC       = 30_000_000 * RAD;
     uint256 constant RWA008_A_INITIAL_PRICE    = 30_437_069 * WAD;
     uint48 constant  RWA008_A_TAU              = 0;
 
@@ -97,8 +95,8 @@ contract DssSpellCollateralAction {
     address constant RWA009_A_OUTPUT_CONDUIT = 0x7a3D23Dc73F7ead55399597aAE6e525b3DF95A88;
 
     // MIP21_LIQUIDATION_ORACLE params
-    uint256 constant RWA009_A_INITIAL_DC     = 100 * MILLION * RAD;
-    uint256 constant RWA009_A_INITIAL_PRICE  = 100 * MILLION * WAD;
+    uint256 constant RWA009_A_INITIAL_DC     = 100_000_000 * RAD;
+    uint256 constant RWA009_A_INITIAL_PRICE  = 100_000_000 * WAD;
     uint48  constant RWA009_A_TAU            = 0;
 
     uint256 constant RWA009_REG_CLASS_RWA    = 3;
