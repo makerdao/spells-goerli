@@ -19,11 +19,7 @@ pragma solidity 0.6.12;
 import "./Goerli-DssSpell.t.base.sol";
 
 interface RwaLiquidationLike {
-    function wards(address) external returns (uint256);
     function ilks(bytes32) external returns (string memory, address, uint48 toc, uint48 tau);
-    function rely(address) external;
-    function deny(address) external;
-    function init(bytes32, uint256, string calldata, uint48) external;
     function bump(bytes32 ilk, uint256 val) external;
     function tell(bytes32) external;
     function cure(bytes32) external;
@@ -32,7 +28,6 @@ interface RwaLiquidationLike {
 }
 
 interface RwaUrnLike {
-    function hope(address) external;
     function can(address) external view returns (uint256);
     function lock(uint256) external;
     function draw(uint256) external;
@@ -41,23 +36,11 @@ interface RwaUrnLike {
 }
 
 interface RwaOutputConduitLike {
-    function wards(address) external returns (uint256);
-    function can(address) external returns (uint256);
-    function rely(address) external;
-    function deny(address) external;
-    function hope(address) external;
-    function mate(address) external;
-    function nope(address) external;
-    function bud(address) external returns (uint256);
     function pick(address) external;
     function push() external;
 }
 
 interface RwaInputConduitLike {
-    function rely(address usr) external;
-    function deny(address usr) external;
-    function mate(address usr) external;
-    function hate(address usr) external;
     function push() external;
 }
 
