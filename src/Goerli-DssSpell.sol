@@ -16,7 +16,7 @@
 
 pragma solidity 0.6.12;
 
-// Enable ABIEncoderV2 when managing collateral through `DssExecLib.addNewCollateral()`
+// Enable ABIEncoderV2 when onboarding collateral through `DssExecLib.addNewCollateral()`
 // pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
