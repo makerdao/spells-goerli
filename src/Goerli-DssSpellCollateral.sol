@@ -70,7 +70,7 @@ contract DssSpellCollateralAction {
     uint256 public constant RAD      = 10**45;
 
     // -- RWA008 MIP21 components --
-    address constant RWA_URN_PROXY_ACTIONS   = 0x741A0fc23AB643B1963E77B5136554b12a91f170;
+    address constant RWA008_A_URN_CLOSE_HELPER   = 0xb220461eFFa9c0b1D09047D08Bf116DfbD9814fA;
 
     address constant RWA008                  = 0x30434AA15F85598F45406d08A79dCdD9a79335e9;
     address constant MCD_JOIN_RWA008_A       = 0x4ce65E856f824C2b4a2eeD88E79b839eB366967d;
@@ -169,7 +169,7 @@ contract DssSpellCollateralAction {
         GemJoinAbstract(MCD_JOIN_RWA008_A).rely(RWA008_A_URN);
 
         // set up the urn
-        RwaUrnLike(RWA008_A_URN).hope(RWA_URN_PROXY_ACTIONS);
+        RwaUrnLike(RWA008_A_URN).hope(RWA008_A_URN_CLOSE_HELPER);
 
         RwaUrnLike(RWA008_A_URN).hope(RWA008_A_OPERATOR);
 
