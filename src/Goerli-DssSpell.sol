@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
+
 // Enable ABIEncoderV2 when managing collateral through `DssExecLib.addNewCollateral()`
 // pragma experimental ABIEncoderV2;
 
