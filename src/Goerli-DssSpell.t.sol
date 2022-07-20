@@ -16,12 +16,7 @@
 
 pragma solidity 0.6.12;
 
-import "dss-exec-lib/DssExecLib.sol";
 import "./Goerli-DssSpell.t.base.sol";
-
-interface ERC20Like {
-    function balanceOf (address) external returns (uint256);
-}
 
 interface RwaLiquidationLike {
     function wards(address) external returns (uint256);
@@ -72,7 +67,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     // -- RWA008 --
     bytes32 constant     ilk_008             = "RWA008-A";
 
-    address              rwaOperator_008     = addr.addr("RWA008_A_OPERATOR");
+    address              rwaOperator_008     = 0x3F761335890721752476d4F210A7ad9BEf66fb45;
     DSTokenAbstract      rwagem_008          = DSTokenAbstract(addr.addr("RWA008"));
     GemJoinAbstract      rwajoin_008         = GemJoinAbstract(addr.addr("MCD_JOIN_RWA008_A"));
     RwaUrnLike           rwaurn_008          = RwaUrnLike(addr.addr("RWA008_A_URN"));
@@ -801,7 +796,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testSpellIsCast_RWA008_OPERATOR_GET_RWA008_TOKEN() public {
-        assertEq(ERC20Like(address(rwagem_008)).balanceOf(rwaOperator_008), 1 * WAD);
+        assertEq(GemAbstract(address(rwagem_008)).balanceOf(rwaOperator_008), 1 * WAD);
     }
 
     function testSpellIsCast_RWA008_OPERATOR_LOCK_DRAW_CONDUITS_WIPE_FREE() public {
@@ -905,8 +900,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 }
 
 contract TestSpell {
-    ChainlogAbstract immutable internal CHANGELOG;
-    DSPauseAbstract immutable internal pause;
+    DSPauseAbstract public pause;
 
     address public action;
     bytes32 public tag;
@@ -916,9 +910,10 @@ contract TestSpell {
     bool public done;
 
     constructor() public {
-        CHANGELOG = ChainlogAbstract(DssExecLib.LOG);
-        pause     = DSPauseAbstract(ChainlogAbstract(DssExecLib.LOG).getAddress("MCD_PAUSE"));
-        sig       = abi.encodeWithSignature("execute()");
+        Addresses addr = new Addresses();
+
+        pause = DSPauseAbstract(addr.addr("MCD_PAUSE"));
+        sig   = abi.encodeWithSignature("execute()");
     }
 
     function setTag() internal {
@@ -949,11 +944,11 @@ contract CullSpellRwa009Action {
     bytes32 constant ilk = "RWA009-A";
 
     function execute() public {
-        ChainlogAbstract CHANGELOG = ChainlogAbstract(DssExecLib.LOG);
+        Addresses addr = new Addresses();
 
-        RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).cull(
+        RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE")).cull(
             ilk,
-            CHANGELOG.getAddress("RWA009_A_URN")
+            addr.addr("RWA009_A_URN")
         );
     }
 }
@@ -969,10 +964,10 @@ contract TellSpellRwa009Action {
     bytes32 constant ilk = "RWA009-A";
 
     function execute() public {
-        ChainlogAbstract CHANGELOG = ChainlogAbstract(DssExecLib.LOG);
+        Addresses addr = new Addresses();
 
-        VatAbstract(CHANGELOG.getAddress("MCD_VAT")).file(ilk, "line", 0);
-        RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).tell(ilk);
+        VatAbstract(addr.addr("MCD_VAT")).file(ilk, "line", 0);
+        RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE")).tell(ilk);
     }
 }
 
@@ -989,9 +984,9 @@ contract BumpSpellRwa009Action {
     uint256 constant MILLION = 10**6;
 
     function execute() public {
-        ChainlogAbstract CHANGELOG = ChainlogAbstract(DssExecLib.LOG);
+        Addresses addr = new Addresses();
 
-        RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).bump(ilk, 110 * MILLION * WAD);
+        RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE")).bump(ilk, 110 * MILLION * WAD);
     }
 }
 
@@ -1006,9 +1001,9 @@ contract BumpSpellRwa009 is TestSpell {
 
 contract EndSpellRwa008Action {
     function execute() public {
-        ChainlogAbstract CHANGELOG = ChainlogAbstract(DssExecLib.LOG);
+        Addresses addr = new Addresses();
 
-        EndAbstract(CHANGELOG.getAddress("MCD_END")).cage();
+        EndAbstract(addr.addr("MCD_END")).cage();
     }
 }
 
@@ -1023,12 +1018,9 @@ contract CullSpellRwa008Action {
     bytes32 constant ilk = "RWA008-A";
 
     function execute() public {
-        ChainlogAbstract CHANGELOG = ChainlogAbstract(DssExecLib.LOG);
+        Addresses addr = new Addresses();
 
-        RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).cull(
-            ilk,
-            CHANGELOG.getAddress("RWA008_A_URN")
-        );
+        RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE")).cull(ilk, addr.addr("RWA008_A_URN"));
     }
 }
 
@@ -1043,9 +1035,9 @@ contract CureSpellRwa008Action {
     bytes32 constant ilk = "RWA008-A";
 
     function execute() public {
-        ChainlogAbstract CHANGELOG = ChainlogAbstract(DssExecLib.LOG);
+        Addresses addr = new Addresses();
 
-        RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).cure(ilk);
+        RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE")).cure(ilk);
     }
 }
 
@@ -1060,10 +1052,10 @@ contract TellSpellRwa008Action {
     bytes32 constant ilk = "RWA008-A";
 
     function execute() public {
-        ChainlogAbstract CHANGELOG = ChainlogAbstract(DssExecLib.LOG);
+        Addresses addr = new Addresses();
 
-        VatAbstract(CHANGELOG.getAddress("MCD_VAT")).file(ilk, "line", 0);
-        RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).tell(ilk);
+        VatAbstract(addr.addr("MCD_VAT")).file(ilk, "line", 0);
+        RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE")).tell(ilk);
     }
 }
 
@@ -1080,9 +1072,9 @@ contract BumpSpellRwa008Action {
     uint256 constant MILLION = 10**6;
 
     function execute() public {
-        ChainlogAbstract CHANGELOG = ChainlogAbstract(DssExecLib.LOG);
+        Addresses addr = new Addresses();
 
-        RwaLiquidationLike(CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE")).bump(ilk, 40 * MILLION * WAD);
+        RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE")).bump(ilk, 40 * MILLION * WAD);
     }
 }
 

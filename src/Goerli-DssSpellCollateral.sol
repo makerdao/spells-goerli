@@ -27,43 +27,22 @@ import "dss-interfaces/dss/VatAbstract.sol";
 import "dss-interfaces/ERC/GemAbstract.sol";
 
 interface RwaLiquidationLike {
-    function wards(address) external returns (uint256);
     function ilks(bytes32) external returns (string memory, address, uint48, uint48);
-    function rely(address) external;
-    function deny(address) external;
     function init(bytes32, uint256, string calldata, uint48) external;
-    function tell(bytes32) external;
-    function cure(bytes32) external;
-    function cull(bytes32) external;
-    function good(bytes32) external view;
 }
 
 interface RwaUrnLike {
     function hope(address) external;
     function lock(uint256) external;
-    function nope(address) external;
-    function draw(uint256) external;
 }
 
 interface RwaOutputConduitLike {
-    function wards(address) external returns (uint256);
-    function can(address) external returns (uint256);
-    function rely(address) external;
-    function deny(address) external;
     function hope(address) external;
     function mate(address) external;
-    function nope(address) external;
-    function bud(address) external returns (uint256);
-    function pick(address) external;
-    function push() external;
 }
 
 interface RwaInputConduitLike {
-    function rely(address usr) external;
-    function deny(address usr) external;
     function mate(address usr) external;
-    function hate(address usr) external;
-    function push() external;
 }
 
 contract DssSpellCollateralAction {
@@ -127,8 +106,6 @@ contract DssSpellCollateralAction {
     // Goerli: CES Goerli Multisig / Mainnet: Genesis
     address constant RWA009_A_OUTPUT_CONDUIT = 0x7a3D23Dc73F7ead55399597aAE6e525b3DF95A88;
 
-    uint256 constant RWA009_DRAW_AMOUNT      = 25 * MILLION * WAD;
-
     // MIP21_LIQUIDATION_ORACLE params
     uint256 constant RWA009_A_INITIAL_DC     = 100 * MILLION * RAD;
     uint256 constant RWA009_A_INITIAL_PRICE  = 100 * MILLION * WAD;
@@ -136,16 +113,10 @@ contract DssSpellCollateralAction {
 
     uint256 constant RWA009_REG_CLASS_RWA    = 3;
 
-    /**
-     * @notice MIP13c3-SP4 Declaration of Intent & Commercial Points -
-     *   Off-Chain Asset Backed Lender to onboard Real World Assets
-     *   as Collateral for a DAI loan
-     *
-     * https://ipfs.io/ipfs/QmdmAUTU3sd9VkdfTZNQM6krc9jsKgF2pz7W1qvvfJo1xk
-     */
-    string constant RWA009_DOC               = ""; // TODO: Reference to a documents which describe deal (should be uploaded to IPFS)
+    string constant RWA009_DOC               = "QmZG31b6iLGGCLGD7ZUn8EDkE9kANPVMcHzEYkvyNWCZpG";
     // -- RWA009 END --
 
+    // https://vote.makerdao.com/polling/QmajCtnG
     function onboardRwa008(
         ChainlogAbstract CHANGELOG,
         IlkRegistryAbstract REGISTRY,
@@ -242,6 +213,7 @@ contract DssSpellCollateralAction {
         );
     }
 
+    // https://vote.makerdao.com/polling/QmQMDasC
     function onboardRwa009(
         ChainlogAbstract CHANGELOG,
         IlkRegistryAbstract REGISTRY,
@@ -300,16 +272,6 @@ contract DssSpellCollateralAction {
 
         // give the urn permissions on the join adapter
         GemJoinAbstract(MCD_JOIN_RWA009_A).rely(RWA009_A_URN);
-
-        // DSS_PAUSE_PROXY permission on URN
-        RwaUrnLike(RWA009_A_URN).hope(address(this));
-
-        // lock RWA009 Token in the URN
-        DSTokenAbstract(RWA009).approve(RWA009_A_URN, 1 * WAD);
-        RwaUrnLike(RWA009_A_URN).lock(1 * WAD);
-
-        // draw DAI to genesis address
-        RwaUrnLike(RWA009_A_URN).draw(RWA009_DRAW_AMOUNT);
 
         // Add RWA009 contract to the changelog
         CHANGELOG.setAddress("RWA009",                  RWA009);

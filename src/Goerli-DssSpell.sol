@@ -15,18 +15,27 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
-// Enable ABIEncoderV2 when managing collateral
-pragma experimental ABIEncoderV2;
+// Enable ABIEncoderV2 when managing collateral through `DssExecLib.addNewCollateral()`
+// pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
+import "dss-interfaces/dapp/DSTokenAbstract.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
+
+interface RwaUrnLike {
+    function hope(address) external;
+    function lock(uint256) external;
+    function draw(uint256) external;
+}
 
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
+
+    uint256 constant RWA009_DRAW_AMOUNT = 25 * MILLION * WAD;
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -46,8 +55,22 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
         onboardNewCollaterals();
+        drawFromRWA009Urn();
 
         DssExecLib.setChangelogVersion("1.13.3");
+    }
+
+    function drawFromRWA009Urn() internal {
+        // DSS_PAUSE_PROXY permission on URN
+        RwaUrnLike(RWA009_A_URN).hope(address(this));
+
+        // lock RWA009 Token in the URN
+        DSTokenAbstract(RWA009).approve(RWA009_A_URN, 1 * WAD);
+        RwaUrnLike(RWA009_A_URN).lock(1 * WAD);
+
+        // draw DAI to genesis address
+        RwaUrnLike(RWA009_A_URN).draw(RWA009_DRAW_AMOUNT);
+
     }
 }
 
