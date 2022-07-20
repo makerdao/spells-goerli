@@ -116,7 +116,6 @@ contract DssSpellCollateralAction {
     string constant RWA009_DOC               = "QmZG31b6iLGGCLGD7ZUn8EDkE9kANPVMcHzEYkvyNWCZpG";
     // -- RWA009 END --
 
-    // https://vote.makerdao.com/polling/QmajCtnG
     function onboardRwa008(
         ChainlogAbstract CHANGELOG,
         IlkRegistryAbstract REGISTRY,
@@ -213,7 +212,6 @@ contract DssSpellCollateralAction {
         );
     }
 
-    // https://vote.makerdao.com/polling/QmQMDasC
     function onboardRwa009(
         ChainlogAbstract CHANGELOG,
         IlkRegistryAbstract REGISTRY,
@@ -304,10 +302,10 @@ contract DssSpellCollateralAction {
         address MCD_SPOT                 = CHANGELOG.getAddress("MCD_SPOT");
         // --------------------------- RWA Collateral onboarding ---------------------------
 
-        // Onboard SocGen
+        // Onboard SocGen: https://vote.makerdao.com/polling/QmajCtnG
         onboardRwa008(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT);
 
-        // Onboard HvB
+        // Onboard HvB: https://vote.makerdao.com/polling/QmQMDasC
         onboardRwa009(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT);
 
         // Add RWA_TOKEN_FAB to changelog
