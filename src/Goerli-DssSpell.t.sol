@@ -921,66 +921,7 @@ contract TestSpell {
     }
 }
 
-// RWA009 Test Spells
-
-contract CullSpellRwa009Action {
-    bytes32 constant ilk = "RWA009-A";
-
-    function execute() public {
-        Addresses addr = new Addresses();
-
-        RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE")).cull(
-            ilk,
-            addr.addr("RWA009_A_URN")
-        );
-    }
-}
-
-contract CullSpellRwa009 is TestSpell {
-    constructor() public {
-        action = address(new CullSpellRwa009Action());
-        setTag();
-    }
-}
-
-contract TellSpellRwa009Action {
-    bytes32 constant ilk = "RWA009-A";
-
-    function execute() public {
-        Addresses addr = new Addresses();
-
-        VatAbstract(addr.addr("MCD_VAT")).file(ilk, "line", 0);
-        RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE")).tell(ilk);
-    }
-}
-
-contract TellSpellRwa009 is TestSpell {
-    constructor() public {
-        action = address(new TellSpellRwa009Action());
-        setTag();
-    }
-}
-
-contract BumpSpellRwa009Action {
-    bytes32 constant ilk     = "RWA009-A";
-    uint256 constant WAD     = 10**18;
-    uint256 constant MILLION = 10**6;
-
-    function execute() public {
-        Addresses addr = new Addresses();
-
-        RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE")).bump(ilk, 110 * MILLION * WAD);
-    }
-}
-
-contract BumpSpellRwa009 is TestSpell {
-    constructor() public {
-        action = address(new BumpSpellRwa009Action());
-        setTag();
-    }
-}
-
-// RWA008 Test Spells
+// R WA008 Test Spells
 
 contract EndSpellRwa008Action {
     function execute() public {
@@ -1064,6 +1005,65 @@ contract BumpSpellRwa008Action {
 contract BumpSpellRwa008 is TestSpell {
     constructor() public {
         action = address(new BumpSpellRwa008Action());
+        setTag();
+    }
+}
+
+// RWA009 Test Spells
+
+contract CullSpellRwa009Action {
+    bytes32 constant ilk = "RWA009-A";
+
+    function execute() public {
+        Addresses addr = new Addresses();
+
+        RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE")).cull(
+            ilk,
+            addr.addr("RWA009_A_URN")
+        );
+    }
+}
+
+contract CullSpellRwa009 is TestSpell {
+    constructor() public {
+        action = address(new CullSpellRwa009Action());
+        setTag();
+    }
+}
+
+contract TellSpellRwa009Action {
+    bytes32 constant ilk = "RWA009-A";
+
+    function execute() public {
+        Addresses addr = new Addresses();
+
+        VatAbstract(addr.addr("MCD_VAT")).file(ilk, "line", 0);
+        RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE")).tell(ilk);
+    }
+}
+
+contract TellSpellRwa009 is TestSpell {
+    constructor() public {
+        action = address(new TellSpellRwa009Action());
+        setTag();
+    }
+}
+
+contract BumpSpellRwa009Action {
+    bytes32 constant ilk     = "RWA009-A";
+    uint256 constant WAD     = 10**18;
+    uint256 constant MILLION = 10**6;
+
+    function execute() public {
+        Addresses addr = new Addresses();
+
+        RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE")).bump(ilk, 110 * MILLION * WAD);
+    }
+}
+
+contract BumpSpellRwa009 is TestSpell {
+    constructor() public {
+        action = address(new BumpSpellRwa009Action());
         setTag();
     }
 }
