@@ -88,14 +88,7 @@ contract DssSpellCollateralAction {
 
     uint256 constant RWA008_REG_CLASS_RWA    = 3;
 
-    /**
-     * @notice MIP13c3-SP4 Declaration of Intent & Commercial Points -
-     *   Off-Chain Asset Backed Lender to onboard Real World Assets
-     *   as Collateral for a DAI loan
-     *
-     * https://ipfs.io/ipfs/QmdmAUTU3sd9VkdfTZNQM6krc9jsKgF2pz7W1qvvfJo1xk
-     */
-    string constant RWA008_DOC               = ""; // TODO: Reference to a documents which describe deal (should be uploaded to IPFS)
+    string constant RWA008_DOC               = "QmdfzY6p5EpkYMN8wcomF2a1GsJbhkPiRQVRYSPfS4NZtB";
     // -- RWA008 end --
 
     // -- RWA009 MIP21 components --
