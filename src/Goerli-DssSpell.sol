@@ -36,6 +36,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
+    address constant RWA_TOKEN_FAB = 0xb7462C421D7EDF3455003F76125e812a66DdE187;
+
     uint256 constant RWA009_DRAW_AMOUNT = 25 * MILLION * WAD;
 
     // Many of the settings that change weekly rely on the rate accumulator
@@ -57,6 +59,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // Includes changes from the DssSpellCollateralAction
         onboardNewCollaterals();
         drawFromRWA009Urn();
+
+        // Add RWA_TOKEN_FAB to changelog
+        DssExecLib.setChangelogAddress("RWA_TOKEN_FAB", RWA_TOKEN_FAB);
 
         DssExecLib.setChangelogVersion("1.13.3");
     }

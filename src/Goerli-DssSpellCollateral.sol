@@ -46,8 +46,6 @@ interface RwaInputConduitLike {
 }
 
 contract DssSpellCollateralAction {
-    address constant RWA_TOKEN_FAB = 0xb7462C421D7EDF3455003F76125e812a66DdE187;
-
     // --- Rates ---
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -300,9 +298,6 @@ contract DssSpellCollateralAction {
 
         // Onboard HvB: https://vote.makerdao.com/polling/QmQMDasC
         onboardRwa009(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT);
-
-        // Add RWA_TOKEN_FAB to changelog
-        CHANGELOG.setAddress("RWA_TOKEN_FAB", RWA_TOKEN_FAB);
     }
 
     function offboardCollaterals() internal {}
