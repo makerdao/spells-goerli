@@ -1674,7 +1674,7 @@ contract Config {
             aL_line:      0,             // In whole Dai units
             aL_gap:       0,             // In whole Dai units
             aL_ttl:       0,             // In seconds
-            line:         30 * MILLION,  // In whole Dai units  // Not checked here as there is auto line
+            line:         30 * MILLION,  // In whole Dai units
             dust:         0,             // In whole Dai units
             pct:          5,             // In basis points
             mat:          10 * THOUSAND, // In basis points
@@ -1704,7 +1704,7 @@ contract Config {
             aL_line:      0,             // In whole Dai units
             aL_gap:       0,             // In whole Dai units
             aL_ttl:       0,             // In seconds
-            line:         100 * MILLION, // In whole Dai units  // Not checked here as there is auto line
+            line:         100 * MILLION, // In whole Dai units
             dust:         0,             // In whole Dai units
             pct:          0,             // In basis points
             mat:          10 * THOUSAND, // In basis points
