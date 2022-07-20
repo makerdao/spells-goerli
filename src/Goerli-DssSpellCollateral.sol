@@ -129,10 +129,7 @@ contract DssSpellCollateralAction {
             "join-dec-not-match"
         );
 
-        /*
-         * init the RwaLiquidationOracle2
-         */
-        // TODO: this should be verified with RWA Team (5 min for testing is good)
+        // Init the RwaLiquidationOracle
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA008_A_INITIAL_PRICE, RWA008_DOC, RWA008_A_TAU);
         (, address pip, , ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
 
@@ -223,9 +220,7 @@ contract DssSpellCollateralAction {
             "join-dec-not-match"
         );
 
-        /*
-         * init the RwaLiquidationOracle
-         */
+        // Init the RwaLiquidationOracle
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA009_A_INITIAL_PRICE, RWA009_DOC, RWA009_A_TAU);
         (, address pip, , ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
 
