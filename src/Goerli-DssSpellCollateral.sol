@@ -61,9 +61,9 @@ contract DssSpellCollateralAction {
     uint256 constant ZERO_ZERO_FIVE_PCT_RATE = 1000000000015850933588756013;
 
     // --- Math ---
-    uint256 public constant WAD      = 10**18;
-    uint256 public constant RAY      = 10**27;
-    uint256 public constant RAD      = 10**45;
+    uint256 public constant WAD = 10**18;
+    uint256 public constant RAY = 10**27;
+    uint256 public constant RAD = 10**45;
 
     // -- RWA008 MIP21 components --
     address constant RWA008                    = 0x30434AA15F85598F45406d08A79dCdD9a79335e9;
