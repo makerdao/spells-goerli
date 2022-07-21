@@ -34,6 +34,10 @@ interface RwaLiquidationLike {
 }
 
 interface RwaUrnLike {
+    function vat() external view returns(address);
+    function jug() external view returns(address);
+    function gemJoin() external view returns(address);
+    function daiJoin() external view returns(address);
     function hope(address) external;
     function lock(uint256) external;
 }
@@ -112,7 +116,8 @@ contract DssSpellCollateralAction {
         address MIP21_LIQUIDATION_ORACLE,
         address MCD_VAT,
         address MCD_JUG,
-        address MCD_SPOT
+        address MCD_SPOT,
+        address MCD_JOIN_DAI
     ) internal {
         // RWA008-A collateral deploy
 
@@ -127,6 +132,10 @@ contract DssSpellCollateralAction {
             GemJoinAbstract(MCD_JOIN_RWA008_A).dec() == DSTokenAbstract(RWA008).decimals(),
             "join-dec-not-match"
         );
+
+        require(RwaUrnLike(RWA008_A_URN).vat() == MCD_VAT, "urn-vat-not-match");
+        require(RwaUrnLike(RWA008_A_URN).jug() == MCD_JUG, "urn-jug-not-match");
+        require(RwaUrnLike(RWA008_A_URN).daiJoin() == MCD_JOIN_DAI, "urn-daijoin-not-match");
 
         // Init the RwaLiquidationOracle
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA008_A_INITIAL_PRICE, RWA008_DOC, RWA008_A_TAU);
@@ -205,7 +214,8 @@ contract DssSpellCollateralAction {
         address MIP21_LIQUIDATION_ORACLE,
         address MCD_VAT,
         address MCD_JUG,
-        address MCD_SPOT
+        address MCD_SPOT,
+        address MCD_JOIN_DAI
     ) internal {
         // Set ilk bytes32 variable
         bytes32 ilk = "RWA009-A";
@@ -218,6 +228,10 @@ contract DssSpellCollateralAction {
             GemJoinAbstract(MCD_JOIN_RWA009_A).dec() == DSTokenAbstract(RWA009).decimals(),
             "join-dec-not-match"
         );
+
+        require(RwaUrnLike(RWA009_A_URN).vat() == MCD_VAT, "urn-vat-not-match");
+        require(RwaUrnLike(RWA009_A_URN).jug() == MCD_JUG, "urn-jug-not-match");
+        require(RwaUrnLike(RWA009_A_URN).daiJoin() == MCD_JOIN_DAI, "urn-daijoin-not-match");
 
         // Init the RwaLiquidationOracle
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA009_A_INITIAL_PRICE, RWA009_DOC, RWA009_A_TAU);
@@ -285,13 +299,14 @@ contract DssSpellCollateralAction {
         address MCD_VAT                  = CHANGELOG.getAddress("MCD_VAT");
         address MCD_JUG                  = CHANGELOG.getAddress("MCD_JUG");
         address MCD_SPOT                 = CHANGELOG.getAddress("MCD_SPOT");
+        address MCD_JOIN_DAI             = CHANGELOG.getAddress("MCD_JOIN_DAI");
         // --------------------------- RWA Collateral onboarding ---------------------------
 
         // Onboard SocGen: https://vote.makerdao.com/polling/QmajCtnG
-        onboardRwa008(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT);
+        onboardRwa008(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI);
 
         // Onboard HvB: https://vote.makerdao.com/polling/QmQMDasC
-        onboardRwa009(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT);
+        onboardRwa009(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI);
     }
 
     function offboardCollaterals() internal {}
