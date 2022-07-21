@@ -162,8 +162,6 @@ contract DssSpellCollateralAction {
         // give the urn permissions on the join adapter
         GemJoinAbstract(MCD_JOIN_RWA008_A).rely(RWA008_A_URN);
 
-        // DSS_PAUSE_PROXY permission on URN
-        RwaUrnLike(RWA009_A_URN).hope(address(this));
         // Helper contract permisison on URN
         RwaUrnLike(RWA008_A_URN).hope(RWA008_A_URN_CLOSE_HELPER);
 
@@ -254,6 +252,9 @@ contract DssSpellCollateralAction {
 
         // give the urn permissions on the join adapter
         GemJoinAbstract(MCD_JOIN_RWA009_A).rely(RWA009_A_URN);
+
+        // DSS_PAUSE_PROXY permission on URN
+        RwaUrnLike(RWA009_A_URN).hope(address(this));
 
         // Add RWA009 contract to the changelog
         CHANGELOG.setAddress("RWA009",                  RWA009);
