@@ -922,7 +922,7 @@ contract TestSpell {
     }
 }
 
-// R WA008 Test Spells
+// RWA008 Test Spells
 
 contract EndSpellRwa008Action {
     function execute() public {

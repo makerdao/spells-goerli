@@ -121,21 +121,18 @@ contract DssSpellCollateralAction {
     ) internal {
         // RWA008-A collateral deploy
 
-        // Set ilk bytes32 variable
-        bytes32 ilk = "RWA008-A";
+        bytes32 ilk      = "RWA008-A";
+        uint256 decimals = DSTokenAbstract(RWA008).decimals();
 
         // Sanity checks
-        require(GemJoinAbstract(MCD_JOIN_RWA008_A).vat() == MCD_VAT, "join-vat-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA008_A).ilk() == ilk,     "join-ilk-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA008_A).gem() == RWA008,  "join-gem-not-match");
-        require(
-            GemJoinAbstract(MCD_JOIN_RWA008_A).dec() == DSTokenAbstract(RWA008).decimals(),
-            "join-dec-not-match"
-        );
+        require(GemJoinAbstract(MCD_JOIN_RWA008_A).vat() == MCD_VAT,  "join-vat-not-match");
+        require(GemJoinAbstract(MCD_JOIN_RWA008_A).ilk() == ilk,      "join-ilk-not-match");
+        require(GemJoinAbstract(MCD_JOIN_RWA008_A).gem() == RWA008,   "join-gem-not-match");
+        require(GemJoinAbstract(MCD_JOIN_RWA008_A).dec() == decimals, "join-dec-not-match");
 
-        require(RwaUrnLike(RWA008_A_URN).vat() == MCD_VAT, "urn-vat-not-match");
-        require(RwaUrnLike(RWA008_A_URN).jug() == MCD_JUG, "urn-jug-not-match");
-        require(RwaUrnLike(RWA008_A_URN).daiJoin() == MCD_JOIN_DAI, "urn-daijoin-not-match");
+        require(RwaUrnLike(RWA008_A_URN).vat() == MCD_VAT,               "urn-vat-not-match");
+        require(RwaUrnLike(RWA008_A_URN).jug() == MCD_JUG,               "urn-jug-not-match");
+        require(RwaUrnLike(RWA008_A_URN).daiJoin() == MCD_JOIN_DAI,      "urn-daijoin-not-match");
         require(RwaUrnLike(RWA008_A_URN).gemJoin() == MCD_JOIN_RWA008_A, "urn-gemjoin-not-match");
 
         // Init the RwaLiquidationOracle
@@ -218,21 +215,20 @@ contract DssSpellCollateralAction {
         address MCD_SPOT,
         address MCD_JOIN_DAI
     ) internal {
-        // Set ilk bytes32 variable
-        bytes32 ilk = "RWA009-A";
+        // RWA009-A collateral deploy
+
+        bytes32 ilk      = "RWA009-A";
+        uint256 decimals = DSTokenAbstract(RWA009).decimals();
 
         // Sanity checks
-        require(GemJoinAbstract(MCD_JOIN_RWA009_A).vat() == MCD_VAT, "join-vat-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA009_A).ilk() == ilk,     "join-ilk-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA009_A).gem() == RWA009,  "join-gem-not-match");
-        require(
-            GemJoinAbstract(MCD_JOIN_RWA009_A).dec() == DSTokenAbstract(RWA009).decimals(),
-            "join-dec-not-match"
-        );
+        require(GemJoinAbstract(MCD_JOIN_RWA009_A).vat() == MCD_VAT,  "join-vat-not-match");
+        require(GemJoinAbstract(MCD_JOIN_RWA009_A).ilk() == ilk,      "join-ilk-not-match");
+        require(GemJoinAbstract(MCD_JOIN_RWA009_A).gem() == RWA009,   "join-gem-not-match");
+        require(GemJoinAbstract(MCD_JOIN_RWA009_A).dec() == decimals, "join-dec-not-match");
 
-        require(RwaUrnLike(RWA009_A_URN).vat() == MCD_VAT, "urn-vat-not-match");
-        require(RwaUrnLike(RWA009_A_URN).jug() == MCD_JUG, "urn-jug-not-match");
-        require(RwaUrnLike(RWA009_A_URN).daiJoin() == MCD_JOIN_DAI, "urn-daijoin-not-match");
+        require(RwaUrnLike(RWA009_A_URN).vat() == MCD_VAT,               "urn-vat-not-match");
+        require(RwaUrnLike(RWA009_A_URN).jug() == MCD_JUG,               "urn-jug-not-match");
+        require(RwaUrnLike(RWA009_A_URN).daiJoin() == MCD_JOIN_DAI,      "urn-daijoin-not-match");
         require(RwaUrnLike(RWA009_A_URN).gemJoin() == MCD_JOIN_RWA009_A, "urn-gemjoin-not-match");
 
         // Init the RwaLiquidationOracle
