@@ -136,6 +136,7 @@ contract DssSpellCollateralAction {
         require(RwaUrnLike(RWA008_A_URN).vat() == MCD_VAT, "urn-vat-not-match");
         require(RwaUrnLike(RWA008_A_URN).jug() == MCD_JUG, "urn-jug-not-match");
         require(RwaUrnLike(RWA008_A_URN).daiJoin() == MCD_JOIN_DAI, "urn-daijoin-not-match");
+        require(RwaUrnLike(RWA008_A_URN).gemJoin() == MCD_JOIN_RWA008_A, "urn-gemjoin-not-match");
 
         // Init the RwaLiquidationOracle
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA008_A_INITIAL_PRICE, RWA008_DOC, RWA008_A_TAU);
@@ -232,6 +233,7 @@ contract DssSpellCollateralAction {
         require(RwaUrnLike(RWA009_A_URN).vat() == MCD_VAT, "urn-vat-not-match");
         require(RwaUrnLike(RWA009_A_URN).jug() == MCD_JUG, "urn-jug-not-match");
         require(RwaUrnLike(RWA009_A_URN).daiJoin() == MCD_JOIN_DAI, "urn-daijoin-not-match");
+        require(RwaUrnLike(RWA009_A_URN).gemJoin() == MCD_JOIN_RWA009_A, "urn-gemjoin-not-match");
 
         // Init the RwaLiquidationOracle
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA009_A_INITIAL_PRICE, RWA009_DOC, RWA009_A_TAU);
