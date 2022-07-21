@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
-
 // Enable ABIEncoderV2 when onboarding collateral through `DssExecLib.addNewCollateral()`
 // pragma experimental ABIEncoderV2;
 
@@ -67,9 +66,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     }
 
     function drawFromRWA009Urn() internal {
-        // DSS_PAUSE_PROXY permission on URN
-        RwaUrnLike(RWA009_A_URN).hope(address(this));
-
         // lock RWA009 Token in the URN
         DSTokenAbstract(RWA009).approve(RWA009_A_URN, 1 * WAD);
         RwaUrnLike(RWA009_A_URN).lock(1 * WAD);

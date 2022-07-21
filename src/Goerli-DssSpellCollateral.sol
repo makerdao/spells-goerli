@@ -15,6 +15,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
+// Enable ABIEncoderV2 when onboarding collateral through `DssExecLib.addNewCollateral()`
+// pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExecLib.sol";
 import "dss-interfaces/dapp/DSTokenAbstract.sol";
@@ -160,7 +162,9 @@ contract DssSpellCollateralAction {
         // give the urn permissions on the join adapter
         GemJoinAbstract(MCD_JOIN_RWA008_A).rely(RWA008_A_URN);
 
-        // set up the urn
+        // DSS_PAUSE_PROXY permission on URN
+        RwaUrnLike(RWA009_A_URN).hope(address(this));
+        // Helper contract permisison on URN
         RwaUrnLike(RWA008_A_URN).hope(RWA008_A_URN_CLOSE_HELPER);
 
         RwaUrnLike(RWA008_A_URN).hope(RWA008_A_OPERATOR);
@@ -238,9 +242,6 @@ contract DssSpellCollateralAction {
         // 100m debt ceiling
         VatAbstract(MCD_VAT).file(ilk, "line", RWA009_A_INITIAL_DC);
         VatAbstract(MCD_VAT).file("Line", VatAbstract(MCD_VAT).Line() + RWA009_A_INITIAL_DC);
-
-        // No dust
-        // VatAbstract(MCD_VAT).file(ilk, "dust", 0)
 
         // 0% stability fee
         JugAbstract(MCD_JUG).file(ilk, "duty", ZERO_PCT_RATE);
