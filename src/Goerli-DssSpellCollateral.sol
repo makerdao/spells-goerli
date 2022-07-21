@@ -23,10 +23,11 @@ import "dss-interfaces/dapp/DSTokenAbstract.sol";
 import "dss-interfaces/dss/ChainlogAbstract.sol";
 import "dss-interfaces/dss/GemJoinAbstract.sol";
 import "dss-interfaces/dss/IlkRegistryAbstract.sol";
-import "dss-interfaces/dss/JugAbstract.sol";
-import "dss-interfaces/dss/SpotAbstract.sol";
-import "dss-interfaces/dss/VatAbstract.sol";
 import "dss-interfaces/ERC/GemAbstract.sol";
+
+interface Initializeable {
+    function init(bytes32) external;
+}
 
 interface RwaLiquidationLike {
     function ilks(bytes32) external returns (string memory, address, uint48, uint48);
@@ -83,13 +84,17 @@ contract DssSpellCollateralAction {
     // DIIS Group wallet
     address constant RWA008_A_MATE             = 0xb9444802F0831A3EB9f90E24EFe5FfA20138d684;
 
-    uint256 constant RWA008_A_INITIAL_DC       = 30_000_000 * RAD;
+    string  constant RWA008_DOC                = "QmdfzY6p5EpkYMN8wcomF2a1GsJbhkPiRQVRYSPfS4NZtB";
     uint256 constant RWA008_A_INITIAL_PRICE    = 30_437_069 * WAD;
-    uint48 constant  RWA008_A_TAU              = 0;
+    uint48  constant RWA008_A_TAU              = 0;
 
+    // Ilk registry params
     uint256 constant RWA008_REG_CLASS_RWA      = 3;
 
-    string constant RWA008_DOC                 = "QmdfzY6p5EpkYMN8wcomF2a1GsJbhkPiRQVRYSPfS4NZtB";
+    // Remaining params
+    uint256 constant RWA008_A_LINE             = 30_000_000;
+    uint256 constant RWA008_A_MAT              = 100_00; // 100% in basis-points
+    uint256 constant RWA008_A_RATE             = ZERO_ZERO_FIVE_PCT_RATE;
     // -- RWA008 end --
 
     // -- RWA009 MIP21 components --
@@ -101,13 +106,18 @@ contract DssSpellCollateralAction {
     address constant RWA009_A_OUTPUT_CONDUIT = 0x7a3D23Dc73F7ead55399597aAE6e525b3DF95A88;
 
     // MIP21_LIQUIDATION_ORACLE params
-    uint256 constant RWA009_A_INITIAL_DC     = 100_000_000 * RAD;
-    uint256 constant RWA009_A_INITIAL_PRICE  = 100_000_000 * WAD;
+    string  constant RWA009_DOC              = "QmZG31b6iLGGCLGD7ZUn8EDkE9kANPVMcHzEYkvyNWCZpG";
+    uint256 constant RWA009_A_INITIAL_PRICE  = 100_000_000 * WAD; // No DssExecLib helper, so WAD is required
     uint48  constant RWA009_A_TAU            = 0;
 
+    // Ilk registry params
     uint256 constant RWA009_REG_CLASS_RWA    = 3;
 
-    string constant RWA009_DOC               = "QmZG31b6iLGGCLGD7ZUn8EDkE9kANPVMcHzEYkvyNWCZpG";
+    // Remaining params
+    uint256 constant RWA009_A_LINE           = 100_000_000;
+    uint256 constant RWA009_A_MAT            = 100_00; // 100% in basis-points
+    uint256 constant RWA009_A_RATE           = ZERO_PCT_RATE;
+
     // -- RWA009 END --
 
     function onboardRwa008(
@@ -120,7 +130,6 @@ contract DssSpellCollateralAction {
         address MCD_JOIN_DAI
     ) internal {
         // RWA008-A collateral deploy
-
         bytes32 ilk      = "RWA008-A";
         uint256 decimals = DSTokenAbstract(RWA008).decimals();
 
@@ -140,48 +149,46 @@ contract DssSpellCollateralAction {
         (, address pip, , ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
 
         // Set price feed for RWA008
-        SpotAbstract(MCD_SPOT).file(ilk, "pip", pip);
+        DssExecLib.setContract(MCD_SPOT, ilk, "pip", pip);
 
         // Init RWA008 in Vat
-        VatAbstract(MCD_VAT).init(ilk);
+        Initializable(MCD_VAT).init(ilk);
         // Init RWA008 in Jug
-        JugAbstract(MCD_JUG).init(ilk);
+        Initializable(MCD_JUG).init(ilk);
 
         // Allow RWA008 Join to modify Vat registry
-        VatAbstract(MCD_VAT).rely(MCD_JOIN_RWA008_A);
+        DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA008_A);
 
-        // Allow RwaLiquidationOracle to modify Vat registry
-        VatAbstract(MCD_VAT).rely(MIP21_LIQUIDATION_ORACLE);
+        // Allow RwaLiquidationOracle2 to modify Vat registry
+        DssExecLib.authorize(MCD_VAT, MIP21_LIQUIDATION_ORACLE);
 
-        // debt ceiling
-        VatAbstract(MCD_VAT).file(ilk, "line", RWA008_A_INITIAL_DC);
-        VatAbstract(MCD_VAT).file("Line", VatAbstract(MCD_VAT).Line() + RWA008_A_INITIAL_DC);
+        // Set the debt ceiling
+        DssExecLib.increaseIlkDebtCeiling(ilk, RWA008_A_LINE, /* _global = */ true);
 
-        // 0.05% stability fee
-        JugAbstract(MCD_JUG).file(ilk, "duty", ZERO_ZERO_FIVE_PCT_RATE);
+        // Set the stability fee
+        DssExecLib.setIlkStabilityFee(ilk, RWA008_A_RATE, /* _doDrip = */ false);
 
-        // collateralization ratio 100%
-        SpotAbstract(MCD_SPOT).file(ilk, "mat", RAY);
+        // Set the collateralization ratio
+        DssExecLib.setIlkLiquidationRatio(ilk, RWA008_A_MAT);
 
-        // poke the spotter to pull in a price
-        SpotAbstract(MCD_SPOT).poke(ilk);
+        // Poke the spotter to pull in a price
+        DssExecLib.updateCollateralPrice(ilk);
 
-        // give the urn permissions on the join adapter
-        GemJoinAbstract(MCD_JOIN_RWA008_A).rely(RWA008_A_URN);
+        // Give the urn permissions on the join adapter
+        DssExecLib.authorize(MCD_JOIN_RWA008_A, RWA008_A_URN);
 
         // Helper contract permisison on URN
         RwaUrnLike(RWA008_A_URN).hope(RWA008_A_URN_CLOSE_HELPER);
-
         RwaUrnLike(RWA008_A_URN).hope(RWA008_A_OPERATOR);
 
-        // set up output conduit
+        // Set up output conduit
         RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).hope(RWA008_A_OPERATOR);
 
-        // whitelist DIIS Group in the conduits
+        // Whitelist DIIS Group in the conduits
         RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).mate(RWA008_A_MATE);
         RwaInputConduitLike(RWA008_A_INPUT_CONDUIT)  .mate(RWA008_A_MATE);
 
-        // whitelist Socgen in the conduits
+        // Whitelist Socgen in the conduits
         RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).mate(RWA008_A_OPERATOR);
         RwaInputConduitLike(RWA008_A_INPUT_CONDUIT)  .mate(RWA008_A_OPERATOR);
 
@@ -197,7 +204,7 @@ contract DssSpellCollateralAction {
             "RWA008-A",
             MCD_JOIN_RWA008_A,
             RWA008,
-            GemJoinAbstract(MCD_JOIN_RWA008_A).dec(),
+            decimals,
             RWA008_REG_CLASS_RWA,
             pip,
             address(0),
@@ -216,7 +223,6 @@ contract DssSpellCollateralAction {
         address MCD_JOIN_DAI
     ) internal {
         // RWA009-A collateral deploy
-
         bytes32 ilk      = "RWA009-A";
         uint256 decimals = DSTokenAbstract(RWA009).decimals();
 
@@ -236,34 +242,33 @@ contract DssSpellCollateralAction {
         (, address pip, , ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
 
         // Set price feed for RWA009
-        SpotAbstract(MCD_SPOT).file(ilk, "pip", pip);
+        DssExecLib.setContract(MCD_SPOT, ilk, "pip", pip);
 
         // Init RWA009 in Vat
-        VatAbstract(MCD_VAT).init(ilk);
+        Initializable(MCD_VAT).init(ilk);
         // Init RWA009 in Jug
-        JugAbstract(MCD_JUG).init(ilk);
+        Initializable(MCD_JUG).init(ilk);
 
         // Allow RWA009 Join to modify Vat registry
-        VatAbstract(MCD_VAT).rely(MCD_JOIN_RWA009_A);
+        DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA009_A);
 
         // Allow RwaLiquidationOracle2 to modify Vat registry
-        VatAbstract(MCD_VAT).rely(MIP21_LIQUIDATION_ORACLE);
+        // DssExecLib.authorize(MCD_VAT, MIP21_LIQUIDATION_ORACLE);
 
         // 100m debt ceiling
-        VatAbstract(MCD_VAT).file(ilk, "line", RWA009_A_INITIAL_DC);
-        VatAbstract(MCD_VAT).file("Line", VatAbstract(MCD_VAT).Line() + RWA009_A_INITIAL_DC);
+        DssExecLib.increaseIlkDebtCeiling(ilk, RWA009_A_LINE, /* _global = */ true);
 
-        // 0% stability fee
-        JugAbstract(MCD_JUG).file(ilk, "duty", ZERO_PCT_RATE);
+        // Set the stability fee
+        DssExecLib.setIlkStabilityFee(ilk, RWA009_A_RATE, /* _doDrip = */ false);
 
-        // collateralization ratio 100%
-        SpotAbstract(MCD_SPOT).file(ilk, "mat", RAY);
+        // Set collateralization ratio
+        DssExecLib.setIlkLiquidationRatio(ilk, RWA009_A_MAT);
 
-        // poke the spotter to pull in a price
-        SpotAbstract(MCD_SPOT).poke(ilk);
+        // Poke the spotter to pull in a price
+        DssExecLib.updateCollateralPrice(ilk);
 
-        // give the urn permissions on the join adapter
-        GemJoinAbstract(MCD_JOIN_RWA009_A).rely(RWA009_A_URN);
+        // Give the urn permissions on the join adapter
+        DssExecLib.authorize(MCD_JOIN_RWA009_A, RWA009_A_URN);
 
         // DSS_PAUSE_PROXY permission on URN
         RwaUrnLike(RWA009_A_URN).hope(address(this));
@@ -281,7 +286,7 @@ contract DssSpellCollateralAction {
             "RWA009-A",
             MCD_JOIN_RWA009_A,
             RWA009,
-            GemJoinAbstract(MCD_JOIN_RWA009_A).dec(),
+            decimals,
             RWA009_REG_CLASS_RWA,
             pip,
             address(0),
@@ -294,10 +299,11 @@ contract DssSpellCollateralAction {
         ChainlogAbstract CHANGELOG       = ChainlogAbstract(DssExecLib.LOG);
         IlkRegistryAbstract REGISTRY     = IlkRegistryAbstract(DssExecLib.reg());
         address MIP21_LIQUIDATION_ORACLE = CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE");
-        address MCD_VAT                  = CHANGELOG.getAddress("MCD_VAT");
-        address MCD_JUG                  = CHANGELOG.getAddress("MCD_JUG");
-        address MCD_SPOT                 = CHANGELOG.getAddress("MCD_SPOT");
-        address MCD_JOIN_DAI             = CHANGELOG.getAddress("MCD_JOIN_DAI");
+        address MCD_VAT                  = DssExecLib.vat();
+        address MCD_JUG                  = DssExecLib.jug();
+        address MCD_SPOT                 = DssExecLib.spotter();
+        address MCD_JOIN_DAI             = DssExecLib.daiJoin();
+
         // --------------------------- RWA Collateral onboarding ---------------------------
 
         // Onboard SocGen: https://vote.makerdao.com/polling/QmajCtnG
