@@ -201,7 +201,7 @@ contract DssSpellCollateralAction {
         CHANGELOG.setAddress("RWA008_A_OUTPUT_CONDUIT", RWA008_A_OUTPUT_CONDUIT);
 
         REGISTRY.put(
-            "RWA008-A",
+            ilk,
             MCD_JOIN_RWA008_A,
             RWA008,
             decimals,
@@ -283,7 +283,7 @@ contract DssSpellCollateralAction {
 
         // Add RWA009 to ILK REGISTRY
         REGISTRY.put(
-            "RWA009-A",
+            ilk,
             MCD_JOIN_RWA009_A,
             RWA009,
             decimals,
