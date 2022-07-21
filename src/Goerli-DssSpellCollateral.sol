@@ -85,15 +85,7 @@ contract DssSpellCollateralAction {
     address constant RWA008_A_MATE             = 0xb9444802F0831A3EB9f90E24EFe5FfA20138d684;
 
     string  constant RWA008_DOC                = "QmdfzY6p5EpkYMN8wcomF2a1GsJbhkPiRQVRYSPfS4NZtB";
-    /**
-     * The Future Value of the debt ceiling by the end of the agreement:
-     *   - 30,000,00 USD: Debt Ceiling
-     *   - 0.05% per year: Stability Fee
-     *   - 2.9 years: Duration of the Loan
-     *
-     *     bc -l <<< 'scale=18; (30000000 * e( l(1.0005) * 2.9 ))'
-     */
-    uint256 constant RWA008_A_INITIAL_PRICE    = 30_043_520_665599336150000000;
+    uint256 constant RWA008_A_INITIAL_PRICE    = 30_437_069 * WAD;
     uint48  constant RWA008_A_TAU              = 0;
 
     // Ilk registry params
@@ -167,6 +159,9 @@ contract DssSpellCollateralAction {
         // Allow RWA008 Join to modify Vat registry
         DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA008_A);
 
+        // Allow RwaLiquidationOracle2 to modify Vat registry
+        DssExecLib.authorize(MCD_VAT, MIP21_LIQUIDATION_ORACLE);
+
         // Set the debt ceiling
         DssExecLib.increaseIlkDebtCeiling(ilk, RWA008_A_LINE, /* _global = */ true);
 
@@ -193,7 +188,7 @@ contract DssSpellCollateralAction {
         RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).mate(RWA008_A_MATE);
         RwaInputConduitLike(RWA008_A_INPUT_CONDUIT)  .mate(RWA008_A_MATE);
 
-        // Whitelist Socgen in the conduits as a fallback for DIIS Group
+        // Whitelist Socgen in the conduits
         RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).mate(RWA008_A_OPERATOR);
         RwaInputConduitLike(RWA008_A_INPUT_CONDUIT)  .mate(RWA008_A_OPERATOR);
 
@@ -257,6 +252,9 @@ contract DssSpellCollateralAction {
         // Allow RWA009 Join to modify Vat registry
         DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA009_A);
 
+        // Allow RwaLiquidationOracle2 to modify Vat registry
+        // DssExecLib.authorize(MCD_VAT, MIP21_LIQUIDATION_ORACLE);
+
         // 100m debt ceiling
         DssExecLib.increaseIlkDebtCeiling(ilk, RWA009_A_LINE, /* _global = */ true);
 
@@ -272,7 +270,7 @@ contract DssSpellCollateralAction {
         // Give the urn permissions on the join adapter
         DssExecLib.authorize(MCD_JOIN_RWA009_A, RWA009_A_URN);
 
-        // MCD_PAUSE_PROXY permission on URN
+        // DSS_PAUSE_PROXY permission on URN
         RwaUrnLike(RWA009_A_URN).hope(address(this));
 
         // Add RWA009 contract to the changelog
@@ -307,10 +305,6 @@ contract DssSpellCollateralAction {
         address MCD_JOIN_DAI             = DssExecLib.daiJoin();
 
         // --------------------------- RWA Collateral onboarding ---------------------------
-
-        // Add missing authorization on Goerli (this is necessary for all the MIP21 RWAs)
-        // It was forgotten to be added since the Kovan => Goerli migration happened
-        DssExecLib.authorize(MCD_VAT, MIP21_LIQUIDATION_ORACLE);
 
         // Onboard SocGen: https://vote.makerdao.com/polling/QmajCtnG
         onboardRwa008(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI);
