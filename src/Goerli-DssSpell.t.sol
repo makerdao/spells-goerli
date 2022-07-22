@@ -534,7 +534,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         (, address pip, , ) = oracle.ilks("RWA008-A");
 
-        assertEq(DSValueAbstract(pip).read(), bytes32(30_437_069 * WAD), "RWA008: Bad initial PIP value");
+        assertEq(
+            DSValueAbstract(pip).read(),
+            bytes32(uint256(30_043_520_665599336150000000)),
+            "RWA008: Bad initial PIP value"
+        );
 
         oracle.bump("RWA008-A", 40 * MILLION * WAD);
 
