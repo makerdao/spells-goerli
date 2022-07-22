@@ -617,7 +617,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(DSValueAbstract(pip).read(), bytes32(0), "RWA008: Oracle PIP value not set to zero after cull()");
     }
 
-    function testRWA008_OPERATOR_GET_RWA008_TOKEN() public {
+    function testRWA008_OPERATOR_OWNS_RWA008_TOKEN_BEFORE_SPELL() public {
         assertEq(rwagem_008.balanceOf(rwaOperator_008), 1 * WAD);
     }
 
@@ -798,6 +798,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(DSValueAbstract(pip).read(), bytes32(0), "RWA009: Oracle PIP value not set to zero after cull()");
     }
 
+    function testRWA009_PAUSE_PROXY_OWNS_RWA009_TOKEN_BEFORE_SPELL() public {
+        assertEq(rwagem_009.balanceOf(addr.addr('MCD_PAUSE_PROXY')), 1 * WAD);
+    }
+
     function testRWA009_SPELL_OPERATOR_WIPE_FREE() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
@@ -810,6 +814,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(rwaurn_009.can(address(this)), 1);
 
         // Check if spell lock 1 * WAD of RWA009
+        assertEq(rwagem_009.balanceOf(addr.addr('MCD_PAUSE_PROXY')), 0, "RWA009: gem not transfered from the pause proxy");
         assertEq(rwagem_009.balanceOf(address(rwajoin_009)), 1 * WAD, "RWA009: gem not locked into the urn");
 
         // Check if spell draw 25mm DAI to GENESIS
