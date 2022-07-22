@@ -72,7 +72,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
         // draw DAI to genesis address
         RwaUrnLike(RWA009_A_URN).draw(RWA009_DRAW_AMOUNT);
-
     }
 }
 
