@@ -85,7 +85,15 @@ contract DssSpellCollateralAction {
     address constant RWA008_A_MATE             = 0xb9444802F0831A3EB9f90E24EFe5FfA20138d684;
 
     string  constant RWA008_DOC                = "QmdfzY6p5EpkYMN8wcomF2a1GsJbhkPiRQVRYSPfS4NZtB";
-    uint256 constant RWA008_A_INITIAL_PRICE    = 30_437_069 * WAD;
+    /**
+     * The Future Value of the debt ceiling by the end of the agreement:
+     *   - 30,000,00 USD: Debt Ceiling
+     *   - 0.05% per year: Stability Fee
+     *   - 2.9 years: Duration of the Loan
+     *
+     *     bc -l <<< 'scale=18; (30000000 * e( l(1.0005) * 2.9 ))'
+     */
+    uint256 constant RWA008_A_INITIAL_PRICE    = 30_043_520_665599336150000000;
     uint48  constant RWA008_A_TAU              = 0;
 
     // Ilk registry params
