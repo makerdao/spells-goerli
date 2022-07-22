@@ -710,6 +710,85 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertLt(art, 4, "RWA008: Bad `art` - larger than conversion error dust after wipe()"); // wad -> rad conversion in wipe leaves some dust
     }
 
+    function testRWA008_OPERATOR_LOCK_DRAW_CAGE() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // set the balance of this contract
+        hevm.store(address(rwagem_008), keccak256(abi.encode(address(this), uint256(3))), bytes32(uint256(1 * WAD)));
+        assertEq(rwagem_008.balanceOf(address(this)), 1 * WAD, "RWA008: wrong gem balance");
+        // setting address(this) as operator
+        hevm.store(address(rwaurn_008), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
+        assertEq(rwaurn_008.can(address(this)), 1, "RWA008: address(this) not operator");
+
+        rwagem_008.approve(address(rwaurn_008), 1 * WAD);
+        rwaurn_008.lock(1 * WAD);
+        assertEq(dai.balanceOf(address(rwaconduitout_008)), 0, "RWA008: dai balance is not zero for output conduit");
+        rwaurn_008.draw(1_000_000 * WAD);
+
+        (uint256 ink, uint256 art) = vat.urns("RWA008-A", address(rwaurn_008));
+        assertEq(ink, 1 * WAD, "RWA008: wrong ink in urn");
+        assertEq(art, 1_000_000 * WAD, "RWA008: wrong art in urn"); // rate == 1 RAY (drip was never called and passed 0 seconds after init)
+
+        // wards
+        giveAuth(address(rwaconduitout_008), address(this));
+        // can
+        hevm.store(address(rwaconduitout_008), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
+        assertEq(rwaconduitout_008.can(address(this)), 1, "RWA008: output conduit not operator");
+        // may
+        hevm.store(address(rwaconduitout_008), keccak256(abi.encode(address(this), uint256(6))), bytes32(uint256(1)));
+        assertEq(rwaconduitout_008.may(address(this)), 1, "RWA008: output conduit not mate");
+
+        assertEq(dai.balanceOf(address(rwaconduitout_008)), 1_000_000 * WAD, "RWA008: wrong dai balance output conduit");
+
+        rwaconduitout_008.pick(address(this));
+
+        rwaconduitout_008.push();
+
+        assertEq(dai.balanceOf(address(this)), 1_000_000 * WAD, "RWA008: wrong dai balance address(this)");
+
+        giveAuth(address(end), address(this));
+        end.cage();
+        end.cage("RWA008-A");
+
+        end.skim("RWA008-A", address(rwaurn_008));
+
+        (ink, art) = vat.urns("RWA008-A", address(rwaurn_008));
+        assertEq(ink, 1 * WAD - (1_000_000 * WAD * WAD / 30_043_520_665599336150000000), "RWA008: wrong ink in urn after skim");
+        assertEq(art, 0, "RWA008: wrong art in urn after skim");
+
+        hevm.warp(block.timestamp + end.wait());
+
+        vow.heal(min(vat.dai(address(vow)), sub(sub(vat.sin(address(vow)), vow.Sin()), vow.Ash())));
+
+        // Removing the surplus to allow continuing the execution.
+        hevm.store(
+            address(vat),
+            keccak256(abi.encode(address(vow), uint256(5))),
+            bytes32(uint256(0))
+        );
+
+        end.thaw();
+
+        end.flow("RWA008-A");
+
+        dai.approve(address(daiJoin), 1_000_000 * WAD);
+        daiJoin.join(address(this), 1_000_000 * WAD);
+
+        vat.hope(address(end));
+        end.pack(1_000_000 * WAD);
+
+        assertEq(vat.gem("RWA008-A", address(this)), 0, "RWA008: wrong vat gem");
+        assertEq(rwagem_008.balanceOf(address(this)), 0, "RWA008: wrong gem balance");
+        end.cash("RWA008-A", 1_000_000 * WAD);
+        assertGt(vat.gem("RWA008-A", address(this)), 0, "RWA008: wrong vat gem after cash");
+        assertEq(rwagem_008.balanceOf(address(this)), 0, "RWA008: wrong gem balance after cash");
+        rwajoin_008.exit(address(this), vat.gem("RWA008-A", address(this)));
+        assertEq(vat.gem("RWA008-A", address(this)), 0, "RWA008: wrong vat gem after exit");
+        assertGt(rwagem_008.balanceOf(address(this)), 0, "RWA008: wrong gem balance after exit");
+    }
+
     function testRWA009_INTEGRATION_BUMP() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
@@ -802,7 +881,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(rwagem_009.balanceOf(addr.addr('MCD_PAUSE_PROXY')), 1 * WAD);
     }
 
-    function testRWA009_SPELL_OPERATOR_WIPE_FREE() public {
+    function testRWA009_SPELL_OPERATOR_LOCK_DRAW_WIPE_FREE() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -855,5 +934,68 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         (ink, art) = vat.urns("RWA009-A", address(rwaurn_009));
         assertEq(ink, 0, "RWA009: bad `ink` after free()");
         assertEq(art, 0, "RWA009: bad `art` after wipe()");
+    }
+
+    function testRWA009_OPERATOR_LOCK_DRAW_CAGE() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        uint256 drawAmount = 25_000_000 * WAD;
+
+        // setting address(this) as operator
+        hevm.store(address(rwaurn_009), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
+        assertEq(rwaurn_009.can(address(this)), 1, "RWA009: address(this) not operator");
+
+        // Check if spell lock 1 * WAD of RWA009
+        assertEq(rwagem_009.balanceOf(address(rwajoin_009)), 1 * WAD, "RWA009: wrong gem balance in join");
+
+        // Check if spell draw 25mm DAI to GENESIS
+        assertEq(dai.balanceOf(address(RWA009_CES_MULTISIG)), drawAmount, "RWA009: wrong dai balance in output conduit");
+
+        (uint256 ink, uint256 art) = vat.urns("RWA009-A", address(rwaurn_009));
+        assertEq(ink, 1 * WAD, "RWA009: wrong ink in urn"); // Whole unit of collateral is locked
+        assertEq(art, drawAmount, "RWA009: wrong art in urn"); // DAI drawn == art as rate should always be 1 RAY
+
+        giveAuth(address(end), address(this));
+        end.cage();
+        end.cage("RWA009-A");
+
+        end.skim("RWA009-A", address(rwaurn_009));
+
+        (ink, art) = vat.urns("RWA009-A", address(rwaurn_009));
+        assertEq(ink, 1 * WAD - (25_000_000 * WAD / 100_000_000), "RWA009: wrong ink in urn after skim");
+        assertEq(art, 0, "RWA009: wrong art in urn after skim");
+
+        hevm.warp(block.timestamp + end.wait());
+
+        vow.heal(min(vat.dai(address(vow)), sub(sub(vat.sin(address(vow)), vow.Sin()), vow.Ash())));
+
+        // Removing the surplus to allow continuing the execution.
+        hevm.store(
+            address(vat),
+            keccak256(abi.encode(address(vow), uint256(5))),
+            bytes32(uint256(0))
+        );
+
+        end.thaw();
+
+        end.flow("RWA009-A");
+
+        giveTokens(address(dai), 1_000_000 * WAD);
+        dai.approve(address(daiJoin), 1_000_000 * WAD);
+        daiJoin.join(address(this), 1_000_000 * WAD);
+
+        vat.hope(address(end));
+        end.pack(1_000_000 * WAD);
+
+        assertEq(vat.gem("RWA009-A", address(this)), 0, "RWA009: wrong vat gem");
+        assertEq(rwagem_009.balanceOf(address(this)), 0, "RWA009: wrong gem balance");
+        end.cash("RWA009-A", 1_000_000 * WAD);
+        assertGt(vat.gem("RWA009-A", address(this)), 0, "RWA009: wrong vat gem after cash");
+        assertEq(rwagem_009.balanceOf(address(this)), 0, "RWA009: wrong gem balance after cash");
+        rwajoin_009.exit(address(this), vat.gem("RWA009-A", address(this)));
+        assertEq(vat.gem("RWA009-A", address(this)), 0, "RWA009: wrong vat gem after exit");
+        assertGt(rwagem_009.balanceOf(address(this)), 0, "RWA009: wrong gem balance after exit");
     }
 }
