@@ -626,8 +626,9 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // TODO: Figure out why warping here makes this test fail
-        // hevm.warp(block.timestamp + 10 days); // Let rate be > 1
+        // Let rate be > 1
+        hevm.warp(block.timestamp + 1 days);
+        jug.drip("RWA008-A");
 
         // set the balance of this contract
         hevm.store(address(rwagem_008), keccak256(abi.encode(address(this), uint256(3))), bytes32(uint256(1 * WAD)));
@@ -678,7 +679,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         (, rate, , , ) = vat.ilks("RWA008-A");
 
-        uint256 daiToPay = (art * rate - dustInVat) / RAY + 1; // extra wei rounding
+        uint256 daiToPay = (art * rate - dustInVat) / RAY + 2; // extra wei rounding
 
         hevm.store(
             address(vat),
