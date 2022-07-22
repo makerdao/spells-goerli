@@ -534,11 +534,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         (, address pip, , ) = oracle.ilks("RWA008-A");
 
-        assertEq(DSValueAbstract(pip).read(), bytes32(30_437_069 * WAD));
+        assertEq(DSValueAbstract(pip).read(), bytes32(30_437_069 * WAD), "RWA008: Bad initial PIP value");
 
         oracle.bump("RWA008-A", 40 * MILLION * WAD);
 
-        assertEq(DSValueAbstract(pip).read(), bytes32(40 * MILLION * WAD));
+        assertEq(DSValueAbstract(pip).read(), bytes32(40 * MILLION * WAD), "RWA008: Bad PIP value after bump()");
     }
 
     function testRWA008_INTEGRATION_TELL() public {
@@ -550,15 +550,15 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         giveAuth(address(oracle), address(this));
 
         (, , , uint48 tocPre) = oracle.ilks("RWA008-A");
-        assertTrue(tocPre == 0);
-        assertTrue(oracle.good("RWA008-A"));
+        assertEq(uint256(tocPre), 0, "RWA008: `toc` is not 0 before tell()");
+        assertTrue(oracle.good("RWA008-A"), "RWA008: Oracle not good before tell()");
 
         vat.file("RWA008-A", "line", 0);
         oracle.tell("RWA008-A");
 
         (, , , uint48 tocPost) = oracle.ilks("RWA008-A");
-        assertTrue(tocPost > 0);
-        assertTrue(!oracle.good("RWA008-A"));
+        assertGt(uint256(tocPost), 0, "RWA008: `toc` is not set after tell()");
+        assertTrue(!oracle.good("RWA008-A"), "RWA008: Oracle still good after tell()");
     }
 
     function testRWA008_INTEGRATION_TELL_CURE_GOOD() public {
@@ -572,16 +572,16 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         vat.file("RWA008-A", "line", 0);
         oracle.tell("RWA008-A");
 
-        assertTrue(!oracle.good("RWA008-A"));
+        assertTrue(!oracle.good("RWA008-A"), "RWA008: Oracle still good after tell()");
 
         oracle.cure("RWA008-A");
 
-        assertTrue(oracle.good("RWA008-A"));
+        assertTrue(oracle.good("RWA008-A"), "RWA008: Oracle not good after cure()");
         (, , , uint48 toc) = oracle.ilks("RWA008-A");
-        assertEq(uint256(toc), 0);
+        assertEq(uint256(toc), 0, "RWA008: `toc` not zero after cure()");
     }
 
-    function testFailRWA008_INTEGRATION_CURE() public {
+    function testFailRWA008_INTEGRATION_CURE_BEFORE_TELL() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -604,13 +604,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         vat.file("RWA008-A", "line", 0);
         oracle.tell("RWA008-A");
 
-        assertTrue(!oracle.good("RWA008-A"));
+        assertTrue(!oracle.good("RWA008-A"), "RWA008: Oracle still good after tell()");
 
         oracle.cull("RWA008-A", addr.addr("RWA008_A_URN"));
 
-        assertTrue(!oracle.good("RWA008-A"));
+        assertTrue(!oracle.good("RWA008-A"), "RWA008: Oracle still good after cull()");
         (, address pip, , ) = oracle.ilks("RWA008-A");
-        assertEq(DSValueAbstract(pip).read(), bytes32(0));
+        assertEq(DSValueAbstract(pip).read(), bytes32(0), "RWA008: Oracle PIP value not set to zero after cull()");
     }
 
     function testRWA008_OPERATOR_GET_RWA008_TOKEN() public {
@@ -636,7 +636,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         rwagem_008.approve(address(rwaurn_008), 1 * WAD);
         rwaurn_008.lock(1 * WAD);
-        assertEq(dai.balanceOf(address(rwaconduitout_008)), 0);
+        assertEq(dai.balanceOf(address(rwaconduitout_008)), 0, "RWA008: Dangling Dai in input conduit before draw()");
         rwaurn_008.draw(1 * WAD);
 
         (, uint256 rate, , , ) = vat.ilks("RWA008-A");
@@ -644,10 +644,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         uint256 dustInVat = vat.dai(address(rwaurn_008));
 
         (uint256 ink, uint256 art) = vat.urns("RWA008-A", address(rwaurn_008));
-        assertEq(ink, 1 * WAD + preInk);
+        assertEq(ink, 1 * WAD + preInk, "RWA008: Bad `ink` after draw()");
         uint256 currArt = ((1 * RAD + dustInVat) / rate) + preArt;
-        assertTrue(art >= currArt - 2 && art <= currArt + 2); // approximation for vat rounding
-        assertEq(dai.balanceOf(address(rwaconduitout_008)), 1 * WAD);
+        assertTrue(art >= currArt - 2 && art <= currArt + 2, "RWA008: Bad `art` after draw()"); // approximation for vat rounding
+        assertEq(dai.balanceOf(address(rwaconduitout_008)), 1 * WAD, "RWA008: Dai not sent to output conduit after draw()");
 
         // wards
         giveAuth(address(rwaconduitout_008), address(this));
@@ -658,19 +658,16 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         hevm.store(address(rwaconduitout_008), keccak256(abi.encode(address(this), uint256(6))), bytes32(uint256(1)));
         assertEq(rwaconduitout_008.may(address(this)), 1);
 
-        assertEq(dai.balanceOf(address(rwaconduitout_008)), 1 * WAD);
-
         rwaconduitout_008.pick(address(this));
-
         rwaconduitout_008.push();
 
-        assertEq(dai.balanceOf(address(rwaconduitout_008)), 0);
-        assertEq(dai.balanceOf(address(this)), 1 * WAD);
+        assertEq(dai.balanceOf(address(rwaconduitout_008)), 0, "RWA008: Output conduit still holds Dai after push()");
+        assertEq(dai.balanceOf(address(this)), 1 * WAD, "RWA008: Dai not sent to destination after push()");
 
         (ink, art) = vat.urns("RWA008-A", address(rwaurn_008));
-        assertEq(ink, 1 * WAD + preInk);
+        assertEq(ink, 1 * WAD + preInk, "RWA008: Bad `ink` after push()");
         currArt = ((1 * RAD + dustInVat) / rate) + preArt;
-        assertTrue(art >= currArt - 2 && art <= currArt + 2); // approximation for vat rounding
+        assertTrue(art >= currArt - 2 && art <= currArt + 2, "RWA008: Bad `art` after push()"); // approximation for vat rounding
 
         hevm.warp(block.timestamp + 10 days);
         jug.drip("RWA008-A");
@@ -692,22 +689,20 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         hevm.store(address(rwaconduitin_008), keccak256(abi.encode(address(this), uint256(4))), bytes32(uint256(1)));
         assertEq(rwaconduitin_008.may(address(this)), 1);
 
-        assertEq(dai.balanceOf(address(rwaconduitin_008)), 0);
+        assertEq(dai.balanceOf(address(rwaconduitin_008)), 0, "RWA008: Dangling Dai in input conduit before transfer()");
         dai.transfer(address(rwaconduitin_008), daiToPay);
-        assertEq(dai.balanceOf(address(rwaconduitin_008)), daiToPay);
+        assertEq(dai.balanceOf(address(rwaconduitin_008)), daiToPay, "RWA008: Dai not sent to input conduit after transfer()");
         rwaconduitin_008.push();
 
-        assertEq(dai.balanceOf(address(rwaurn_008)), daiToPay);
-        assertEq(dai.balanceOf(address(rwaconduitin_008)), 0);
+        assertEq(dai.balanceOf(address(rwaurn_008)), daiToPay, "RWA008: Dai not sent to the urn after push()");
+        assertEq(dai.balanceOf(address(rwaconduitin_008)), 0, "RWA008: Dangling Dai in input conduit after push()");
 
         rwaurn_008.wipe(daiToPay);
         rwaurn_008.free(1 * WAD);
 
         (ink, art) = vat.urns("RWA008-A", address(rwaurn_008));
-        assertEq(ink, preInk);
-        assertTrue(art < 4); // wad -> rad conversion in wipe leaves some dust
-        (ink, ) = vat.urns("RWA008-A", address(this));
-        assertEq(ink, 0);
+        assertEq(ink, preInk, "RWA008: Bad `ink` after free()");
+        assertLt(art, 4, "RWA008: Bad `art` - larger than conversion error dust after wipe()"); // wad -> rad conversion in wipe leaves some dust
     }
 
     function testRWA009_INTEGRATION_BUMP() public {
@@ -719,11 +714,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         (, address pip, , ) = oracle.ilks("RWA009-A");
 
-        assertEq(DSValueAbstract(pip).read(), bytes32(100 * MILLION * WAD));
+        assertEq(DSValueAbstract(pip).read(), bytes32(100 * MILLION * WAD), "RWA009: Bad initial PIP value");
 
         oracle.bump("RWA009-A", 110 * MILLION * WAD);
 
-        assertEq(DSValueAbstract(pip).read(), bytes32(110 * MILLION * WAD));
+        assertEq(DSValueAbstract(pip).read(), bytes32(110 * MILLION * WAD), "RWA009: Bad PIP value after bump()");
     }
 
     function testRWA009_INTEGRATION_TELL() public {
@@ -735,15 +730,15 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         giveAuth(address(oracle), address(this));
 
         (, , , uint48 tocPre) = oracle.ilks("RWA009-A");
-        assertTrue(tocPre == 0);
-        assertTrue(oracle.good("RWA009-A"));
+        assertEq(uint256(tocPre), 0, "RWA009: `toc` is not 0 before tell()");
+        assertTrue(oracle.good("RWA009-A"), "RWA009: Oracle not good before tell()");
 
         vat.file("RWA009-A", "line", 0);
         oracle.tell("RWA009-A");
 
         (, , , uint48 tocPost) = oracle.ilks("RWA009-A");
-        assertTrue(tocPost > 0);
-        assertTrue(!oracle.good("RWA009-A"));
+        assertGt(uint256(tocPost), 0, "RWA009: `toc` is not set after tell()");
+        assertTrue(!oracle.good("RWA009-A"), "RWA009: Oracle still good after tell()");
     }
 
     function testRWA009_INTEGRATION_TELL_CURE_GOOD() public {
@@ -757,16 +752,16 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         vat.file("RWA009-A", "line", 0);
         oracle.tell("RWA009-A");
 
-        assertTrue(!oracle.good("RWA009-A"));
+        assertTrue(!oracle.good("RWA009-A"), "RWA009: Oracle still good after tell()");
 
         oracle.cure("RWA009-A");
 
-        assertTrue(oracle.good("RWA009-A"));
+        assertTrue(oracle.good("RWA009-A"), "RWA009: Oracle not good after cure()");
         (, , , uint48 toc) = oracle.ilks("RWA009-A");
-        assertEq(uint256(toc), 0);
+        assertEq(uint256(toc), 0, "RWA009: `toc` not zero after cure()");
     }
 
-    function testFailRWA009_INTEGRATION_CURE() public {
+    function testFailRWA009_INTEGRATION_CURE_BEFORE_TELL() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -789,13 +784,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         vat.file("RWA009-A", "line", 0);
         oracle.tell("RWA009-A");
 
-        assertTrue(!oracle.good("RWA009-A"));
+        assertTrue(!oracle.good("RWA009-A"), "RWA009: Oracle still good after tell()");
 
         oracle.cull("RWA009-A", addr.addr("RWA009_A_URN"));
 
-        assertTrue(!oracle.good("RWA009-A"));
+        assertTrue(!oracle.good("RWA009-A"), "RWA009: Oracle still good after cull()");
         (, address pip, , ) = oracle.ilks("RWA009-A");
-        assertEq(DSValueAbstract(pip).read(), bytes32(0));
+        assertEq(DSValueAbstract(pip).read(), bytes32(0), "RWA009: Oracle PIP value not set to zero after cull()");
     }
 
     function testRWA009_SPELL_OPERATOR_WIPE_FREE() public {
@@ -810,20 +805,20 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(rwaurn_009.can(address(this)), 1);
 
         // Check if spell lock 1 * WAD of RWA009
-        assertEq(rwagem_009.balanceOf(address(rwajoin_009)), 1 * WAD);
+        assertEq(rwagem_009.balanceOf(address(rwajoin_009)), 1 * WAD, "RWA009: gem not locked into the urn");
 
         // Check if spell draw 25mm DAI to GENESIS
-        assertEq(dai.balanceOf(address(RWA009_CES_MULTISIG)), drawAmount);
+        assertEq(dai.balanceOf(address(RWA009_CES_MULTISIG)), drawAmount, "RWA009: Dai drawn was not send to the recipient");
 
         (uint256 ink, uint256 art) = vat.urns("RWA009-A", address(rwaurn_009));
-        assertEq(art, drawAmount); // DAI drawn == art as rate should always be 1 RAY
-        assertEq(ink, 1 * WAD); // Whole unit of collateral is locked
+        assertEq(art, drawAmount, "RWA009: bad `art` after spell"); // DAI drawn == art as rate should always be 1 RAY
+        assertEq(ink, 1 * WAD, "RWA009: bad `ink` after spell"); // Whole unit of collateral is locked
 
         hevm.warp(block.timestamp + 10 days);
         jug.drip("RWA009-A");
 
         (, uint256 rate,,,) = vat.ilks("RWA009-A");
-        assertEq(rate, RAY); // rate keeps being 1 RAY
+        assertEq(rate, RAY, 'RWA009: bad `rate`'); // rate keeps being 1 RAY
 
         // as we have SF 0 we need to pay exectly the same amount of DAI we have drawn
         uint256 daiToPay = drawAmount;
@@ -844,11 +839,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         rwaurn_009.free(1 * WAD);
 
         // check if MCD_PAUSE_PROXY have RWA009 Tokens
-        assertEq(rwagem_009.balanceOf(address(this)), 1 * WAD, "Caller does not get back RWA009 Token");
+        assertEq(rwagem_009.balanceOf(address(this)), 1 * WAD, "RWA009: gem not sent back to the caller");
 
         // check if we have 0 collateral and outstanding debt in the VAT
         (ink, art) = vat.urns("RWA009-A", address(rwaurn_009));
-        assertEq(ink, 0, "INK != preINK");
-        assertEq(art, 0, "ART != preART");
+        assertEq(ink, 0, "RWA009: bad `ink` after free()");
+        assertEq(art, 0, "RWA009: bad `art` after wipe()");
     }
 }
