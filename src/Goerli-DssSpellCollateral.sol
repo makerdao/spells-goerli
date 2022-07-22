@@ -159,7 +159,7 @@ contract DssSpellCollateralAction {
         // Allow RWA008 Join to modify Vat registry
         DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA008_A);
 
-        // Allow RwaLiquidationOracle2 to modify Vat registry
+        // Allow RwaLiquidationOracle to modify Vat registry
         DssExecLib.authorize(MCD_VAT, MIP21_LIQUIDATION_ORACLE);
 
         // Set the debt ceiling
@@ -188,7 +188,7 @@ contract DssSpellCollateralAction {
         RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).mate(RWA008_A_MATE);
         RwaInputConduitLike(RWA008_A_INPUT_CONDUIT)  .mate(RWA008_A_MATE);
 
-        // Whitelist Socgen in the conduits
+        // Whitelist Socgen in the conduits as a fallback for DIIS Group
         RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).mate(RWA008_A_OPERATOR);
         RwaInputConduitLike(RWA008_A_INPUT_CONDUIT)  .mate(RWA008_A_OPERATOR);
 
@@ -252,7 +252,7 @@ contract DssSpellCollateralAction {
         // Allow RWA009 Join to modify Vat registry
         DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA009_A);
 
-        // Allow RwaLiquidationOracle2 to modify Vat registry
+        // Allow RwaLiquidationOracle to modify Vat registry
         // DssExecLib.authorize(MCD_VAT, MIP21_LIQUIDATION_ORACLE);
 
         // 100m debt ceiling
@@ -270,7 +270,7 @@ contract DssSpellCollateralAction {
         // Give the urn permissions on the join adapter
         DssExecLib.authorize(MCD_JOIN_RWA009_A, RWA009_A_URN);
 
-        // DSS_PAUSE_PROXY permission on URN
+        // MCD_PAUSE_PROXY permission on URN
         RwaUrnLike(RWA009_A_URN).hope(address(this));
 
         // Add RWA009 contract to the changelog
