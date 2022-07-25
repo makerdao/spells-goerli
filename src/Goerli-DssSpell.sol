@@ -24,6 +24,10 @@ import "dss-interfaces/dapp/DSTokenAbstract.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
+interface StarknetLike {
+    function setMaxDeposit(uint256) external;
+}
+
 interface RwaUrnLike {
     function hope(address) external;
     function lock(uint256) external;
@@ -54,6 +58,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     }
 
     function actions() public override {
+        // Set Starknet bridge max deposit to get on sync with mainnet
+        StarknetLike(DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE")).setMaxDeposit(50 * WAD);
+
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
         onboardNewCollaterals();
