@@ -167,9 +167,6 @@ contract DssSpellCollateralAction {
         // Allow RWA008 Join to modify Vat registry
         DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA008_A);
 
-        // Allow RwaLiquidationOracle to modify Vat registry
-        DssExecLib.authorize(MCD_VAT, MIP21_LIQUIDATION_ORACLE);
-
         // Set the debt ceiling
         DssExecLib.increaseIlkDebtCeiling(ilk, RWA008_A_LINE, /* _global = */ true);
 
@@ -260,9 +257,6 @@ contract DssSpellCollateralAction {
         // Allow RWA009 Join to modify Vat registry
         DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA009_A);
 
-        // Allow RwaLiquidationOracle to modify Vat registry
-        // DssExecLib.authorize(MCD_VAT, MIP21_LIQUIDATION_ORACLE);
-
         // 100m debt ceiling
         DssExecLib.increaseIlkDebtCeiling(ilk, RWA009_A_LINE, /* _global = */ true);
 
@@ -313,6 +307,10 @@ contract DssSpellCollateralAction {
         address MCD_JOIN_DAI             = DssExecLib.daiJoin();
 
         // --------------------------- RWA Collateral onboarding ---------------------------
+
+        // Add missing authorization on Goerli (this is necessary for all the MIP21 RWAs)
+        // It was forgotten to be added since the Kovan => Goerli migration happened
+        DssExecLib.authorize(MCD_VAT, MIP21_LIQUIDATION_ORACLE);
 
         // Onboard SocGen: https://vote.makerdao.com/polling/QmajCtnG
         onboardRwa008(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI);
