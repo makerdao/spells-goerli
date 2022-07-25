@@ -755,7 +755,25 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         end.skim("RWA008-A", address(rwaurn_008));
 
         (ink, art) = vat.urns("RWA008-A", address(rwaurn_008));
-        assertEq(ink, 1 * WAD - (1_000_000 * WAD * WAD / 30_043_520_665599336150000000), "RWA008: wrong ink in urn after skim");
+        // `skim()` should take only enough gem value in DAI to cover the current debt position:
+        //
+        //    skimmedInk = currentDebt / gemPriceInDai
+        //
+        // The remaining `ink` can be obtained by:
+        //
+        //    ink = previousInk - skimmedInk
+        //
+        // We need to be careful because the gem price is stored as a WAD, so to make sure the units align in the
+        // expression above, we need to divide the price by WAD.
+        //
+        //     gem*WAD       dai*WAD      /       (dai/gem)*WAD            / WAD
+        //        v             v                       v                     v
+        //    1 * WAD - (1_000_000 * WAD) / (30_043_520_665599336150000000 / WAD)
+        //
+        // While mathematically correct, the expression will present a rounding error with Solidity's integer math, so
+        // we reorder it as follows:
+        uint256 skimmedInk = (1_000_000 * WAD) * WAD / 30_043_520_665599336150000000;
+        assertEq(ink, 1 * WAD - skimmedInk, "RWA008: wrong ink in urn after skim");
         assertEq(art, 0, "RWA008: wrong art in urn after skim");
 
         hevm.warp(block.timestamp + end.wait());
