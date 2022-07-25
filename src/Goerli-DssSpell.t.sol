@@ -982,7 +982,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         end.skim("RWA009-A", address(rwaurn_009));
 
         (ink, art) = vat.urns("RWA009-A", address(rwaurn_009));
-        uint256 skimmedInk = (25_000_000 * WAD) * WAD / 100_000_000;
+        uint256 skimmedInk = 25_000_000 * WAD / 100_000_000;
         assertEq(ink, 1 * WAD - skimmedInk, "RWA009: wrong ink in urn after skim");
         assertEq(art, 0, "RWA009: wrong art in urn after skim");
 
