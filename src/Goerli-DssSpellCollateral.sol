@@ -73,12 +73,12 @@ contract DssSpellCollateralAction {
     uint256 public constant RAD = 10**45;
 
     // -- RWA008 MIP21 components --
-    address constant RWA008                    = 0x30434AA15F85598F45406d08A79dCdD9a79335e9;
-    address constant MCD_JOIN_RWA008_A         = 0x4ce65E856f824C2b4a2eeD88E79b839eB366967d;
-    address constant RWA008_A_URN              = 0x6351915f840937Edba75656727f20165185FaB83;
-    address constant RWA008_A_URN_CLOSE_HELPER = 0xb220461eFFa9c0b1D09047D08Bf116DfbD9814fA;
-    address constant RWA008_A_INPUT_CONDUIT    = 0x6298a2498b4E3789bb8220Cf5f5b44f518509e2a;
-    address constant RWA008_A_OUTPUT_CONDUIT   = 0x1FE95E519F0CE8eCF1cdC885f4DeA7913e146149;
+    address constant RWA008                    = 0x9A900f506b88ae6C7F9C5fbEffC5AFEC24A6fAAA;
+    address constant MCD_JOIN_RWA008_A         = 0x36fA17FA0b4Be214cDc04faD2587dC85a7c2c086;
+    address constant RWA008_A_URN              = 0xF50FE370839c295DADFADFCC5b6DC9b904604F7d;
+    address constant RWA008_A_URN_CLOSE_HELPER = 0xAa74C325142a3E7CA84FEaa1b0349F1Fd08B83Dc;
+    address constant RWA008_A_INPUT_CONDUIT    = 0x8c4295EF77e503E5fd0c8dE3f73985834bE85DE2;
+    address constant RWA008_A_OUTPUT_CONDUIT   = 0x1aA21d2E39EC0da185CA04609c8868bC324d8553;
     // SocGen's wallet
     address constant RWA008_A_OPERATOR         = 0x3F761335890721752476d4F210A7ad9BEf66fb45;
     // DIIS Group wallet
@@ -106,10 +106,10 @@ contract DssSpellCollateralAction {
     // -- RWA008 end --
 
     // -- RWA009 MIP21 components --
-    address constant RWA009                  = 0xd2B101854F64Df738bA601840279838568583F39;
-    address constant MCD_JOIN_RWA009_A       = 0x7122B934F02A15954282Ed41572Ada539864773a;
-    address constant RWA009_A_URN            = 0xD2C8588C72026171Ec3a17369ad0f0734E30915d;
-    address constant RWA009_A_JAR            = 0xa484C16D2Ca15706c4B875710d9e80b7F101572B;
+    address constant RWA009                  = 0xfD775125701524461580Bf865f33068E4710591b;
+    address constant MCD_JOIN_RWA009_A       = 0xE1ee48D4a7d28078a1BEb6b3C0fe8391669661Fb;
+    address constant RWA009_A_URN            = 0xd334bbA9172a6F615Be93d194d1322148fb5222e;
+    address constant RWA009_A_JAR            = 0xad4e1696d008A656F810498A974C5D3dC4A6150d;
     // Goerli: CES Goerli Multisig / Mainnet: Genesis
     address constant RWA009_A_OUTPUT_CONDUIT = 0x7a3D23Dc73F7ead55399597aAE6e525b3DF95A88;
 
@@ -153,31 +153,31 @@ contract DssSpellCollateralAction {
         require(RwaUrnLike(RWA008_A_URN).gemJoin() == MCD_JOIN_RWA008_A, "urn-gemjoin-not-match");
 
         // Init the RwaLiquidationOracle
-        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA008_A_INITIAL_PRICE, RWA008_DOC, RWA008_A_TAU);
+        // RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA008_A_INITIAL_PRICE, RWA008_DOC, RWA008_A_TAU);
         (, address pip, , ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
 
         // Set price feed for RWA008
-        DssExecLib.setContract(MCD_SPOT, ilk, "pip", pip);
+        // DssExecLib.setContract(MCD_SPOT, ilk, "pip", pip);
 
         // Init RWA008 in Vat
-        Initializable(MCD_VAT).init(ilk);
+        // Initializable(MCD_VAT).init(ilk);
         // Init RWA008 in Jug
-        Initializable(MCD_JUG).init(ilk);
+        // Initializable(MCD_JUG).init(ilk);
 
         // Allow RWA008 Join to modify Vat registry
         DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA008_A);
 
         // Set the debt ceiling
-        DssExecLib.increaseIlkDebtCeiling(ilk, RWA008_A_LINE, /* _global = */ true);
+        // DssExecLib.increaseIlkDebtCeiling(ilk, RWA008_A_LINE, /* _global = */ true);
 
         // Set the stability fee
-        DssExecLib.setIlkStabilityFee(ilk, RWA008_A_RATE, /* _doDrip = */ false);
+        // DssExecLib.setIlkStabilityFee(ilk, RWA008_A_RATE, /* _doDrip = */ false);
 
         // Set the collateralization ratio
-        DssExecLib.setIlkLiquidationRatio(ilk, RWA008_A_MAT);
+        // DssExecLib.setIlkLiquidationRatio(ilk, RWA008_A_MAT);
 
         // Poke the spotter to pull in a price
-        DssExecLib.updateCollateralPrice(ilk);
+        // DssExecLib.updateCollateralPrice(ilk);
 
         // Give the urn permissions on the join adapter
         DssExecLib.authorize(MCD_JOIN_RWA008_A, RWA008_A_URN);
@@ -199,7 +199,7 @@ contract DssSpellCollateralAction {
 
         // Add RWA008 contract to the changelog
         CHANGELOG.setAddress("RWA008",                  RWA008);
-        CHANGELOG.setAddress("PIP_RWA008",              pip);
+        // CHANGELOG.setAddress("PIP_RWA008",              pip);
         CHANGELOG.setAddress("MCD_JOIN_RWA008_A",       MCD_JOIN_RWA008_A);
         CHANGELOG.setAddress("RWA008_A_URN",            RWA008_A_URN);
         CHANGELOG.setAddress("RWA008_A_INPUT_CONDUIT",  RWA008_A_INPUT_CONDUIT);
@@ -243,31 +243,31 @@ contract DssSpellCollateralAction {
         require(RwaUrnLike(RWA009_A_URN).gemJoin() == MCD_JOIN_RWA009_A, "urn-gemjoin-not-match");
 
         // Init the RwaLiquidationOracle
-        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA009_A_INITIAL_PRICE, RWA009_DOC, RWA009_A_TAU);
+        // RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA009_A_INITIAL_PRICE, RWA009_DOC, RWA009_A_TAU);
         (, address pip, , ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
 
         // Set price feed for RWA009
-        DssExecLib.setContract(MCD_SPOT, ilk, "pip", pip);
+        // DssExecLib.setContract(MCD_SPOT, ilk, "pip", pip);
 
         // Init RWA009 in Vat
-        Initializable(MCD_VAT).init(ilk);
+        // Initializable(MCD_VAT).init(ilk);
         // Init RWA009 in Jug
-        Initializable(MCD_JUG).init(ilk);
+        // Initializable(MCD_JUG).init(ilk);
 
         // Allow RWA009 Join to modify Vat registry
         DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA009_A);
 
         // 100m debt ceiling
-        DssExecLib.increaseIlkDebtCeiling(ilk, RWA009_A_LINE, /* _global = */ true);
+        // DssExecLib.increaseIlkDebtCeiling(ilk, RWA009_A_LINE, /* _global = */ true);
 
         // Set the stability fee
-        DssExecLib.setIlkStabilityFee(ilk, RWA009_A_RATE, /* _doDrip = */ false);
+        // DssExecLib.setIlkStabilityFee(ilk, RWA009_A_RATE, /* _doDrip = */ false);
 
         // Set collateralization ratio
-        DssExecLib.setIlkLiquidationRatio(ilk, RWA009_A_MAT);
+        // DssExecLib.setIlkLiquidationRatio(ilk, RWA009_A_MAT);
 
         // Poke the spotter to pull in a price
-        DssExecLib.updateCollateralPrice(ilk);
+        // DssExecLib.updateCollateralPrice(ilk);
 
         // Give the urn permissions on the join adapter
         DssExecLib.authorize(MCD_JOIN_RWA009_A, RWA009_A_URN);
@@ -277,7 +277,7 @@ contract DssSpellCollateralAction {
 
         // Add RWA009 contract to the changelog
         CHANGELOG.setAddress("RWA009",                  RWA009);
-        CHANGELOG.setAddress("PIP_RWA009",              pip);
+        // CHANGELOG.setAddress("PIP_RWA009",              pip);
         CHANGELOG.setAddress("MCD_JOIN_RWA009_A",       MCD_JOIN_RWA009_A);
         CHANGELOG.setAddress("RWA009_A_URN",            RWA009_A_URN);
         CHANGELOG.setAddress("RWA009_A_JAR",            RWA009_A_JAR);
@@ -319,5 +319,23 @@ contract DssSpellCollateralAction {
         onboardRwa009(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI);
     }
 
-    function offboardCollaterals() internal {}
+    address constant OLD_RWA008                    = 0x30434AA15F85598F45406d08A79dCdD9a79335e9;
+    address constant OLD_MCD_JOIN_RWA008_A         = 0x4ce65E856f824C2b4a2eeD88E79b839eB366967d;
+    address constant OLD_RWA008_A_URN              = 0x6351915f840937Edba75656727f20165185FaB83;
+    address constant OLD_RWA008_A_URN_CLOSE_HELPER = 0xb220461eFFa9c0b1D09047D08Bf116DfbD9814fA;
+    address constant OLD_RWA008_A_INPUT_CONDUIT    = 0x6298a2498b4E3789bb8220Cf5f5b44f518509e2a;
+    address constant OLD_RWA008_A_OUTPUT_CONDUIT   = 0x1FE95E519F0CE8eCF1cdC885f4DeA7913e146149;
+
+    address constant OLD_RWA009                  = 0xd2B101854F64Df738bA601840279838568583F39;
+    address constant OLD_MCD_JOIN_RWA009_A       = 0x7122B934F02A15954282Ed41572Ada539864773a;
+    address constant OLD_RWA009_A_URN            = 0xD2C8588C72026171Ec3a17369ad0f0734E30915d;
+    address constant OLD_RWA009_A_JAR            = 0xa484C16D2Ca15706c4B875710d9e80b7F101572B;
+
+    function offboardCollaterals() internal {
+        address MCD_VAT = DssExecLib.vat();
+
+        // Disallows old RWA008 Join in the Vat
+        DssExecLib.deauthorize(MCD_VAT, OLD_MCD_JOIN_RWA008_A);
+        DssExecLib.deauthorize(MCD_VAT, OLD_MCD_JOIN_RWA009_A);
+    }
 }
