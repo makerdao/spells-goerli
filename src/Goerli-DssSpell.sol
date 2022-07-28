@@ -20,12 +20,11 @@ pragma solidity 0.6.12;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
-import "dss-interfaces/dapp/DSTokenAbstract.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
-interface StarknetLike {
-    function setMaxDeposit(uint256) external;
+interface ERC20Like {
+    function approve(address, uint256) external returns (bool);
 }
 
 interface RwaUrnLike {
@@ -39,7 +38,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
-    address constant RWA_TOKEN_FAB = 0xb7462C421D7EDF3455003F76125e812a66DdE187;
+    address constant RWA_TOKEN_FAB = 0x8FCe002C320E85e4D8c111E6f46ee4CDb3eBc67E;
 
     uint256 constant RWA009_DRAW_AMOUNT = 25_000_000 * WAD;
 
@@ -58,11 +57,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     }
 
     function actions() public override {
-        // Set Starknet bridge max deposit to get on sync with mainnet
-        StarknetLike(DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE")).setMaxDeposit(50 * WAD);
-
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
+        offboardCollaterals();
         onboardNewCollaterals();
         drawFromRWA009Urn();
 
@@ -74,7 +71,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     function drawFromRWA009Urn() internal {
         // lock RWA009 Token in the URN
-        DSTokenAbstract(RWA009).approve(RWA009_A_URN, 1 * WAD);
+        ERC20Like(RWA009).approve(RWA009_A_URN, 1 * WAD);
         RwaUrnLike(RWA009_A_URN).lock(1 * WAD);
 
         // draw DAI to genesis address
