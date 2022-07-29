@@ -529,7 +529,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     function testRemovedAuthorizationForOldJoinsInVat() public {
         address MCD_JOIN_RWA008_A_OLD = chainLog.getAddress("MCD_JOIN_RWA008_A");
-        address MCD_JOIN_RWA009_A_OLD = chainLog.getAddress("MCD_JOIN_RWA009");
+        address MCD_JOIN_RWA009_A_OLD = chainLog.getAddress("MCD_JOIN_RWA009_A");
+
+        assertEq(WardsAbstract(addr.addr('MCD_VAT')).wards(MCD_JOIN_RWA008_A_OLD), 1, "RWA008: bad vat permisison for old join");
+        assertEq(WardsAbstract(addr.addr('MCD_VAT')).wards(MCD_JOIN_RWA009_A_OLD), 1, "RWA009: bad vat permisison for old join");
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
