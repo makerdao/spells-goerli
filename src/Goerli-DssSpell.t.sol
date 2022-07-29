@@ -745,10 +745,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         rwaurn_008.draw(1_000_000 * WAD);
 
         (uint256 ink, uint256 art) = vat.urns("RWA008-A", address(rwaurn_008));
-        (, uint256 rate,,,) = vat.ilks("RWA009-A");
+        (, uint256 rate,,,) = vat.ilks("RWA008-A");
         assertEq(ink, 1 * WAD, "RWA008: wrong ink in urn");
         // Rate has already been poked
-        assertLt(art * rate / RAY, 1_000_000 * WAD, "RWA008: wrong art in urn");
+        assertEq(art, 1_000_000 * WAD * RAY / rate + 1, "RWA008: wrong art in urn");
 
         // wards
         giveAuth(address(rwaconduitout_008), address(this));
