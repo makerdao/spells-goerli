@@ -25,12 +25,14 @@ import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
 interface ERC20Like {
     function approve(address, uint256) external returns (bool);
+    function transfer(address, uint256) external returns (bool);
 }
 
 interface RwaUrnLike {
-    function hope(address) external;
     function lock(uint256) external;
     function draw(uint256) external;
+    function free(uint256) external;
+    function wipe(uint256) external;
 }
 
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
@@ -57,9 +59,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     }
 
     function actions() public override {
+        wipeFromRWA009Urn();
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
-        offboardCollaterals();
         onboardNewCollaterals();
         drawFromRWA009Urn();
 
@@ -67,6 +69,14 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         DssExecLib.setChangelogAddress("RWA_TOKEN_FAB", RWA_TOKEN_FAB);
 
         DssExecLib.setChangelogVersion("1.13.3");
+    }
+
+    function wipeFromRWA009Urn() internal {
+        // wipe DAI
+        RwaUrnLike(RWA009_A_URN_OLD).wipe(RWA009_DRAW_AMOUNT);
+
+        // free old RWA009 Token from the URN
+        RwaUrnLike(RWA009_A_URN_OLD).free(1 * WAD);
     }
 
     function drawFromRWA009Urn() internal {

@@ -527,16 +527,16 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     RwaUrnLike           rwaurn_009          = RwaUrnLike(addr.addr("RWA009_A_URN"));
     address              RWA009_CES_MULTISIG = addr.addr("RWA009_A_OUTPUT_CONDUIT");
 
-    address OLD_MCD_JOIN_RWA008_A = 0x4ce65E856f824C2b4a2eeD88E79b839eB366967d;
-    address OLD_MCD_JOIN_RWA009_A = 0x7122B934F02A15954282Ed41572Ada539864773a;
-
     function testRemovedAuthorizationForOldJoinsInVat() public {
+        address MCD_JOIN_RWA008_A_OLD = chainLog.getAddress("MCD_JOIN_RWA008_A");
+        address MCD_JOIN_RWA009_A_OLD = chainLog.getAddress("MCD_JOIN_RWA009");
+
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        assertEq(WardsAbstract(addr.addr('MCD_VAT')).wards(OLD_MCD_JOIN_RWA008_A), 0, "RWA008: bad vat permisison for old join");
-        assertEq(WardsAbstract(addr.addr('MCD_VAT')).wards(OLD_MCD_JOIN_RWA009_A), 0, "RWA009: bad vat permisison for old join");
+        assertEq(WardsAbstract(addr.addr('MCD_VAT')).wards(MCD_JOIN_RWA008_A_OLD), 0, "RWA008: bad vat permisison for old join");
+        assertEq(WardsAbstract(addr.addr('MCD_VAT')).wards(MCD_JOIN_RWA009_A_OLD), 0, "RWA009: bad vat permisison for old join");
     }
 
     function testRWA008_INTEGRATION_BUMP() public {
@@ -930,8 +930,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(rwagem_009.balanceOf(addr.addr('MCD_PAUSE_PROXY')), 0, "RWA009: gem not transfered from the pause proxy");
         assertEq(rwagem_009.balanceOf(address(rwajoin_009)), 1 * WAD, "RWA009: gem not locked into the urn");
 
-        // This spell makes another draw, so we add the original drawn amount to obtain the actual balance
-        assertEq(dai.balanceOf(address(RWA009_CES_MULTISIG)), drawAmount + 25_000_000 * WAD, "RWA009: Dai drawn was not send to the recipient");
+        // Check if spell draw 25mm DAI to GENESIS
+        assertEq(dai.balanceOf(address(RWA009_CES_MULTISIG)), drawAmount, "RWA009: Dai drawn was not send to the recipient");
 
         (uint256 ink, uint256 art) = vat.urns("RWA009-A", address(rwaurn_009));
         assertEq(art, drawAmount, "RWA009: bad `art` after spell"); // DAI drawn == art as rate should always be 1 RAY
@@ -984,8 +984,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // Check if spell lock 1 * WAD of RWA009
         assertEq(rwagem_009.balanceOf(address(rwajoin_009)), 1 * WAD, "RWA009: wrong gem balance in join");
 
-        // This spell makes another draw, so we add the original drawn amount to obtain the actual balance
-        assertEq(dai.balanceOf(address(RWA009_CES_MULTISIG)), drawAmount + 25_000_000 * WAD, "RWA009: wrong dai balance in output conduit");
+        // Check if spell draw 25mm DAI to GENESIS
+        assertEq(dai.balanceOf(address(RWA009_CES_MULTISIG)), drawAmount, "RWA009: wrong dai balance in output conduit");
 
         (uint256 ink, uint256 art) = vat.urns("RWA009-A", address(rwaurn_009));
         assertEq(ink, 1 * WAD, "RWA009: wrong ink in urn"); // Whole unit of collateral is locked

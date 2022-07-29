@@ -25,10 +25,6 @@ import "dss-interfaces/dss/GemJoinAbstract.sol";
 import "dss-interfaces/dss/IlkRegistryAbstract.sol";
 import "dss-interfaces/ERC/GemAbstract.sol";
 
-interface Initializeable {
-    function init(bytes32) external;
-}
-
 interface RwaLiquidationLike {
     function ilks(bytes32) external returns (string memory, address, uint48, uint48);
     function init(bytes32, uint256, string calldata, uint48) external;
@@ -39,16 +35,19 @@ interface RwaUrnLike {
     function jug() external view returns(address);
     function gemJoin() external view returns(address);
     function daiJoin() external view returns(address);
+    function outputConduit() external view returns(address);
     function hope(address) external;
-    function lock(uint256) external;
 }
 
 interface RwaOutputConduitLike {
+    function dai() external view returns(address);
     function hope(address) external;
     function mate(address) external;
 }
 
 interface RwaInputConduitLike {
+    function dai() external view returns(address);
+    function to() external view returns(address);
     function mate(address usr) external;
 }
 
@@ -73,6 +72,8 @@ contract DssSpellCollateralAction {
     uint256 public constant RAD = 10**45;
 
     // -- RWA008 MIP21 components --
+    address immutable MCD_JOIN_RWA008_A_OLD    = DssExecLib.getChangelogAddress("MCD_JOIN_RWA008_A");
+
     address constant RWA008                    = 0x9A900f506b88ae6C7F9C5fbEffC5AFEC24A6fAAA;
     address constant MCD_JOIN_RWA008_A         = 0x36fA17FA0b4Be214cDc04faD2587dC85a7c2c086;
     address constant RWA008_A_URN              = 0xF50FE370839c295DADFADFCC5b6DC9b904604F7d;
@@ -106,6 +107,9 @@ contract DssSpellCollateralAction {
     // -- RWA008 end --
 
     // -- RWA009 MIP21 components --
+    address immutable MCD_JOIN_RWA009_A_OLD  = DssExecLib.getChangelogAddress("MCD_JOIN_RWA009_A");
+    address immutable RWA009_A_URN_OLD       = DssExecLib.getChangelogAddress("RWA009_A_URN");
+
     address constant RWA009                  = 0xfD775125701524461580Bf865f33068E4710591b;
     address constant MCD_JOIN_RWA009_A       = 0xE1ee48D4a7d28078a1BEb6b3C0fe8391669661Fb;
     address constant RWA009_A_URN            = 0xd334bbA9172a6F615Be93d194d1322148fb5222e;
@@ -135,7 +139,8 @@ contract DssSpellCollateralAction {
         address MCD_VAT,
         address MCD_JUG,
         address MCD_SPOT,
-        address MCD_JOIN_DAI
+        address MCD_JOIN_DAI,
+        address MCD_DAI
     ) internal {
         // RWA008-A collateral deploy
         bytes32 ilk      = "RWA008-A";
@@ -147,10 +152,16 @@ contract DssSpellCollateralAction {
         require(GemJoinAbstract(MCD_JOIN_RWA008_A).gem() == RWA008,   "join-gem-not-match");
         require(GemJoinAbstract(MCD_JOIN_RWA008_A).dec() == decimals, "join-dec-not-match");
 
-        require(RwaUrnLike(RWA008_A_URN).vat() == MCD_VAT,               "urn-vat-not-match");
-        require(RwaUrnLike(RWA008_A_URN).jug() == MCD_JUG,               "urn-jug-not-match");
-        require(RwaUrnLike(RWA008_A_URN).daiJoin() == MCD_JOIN_DAI,      "urn-daijoin-not-match");
-        require(RwaUrnLike(RWA008_A_URN).gemJoin() == MCD_JOIN_RWA008_A, "urn-gemjoin-not-match");
+        require(RwaUrnLike(RWA008_A_URN).vat()           == MCD_VAT,                 "urn-vat-not-match");
+        require(RwaUrnLike(RWA008_A_URN).jug()           == MCD_JUG,                 "urn-jug-not-match");
+        require(RwaUrnLike(RWA008_A_URN).daiJoin()       == MCD_JOIN_DAI,            "urn-daijoin-not-match");
+        require(RwaUrnLike(RWA008_A_URN).gemJoin()       == MCD_JOIN_RWA008_A,       "urn-gemjoin-not-match");
+        require(RwaUrnLike(RWA008_A_URN).outputConduit() == RWA008_A_OUTPUT_CONDUIT, "urn-outputconduit-not-match");
+
+        require(RwaInputConduitLike(RWA008_A_INPUT_CONDUIT).dai() == MCD_DAI,      "inputconduit-dai-not-match");
+        require(RwaInputConduitLike(RWA008_A_INPUT_CONDUIT).to()  == RWA008_A_URN, "inputconduit-to-not-match");
+
+        require(RwaOutputConduitLike(RWA008_A_OUTPUT_CONDUIT).dai() == MCD_DAI, "outputconduit-dai-not-match");
 
         // Init the RwaLiquidationOracle
         // RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA008_A_INITIAL_PRICE, RWA008_DOC, RWA008_A_TAU);
@@ -166,6 +177,8 @@ contract DssSpellCollateralAction {
 
         // Allow RWA008 Join to modify Vat registry
         DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA008_A);
+        // Disallows old RWA008 Join in the Vat
+        DssExecLib.deauthorize(MCD_VAT, MCD_JOIN_RWA008_A_OLD);
 
         // Set the debt ceiling
         // DssExecLib.increaseIlkDebtCeiling(ilk, RWA008_A_LINE, /* _global = */ true);
@@ -237,10 +250,11 @@ contract DssSpellCollateralAction {
         require(GemJoinAbstract(MCD_JOIN_RWA009_A).gem() == RWA009,   "join-gem-not-match");
         require(GemJoinAbstract(MCD_JOIN_RWA009_A).dec() == decimals, "join-dec-not-match");
 
-        require(RwaUrnLike(RWA009_A_URN).vat() == MCD_VAT,               "urn-vat-not-match");
-        require(RwaUrnLike(RWA009_A_URN).jug() == MCD_JUG,               "urn-jug-not-match");
-        require(RwaUrnLike(RWA009_A_URN).daiJoin() == MCD_JOIN_DAI,      "urn-daijoin-not-match");
-        require(RwaUrnLike(RWA009_A_URN).gemJoin() == MCD_JOIN_RWA009_A, "urn-gemjoin-not-match");
+        require(RwaUrnLike(RWA009_A_URN).vat()           == MCD_VAT,                 "urn-vat-not-match");
+        require(RwaUrnLike(RWA009_A_URN).jug()           == MCD_JUG,                 "urn-jug-not-match");
+        require(RwaUrnLike(RWA009_A_URN).daiJoin()       == MCD_JOIN_DAI,            "urn-daijoin-not-match");
+        require(RwaUrnLike(RWA009_A_URN).gemJoin()       == MCD_JOIN_RWA009_A,       "urn-gemjoin-not-match");
+        require(RwaUrnLike(RWA009_A_URN).outputConduit() == RWA009_A_OUTPUT_CONDUIT, "urn-outputconduit-not-match");
 
         // Init the RwaLiquidationOracle
         // RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA009_A_INITIAL_PRICE, RWA009_DOC, RWA009_A_TAU);
@@ -256,6 +270,8 @@ contract DssSpellCollateralAction {
 
         // Allow RWA009 Join to modify Vat registry
         DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA009_A);
+        // Disallows old RWA009 Join in the Vat
+        DssExecLib.deauthorize(MCD_VAT, MCD_JOIN_RWA009_A_OLD);
 
         // 100m debt ceiling
         // DssExecLib.increaseIlkDebtCeiling(ilk, RWA009_A_LINE, /* _global = */ true);
@@ -302,6 +318,7 @@ contract DssSpellCollateralAction {
         IlkRegistryAbstract REGISTRY     = IlkRegistryAbstract(DssExecLib.reg());
         address MIP21_LIQUIDATION_ORACLE = CHANGELOG.getAddress("MIP21_LIQUIDATION_ORACLE");
         address MCD_VAT                  = DssExecLib.vat();
+        address MCD_DAI                  = DssExecLib.dai();
         address MCD_JUG                  = DssExecLib.jug();
         address MCD_SPOT                 = DssExecLib.spotter();
         address MCD_JOIN_DAI             = DssExecLib.daiJoin();
@@ -313,29 +330,11 @@ contract DssSpellCollateralAction {
         DssExecLib.authorize(MCD_VAT, MIP21_LIQUIDATION_ORACLE);
 
         // Onboard SocGen: https://vote.makerdao.com/polling/QmajCtnG
-        onboardRwa008(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI);
+        onboardRwa008(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI, MCD_DAI);
 
         // Onboard HvB: https://vote.makerdao.com/polling/QmQMDasC
         onboardRwa009(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI);
     }
 
-    address constant OLD_RWA008                    = 0x30434AA15F85598F45406d08A79dCdD9a79335e9;
-    address constant OLD_MCD_JOIN_RWA008_A         = 0x4ce65E856f824C2b4a2eeD88E79b839eB366967d;
-    address constant OLD_RWA008_A_URN              = 0x6351915f840937Edba75656727f20165185FaB83;
-    address constant OLD_RWA008_A_URN_CLOSE_HELPER = 0xb220461eFFa9c0b1D09047D08Bf116DfbD9814fA;
-    address constant OLD_RWA008_A_INPUT_CONDUIT    = 0x6298a2498b4E3789bb8220Cf5f5b44f518509e2a;
-    address constant OLD_RWA008_A_OUTPUT_CONDUIT   = 0x1FE95E519F0CE8eCF1cdC885f4DeA7913e146149;
-
-    address constant OLD_RWA009                  = 0xd2B101854F64Df738bA601840279838568583F39;
-    address constant OLD_MCD_JOIN_RWA009_A       = 0x7122B934F02A15954282Ed41572Ada539864773a;
-    address constant OLD_RWA009_A_URN            = 0xD2C8588C72026171Ec3a17369ad0f0734E30915d;
-    address constant OLD_RWA009_A_JAR            = 0xa484C16D2Ca15706c4B875710d9e80b7F101572B;
-
-    function offboardCollaterals() internal {
-        address MCD_VAT = DssExecLib.vat();
-
-        // Disallows old RWA008 Join in the Vat
-        DssExecLib.deauthorize(MCD_VAT, OLD_MCD_JOIN_RWA008_A);
-        DssExecLib.deauthorize(MCD_VAT, OLD_MCD_JOIN_RWA009_A);
-    }
+    function offboardCollaterals() internal {}
 }
