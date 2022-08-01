@@ -107,28 +107,28 @@ contract DssSpellCollateralAction {
     // -- RWA008 end --
 
     // -- RWA009 MIP21 components --
-    address immutable MCD_JOIN_RWA009_A_OLD  = DssExecLib.getChangelogAddress("MCD_JOIN_RWA009_A");
-    address immutable RWA009_A_URN_OLD       = DssExecLib.getChangelogAddress("RWA009_A_URN");
+    address immutable MCD_JOIN_RWA009_A_OLD   = DssExecLib.getChangelogAddress("MCD_JOIN_RWA009_A");
+    address immutable RWA009_A_URN_OLD        = DssExecLib.getChangelogAddress("RWA009_A_URN");
 
-    address constant RWA009                  = 0xfD775125701524461580Bf865f33068E4710591b;
-    address constant MCD_JOIN_RWA009_A       = 0xE1ee48D4a7d28078a1BEb6b3C0fe8391669661Fb;
-    address constant RWA009_A_URN            = 0xd334bbA9172a6F615Be93d194d1322148fb5222e;
-    address constant RWA009_A_JAR            = 0xad4e1696d008A656F810498A974C5D3dC4A6150d;
-    // Goerli: CES Goerli Multisig / Mainnet: Genesis
-    address constant RWA009_A_OUTPUT_CONDUIT = 0x7a3D23Dc73F7ead55399597aAE6e525b3DF95A88;
+    address constant RWA009                   = 0xfD775125701524461580Bf865f33068E4710591b;
+    address constant MCD_JOIN_RWA009_A        = 0xE1ee48D4a7d28078a1BEb6b3C0fe8391669661Fb;
+    address constant RWA009_A_URN             = 0xd334bbA9172a6F615Be93d194d1322148fb5222e;
+    address constant RWA009_A_JAR             = 0xad4e1696d008A656F810498A974C5D3dC4A6150d;
+    // Goerli: DS Pause Proxy / Mainnet: Genesis
+    address immutable RWA009_A_OUTPUT_CONDUIT = DssExecLib.getChangelogAddress("MCD_PAUSE_PROXY");
 
     // MIP21_LIQUIDATION_ORACLE params
-    string  constant RWA009_DOC              = "QmZG31b6iLGGCLGD7ZUn8EDkE9kANPVMcHzEYkvyNWCZpG";
-    uint256 constant RWA009_A_INITIAL_PRICE  = 100_000_000 * WAD; // No DssExecLib helper, so WAD is required
-    uint48  constant RWA009_A_TAU            = 0;
+    string  constant RWA009_DOC               = "QmZG31b6iLGGCLGD7ZUn8EDkE9kANPVMcHzEYkvyNWCZpG";
+    uint256 constant RWA009_A_INITIAL_PRICE   = 100_000_000 * WAD; // No DssExecLib helper, so WAD is required
+    uint48  constant RWA009_A_TAU             = 0;
 
     // Ilk registry params
-    uint256 constant RWA009_REG_CLASS_RWA    = 3;
+    uint256 constant RWA009_REG_CLASS_RWA     = 3;
 
     // Remaining params
-    uint256 constant RWA009_A_LINE           = 100_000_000;
-    uint256 constant RWA009_A_MAT            = 100_00; // 100% in basis-points
-    uint256 constant RWA009_A_RATE           = ZERO_PCT_RATE;
+    uint256 constant RWA009_A_LINE            = 100_000_000;
+    uint256 constant RWA009_A_MAT             = 100_00; // 100% in basis-points
+    uint256 constant RWA009_A_RATE            = ZERO_PCT_RATE;
 
     // -- RWA009 END --
 
@@ -243,6 +243,9 @@ contract DssSpellCollateralAction {
         // RWA009-A collateral deploy
         bytes32 ilk      = "RWA009-A";
         uint256 decimals = DSTokenAbstract(RWA009).decimals();
+
+        // Set the output conduit to be the MCD_PAUSE_PROXY
+        DssExecLib.setContract(RWA009_A_URN, "outputConduit", RWA009_A_OUTPUT_CONDUIT);
 
         // Sanity checks
         require(GemJoinAbstract(MCD_JOIN_RWA009_A).vat() == MCD_VAT,  "join-vat-not-match");

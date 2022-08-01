@@ -522,24 +522,24 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     RwaInputConduitLike  rwaconduitin_008    = RwaInputConduitLike(addr.addr("RWA008_A_INPUT_CONDUIT"));
     RwaOutputConduitLike rwaconduitout_008   = RwaOutputConduitLike(addr.addr("RWA008_A_OUTPUT_CONDUIT"));
 
-    DSTokenAbstract      rwagem_009          = DSTokenAbstract(addr.addr("RWA009"));
-    GemJoinAbstract      rwajoin_009         = GemJoinAbstract(addr.addr("MCD_JOIN_RWA009_A"));
-    RwaUrnLike           rwaurn_009          = RwaUrnLike(addr.addr("RWA009_A_URN"));
-    address              RWA009_CES_MULTISIG = addr.addr("RWA009_A_OUTPUT_CONDUIT");
+    DSTokenAbstract rwagem_009      = DSTokenAbstract(addr.addr("RWA009"));
+    GemJoinAbstract rwajoin_009     = GemJoinAbstract(addr.addr("MCD_JOIN_RWA009_A"));
+    RwaUrnLike      rwaurn_009      = RwaUrnLike(addr.addr("RWA009_A_URN"));
+    address         MCD_PAUSE_PROXY = addr.addr("MCD_PAUSE_PROXY");
 
     function testRemovedAuthorizationForOldJoinsInVat() public {
         address MCD_JOIN_RWA008_A_OLD = chainLog.getAddress("MCD_JOIN_RWA008_A");
         address MCD_JOIN_RWA009_A_OLD = chainLog.getAddress("MCD_JOIN_RWA009_A");
 
-        assertEq(WardsAbstract(addr.addr('MCD_VAT')).wards(MCD_JOIN_RWA008_A_OLD), 1, "RWA008: bad vat permisison for old join");
-        assertEq(WardsAbstract(addr.addr('MCD_VAT')).wards(MCD_JOIN_RWA009_A_OLD), 1, "RWA009: bad vat permisison for old join");
+        assertEq(WardsAbstract(addr.addr('MCD_VAT')).wards(MCD_JOIN_RWA008_A_OLD), 1, "RWA008: [before spell] bad vat permisison for old join");
+        assertEq(WardsAbstract(addr.addr('MCD_VAT')).wards(MCD_JOIN_RWA009_A_OLD), 1, "RWA009: [before spell] bad vat permisison for old join");
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        assertEq(WardsAbstract(addr.addr('MCD_VAT')).wards(MCD_JOIN_RWA008_A_OLD), 0, "RWA008: bad vat permisison for old join");
-        assertEq(WardsAbstract(addr.addr('MCD_VAT')).wards(MCD_JOIN_RWA009_A_OLD), 0, "RWA009: bad vat permisison for old join");
+        assertEq(WardsAbstract(addr.addr('MCD_VAT')).wards(MCD_JOIN_RWA008_A_OLD), 0, "RWA008: [after spell] bad vat permisison for old join");
+        assertEq(WardsAbstract(addr.addr('MCD_VAT')).wards(MCD_JOIN_RWA009_A_OLD), 0, "RWA009: [after spell] bad vat permisison for old join");
     }
 
     function testRWA008_INTEGRATION_BUMP() public {
@@ -934,7 +934,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(rwagem_009.balanceOf(address(rwajoin_009)), 1 * WAD, "RWA009: gem not locked into the urn");
 
         // Check if spell draw 25mm DAI to GENESIS
-        assertEq(dai.balanceOf(address(RWA009_CES_MULTISIG)), drawAmount, "RWA009: Dai drawn was not send to the recipient");
+        assertEq(dai.balanceOf(address(MCD_PAUSE_PROXY)), drawAmount, "RWA009: Dai drawn was not send to the recipient");
 
         (uint256 ink, uint256 art) = vat.urns("RWA009-A", address(rwaurn_009));
         assertEq(art, drawAmount, "RWA009: bad `art` after spell"); // DAI drawn == art as rate should always be 1 RAY
@@ -988,7 +988,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(rwagem_009.balanceOf(address(rwajoin_009)), 1 * WAD, "RWA009: wrong gem balance in join");
 
         // Check if spell draw 25mm DAI to GENESIS
-        assertEq(dai.balanceOf(address(RWA009_CES_MULTISIG)), drawAmount, "RWA009: wrong dai balance in output conduit");
+        assertEq(dai.balanceOf(address(MCD_PAUSE_PROXY)), drawAmount, "RWA009: wrong dai balance in output conduit");
 
         (uint256 ink, uint256 art) = vat.urns("RWA009-A", address(rwaurn_009));
         assertEq(ink, 1 * WAD, "RWA009: wrong ink in urn"); // Whole unit of collateral is locked
@@ -1001,6 +1001,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         end.skim("RWA009-A", address(rwaurn_009));
 
         (ink, art) = vat.urns("RWA009-A", address(rwaurn_009));
+        // 100_000_00 is the value attributed to the price of 1*WAD RWA009
         uint256 skimmedInk = 25_000_000 * WAD / 100_000_000;
         assertEq(ink, 1 * WAD - skimmedInk, "RWA009: wrong ink in urn after skim");
         assertEq(art, 0, "RWA009: wrong art in urn after skim");

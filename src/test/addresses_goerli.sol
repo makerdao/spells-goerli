@@ -310,7 +310,7 @@ contract Addresses {
         addr["MCD_JOIN_RWA009_A"]               = 0xE1ee48D4a7d28078a1BEb6b3C0fe8391669661Fb;
         addr["RWA009_A_URN"]                    = 0xd334bbA9172a6F615Be93d194d1322148fb5222e;
         addr["RWA009_A_JAR"]                    = 0xad4e1696d008A656F810498A974C5D3dC4A6150d;
-        addr["RWA009_A_OUTPUT_CONDUIT"]         = 0x7a3D23Dc73F7ead55399597aAE6e525b3DF95A88;
+        addr["RWA009_A_OUTPUT_CONDUIT"]         = 0x5DCdbD3cCF9B09EAAD03bc5f50fA2B3d3ACA0121;
         addr["PROXY_PAUSE_ACTIONS"]             = 0x8D1187FCa9A104211bd25c689C08718AD8730C83;
         addr["PROXY_DEPLOYER"]                  = 0xc9476Fd378de5b0de5C4280D4323f6F89f723c15;
         addr["GUNIV3DAIUSDC1"]                  = 0xc5D83e829Ecdce4d67645EE1a1317451e0b4c68d;
