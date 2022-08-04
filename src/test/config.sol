@@ -502,7 +502,7 @@ contract Config {
         });
         afterSpell.collaterals["MANA-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      15 * MILLION,
+            aL_line:      17 * MILLION,
             aL_gap:       1 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
@@ -1432,7 +1432,7 @@ contract Config {
         });
         afterSpell.collaterals["GUNIV3DAIUSDC1-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      750 * MILLION,
+            aL_line:      1 * BILLION,
             aL_gap:       50 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
@@ -1551,7 +1551,7 @@ contract Config {
         });
         afterSpell.collaterals["GUNIV3DAIUSDC2-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      1 * BILLION,
+            aL_line:      1250 * MILLION,
             aL_gap:       50 * MILLION,
             aL_ttl:       8 hours,
             line:         0,

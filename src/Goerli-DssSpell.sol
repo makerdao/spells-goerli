@@ -32,7 +32,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
-    uint256 public constant WAD = 10**18;
+    uint256 constant internal MILLION  = 10 **  6;
+    uint256 constant internal BILLION  = 10 **  9;
+    uint256 constant internal WAD      = 10 ** 18;
 
     uint256 constant RWA009_DRAW_AMOUNT = 25_000_000 * WAD;
     address constant RWA009_A_URN = 0xd334bbA9172a6F615Be93d194d1322148fb5222e;
@@ -95,6 +97,15 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
         // Increase Stability Fee for  UNIV2DAIUSDC-A   from 0.01% to 0.02%
         DssExecLib.setIlkStabilityFee("UNIV2DAIUSDC-A", ZERO_ZERO_TWO_PCT_RATE, true);
+
+        // ----------------------------- Debt Ceiling updates -----------------------------
+
+        // Increase the line for              GUNIV3DAIUSDC2-A from   1 billion to 1.25 billion DAI
+        DssExecLib.setIlkAutoLineDebtCeiling("GUNIV3DAIUSDC2-A",                   1250 * MILLION);
+        // Increase the line for              GUINV3DAIUSDC1-A from 750 million to 1 billion DAI
+        DssExecLib.setIlkAutoLineDebtCeiling("GUNIV3DAIUSDC1-A",                   1 * BILLION);
+        // Increase the line for              MANA-A           from  15 million to 17 million DAI
+        DssExecLib.setIlkAutoLineDebtCeiling("MANA-A",                             17 * MILLION);
 
     }
 }
