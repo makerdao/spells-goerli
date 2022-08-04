@@ -47,7 +47,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // $ bc -l <<< 'scale=27; e( l(1.08)/(60 * 60 * 24 * 365) )'
     //
     // A table of rates can be found at
-    //    https://ipfs.io/ipfs/QmR6obnugMeJ6iywg999tr45iDS8V7TfqjAqrgPbc3Y6bJ
+    //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
 
     // --- Rates ---
@@ -74,7 +74,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // Draw again for Aug 10 Exec Draw
         RwaUrnLike(RWA009_A_URN).draw(RWA009_DRAW_AMOUNT);
 
-        // ----------------------------- Rates updates -----------------------------
+        // --------------------------- Rates updates ---------------------------
         // https://vote.makerdao.com/polling/QmfMRfE4#poll-detail
 
         // Reduce Stability Fee for    ETH-B   from 4% to 3.75%
@@ -98,7 +98,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // Increase Stability Fee for  UNIV2DAIUSDC-A   from 0.01% to 0.02%
         DssExecLib.setIlkStabilityFee("UNIV2DAIUSDC-A", ZERO_ZERO_TWO_PCT_RATE, true);
 
-        // ----------------------------- Debt Ceiling updates -----------------------------
+        // ------------------------ Debt Ceiling updates -----------------------
+        // https://vote.makerdao.com/polling/QmfMRfE4#poll-detail
 
         // Increase the line for              GUNIV3DAIUSDC2-A from   1 billion to 1.25 billion DAI
         DssExecLib.setIlkAutoLineDebtCeiling("GUNIV3DAIUSDC2-A",                   1250 * MILLION);
