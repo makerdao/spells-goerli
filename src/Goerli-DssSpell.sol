@@ -36,8 +36,10 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     uint256 constant internal BILLION  = 10 **  9;
     uint256 constant internal WAD      = 10 ** 18;
 
-    uint256 constant RWA009_DRAW_AMOUNT = 25_000_000 * WAD;
-    address constant RWA009_A_URN = 0xd334bbA9172a6F615Be93d194d1322148fb5222e;
+    // address constant RWA008_A_OPERATOR       = 0x03f1A14A5b31e2f1751b6db368451dFCEA5A0439;
+    // address constant RWA008_A_OUTPUT_CONDUIT = 0x1aA21d2E39EC0da185CA04609c8868bC324d8553;
+    uint256 constant RWA009_DRAW_AMOUNT      = 25_000_000 * WAD;
+    address constant RWA009_A_URN            = 0xd334bbA9172a6F615Be93d194d1322148fb5222e;
 
 
     // Many of the settings that change weekly rely on the rate accumulator
@@ -110,7 +112,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
         // ----------------------- Activate SocGen Vault -----------------------
         // NOTE: ignore in goerli
-        // call hope() on RWA008_A_OUTPUT_CONDUIT - needs go-ahead from CES
+        // call hope() on RWA008_A_OUTPUT_CONDUIT
+        // https://discord.com/channels/893112320329396265/897483518316265553/1004725159506231316
+        // Hopeable(RWA008_A_OUTPUT_CONDUIT).hope(RWA008_A_OPERATOR);
 
         // ------------------------- Delegate Payments -------------------------
         // NOTE: ignore in goerli
