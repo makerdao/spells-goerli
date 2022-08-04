@@ -18,14 +18,6 @@ pragma solidity 0.6.12;
 
 import "./Goerli-DssSpell.t.base.sol";
 
-interface RwaUrnLike {
-    // function can(address) external view returns (uint256);
-    // function lock(uint256) external;
-    // function draw(uint256) external;
-    // function wipe(uint256) external;
-    // function free(uint256) external;
-}
-
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -461,9 +453,9 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testRWA009_SPELL_DRAW() public {
-        RwaUrnLike rwaUrn009      = RwaUrnLike(addr.addr("RWA009_A_URN"));
-        address    MCD_PAUSE_PROXY = addr.addr("MCD_PAUSE_PROXY");
-        uint256    drawAmount      = 25_000_000 * WAD;
+        address rwaUrn009       = addr.addr("RWA009_A_URN");
+        address MCD_PAUSE_PROXY = addr.addr("MCD_PAUSE_PROXY");
+        uint256 drawAmount      = 25_000_000 * WAD;
 
         (uint256 pink, uint256 part) = vat.urns("RWA009-A", address(rwaUrn009));
         uint256 prevBalance = dai.balanceOf(address(MCD_PAUSE_PROXY));
