@@ -108,6 +108,28 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // Increase the line for              MANA-A           from  15 million to 17 million DAI
         DssExecLib.setIlkAutoLineDebtCeiling("MANA-A",                             17 * MILLION);
 
+        // ----------------------- Activate SocGen Vault -----------------------
+        // NOTE: ignore in goerli
+        // call hope() on RWA008_A_OUTPUT_CONDUIT - needs go-ahead from CES
+
+        // ------------------------- Delegate Payments -------------------------
+        // NOTE: ignore in goerli
+        // Recognized Delegate Compensation - July 2022
+        // Flip Flop Flap Delegate LLC - 12000 DAI - 0x688d508f3a6B0a377e266405A1583B3316f9A2B3
+        // Feedblack Loops LLC         - 12000 DAI - 0x80882f2A36d49fC46C3c654F7f9cB9a2Bf0423e1
+        // JustinCase                  - 12000 DAI - 0xE070c2dCfcf6C6409202A8a210f71D51dbAe9473
+        // Doo                         - 12000 DAI - 0x3B91eBDfBC4B78d778f62632a4004804AC5d2DB0
+        // schuppi                     - 11918 DAI - 0xCCffDBc38B1463847509dCD95e0D9AAf54D1c167
+        // Flipside Crypto             - 11387 DAI - 0x62a43123FE71f9764f26554b3F5017627996816a
+        // Penn Blockchain             -  9438 DAI - 0x2165d41af0d8d5034b9c266597c1a415fa0253bd
+        // Chris Blec                  -  9174 DAI - 0xa3f0AbB4Ba74512b5a736C5759446e9B50FDA170
+        // GFX Labs                    -  8512 DAI - 0xa6e8772af29b29B9202a073f8E36f447689BEef6
+        // MakerMan                    -  6912 DAI - 0x9AC6A6B24bCd789Fa59A175c0514f33255e1e6D0
+        // ACREInvest                  -  6628 DAI - 0x5b9C98e8A3D9Db6cd4B4B4C1F92D0A551D06F00D
+        // mhonkasalo & teemulau       -  4029 DAI - 0x97Fb39171ACd7C82c439b6158EA2F71D26ba383d
+        // Llama                       -  3797 DAI - 0x82cD339Fa7d6f22242B31d5f7ea37c1B721dB9C3
+        // Blockchain@Columbia         -  2013 DAI - 0xdC1F98682F4F8a5c6d54F345F448437b83f5E432
+
     }
 }
 
