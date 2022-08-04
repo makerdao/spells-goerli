@@ -18,6 +18,14 @@ pragma solidity 0.6.12;
 
 import "./Goerli-DssSpell.t.base.sol";
 
+interface RwaUrnLike {
+    // function can(address) external view returns (uint256);
+    // function lock(uint256) external;
+    // function draw(uint256) external;
+    // function wipe(uint256) external;
+    // function free(uint256) external;
+}
+
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -450,5 +458,31 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(dai.balanceOf(address(pauseProxy)), prevBalance + WAD);
 
         assertEq(vest.rxd(1), WAD);
+    }
+
+    function testRWA009_SPELL_DRAW() public {
+        RwaUrnLike rwaUrn009      = RwaUrnLike(addr.addr("RWA009_A_URN"));
+        address    MCD_PAUSE_PROXY = addr.addr("MCD_PAUSE_PROXY");
+        uint256    drawAmount      = 25_000_000 * WAD;
+
+        (uint256 pink, uint256 part) = vat.urns("RWA009-A", address(rwaUrn009));
+        uint256 prevBalance = dai.balanceOf(address(MCD_PAUSE_PROXY));
+
+        assertEq(prevBalance, 25_000_000 * WAD, "RWA009/bad-recipient-balance-before-spell");
+        assertEq(pink, 1 * WAD,                 "RWA009/bad-art-before-spell");
+        assertEq(part, 25_000_000 * WAD,        "RWA009/bad-ink-before-spell");
+
+        drawAmount = drawAmount + 25_000_000 * WAD; // we are drawing twice to catch up to mainnet
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // Check if spell draw 25mm DAI to GENESIS
+        assertEq(dai.balanceOf(address(MCD_PAUSE_PROXY)), prevBalance + drawAmount, "RWA009/dai-drawn-was-not-send-to-the-recipient");
+
+        (uint256 ink, uint256 art) = vat.urns("RWA009-A", address(rwaUrn009));
+        assertEq(art, part + drawAmount, "RWA009/bad-art-after-spell"); // DAI drawn == art as rate should always be 1 RAY
+        assertEq(ink, pink,              "RWA009/bad-ink-after-spell"); // Whole unit of collateral is locked. should not change
     }
 }

@@ -23,10 +23,20 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
+interface RwaUrnLike {
+    function draw(uint256) external;
+}
+
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
+
+    uint256 public constant WAD = 10**18;
+
+    uint256 constant RWA009_DRAW_AMOUNT = 25_000_000 * WAD;
+    address constant RWA009_A_URN = 0xd334bbA9172a6F615Be93d194d1322148fb5222e;
+
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -35,8 +45,15 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // $ bc -l <<< 'scale=27; e( l(1.08)/(60 * 60 * 24 * 365) )'
     //
     // A table of rates can be found at
-    //    https://ipfs.io/ipfs/QmX2QMoM1SZq2XMoTbMak8pZP86Y2icpgPAKDjQg4r4YHn
+    //    https://ipfs.io/ipfs/QmR6obnugMeJ6iywg999tr45iDS8V7TfqjAqrgPbc3Y6bJ
     //
+
+    // --- Rates ---
+    uint256 constant ZERO_PCT_RATE             = 1000000000000000000000000000;
+    uint256 constant ZERO_ZERO_TWO_PCT_RATE    = 1000000000006341324285480111;
+    uint256 constant ZERO_ZERO_SIX_PCT_RATE    = 1000000000019020169709960675;
+    uint256 constant TWO_TWO_FIVE_PCT_RATE     = 1000000000705562181084137268;
+    uint256 constant THREE_SEVEN_FIVE_PCT_RATE = 1000000001167363430498603315;
 
     function officeHours() public override returns (bool) {
         return false;
@@ -46,6 +63,38 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
         // onboardNewCollaterals();
+
+        // ----------------------------- RWA Draws -----------------------------
+        // https://vote.makerdao.com/polling/QmQMDasC#poll-detail
+        // Weekly Draw for HVB
+        // Draw once to catch up to mainnet
+        RwaUrnLike(RWA009_A_URN).draw(RWA009_DRAW_AMOUNT);
+        // Draw again for Aug 10 Exec Draw
+        RwaUrnLike(RWA009_A_URN).draw(RWA009_DRAW_AMOUNT);
+
+        // ----------------------------- Rates updates -----------------------------
+        // https://vote.makerdao.com/polling/QmfMRfE4#poll-detail
+
+        // Reduce Stability Fee for    ETH-B   from 4% to 3.75%
+        DssExecLib.setIlkStabilityFee("ETH-B", THREE_SEVEN_FIVE_PCT_RATE, true);
+
+        // Reduce Stability Fee for    WSTETH-A   from 2.50% to 2.25%
+        DssExecLib.setIlkStabilityFee("WSTETH-A", TWO_TWO_FIVE_PCT_RATE, true);
+
+        // Reduce Stability Fee for    WSTETH-B   from 0.75% to 0%
+        DssExecLib.setIlkStabilityFee("WSTETH-B", ZERO_PCT_RATE, true);
+
+        // Reduce Stability Fee for    WBTC-B   from 4.00% to 3.75%
+        DssExecLib.setIlkStabilityFee("WBTC-B", THREE_SEVEN_FIVE_PCT_RATE, true);
+
+        // Increase Stability Fee for  GUNIV3DAIUSDC1-A   from 0.01% to 0.02%
+        DssExecLib.setIlkStabilityFee("GUNIV3DAIUSDC1-A", ZERO_ZERO_TWO_PCT_RATE, true);
+
+        // Increase Stability Fee for  GUNIV3DAIUSDC2-A   from 0.05% to 0.06%
+        DssExecLib.setIlkStabilityFee("GUNIV3DAIUSDC2-A", ZERO_ZERO_SIX_PCT_RATE, true);
+
+        // Increase Stability Fee for  UNIV2DAIUSDC-A   from 0.01% to 0.02%
+        DssExecLib.setIlkStabilityFee("UNIV2DAIUSDC-A", ZERO_ZERO_TWO_PCT_RATE, true);
 
     }
 }
