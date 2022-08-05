@@ -454,11 +454,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     function testRWA009_SPELL_DRAW() public {
         address rwaUrn009       = addr.addr("RWA009_A_URN");
-        address MCD_PAUSE_PROXY = addr.addr("MCD_PAUSE_PROXY");
+        address rwaUrn009Output = addr.addr("MCD_PAUSE_PROXY"); // for goerli, we use the pause proxy
         uint256 drawAmount      = 25_000_000 * WAD;
 
         (uint256 pink, uint256 part) = vat.urns("RWA009-A", address(rwaUrn009));
-        uint256 prevBalance = dai.balanceOf(address(MCD_PAUSE_PROXY));
+        uint256 prevBalance = dai.balanceOf(address(rwaUrn009Output));
 
         assertEq(prevBalance, 25_000_000 * WAD, "RWA009/bad-recipient-balance-before-spell");
         assertEq(pink, 1 * WAD,                 "RWA009/bad-art-before-spell");
@@ -471,7 +471,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Check if spell draw 25mm DAI to GENESIS
-        assertEq(dai.balanceOf(address(MCD_PAUSE_PROXY)), prevBalance + drawAmount, "RWA009/dai-drawn-was-not-send-to-the-recipient");
+        assertEq(dai.balanceOf(address(rwaUrn009Output)), prevBalance + drawAmount, "RWA009/dai-drawn-was-not-send-to-the-recipient");
 
         (uint256 ink, uint256 art) = vat.urns("RWA009-A", address(rwaUrn009));
         assertEq(art, part + drawAmount, "RWA009/bad-art-after-spell"); // DAI drawn == art as rate should always be 1 RAY
