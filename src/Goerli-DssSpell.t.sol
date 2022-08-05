@@ -464,7 +464,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(pink, 1 * WAD,                 "RWA009/bad-art-before-spell");
         assertEq(part, 25_000_000 * WAD,        "RWA009/bad-ink-before-spell");
 
-        drawAmount = drawAmount + 25_000_000 * WAD; // we are drawing twice to catch up to mainnet
+        drawAmount = 2 * 25_000_000 * WAD; // we are drawing twice to catch up to mainnet
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
