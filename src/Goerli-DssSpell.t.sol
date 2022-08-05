@@ -454,7 +454,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     function testRWA009_SPELL_DRAW() public {
         address rwaUrn009       = addr.addr("RWA009_A_URN");
-        address rwaUrn009Output = addr.addr("MCD_PAUSE_PROXY"); // for goerli, we use the pause proxy
+        address rwaUrn009Output = addr.addr("RWA009_A_OUTPUT_CONDUIT"); // for goerli, we use the pause proxy
         uint256 drawAmount      = 25_000_000 * WAD;
 
         (uint256 pink, uint256 part) = vat.urns("RWA009-A", address(rwaUrn009));
