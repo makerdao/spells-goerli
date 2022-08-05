@@ -455,7 +455,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     function testRWA009_SPELL_DRAW() public {
         address rwaUrn009       = addr.addr("RWA009_A_URN");
         address rwaUrn009Output = addr.addr("RWA009_A_OUTPUT_CONDUIT"); // for goerli, we use the pause proxy
-        uint256 drawAmount      = 25_000_000 * WAD;
 
         (uint256 pink, uint256 part) = vat.urns("RWA009-A", address(rwaUrn009));
         uint256 prevBalance = dai.balanceOf(address(rwaUrn009Output));
@@ -464,7 +463,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(pink, 1 * WAD,                 "RWA009/bad-art-before-spell");
         assertEq(part, 25_000_000 * WAD,        "RWA009/bad-ink-before-spell");
 
-        drawAmount = 2 * 25_000_000 * WAD; // we are drawing twice to catch up to mainnet
+        uint256 drawAmount = 2 * 25_000_000 * WAD; // we are drawing twice to catch up to mainnet
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
