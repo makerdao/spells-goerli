@@ -54,6 +54,29 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     //    https://ipfs.io/ipfs/QmX2QMoM1SZq2XMoTbMak8pZP86Y2icpgPAKDjQg4r4YHn
     //
 
+    //-----SF-001 wuz here
+    // Adding new MKR vesting streams following repricing on https://forum.makerdao.com/t/mip40c3-sp48-strategic-finance-unit-mkr-compensation-sf-001/12060/11
+    //
+
+    address public immutable MCD_VEST_MKR_TREASURY = DssExecLib.getChangelogAddress("MCD_VEST_MKR_TREASURY");
+
+    address constant SF_001_WALLET         = 0xf737C76D2B358619f7ef696cf3F94548fEcec379;
+
+    address constant SF_001_VEST_01        = 0xcc81578d163a04ea8d2eae6904d0c8e61a84e1bb; // s
+    address constant SF_001_VEST_02        = 0x31C01e90Edcf8602C1A18B2aE4e5A72D8DCE76bD; // a
+    address constant SF_001_VEST_03        = 0x12b19C5857CF92AaE5e5e5ADc6350e25e4C902e9; // l
+    address constant SF_001_VEST_04        = 0x61606beafca314347cD2c6325786d54582335566; // p
+    address constant SF_001_VEST_05        = 0xbdAF0300c488c6E8a3e28788CaE9902143dF6AFe; // j
+
+    uint256 constant AUG_05_2022 = 1659682800;
+    uint256 constant AUG_05_2023 = 1691218800;
+    uint256 constant AUG_05_2025 = 1754377200;
+
+    // Math
+    uint256 constant MILLION = 10**6;
+    uint256 constant WAD = 10**18;
+
+
     function officeHours() public override returns (bool) {
         return false;
     }
@@ -69,6 +92,67 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         DssExecLib.setChangelogAddress("RWA_TOKEN_FAB", RWA_TOKEN_FAB);
 
         DssExecLib.setChangelogVersion("1.13.3");
+
+        //-----SF-001 wuz here
+        // Adding new MKR vesting streams following repricing on https://forum.makerdao.com/t/mip40c3-sp48-strategic-finance-unit-mkr-compensation-sf-001/12060/11
+        //
+
+        DssVestLike(MCD_VEST_MKR_TREASURY).restrict(
+            DssVestLike(MCD_VEST_MKR_TREASURY).create(
+                SF_001_VEST_01,  // Participant
+                216.09 * 3 * WAD,       // Amount
+                AUG_05_2022,     // Begin date
+                3 * 365 days,    // Vest duration
+                365 days,        // Cliff time
+                SF_001_WALLET    // Manager
+            )
+        );
+
+        DssVestLike(MCD_VEST_MKR_TREASURY).restrict(
+            DssVestLike(MCD_VEST_MKR_TREASURY).create(
+                SF_001_VEST_02,  // Participant
+                216.09 * 3 * WAD,       // Amount
+                AUG_05_2022,     // Begin date
+                3 * 365 days,    // Vest duration
+                365 days,        // Cliff time
+                SF_001_WALLET    // Manager
+            )
+        );
+
+        DssVestLike(MCD_VEST_MKR_TREASURY).restrict(
+            DssVestLike(MCD_VEST_MKR_TREASURY).create(
+                SF_001_VEST_03,  // Participant
+                175.58 * 3 * WAD,       // Amount
+                AUG_05_2022,     // Begin date
+                3 * 365 days,    // Vest duration
+                365 days,        // Cliff time
+                SF_001_WALLET    // Manager
+            )
+        );
+
+        DssVestLike(MCD_VEST_MKR_TREASURY).restrict(
+            DssVestLike(MCD_VEST_MKR_TREASURY).create(
+                SF_001_VEST_04,  // Participant
+                27 * WAD,       // Amount
+                AUG_05_2022,     // Begin date
+                365 days,    // Vest duration
+                365 days,        // Cliff time
+                SF_001_WALLET    // Manager
+            )
+        );
+
+        DssVestLike(MCD_VEST_MKR_TREASURY).restrict(
+            DssVestLike(MCD_VEST_MKR_TREASURY).create(
+                SF_001_VEST_05,  // Participant
+                13.5 * WAD,       // Amount
+                AUG_05_2022,     // Begin date
+                365 days,    // Vest duration
+                365 days,        // Cliff time
+                SF_001_WALLET    // Manager
+            )
+        );
+
+
     }
 
     function wipeFromRWA009Urn() internal {
