@@ -38,7 +38,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     // address constant RWA008_A_OPERATOR       = 0x03f1A14A5b31e2f1751b6db368451dFCEA5A0439;
     // address constant RWA008_A_OUTPUT_CONDUIT = 0x1aA21d2E39EC0da185CA04609c8868bC324d8553;
-    uint256 constant RWA009_DRAW_AMOUNT      = 25_000_000 * WAD;
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
