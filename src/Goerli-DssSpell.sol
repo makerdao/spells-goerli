@@ -66,15 +66,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // Includes changes from the DssSpellCollateralAction
         // onboardNewCollaterals();
 
-        // ----------------------------- RWA Draws -----------------------------
-        // https://vote.makerdao.com/polling/QmQMDasC#poll-detail
-        // Weekly Draw for HVB
-        address RWA009_A_URN = DssExecLib.getChangelogAddress("RWA009_A_URN");
-        // Draw once to catch up to mainnet since there was no goerli spell last week
-        RwaUrnLike(RWA009_A_URN).draw(RWA009_DRAW_AMOUNT);
-        // Draw again for Aug 10 Exec Draw
-        RwaUrnLike(RWA009_A_URN).draw(RWA009_DRAW_AMOUNT);
-
         // --------------------------- Rates updates ---------------------------
         // https://vote.makerdao.com/polling/QmfMRfE4#poll-detail
 
