@@ -1115,9 +1115,6 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     function skipWards(address target, address deployer) internal view returns (bool ok) {
         ok = (
             target   == address(chainLog)      &&
-            deployer == deployers.PE_03()      ||
-            deployer == deployers.PE_04()      ||
-            deployer == deployers.PE_05()      ||
             deployer == deployers.PE_CURRENT()
         ) ||
         (
