@@ -452,7 +452,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(vest.rxd(1), WAD);
     }
 
-    function testRWA009_SPELL_DRAW() private {
+    function testRWA009_SPELL_DRAW() public {
         address rwaUrn009       = addr.addr("RWA009_A_URN");
         address rwaUrn009Output = addr.addr("RWA009_A_OUTPUT_CONDUIT"); // for goerli, we use the pause proxy
 
