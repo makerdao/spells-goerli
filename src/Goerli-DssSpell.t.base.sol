@@ -1120,7 +1120,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             deployer == deployers.addr(4)
         ) ||
         (
-            deployer == deployers.addr(6)  // Oracles
+            deployer == deployers.addr(7)  // Oracles
         );
     }
 
