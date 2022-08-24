@@ -451,27 +451,4 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         assertEq(vest.rxd(1), WAD);
     }
-
-    function testRWA009_SPELL_DRAW() public {
-        address rwaUrn009       = addr.addr("RWA009_A_URN");
-        address rwaUrn009Output = addr.addr("RWA009_A_OUTPUT_CONDUIT"); // for goerli, we use the pause proxy
-
-        (uint256 pink, uint256 part) = vat.urns("RWA009-A", address(rwaUrn009));
-        uint256 prevBalance = dai.balanceOf(address(rwaUrn009Output));
-
-        assertEq(pink, 1 * WAD, "RWA009/bad-ink-before-spell");
-
-        uint256 drawAmount = 2 * 25_000_000 * WAD; // we are drawing twice to catch up to mainnet
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        // Check if spell draw 25mm DAI to Output Conduit (Pause Proxy)
-        assertEq(dai.balanceOf(address(rwaUrn009Output)), prevBalance + drawAmount, "RWA009/dai-drawn-was-not-send-to-the-recipient");
-
-        (uint256 ink, uint256 art) = vat.urns("RWA009-A", address(rwaUrn009));
-        assertEq(art, part + drawAmount, "RWA009/bad-art-after-spell"); // DAI drawn == art as rate should always be 1 RAY
-        assertEq(ink, pink,              "RWA009/bad-ink-after-spell"); // Whole unit of collateral is locked. should not change
-    }
 }
