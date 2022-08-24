@@ -53,6 +53,29 @@ interface FlapLike is FlapAbstract {
     function lid() external view returns (uint256);
 }
 
+interface TeleportJoinLike {
+    function wards(address) external view returns (uint256);
+    function fees(bytes32) external view returns (address);
+    function line(bytes32) external view returns (uint256);
+    function debt(bytes32) external view returns (int256);
+    function vow() external view returns (address);
+    function vat() external view returns (address);
+    function daiJoin() external view returns (address);
+    function ilk() external view returns (bytes32);
+    function domain() external view returns (bytes32);
+}
+
+interface TeleportFeeLike {
+    function fee() external view returns (uint256);
+    function ttl() external view returns (uint256);
+}
+
+interface TeleportOracleAuthLike {
+    function signers(address) external view returns (uint256);
+    function teleportJoin() external view returns (address);
+    function threshold() external view returns (uint256);
+}
+
 contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     Hevm hevm;
 
@@ -987,6 +1010,64 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertLe(ink, 1);
         assertLe(art, 1);
         assertEq(token.balanceOf(address(join)), 0);
+    }
+
+    function checkTeleportFWIntegration(
+        bytes32 sourceDomain
+        bytes32 targetDomain,
+        uint256 line
+        address fee,
+        address gateway,
+        address escrow,
+        uint256 toMint,
+        uint256 expectedFee
+    ) public {
+        TeleportJoinLike join = TeleportJoinLike(DssExecLib.getChainlogAddress("MCD_JOIN_TELEPORT_FW_A"));
+        TeleportRouterLike router = TeleportRouterLike(DssExecLib.getChainlogAddress("MCD_ROUTER_TELEPORT_FW_A"));
+        TeleportOracleAuthLike oracleAuth = TeleportOracleAuthLike(0xD40ab915cB8232E8188e1a9137E4b5dCB86F0fd8);
+
+        // Sanity checks
+        assertEq(join.line(address(sourceDomain)), line);
+        assertEq(join.fees(address(sourceDomain)), fee);
+        assertEq(dai.allowance(escrow, gateway), type(uint256).max);
+        assertEq(dai.allowance(gateway, router), type(uint256).max);
+
+        TeleportGUID memory guid1 = TeleportGUID({
+            sourceDomain: sourceDomain,
+            targetDomain: targetDomain,
+            receiver: addressToBytes32(address(this)),
+            operator: addressToBytes32(address(0)),
+            amount: uint128(toMint),
+            nonce: 0,
+            timestamp: uint48(block.timestamp)
+        });
+        TeleportGUID memory guid2 = TeleportGUID({
+            sourceDomain: sourceDomain,
+            targetDomain: targetDomain,
+            receiver: addressToBytes32(address(this)),
+            operator: addressToBytes32(address(0)),
+            amount: uint128(toMint),
+            nonce: 1,
+            timestamp: uint48(block.timestamp + TeleportFeeLike(fee).ttl())
+        });
+
+        // Cannot run a full integration test from L2 yet so check the L1 side from the router
+        giveAuth(address(router), address(this));
+        hevm.warp(block.timestamp + TeleportFeeLike(fee).ttl())
+        router.requestMint(guid1, 0, 0);
+        assertEq(dai.balanceOf(address(this)), toMint);
+        assertEq(join.debt(sourceDomain), int256(toMint));
+
+        // Check oracle auth mint
+        // TODO - need signatures
+        //oracleAuth.requestMint(guid2, SIGNATURE, expectedFee * WAD / toMint, 0);
+        assertEq(dai.balanceOf(address(this)), toMint * 2 - expectedFee);
+        assertEq(join.debt(sourceDomain), int256(toMint * 2 - expectedFee));
+
+        // Check settle
+        router.settle(targetDomain, toMint * 2 - expectedFee);
+        assertEq(dai.balanceOf(address(this)), 0);
+        assertEq(join.debt(sourceDomain), int256(0));
     }
 
     function checkDaiVest(

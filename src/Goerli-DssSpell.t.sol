@@ -18,6 +18,12 @@ pragma solidity 0.6.12;
 
 import "./Goerli-DssSpell.t.base.sol";
 
+interface TeleporRouterLike {
+    function gateways(bytes32) external view returns (address);
+    function domains(address) external view returns (bytes32);
+    function dai() external view returns (address);
+}
+
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -450,5 +456,62 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(dai.balanceOf(address(pauseProxy)), prevBalance + WAD);
 
         assertEq(vest.rxd(1), WAD);
+    }
+
+    function testTeleportFW() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        TeleportJoinLike join = TeleportJoinLike(0xAaEf3f1523291aDdaF98a8535c27F25971d823D2);
+        TeleportOracleAuthLike oracleAuth = TeleportOracleAuthLike(0xD40ab915cB8232E8188e1a9137E4b5dCB86F0fd8);
+        TeleportRouterLike router = TeleportRouterLike(0x75c2D0A33cB245acD1F10798fEdD4a42Be4951a9);
+        TeleportFeeLike fee = TeleportFeeLike(0x72Cb460888D401f991AB1a78ffc48EFcDcd155e8);
+
+        bytes32 ilk = "TELEPORT-FW-A";
+        bytes23 domain = "ETH-MAIN-A";
+
+        // Sanity checks
+        assertEq(vat.wards(address(join)), 1);
+
+        assertEq(join.wards(address(oracleAuth)), 1);
+        assertEq(join.wards(address(router)), 1);
+        assertEq(join.vow(), address(vow));
+        assertEq(join.daiJoin(), address(daiJoin));
+        assertEq(join.ilk(), ilk);
+        assertEq(join.domain(), domain);
+
+        assertEq(fee.fee(), WAD / 10000);   // 1bps
+        assertEq(fee.ttl(), 8 days);
+
+        //assertEq(oracleAuth.signers(ADDR), 1);    // TODO
+        assertEq(oracleAuth.teleportJoin(), address(join));
+        assertEq(oracleAuth.threshold(), 1);
+
+        assertEq(router.gateways(domain), address(join));
+        assertEq(router.domains(address(join)), domain);
+        assertEq(router.dai(), address(dai));
+
+        checkTeleportFWIntegration(
+            "OPT-MAIN-A",
+            domain,
+            1_000_000 * WAD,
+            address(fee),
+            0xe57e6b2eEEf91C068849bd6066d1041A00A4F654,
+            0xbc892A208705862273008B2Fb7D01E968be42653,
+            100 * WAD,
+            WAD / 100
+        );
+
+        checkTeleportFWIntegration(
+            "ARB-ONE-A",
+            domain,
+            1_000_000 * WAD,
+            address(fee),
+            0x3F7Eea7c2D08bc6F249759082360E14c829b2A92,
+            0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1,
+            100 * WAD,
+            WAD / 100
+        );
     }
 }
