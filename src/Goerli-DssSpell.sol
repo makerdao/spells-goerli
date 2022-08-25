@@ -16,18 +16,16 @@
 
 pragma solidity 0.6.12;
 // Enable ABIEncoderV2 when onboarding collateral through `DssExecLib.addNewCollateral()`
-pragma experimental ABIEncoderV2;
+// pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
-import {
-    VatAbstract,
-    JugAbstract,
-    CureAbstract
-} from "dss-interfaces/Interfaces.sol";
+import { VatAbstract } from "dss-interfaces/dss/VatAbstract.sol";
+import { JugAbstract } from "dss-interfaces/dss/JugAbstract.sol";
+import { CureAbstract } from "dss-interfaces/dss/CureAbstract.sol";
 
 interface TeleportJoinLike {
     function file(bytes32,bytes32,address) external;

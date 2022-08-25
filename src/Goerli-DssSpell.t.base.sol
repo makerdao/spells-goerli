@@ -1058,6 +1058,34 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         return bytes32(uint256(uint160(addr)));
     }
 
+    function oracleAuthRequestMint(
+        bytes32 sourceDomain,
+        bytes32 targetDomain,
+        uint256 toMint,
+        uint256 expectedFee
+    ) internal {
+        TeleportOracleAuthLike oracleAuth = TeleportOracleAuthLike(chainLog.getAddress("MCD_ORACLE_AUTH_TELEPORT_FW_A"));
+        (bytes memory signatures, address[] memory signers) = getSignatures(oracleAuth.getSignHash(TeleportGUID({
+            sourceDomain: sourceDomain,
+            targetDomain: targetDomain,
+            receiver: bytes32(uint256(uint160(address(this)))),
+            operator: bytes32(0),
+            amount: uint128(toMint),
+            nonce: 1,
+            timestamp: uint48(block.timestamp)
+        })));
+        oracleAuth.addSigners(signers);
+        oracleAuth.requestMint(TeleportGUID({
+            sourceDomain: sourceDomain,
+            targetDomain: targetDomain,
+            receiver: bytes32(uint256(uint160(address(this)))),
+            operator: bytes32(0),
+            amount: uint128(toMint),
+            nonce: 1,
+            timestamp: uint48(block.timestamp)
+        }), signatures, expectedFee * WAD / toMint, 0);
+    }
+
     function checkTeleportFWIntegration(
         bytes32 sourceDomain,
         bytes32 targetDomain,
@@ -1070,8 +1098,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     ) public {
         TeleportJoinLike join = TeleportJoinLike(chainLog.getAddress("MCD_JOIN_TELEPORT_FW_A"));
         TeleportRouterLike router = TeleportRouterLike(chainLog.getAddress("MCD_ROUTER_TELEPORT_FW_A"));
-        TeleportOracleAuthLike oracleAuth = TeleportOracleAuthLike(chainLog.getAddress("MCD_ORACLE_AUTH_TELEPORT_FW_A"));
-
+        
         // Sanity checks
         assertEq(join.line(sourceDomain), line);
         assertEq(join.fees(sourceDomain), fee);
@@ -1079,33 +1106,25 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(dai.allowance(gateway, address(router)), type(uint256).max);
 
         // Cannot run a full integration test from L2 yet so check the L1 side from the router
-        TeleportGUID memory guid = TeleportGUID(
-            sourceDomain,
-            targetDomain,
-            bytes32(uint256(uint160(address(this)))),
-            bytes32(0),
-            uint128(toMint),
-            0,
-            uint48(block.timestamp)
-        );
         {
             giveAuth(address(router), address(this));
             hevm.warp(block.timestamp + TeleportFeeLike(fee).ttl());
-            router.requestMint(guid, 0, 0);
+            router.requestMint(TeleportGUID({
+                sourceDomain: sourceDomain,
+                targetDomain: targetDomain,
+                receiver: bytes32(uint256(uint160(address(this)))),
+                operator: bytes32(0),
+                amount: uint128(toMint),
+                nonce: 0,
+                timestamp: uint48(block.timestamp)
+            }), 0, 0);
             assertEq(dai.balanceOf(address(this)), toMint);
             assertEq(join.debt(sourceDomain), int256(toMint));
         }
 
         // Check oracle auth mint -- add custom signatures to test
         {
-            guid.nonce = 1;
-
-            {
-                bytes32 signHash = oracleAuth.getSignHash(guid);
-                (bytes memory signatures, address[] memory signers) = getSignatures(signHash);
-                oracleAuth.addSigners(signers);
-                oracleAuth.requestMint(guid, signatures, expectedFee * WAD / toMint, 0);
-            }
+            oracleAuthRequestMint(sourceDomain, targetDomain, toMint, expectedFee);
             assertEq(dai.balanceOf(address(this)), toMint * 2 - expectedFee);
             assertEq(join.debt(sourceDomain), int256(toMint * 2 - expectedFee));
         }
