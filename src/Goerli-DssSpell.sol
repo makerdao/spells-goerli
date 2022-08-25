@@ -25,7 +25,10 @@ import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
 import { VatAbstract } from "dss-interfaces/dss/VatAbstract.sol";
 import { JugAbstract } from "dss-interfaces/dss/JugAbstract.sol";
-import { CureAbstract } from "dss-interfaces/dss/CureAbstract.sol";
+
+interface CureAbstract {
+    function lift(address) external;
+}
 
 interface TeleportJoinLike {
     function file(bytes32,bytes32,address) external;

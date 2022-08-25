@@ -61,6 +61,11 @@ interface DirectDepositLike is GemJoinAbstract {
     function king() external view returns (address);
 }
 
+interface FlapLike is FlapAbstract {
+    function fill() external view returns (uint256);
+    function lid() external view returns (uint256);
+}
+
 interface TeleportJoinLike {
     function wards(address) external view returns (uint256);
     function fees(bytes32) external view returns (address);
@@ -130,7 +135,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     ESMAbstract              esm = ESMAbstract(        addr.addr("MCD_ESM"));
     address                 cure =                     addr.addr("MCD_CURE");
     IlkRegistryAbstract      reg = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
-    FlapAbstract            flap = FlapAbstract(       addr.addr("MCD_FLAP"));
+    FlapLike                flap = FlapLike(           addr.addr("MCD_FLAP"));
 
     OsmMomAbstract           osmMom = OsmMomAbstract(     addr.addr("OSM_MOM"));
     FlipperMomAbstract      flipMom = FlipperMomAbstract( addr.addr("FLIPPER_MOM"));
