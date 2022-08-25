@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
+pragma experimental ABIEncoderV2;
 
 import "ds-math/math.sol";
 import "ds-test/test.sol";
@@ -27,10 +28,22 @@ import "./test/config.sol";
 
 import {DssSpell} from "./Goerli-DssSpell.sol";
 
+struct TeleportGUID {
+    bytes32 sourceDomain;
+    bytes32 targetDomain;
+    bytes32 receiver;
+    bytes32 operator;
+    uint128 amount;
+    uint80 nonce;
+    uint48 timestamp;
+}
+
 interface Hevm {
     function warp(uint256) external;
     function store(address,bytes32,bytes32) external;
     function load(address,bytes32) external view returns (bytes32);
+    function addr(uint) external returns (address);
+    function sign(uint, bytes32) external returns (uint8, bytes32, bytes32);
 }
 
 interface DssExecSpellLike {
@@ -46,11 +59,6 @@ interface DirectDepositLike is GemJoinAbstract {
     function tau() external view returns (uint256);
     function bar() external view returns (uint256);
     function king() external view returns (address);
-}
-
-interface FlapLike is FlapAbstract {
-    function fill() external view returns (uint256);
-    function lid() external view returns (uint256);
 }
 
 interface TeleportJoinLike {
@@ -74,6 +82,26 @@ interface TeleportOracleAuthLike {
     function signers(address) external view returns (uint256);
     function teleportJoin() external view returns (address);
     function threshold() external view returns (uint256);
+    function addSigners(address[] calldata) external;
+    function getSignHash(TeleportGUID calldata) external pure returns (bytes32);
+    function requestMint(
+        TeleportGUID calldata,
+        bytes calldata,
+        uint256,
+        uint256
+    ) external returns (uint256, uint256);
+}
+
+interface TeleportRouterLike {
+    function gateways(bytes32) external view returns (address);
+    function domains(address) external view returns (bytes32);
+    function dai() external view returns (address);
+    function requestMint(
+        TeleportGUID calldata,
+        uint256,
+        uint256
+    ) external returns (uint256, uint256);
+    function settle(bytes32, uint256) external;
 }
 
 contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
@@ -102,7 +130,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     ESMAbstract              esm = ESMAbstract(        addr.addr("MCD_ESM"));
     address                 cure =                     addr.addr("MCD_CURE");
     IlkRegistryAbstract      reg = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
-    FlapLike                flap = FlapLike(           addr.addr("MCD_FLAP"));
+    FlapAbstract            flap = FlapAbstract(       addr.addr("MCD_FLAP"));
 
     OsmMomAbstract           osmMom = OsmMomAbstract(     addr.addr("OSM_MOM"));
     FlipperMomAbstract      flipMom = FlipperMomAbstract( addr.addr("FLIPPER_MOM"));
@@ -1012,6 +1040,24 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(token.balanceOf(address(join)), 0);
     }
 
+    function getSignatures(bytes32 signHash) internal returns (bytes memory signatures, address[] memory signers) {
+        // seeds chosen s.t. corresponding addresses are in ascending order
+        uint8[30] memory seeds = [8,10,6,2,9,15,14,20,7,29,24,13,12,25,16,26,21,22,0,18,17,27,3,28,23,19,4,5,1,11];
+        uint numSigners = seeds.length;
+        signers = new address[](numSigners);
+        for(uint i; i < numSigners; i++) {
+            uint sk = uint(keccak256(abi.encode(seeds[i])));
+            signers[i] = hevm.addr(sk);
+            (uint8 v, bytes32 r, bytes32 s) = hevm.sign(sk, signHash);
+            signatures = abi.encodePacked(signatures, r, s, v);
+        }
+        assertEq(signatures.length, numSigners * 65);
+    }
+
+    function addressToBytes32(address addr) internal pure returns (bytes32) {
+        return bytes32(uint256(uint160(addr)));
+    }
+
     function checkTeleportFWIntegration(
         bytes32 sourceDomain,
         bytes32 targetDomain,
@@ -1022,49 +1068,47 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         uint256 toMint,
         uint256 expectedFee
     ) public {
-        TeleportJoinLike join = TeleportJoinLike(DssExecLib.getChainlogAddress("MCD_JOIN_TELEPORT_FW_A"));
-        TeleportRouterLike router = TeleportRouterLike(DssExecLib.getChainlogAddress("MCD_ROUTER_TELEPORT_FW_A"));
-        TeleportOracleAuthLike oracleAuth = TeleportOracleAuthLike(0xD40ab915cB8232E8188e1a9137E4b5dCB86F0fd8);
+        TeleportJoinLike join = TeleportJoinLike(chainLog.getAddress("MCD_JOIN_TELEPORT_FW_A"));
+        TeleportRouterLike router = TeleportRouterLike(chainLog.getAddress("MCD_ROUTER_TELEPORT_FW_A"));
+        TeleportOracleAuthLike oracleAuth = TeleportOracleAuthLike(chainLog.getAddress("MCD_ORACLE_AUTH_TELEPORT_FW_A"));
 
         // Sanity checks
-        assertEq(join.line(address(sourceDomain)), line);
-        assertEq(join.fees(address(sourceDomain)), fee);
+        assertEq(join.line(sourceDomain), line);
+        assertEq(join.fees(sourceDomain), fee);
         assertEq(dai.allowance(escrow, gateway), type(uint256).max);
-        assertEq(dai.allowance(gateway, router), type(uint256).max);
-
-        TeleportGUID memory guid1 = TeleportGUID({
-            sourceDomain: sourceDomain,
-            targetDomain: targetDomain,
-            receiver: addressToBytes32(address(this)),
-            operator: addressToBytes32(address(0)),
-            amount: uint128(toMint),
-            nonce: 0,
-            timestamp: uint48(block.timestamp)
-        });
-        TeleportGUID memory guid2 = TeleportGUID({
-            sourceDomain: sourceDomain,
-            targetDomain: targetDomain,
-            receiver: addressToBytes32(address(this)),
-            operator: addressToBytes32(address(0)),
-            amount: uint128(toMint),
-            nonce: 1,
-            timestamp: uint48(block.timestamp + TeleportFeeLike(fee).ttl())
-        });
+        assertEq(dai.allowance(gateway, address(router)), type(uint256).max);
 
         // Cannot run a full integration test from L2 yet so check the L1 side from the router
-        giveAuth(address(router), address(this));
-        hevm.warp(block.timestamp + TeleportFeeLike(fee).ttl());
-        router.requestMint(guid1, 0, 0);
-        assertEq(dai.balanceOf(address(this)), toMint);
-        assertEq(join.debt(sourceDomain), int256(toMint));
+        TeleportGUID memory guid = TeleportGUID(
+            sourceDomain,
+            targetDomain,
+            bytes32(uint256(uint160(address(this)))),
+            bytes32(0),
+            uint128(toMint),
+            0,
+            uint48(block.timestamp)
+        );
+        {
+            giveAuth(address(router), address(this));
+            hevm.warp(block.timestamp + TeleportFeeLike(fee).ttl());
+            router.requestMint(guid, 0, 0);
+            assertEq(dai.balanceOf(address(this)), toMint);
+            assertEq(join.debt(sourceDomain), int256(toMint));
+        }
 
         // Check oracle auth mint -- add custom signatures to test
-        bytes32 signHash = auth.getSignHash(guid2);
-        (bytes memory signatures, address[] memory signers) = getSignatures(signHash);
-        oracleAuth.addSigners(signers);
-        oracleAuth.requestMint(guid2, signatures, expectedFee * WAD / toMint, 0);
-        assertEq(dai.balanceOf(address(this)), toMint * 2 - expectedFee);
-        assertEq(join.debt(sourceDomain), int256(toMint * 2 - expectedFee));
+        {
+            guid.nonce = 1;
+
+            {
+                bytes32 signHash = oracleAuth.getSignHash(guid);
+                (bytes memory signatures, address[] memory signers) = getSignatures(signHash);
+                oracleAuth.addSigners(signers);
+                oracleAuth.requestMint(guid, signatures, expectedFee * WAD / toMint, 0);
+            }
+            assertEq(dai.balanceOf(address(this)), toMint * 2 - expectedFee);
+            assertEq(join.debt(sourceDomain), int256(toMint * 2 - expectedFee));
+        }
 
         // Check settle
         router.settle(targetDomain, toMint * 2 - expectedFee);

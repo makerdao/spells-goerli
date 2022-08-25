@@ -15,14 +15,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
+pragma experimental ABIEncoderV2;
 
 import "./Goerli-DssSpell.t.base.sol";
-
-interface TeleporRouterLike {
-    function gateways(bytes32) external view returns (address);
-    function domains(address) external view returns (bytes32);
-    function dai() external view returns (address);
-}
 
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use

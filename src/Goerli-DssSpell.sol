@@ -16,7 +16,7 @@
 
 pragma solidity 0.6.12;
 // Enable ABIEncoderV2 when onboarding collateral through `DssExecLib.addNewCollateral()`
-// pragma experimental ABIEncoderV2;
+pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
@@ -96,9 +96,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         //
 
         // Setup new ilk
-        VatAbstract vat = DssExecLib.vat();
-        JugAbstract jug = DssExecLib.jug();
-        CureAbstract cure = DssExecLib.cure();
+        VatAbstract vat = VatAbstract(DssExecLib.vat());
+        JugAbstract jug = JugAbstract(DssExecLib.jug());
+        CureAbstract cure = CureAbstract(DssExecLib.getChangelogAddress("MCD_CURE"));
         address dai = DssExecLib.dai();
 
         vat.init(ILK);
