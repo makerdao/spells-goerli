@@ -1120,6 +1120,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(dai.allowance(gateway, address(router)), type(uint256).max);
 
         {
+            // NOTE: We are calling the router directly because the bridge code is minimal and unique to each domain
             PrankHevm(address(hevm)).startPrank(gateway);
             router.requestMint(TeleportGUID({
                 sourceDomain: sourceDomain,

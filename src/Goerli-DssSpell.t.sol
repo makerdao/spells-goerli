@@ -19,6 +19,11 @@ pragma experimental ABIEncoderV2;
 
 import "./Goerli-DssSpell.t.base.sol";
 
+interface CureLike {
+    function tCount() external view returns (uint256);
+    function srcs(uint256) external view returns (address);
+}
+
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -511,6 +516,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(router.gateways(domain), address(join));
         assertEq(router.domains(address(join)), domain);
         assertEq(router.dai(), address(dai));
+
+        assertEq(CureLike(cure).srcs(CureLike(cure).tCount() - 1), address(join));
 
         checkTeleportFWIntegration(
             "OPT-GOER-A",
