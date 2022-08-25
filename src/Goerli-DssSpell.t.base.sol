@@ -98,6 +98,7 @@ interface TeleportOracleAuthLike {
 }
 
 interface TeleportRouterLike {
+    function file(bytes32, bytes32, address) external;
     function gateways(bytes32) external view returns (address);
     function domains(address) external view returns (bytes32);
     function dai() external view returns (address);
@@ -107,6 +108,11 @@ interface TeleportRouterLike {
         uint256
     ) external returns (uint256, uint256);
     function settle(bytes32, uint256) external;
+}
+
+interface PrankHevm {
+    function startPrank(address) external;
+    function stopPrank() external;
 }
 
 contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
@@ -1070,6 +1076,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         uint256 expectedFee
     ) internal {
         TeleportOracleAuthLike oracleAuth = TeleportOracleAuthLike(chainLog.getAddress("MCD_ORACLE_AUTH_TELEPORT_FW_A"));
+        giveAuth(address(oracleAuth), address(this));
         (bytes memory signatures, address[] memory signers) = getSignatures(oracleAuth.getSignHash(TeleportGUID({
             sourceDomain: sourceDomain,
             targetDomain: targetDomain,
@@ -1091,6 +1098,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         }), signatures, expectedFee * WAD / toMint, 0);
     }
 
+    // NOTE: Only executable by forge
     function checkTeleportFWIntegration(
         bytes32 sourceDomain,
         bytes32 targetDomain,
@@ -1110,10 +1118,8 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(dai.allowance(escrow, gateway), type(uint256).max);
         assertEq(dai.allowance(gateway, address(router)), type(uint256).max);
 
-        // Cannot run a full integration test from L2 yet so check the L1 side from the router
         {
-            giveAuth(address(router), address(this));
-            hevm.warp(block.timestamp + TeleportFeeLike(fee).ttl());
+            PrankHevm(address(hevm)).startPrank(gateway);
             router.requestMint(TeleportGUID({
                 sourceDomain: sourceDomain,
                 targetDomain: targetDomain,
@@ -1121,8 +1127,9 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
                 operator: bytes32(0),
                 amount: uint128(toMint),
                 nonce: 0,
-                timestamp: uint48(block.timestamp)
+                timestamp: uint48(block.timestamp - TeleportFeeLike(fee).ttl())
             }), 0, 0);
+            PrankHevm(address(hevm)).stopPrank();
             assertEq(dai.balanceOf(address(this)), toMint);
             assertEq(join.debt(sourceDomain), int256(toMint));
         }
@@ -1131,13 +1138,16 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         {
             oracleAuthRequestMint(sourceDomain, targetDomain, toMint, expectedFee);
             assertEq(dai.balanceOf(address(this)), toMint * 2 - expectedFee);
-            assertEq(join.debt(sourceDomain), int256(toMint * 2 - expectedFee));
+            assertEq(join.debt(sourceDomain), int256(toMint * 2));
         }
 
         // Check settle
+        dai.transfer(gateway, toMint * 2 - expectedFee);
+        PrankHevm(address(hevm)).startPrank(gateway);
         router.settle(targetDomain, toMint * 2 - expectedFee);
-        assertEq(dai.balanceOf(address(this)), 0);
-        assertEq(join.debt(sourceDomain), int256(0));
+        PrankHevm(address(hevm)).stopPrank();
+        assertEq(dai.balanceOf(gateway), 0);
+        assertEq(join.debt(sourceDomain), int256(WAD / 100));
     }
 
     function checkDaiVest(

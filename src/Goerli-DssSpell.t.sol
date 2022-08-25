@@ -453,6 +453,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(vest.rxd(1), WAD);
     }
 
+    // NOTE: Only executable by forge
     function testTeleportFW() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
@@ -464,7 +465,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         TeleportFeeLike fee = TeleportFeeLike(0x72Cb460888D401f991AB1a78ffc48EFcDcd155e8);
 
         bytes32 ilk = "TELEPORT-FW-A";
-        bytes23 domain = "ETH-MAIN-A";
+        bytes23 domain = "ETH-GOER-A";
 
         // Sanity checks
         assertEq(vat.wards(address(join)), 1);
@@ -488,7 +489,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(router.dai(), address(dai));
 
         checkTeleportFWIntegration(
-            "OPT-MAIN-A",
+            "OPT-GOER-A",
             domain,
             1_000_000 * WAD,
             address(fee),
@@ -499,7 +500,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         );
 
         checkTeleportFWIntegration(
-            "ARB-ONE-A",
+            "ARB-GOER-A",
             domain,
             1_000_000 * WAD,
             address(fee),

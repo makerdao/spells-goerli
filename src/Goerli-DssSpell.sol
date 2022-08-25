@@ -35,6 +35,10 @@ interface TeleportJoinLike {
     function file(bytes32,bytes32,uint256) external;
 }
 
+interface TeleportRouterLike {
+    function file(bytes32,bytes32,address) external;
+}
+
 interface TeleportOracleAuthLike {
     function file(bytes32,uint256) external;
     function addSigners(address[] calldata) external;
@@ -55,15 +59,15 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     address internal constant LINEAR_FEE = 0x72Cb460888D401f991AB1a78ffc48EFcDcd155e8;
 
     bytes32 constant internal ILK = "TELEPORT-FW-A";
-    bytes32 constant internal DOMAIN_ETH = "ETH-MAIN-A";
+    bytes32 constant internal DOMAIN_ETH = "ETH-GOER-A";
 
-    bytes32 constant internal DOMAIN_OPT = "OPT-MAIN-A";
+    bytes32 constant internal DOMAIN_OPT = "OPT-GOER-A";
     address internal constant TELEPORT_GATEWAY_OPT = 0xe57e6b2eEEf91C068849bd6066d1041A00A4F654;
     address internal constant ESCROW_OPT = 0xbc892A208705862273008B2Fb7D01E968be42653;
     address internal constant DAI_BRIDGE_OPT = 0x05a388Db09C2D44ec0b00Ee188cD42365c42Df23;
     address internal constant GOV_RELAY_OPT = 0xD9b2835A5bFC8bD5f54DB49707CF48101C66793a;
 
-    bytes32 constant internal DOMAIN_ARB = "ARB-ONE-A";
+    bytes32 constant internal DOMAIN_ARB = "ARB-GOER-A";
     address internal constant TELEPORT_GATEWAY_ARB = 0x3F7Eea7c2D08bc6F249759082360E14c829b2A92;
     address internal constant ESCROW_ARB = 0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1;
     address internal constant DAI_BRIDGE_ARB = 0x467194771dAe2967Aef3ECbEDD3Bf9a310C76C65;
@@ -128,7 +132,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // TODO add signers
 
         // Configure TeleportRouter
-        // Note: ETH-MAIN-A route already defined
+        // Note: ETH-GOER-A route already defined
+        TeleportRouterLike(ROUTER).file("gateway", DOMAIN_OPT, TELEPORT_GATEWAY_OPT);
+        TeleportRouterLike(ROUTER).file("gateway", DOMAIN_ARB, TELEPORT_GATEWAY_ARB);
 
         // Authorize TeleportGateways to use the escrows
         EscrowLike(ESCROW_OPT).approve(dai, TELEPORT_GATEWAY_OPT, type(uint256).max);
