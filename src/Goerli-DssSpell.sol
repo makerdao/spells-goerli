@@ -138,6 +138,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         DssExecLib.setChangelogAddress("MCD_ORACLE_AUTH_TELEPORT_FW_A", ORACLE_AUTH);
         DssExecLib.setChangelogAddress("MCD_ROUTER_TELEPORT_FW_A", ROUTER);
 
+        DssExecLib.setChangelogAddress("OPTIMISM_TELEPORT_BRIDGE", TELEPORT_GATEWAY_OPT);
+        DssExecLib.setChangelogAddress("ARBITRUM_TELEPORT_BRIDGE", TELEPORT_GATEWAY_ARB);
+
         // Note: GOERLI-ONLY - missing bridge entries
         DssExecLib.setChangelogAddress("OPTIMISM_DAI_BRIDGE", DAI_BRIDGE_OPT);
         DssExecLib.setChangelogAddress("OPTIMISM_ESCROW", ESCROW_OPT);

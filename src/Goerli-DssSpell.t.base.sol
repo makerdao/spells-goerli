@@ -1013,9 +1013,9 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     }
 
     function checkTeleportFWIntegration(
-        bytes32 sourceDomain
+        bytes32 sourceDomain,
         bytes32 targetDomain,
-        uint256 line
+        uint256 line,
         address fee,
         address gateway,
         address escrow,
@@ -1053,14 +1053,16 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
         // Cannot run a full integration test from L2 yet so check the L1 side from the router
         giveAuth(address(router), address(this));
-        hevm.warp(block.timestamp + TeleportFeeLike(fee).ttl())
+        hevm.warp(block.timestamp + TeleportFeeLike(fee).ttl());
         router.requestMint(guid1, 0, 0);
         assertEq(dai.balanceOf(address(this)), toMint);
         assertEq(join.debt(sourceDomain), int256(toMint));
 
-        // Check oracle auth mint
-        // TODO - need signatures
-        //oracleAuth.requestMint(guid2, SIGNATURE, expectedFee * WAD / toMint, 0);
+        // Check oracle auth mint -- add custom signatures to test
+        bytes32 signHash = auth.getSignHash(guid2);
+        (bytes memory signatures, address[] memory signers) = getSignatures(signHash);
+        oracleAuth.addSigners(signers);
+        oracleAuth.requestMint(guid2, signatures, expectedFee * WAD / toMint, 0);
         assertEq(dai.balanceOf(address(this)), toMint * 2 - expectedFee);
         assertEq(join.debt(sourceDomain), int256(toMint * 2 - expectedFee));
 
