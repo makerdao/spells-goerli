@@ -129,7 +129,23 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
         // Configure TeleportOracleAuth
         TeleportOracleAuthLike(ORACLE_AUTH).file("threshold", 1);
-        // TODO add signers
+        address[] memory oracles = new address[](14);
+        // All are oracle keys except the last
+        oracles[0] = 0xC4756A9DaE297A046556261Fa3CD922DFC32Db78;
+        oracles[1] = 0x23ce419DcE1De6b3647Ca2484A25F595132DfBd2;
+        oracles[2] = 0x774D5AA0EeE4897a9a6e65Cbed845C13Ffbc6d16;
+        oracles[3] = 0xb41E8d40b7aC4Eb34064E079C8Eca9d7570EBa1d;
+        oracles[4] = 0x0E0cDcbbE170f6d81f87b45c2227526B6779A083;
+        oracles[5] = 0x73093A55d5703C7A81D7381F7F24FCf432c64652;
+        oracles[6] = 0x2a2b83700c990FDFEFD22968fc7C4A4B80783E60;
+        oracles[7] = 0x1BC7410DD4D18bf8f613F4B6a646FA3953D3A0f2;
+        oracles[8] = 0xE5D5b00cc04596461a5527616b4F88B754879aE8;
+        oracles[9] = 0xA5E6053Fe351883036d13C2219b68102AbdFcBB6;
+        oracles[10] = 0x59524b843866b9686c520fB3d3613A73fe303d30;
+        oracles[11] = 0x794D810a3d524B9E25227bFA22E69CaaC8544EF2;
+        oracles[12] = 0xE85963ACc9A361E13306c6395186aa950f750883;
+        oracles[13] = 0xc65EF2D17B05ADbd8e4968bCB01b325ab799aBd8; // PECU
+        TeleportOracleAuthLike(ORACLE_AUTH).addSigners(oracles);
 
         // Configure TeleportRouter
         // Note: ETH-GOER-A route already defined

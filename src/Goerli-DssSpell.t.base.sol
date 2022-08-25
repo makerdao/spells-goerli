@@ -649,6 +649,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
                 }
             }
         }
+
         //       actual                               expected
         assertEq(sumlines + values.line_offset * RAD, vat.Line(), "TestError/vat-Line");
     }

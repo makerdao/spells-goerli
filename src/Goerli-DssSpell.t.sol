@@ -165,8 +165,18 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        // checkChainlogKey("CONTRACT_KEY");
-        // checkChainlogVersion("X.XX.X");
+        checkChainlogKey("MCD_JOIN_TELEPORT_FW_A");
+        checkChainlogKey("MCD_ORACLE_AUTH_TELEPORT_FW_A");
+        checkChainlogKey("MCD_ROUTER_TELEPORT_FW_A");
+        checkChainlogKey("OPTIMISM_TELEPORT_BRIDGE");
+        checkChainlogKey("OPTIMISM_DAI_BRIDGE");
+        checkChainlogKey("OPTIMISM_ESCROW");
+        checkChainlogKey("OPTIMISM_GOV_RELAY");
+        checkChainlogKey("ARBITRUM_TELEPORT_BRIDGE");
+        checkChainlogKey("ARBITRUM_DAI_BRIDGE");
+        checkChainlogKey("ARBITRUM_ESCROW");
+        checkChainlogKey("ARBITRUM_GOV_RELAY");
+        checkChainlogVersion("1.14.0");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
@@ -480,7 +490,21 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(fee.fee(), WAD / 10000);   // 1bps
         assertEq(fee.ttl(), 8 days);
 
-        //assertEq(oracleAuth.signers(ADDR), 1);    // TODO
+        assertEq(oracleAuth.signers(0xC4756A9DaE297A046556261Fa3CD922DFC32Db78), 1);
+        assertEq(oracleAuth.signers(0x23ce419DcE1De6b3647Ca2484A25F595132DfBd2), 1);
+        assertEq(oracleAuth.signers(0x774D5AA0EeE4897a9a6e65Cbed845C13Ffbc6d16), 1);
+        assertEq(oracleAuth.signers(0xb41E8d40b7aC4Eb34064E079C8Eca9d7570EBa1d), 1);
+        assertEq(oracleAuth.signers(0x0E0cDcbbE170f6d81f87b45c2227526B6779A083), 1);
+        assertEq(oracleAuth.signers(0x73093A55d5703C7A81D7381F7F24FCf432c64652), 1);
+        assertEq(oracleAuth.signers(0x2a2b83700c990FDFEFD22968fc7C4A4B80783E60), 1);
+        assertEq(oracleAuth.signers(0x1BC7410DD4D18bf8f613F4B6a646FA3953D3A0f2), 1);
+        assertEq(oracleAuth.signers(0xE5D5b00cc04596461a5527616b4F88B754879aE8), 1);
+        assertEq(oracleAuth.signers(0xA5E6053Fe351883036d13C2219b68102AbdFcBB6), 1);
+        assertEq(oracleAuth.signers(0x59524b843866b9686c520fB3d3613A73fe303d30), 1);
+        assertEq(oracleAuth.signers(0x794D810a3d524B9E25227bFA22E69CaaC8544EF2), 1);
+        assertEq(oracleAuth.signers(0xE85963ACc9A361E13306c6395186aa950f750883), 1);
+        assertEq(oracleAuth.signers(0xc65EF2D17B05ADbd8e4968bCB01b325ab799aBd8), 1);
+        
         assertEq(oracleAuth.teleportJoin(), address(join));
         assertEq(oracleAuth.threshold(), 1);
 
