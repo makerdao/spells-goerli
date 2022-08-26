@@ -124,7 +124,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
         DssExecLib.increaseGlobalDebtCeiling(2_000_000);
         DssExecLib.setIlkDebtCeiling(ILK, 2_000_000);
-        DssExecLib.setIlkStabilityFee(ILK, ZERO_PCT, true);
         vat.file(ILK, "spot", RAY);
 
         cure.lift(TELEPORT_JOIN);
