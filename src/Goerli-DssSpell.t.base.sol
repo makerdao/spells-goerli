@@ -1110,8 +1110,8 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         uint256 expectedFee,
         uint256 expectedTtl
     ) public {
-        TeleportJoinLike join = TeleportJoinLike(chainLog.getAddress("MCD_JOIN_TELEPORT_FW_A"));
-        TeleportRouterLike router = TeleportRouterLike(chainLog.getAddress("MCD_ROUTER_TELEPORT_FW_A"));
+        TeleportJoinLike join = TeleportJoinLike(addr.addr("MCD_JOIN_TELEPORT_FW_A"));
+        TeleportRouterLike router = TeleportRouterLike(addr.addr("MCD_ROUTER_TELEPORT_FW_A"));
         TeleportFeeLike fee = TeleportFeeLike(join.fees(sourceDomain));
         
         // Sanity checks
