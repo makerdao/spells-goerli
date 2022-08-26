@@ -26,6 +26,10 @@ import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 import { VatAbstract } from "dss-interfaces/dss/VatAbstract.sol";
 import { JugAbstract } from "dss-interfaces/dss/JugAbstract.sol";
 
+interface RwaUrnLike {
+    function draw(uint256) external;
+}
+
 interface CureAbstract {
     function lift(address) external;
 }
@@ -73,6 +77,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     address internal constant DAI_BRIDGE_ARB = 0x467194771dAe2967Aef3ECbEDD3Bf9a310C76C65;
     address internal constant GOV_RELAY_ARB = 0x10E6593CDda8c58a1d0f14C5164B376352a55f2F;
 
+    uint256 constant RWA009_DRAW_AMOUNT = 25_000_000 * WAD;
+
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
     // To check this yourself, use the following rate calculation (example 8%):
@@ -97,8 +103,15 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // Includes changes from the DssSpellCollateralAction
         // onboardNewCollaterals();
 
-        // ----------------------------- Setup Teleport Fast Withdrawals -----------------------------
-        //
+        // ----------------------------- RWA Draws -----------------------------
+        // https://vote.makerdao.com/polling/QmQMDasC#poll-detail
+        // Weekly Draw for HVB
+        address RWA009_A_URN = DssExecLib.getChangelogAddress("RWA009_A_URN");
+        RwaUrnLike(RWA009_A_URN).draw(RWA009_DRAW_AMOUNT);
+
+        // ------------------ Setup Teleport Fast Withdrawals -----------------
+        // https://vote.makerdao.com/polling/QmahjYA2#poll-detail
+        // https://forum.makerdao.com/t/layer-2-roadmap-history-and-future/17310#phase-1-l2-l1-fast-withdrawals-5
 
         // Setup new ilk
         VatAbstract vat = VatAbstract(DssExecLib.vat());
