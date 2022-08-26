@@ -30,7 +30,7 @@ interface RwaUrnLike {
     function draw(uint256) external;
 }
 
-interface CureAbstract {
+interface CureLike {
     function lift(address) external;
 }
 
@@ -115,7 +115,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // Setup new ilk
         VatAbstract vat = VatAbstract(DssExecLib.vat());
         JugAbstract jug = JugAbstract(DssExecLib.jug());
-        CureAbstract cure = CureAbstract(DssExecLib.getChangelogAddress("MCD_CURE"));
+        CureLike cure = CureLike(DssExecLib.getChangelogAddress("MCD_CURE"));
         address dai = DssExecLib.dai();
 
         vat.init(ILK);

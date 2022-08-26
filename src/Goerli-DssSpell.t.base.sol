@@ -1076,7 +1076,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         uint256 toMint,
         uint256 expectedFee
     ) internal {
-        TeleportOracleAuthLike oracleAuth = TeleportOracleAuthLike(chainLog.getAddress("MCD_ORACLE_AUTH_TELEPORT_FW_A"));
+        TeleportOracleAuthLike oracleAuth = TeleportOracleAuthLike(addr.addr("MCD_ORACLE_AUTH_TELEPORT_FW_A"));
         giveAuth(address(oracleAuth), address(this));
         (bytes memory signatures, address[] memory signers) = getSignatures(oracleAuth.getSignHash(TeleportGUID({
             sourceDomain: sourceDomain,
