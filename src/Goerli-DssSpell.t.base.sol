@@ -44,6 +44,8 @@ interface Hevm {
     function load(address,bytes32) external view returns (bytes32);
     function addr(uint) external returns (address);
     function sign(uint, bytes32) external returns (uint8, bytes32, bytes32);
+    function startPrank(address) external;
+    function stopPrank() external;
 }
 
 interface DssExecSpellLike {
@@ -108,11 +110,6 @@ interface TeleportRouterLike {
         uint256
     ) external returns (uint256, uint256);
     function settle(bytes32, uint256) external;
-}
-
-interface PrankHevm {
-    function startPrank(address) external;
-    function stopPrank() external;
 }
 
 contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
@@ -1124,7 +1121,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
         {
             // NOTE: We are calling the router directly because the bridge code is minimal and unique to each domain
-            PrankHevm(address(hevm)).startPrank(gateway);
+            hevm.startPrank(gateway);
             router.requestMint(TeleportGUID({
                 sourceDomain: sourceDomain,
                 targetDomain: targetDomain,
@@ -1134,7 +1131,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
                 nonce: 0,
                 timestamp: uint48(block.timestamp - TeleportFeeLike(fee).ttl())
             }), 0, 0);
-            PrankHevm(address(hevm)).stopPrank();
+            hevm.stopPrank();
             assertEq(dai.balanceOf(address(this)), toMint);
             assertEq(join.debt(sourceDomain), int256(toMint));
         }
@@ -1148,9 +1145,9 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
         // Check settle
         dai.transfer(gateway, toMint * 2 - toMint * expectedFee / WAD);
-        PrankHevm(address(hevm)).startPrank(gateway);
+        hevm.startPrank(gateway);
         router.settle(targetDomain, toMint * 2 - toMint * expectedFee / WAD);
-        PrankHevm(address(hevm)).stopPrank();
+        hevm.stopPrank();
         assertEq(dai.balanceOf(gateway), 0);
         assertEq(join.debt(sourceDomain), int256(WAD / 100));
     }
