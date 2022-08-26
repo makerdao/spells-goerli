@@ -88,7 +88,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // A table of rates can be found at
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
-    uint256 internal constant ZERO_PCT = 1000000000000000000000000000;
 
     uint256 internal constant WAD = 10**18;
     uint256 internal constant RAY = 10**27;

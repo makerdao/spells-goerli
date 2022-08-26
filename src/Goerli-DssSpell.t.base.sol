@@ -1096,7 +1096,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             amount: uint128(toMint),
             nonce: 1,
             timestamp: uint48(block.timestamp)
-        }), signatures, expectedFee * WAD / toMint, 0);
+        }), signatures, expectedFee, 0);
     }
 
     // NOTE: Only executable by forge
@@ -1104,20 +1104,22 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         bytes32 sourceDomain,
         bytes32 targetDomain,
         uint256 line,
-        address fee,
         address gateway,
         address escrow,
         uint256 toMint,
-        uint256 expectedFee
+        uint256 expectedFee,
+        uint256 expectedTtl
     ) public {
         TeleportJoinLike join = TeleportJoinLike(chainLog.getAddress("MCD_JOIN_TELEPORT_FW_A"));
         TeleportRouterLike router = TeleportRouterLike(chainLog.getAddress("MCD_ROUTER_TELEPORT_FW_A"));
+        TeleportFeeLike fee = TeleportFeeLike(join.fees(sourceDomain));
         
         // Sanity checks
         assertEq(join.line(sourceDomain), line);
-        assertEq(join.fees(sourceDomain), fee);
         assertEq(dai.allowance(escrow, gateway), type(uint256).max);
         assertEq(dai.allowance(gateway, address(router)), type(uint256).max);
+        assertEq(fee.fee(), expectedFee);
+        assertEq(fee.ttl(), expectedTtl);
 
         {
             // NOTE: We are calling the router directly because the bridge code is minimal and unique to each domain
@@ -1139,14 +1141,14 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         // Check oracle auth mint -- add custom signatures to test
         {
             oracleAuthRequestMint(sourceDomain, targetDomain, toMint, expectedFee);
-            assertEq(dai.balanceOf(address(this)), toMint * 2 - expectedFee);
+            assertEq(dai.balanceOf(address(this)), toMint * 2 - toMint * expectedFee / WAD);
             assertEq(join.debt(sourceDomain), int256(toMint * 2));
         }
 
         // Check settle
-        dai.transfer(gateway, toMint * 2 - expectedFee);
+        dai.transfer(gateway, toMint * 2 - toMint * expectedFee / WAD);
         PrankHevm(address(hevm)).startPrank(gateway);
-        router.settle(targetDomain, toMint * 2 - expectedFee);
+        router.settle(targetDomain, toMint * 2 - toMint * expectedFee / WAD);
         PrankHevm(address(hevm)).stopPrank();
         assertEq(dai.balanceOf(gateway), 0);
         assertEq(join.debt(sourceDomain), int256(WAD / 100));

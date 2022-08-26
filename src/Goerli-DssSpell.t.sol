@@ -497,10 +497,9 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        TeleportJoinLike join = TeleportJoinLike(0xAaEf3f1523291aDdaF98a8535c27F25971d823D2);
-        TeleportOracleAuthLike oracleAuth = TeleportOracleAuthLike(0xD40ab915cB8232E8188e1a9137E4b5dCB86F0fd8);
-        TeleportRouterLike router = TeleportRouterLike(0x75c2D0A33cB245acD1F10798fEdD4a42Be4951a9);
-        TeleportFeeLike fee = TeleportFeeLike(0x72Cb460888D401f991AB1a78ffc48EFcDcd155e8);
+        TeleportJoinLike join = TeleportJoinLike(addr.addr("MCD_JOIN_TELEPORT_FW_A"));
+        TeleportOracleAuthLike oracleAuth = TeleportOracleAuthLike(addr.addr("MCD_ORACLE_AUTH_TELEPORT_FW_A"));
+        TeleportRouterLike router = TeleportRouterLike(addr.addr("MCD_ROUTER_TELEPORT_FW_A"));
 
         bytes32 ilk = "TELEPORT-FW-A";
         bytes23 domain = "ETH-GOER-A";
@@ -514,9 +513,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(join.daiJoin(), address(daiJoin));
         assertEq(join.ilk(), ilk);
         assertEq(join.domain(), domain);
-
-        assertEq(fee.fee(), WAD / 10000);   // 1bps
-        assertEq(fee.ttl(), 8 days);
 
         assertEq(oracleAuth.signers(0xC4756A9DaE297A046556261Fa3CD922DFC32Db78), 1);
         assertEq(oracleAuth.signers(0x23ce419DcE1De6b3647Ca2484A25F595132DfBd2), 1);
@@ -546,22 +542,22 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             "OPT-GOER-A",
             domain,
             1_000_000 * WAD,
-            address(fee),
-            0xe57e6b2eEEf91C068849bd6066d1041A00A4F654,
-            0xbc892A208705862273008B2Fb7D01E968be42653,
+            addr.addr("OPTIMISM_TELEPORT_BRIDGE"),
+            addr.addr("OPTIMISM_ESCROW"),
             100 * WAD,
-            WAD / 100
+            WAD / 10000,   // 1bps
+            8 days
         );
 
         checkTeleportFWIntegration(
             "ARB-GOER-A",
             domain,
             1_000_000 * WAD,
-            address(fee),
-            0x3F7Eea7c2D08bc6F249759082360E14c829b2A92,
-            0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1,
+            addr.addr("ARBITRUM_TELEPORT_BRIDGE"),
+            addr.addr("ARBITRUM_ESCROW"),
             100 * WAD,
-            WAD / 100
+            WAD / 10000,   // 1bps
+            8 days
         );
     }
 }
