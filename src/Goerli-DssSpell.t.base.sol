@@ -1105,6 +1105,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         bytes32 targetDomain,
         uint256 line,
         address gateway,
+        address fee,
         address escrow,
         uint256 toMint,
         uint256 expectedFee,
@@ -1112,14 +1113,14 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     ) public {
         TeleportJoinLike join = TeleportJoinLike(addr.addr("MCD_JOIN_TELEPORT_FW_A"));
         TeleportRouterLike router = TeleportRouterLike(addr.addr("MCD_ROUTER_TELEPORT_FW_A"));
-        TeleportFeeLike fee = TeleportFeeLike(join.fees(sourceDomain));
         
         // Sanity checks
         assertEq(join.line(sourceDomain), line);
+        assertEq(join.fees(sourceDomain), address(fee));
         assertEq(dai.allowance(escrow, gateway), type(uint256).max);
         assertEq(dai.allowance(gateway, address(router)), type(uint256).max);
-        assertEq(fee.fee(), expectedFee);
-        assertEq(fee.ttl(), expectedTtl);
+        assertEq(TeleportFeeLike(fee).fee(), expectedFee);
+        assertEq(TeleportFeeLike(fee).ttl(), expectedTtl);
 
         {
             // NOTE: We are calling the router directly because the bridge code is minimal and unique to each domain

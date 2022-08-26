@@ -174,10 +174,12 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkChainlogKey("MCD_ORACLE_AUTH_TELEPORT_FW_A");
         checkChainlogKey("MCD_ROUTER_TELEPORT_FW_A");
         checkChainlogKey("OPTIMISM_TELEPORT_BRIDGE");
+        checkChainlogKey("OPTIMISM_TELEPORT_FEE");
         checkChainlogKey("OPTIMISM_DAI_BRIDGE");
         checkChainlogKey("OPTIMISM_ESCROW");
         checkChainlogKey("OPTIMISM_GOV_RELAY");
         checkChainlogKey("ARBITRUM_TELEPORT_BRIDGE");
+        checkChainlogKey("ARBITRUM_TELEPORT_FEE");
         checkChainlogKey("ARBITRUM_DAI_BRIDGE");
         checkChainlogKey("ARBITRUM_ESCROW");
         checkChainlogKey("ARBITRUM_GOV_RELAY");
@@ -543,6 +545,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             domain,
             1_000_000 * WAD,
             addr.addr("OPTIMISM_TELEPORT_BRIDGE"),
+            addr.addr("OPTIMISM_TELEPORT_FEE"),
             addr.addr("OPTIMISM_ESCROW"),
             100 * WAD,
             WAD / 10000,   // 1bps
@@ -554,6 +557,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             domain,
             1_000_000 * WAD,
             addr.addr("ARBITRUM_TELEPORT_BRIDGE"),
+            addr.addr("ARBITRUM_TELEPORT_FEE"),
             addr.addr("ARBITRUM_ESCROW"),
             100 * WAD,
             WAD / 10000,   // 1bps
