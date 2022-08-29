@@ -68,6 +68,15 @@ interface FlapLike is FlapAbstract {
     function lid() external view returns (uint256);
 }
 
+interface CureLike {
+    function tCount() external view returns (uint256);
+    function srcs(uint256) external view returns (address);
+    function live() external view returns (uint256);
+    function tell() external view returns (uint256);
+    function cage() external;
+    function load(address) external;
+}
+
 interface TeleportJoinLike {
     function wards(address) external view returns (uint256);
     function fees(bytes32) external view returns (address);
@@ -136,7 +145,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     DSTokenAbstract          gov = DSTokenAbstract(    addr.addr("MCD_GOV"));
     EndAbstract              end = EndAbstract(        addr.addr("MCD_END"));
     ESMAbstract              esm = ESMAbstract(        addr.addr("MCD_ESM"));
-    address                 cure =                     addr.addr("MCD_CURE");
+    CureLike                cure = CureLike(           addr.addr("MCD_CURE"));
     IlkRegistryAbstract      reg = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
     FlapLike                flap = FlapLike(           addr.addr("MCD_FLAP"));
 
@@ -1150,6 +1159,39 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         hevm.stopPrank();
         assertEq(dai.balanceOf(gateway), 0);
         assertEq(join.debt(sourceDomain), int256(WAD / 100));
+    }
+
+    // NOTE: Only executable by forge
+    function checkCureLoadTeleport(
+        bytes32 sourceDomain,
+        bytes32 targetDomain,
+        uint256 toMint,
+        uint256 expectedFee,
+        uint256 expectedTell,
+        bool cage
+    ) public {
+        TeleportJoinLike join = TeleportJoinLike(addr.addr("MCD_JOIN_TELEPORT_FW_A"));
+
+        // Oracle auth mint -- add custom signatures to test
+        oracleAuthRequestMint(sourceDomain, targetDomain, toMint, expectedFee);
+        assertEq(join.debt(sourceDomain), int256(toMint));
+
+        // Emulate Global Settlement
+        if (cage) {
+            assertEq(cure.live(), 1);
+            hevm.store(
+                address(cure),
+                keccak256(abi.encode(address(this), uint256(0))),
+                bytes32(uint256(1))
+            );
+            cure.cage();
+            assertEq(cure.tell(), 0);
+        }
+        assertEq(cure.live(), 0);
+
+        // Check cure tells the teleport source correctly
+        cure.load(address(join));
+        assertEq(cure.tell(), expectedTell);
     }
 
     function checkDaiVest(

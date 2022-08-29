@@ -19,11 +19,6 @@ pragma experimental ABIEncoderV2;
 
 import "./Goerli-DssSpell.t.base.sol";
 
-interface CureLike {
-    function tCount() external view returns (uint256);
-    function srcs(uint256) external view returns (address);
-}
-
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -563,6 +558,33 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             100 * WAD,
             WAD / 10000,   // 1bps
             8 days
+        );
+    }
+
+    // NOTE: Only executable by forge
+    function testCureTeleport() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        bytes23 domain = "ETH-GOER-A";
+
+        checkCureLoadTeleport(
+            "OPT-GOER-A",
+            domain,
+            1_000_000 * WAD,
+            TeleportFeeLike(addr.addr("OPTIMISM_TELEPORT_FEE")).fee(),
+            1_000_000 * RAD,
+            true
+        );
+
+        checkCureLoadTeleport(
+            "ARB-GOER-A",
+            domain,
+            1_000_000 * WAD,
+            TeleportFeeLike(addr.addr("ARBITRUM_TELEPORT_FEE")).fee(),
+            2_000_000 * RAD,
+            false
         );
     }
 }
