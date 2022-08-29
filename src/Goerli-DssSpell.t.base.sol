@@ -1154,7 +1154,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         router.settle(targetDomain, toMint * 2 - fee);
         hevm.stopPrank();
         assertEq(dai.balanceOf(gateway), 0);
-        assertEq(join.debt(sourceDomain), int256(WAD / 100));
+        assertEq(join.debt(sourceDomain), int256(fee));
     }
 
     function checkDaiVest(
