@@ -1092,10 +1092,6 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(signatures.length, numSigners * 65);
     }
 
-    function addressToBytes32(address addr) internal pure returns (bytes32) {
-        return bytes32(uint256(uint160(addr)));
-    }
-
     function oracleAuthRequestMint(
         bytes32 sourceDomain,
         bytes32 targetDomain,
@@ -1171,22 +1167,22 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         }
 
         // Check oracle auth mint -- add custom signatures to test
-        uint256 fee = toMint * expectedFee / WAD;
+        uint256 _fee = toMint * expectedFee / WAD;
         {
             uint256 prevDai = vat.dai(address(vow));
             oracleAuthRequestMint(sourceDomain, targetDomain, toMint, expectedFee);
-            assertEq(dai.balanceOf(address(this)), toMint * 2 - fee);
+            assertEq(dai.balanceOf(address(this)), toMint * 2 - _fee);
             assertEq(join.debt(sourceDomain), int256(toMint * 2));
-            assertEq(vat.dai(address(vow)) - prevDai, fee * RAY);
+            assertEq(vat.dai(address(vow)) - prevDai, _fee * RAY);
         }
 
         // Check settle
-        dai.transfer(gateway, toMint * 2 - fee);
+        dai.transfer(gateway, toMint * 2 - _fee);
         hevm.startPrank(gateway);
-        router.settle(targetDomain, toMint * 2 - fee);
+        router.settle(targetDomain, toMint * 2 - _fee);
         hevm.stopPrank();
         assertEq(dai.balanceOf(gateway), 0);
-        assertEq(join.debt(sourceDomain), int256(fee));
+        assertEq(join.debt(sourceDomain), int256(_fee));
     }
 
     function checkCureLoadTeleport(

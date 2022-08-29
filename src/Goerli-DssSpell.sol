@@ -62,8 +62,28 @@ interface TeleportOracleAuthLike {
     function teleportJoin() external view returns (address);
 }
 
+interface TeleportFeeLike {
+    function fee() external view returns (uint256);
+    function ttl() external view returns (uint256);
+}
+
 interface EscrowLike {
     function approve(address,address,uint256) external;
+}
+
+interface TeleportBridgeLike {
+    function l1Escrow() external view returns (address);
+    function l1TeleportRouter() external view returns (address);
+    function l1Token() external view returns (address);
+    function l2TeleportGateway() external view returns (address);
+}
+
+interface OptimismTeleportBridgeLike is TeleportBridgeLike {
+    function messenger() external view returns (address);
+}
+
+interface ArbitrumTeleportBridgeLike is TeleportBridgeLike {
+    function inbox() external view returns (address);
 }
 
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
@@ -81,15 +101,19 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     bytes32 internal constant DOMAIN_OPT = "OPT-GOER-A";
     address internal constant TELEPORT_GATEWAY_OPT = 0x5d49a6BCEc49072D1612cA6d60c8D7985cfc4988;
+    address internal constant TELEPORT_L2_GATEWAY_OPT = 0xd9e000C419F3aA4EA1C519497f5aF249b496a00f;
     address internal constant ESCROW_OPT = 0xbc892A208705862273008B2Fb7D01E968be42653;
     address internal constant DAI_BRIDGE_OPT = 0x05a388Db09C2D44ec0b00Ee188cD42365c42Df23;
     address internal constant GOV_RELAY_OPT = 0xD9b2835A5bFC8bD5f54DB49707CF48101C66793a;
+    address internal constant MESSENGER_OPT = 0x5086d1eEF304eb5284A0f6720f79403b4e9bE294;
 
     bytes32 internal constant DOMAIN_ARB = "ARB-GOER-A";
     address internal constant TELEPORT_GATEWAY_ARB = 0x737D2B14571b58204403267A198BFa470F0D696e;
+    address internal constant TELEPORT_L2_GATEWAY_ARB = 0x8334a747731Be3a58bCcAf9a3D35EbC968806223;
     address internal constant ESCROW_ARB = 0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1;
     address internal constant DAI_BRIDGE_ARB = 0x467194771dAe2967Aef3ECbEDD3Bf9a310C76C65;
     address internal constant GOV_RELAY_ARB = 0x10E6593CDda8c58a1d0f14C5164B376352a55f2F;
+    address internal constant INBOX_ARB = 0x6BEbC4925716945D46F0Ec336D5C2564F419682C;
 
     uint256 internal constant RWA009_DRAW_AMOUNT = 25_000_000 * WAD;
 
@@ -140,6 +164,18 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         require(TeleportJoinLike(TELEPORT_JOIN).domain() == DOMAIN_ETH);
         require(TeleportOracleAuthLike(ORACLE_AUTH).teleportJoin() == TELEPORT_JOIN);
         require(TeleportRouterLike(ROUTER).dai() == dai);
+        require(TeleportFeeLike(LINEAR_FEE).fee() == WAD / 10000);
+        require(TeleportFeeLike(LINEAR_FEE).ttl() == 8 days);
+        require(OptimismTeleportBridgeLike(TELEPORT_GATEWAY_OPT).l1Escrow() == ESCROW_OPT);
+        require(OptimismTeleportBridgeLike(TELEPORT_GATEWAY_OPT).l1TeleportRouter() == ROUTER);
+        require(OptimismTeleportBridgeLike(TELEPORT_GATEWAY_OPT).l1Token() == dai);
+        require(OptimismTeleportBridgeLike(TELEPORT_GATEWAY_OPT).l2TeleportGateway() == TELEPORT_L2_GATEWAY_OPT);
+        require(OptimismTeleportBridgeLike(TELEPORT_GATEWAY_OPT).messenger() == MESSENGER_OPT);
+        require(ArbitrumTeleportBridgeLike(TELEPORT_GATEWAY_ARB).l1Escrow() == ESCROW_ARB);
+        require(ArbitrumTeleportBridgeLike(TELEPORT_GATEWAY_ARB).l1TeleportRouter() == ROUTER);
+        require(ArbitrumTeleportBridgeLike(TELEPORT_GATEWAY_ARB).l1Token() == dai);
+        require(ArbitrumTeleportBridgeLike(TELEPORT_GATEWAY_ARB).l2TeleportGateway() == TELEPORT_L2_GATEWAY_ARB);
+        require(ArbitrumTeleportBridgeLike(TELEPORT_GATEWAY_ARB).inbox() == INBOX_ARB);
 
         vat.init(ILK);
         jug.init(ILK);
@@ -202,13 +238,13 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         ilkRegistry.put(
             ILK,
             TELEPORT_JOIN,
-            dai,
-            DaiAbstract(dai).decimals(),
+            address(0),
+            0,
             4,
             address(0),
             address(0),
-            DaiAbstract(dai).name(),
-            DaiAbstract(dai).symbol()
+            "",
+            ""
         );
 
         // Configure Chainlog
