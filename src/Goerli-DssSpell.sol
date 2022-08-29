@@ -37,9 +37,10 @@ interface CureLike {
 }
 
 interface TeleportJoinLike {
+    function rely(address) external;
+    function file(bytes32,address) external;
     function file(bytes32,bytes32,address) external;
     function file(bytes32,bytes32,uint256) external;
-    function vow() external view returns (address);
     function vat() external view returns (address);
     function daiJoin() external view returns (address);
     function ilk() external view returns (bytes32);
@@ -68,22 +69,22 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
-    address internal constant TELEPORT_JOIN = 0xAaEf3f1523291aDdaF98a8535c27F25971d823D2;
-    address internal constant ORACLE_AUTH = 0xD40ab915cB8232E8188e1a9137E4b5dCB86F0fd8;
-    address internal constant ROUTER = 0x75c2D0A33cB245acD1F10798fEdD4a42Be4951a9;
-    address internal constant LINEAR_FEE = 0x72Cb460888D401f991AB1a78ffc48EFcDcd155e8;
+    address internal constant TELEPORT_JOIN = 0xE2fddf4e0f5A4B6d0Cc1D162FBFbEF7B6c5D6f69;
+    address internal constant ORACLE_AUTH = 0x29d292E0773E484dbcA8626F432985630175763b;
+    address internal constant ROUTER = 0x5A16311D32662E71f1E0beAD41372f60cEb61b26;
+    address internal constant LINEAR_FEE = 0x89bcDc64090ddAbB9AFBeeFB7999d564e2875907;
 
     bytes32 constant internal ILK = "TELEPORT-FW-A";
     bytes32 constant internal DOMAIN_ETH = "ETH-GOER-A";
 
     bytes32 constant internal DOMAIN_OPT = "OPT-GOER-A";
-    address internal constant TELEPORT_GATEWAY_OPT = 0xe57e6b2eEEf91C068849bd6066d1041A00A4F654;
+    address internal constant TELEPORT_GATEWAY_OPT = 0x5d49a6BCEc49072D1612cA6d60c8D7985cfc4988;
     address internal constant ESCROW_OPT = 0xbc892A208705862273008B2Fb7D01E968be42653;
     address internal constant DAI_BRIDGE_OPT = 0x05a388Db09C2D44ec0b00Ee188cD42365c42Df23;
     address internal constant GOV_RELAY_OPT = 0xD9b2835A5bFC8bD5f54DB49707CF48101C66793a;
 
     bytes32 constant internal DOMAIN_ARB = "ARB-GOER-A";
-    address internal constant TELEPORT_GATEWAY_ARB = 0x3F7Eea7c2D08bc6F249759082360E14c829b2A92;
+    address internal constant TELEPORT_GATEWAY_ARB = 0x737D2B14571b58204403267A198BFa470F0D696e;
     address internal constant ESCROW_ARB = 0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1;
     address internal constant DAI_BRIDGE_ARB = 0x467194771dAe2967Aef3ECbEDD3Bf9a310C76C65;
     address internal constant GOV_RELAY_ARB = 0x10E6593CDda8c58a1d0f14C5164B376352a55f2F;
@@ -131,13 +132,10 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
         // Run sanity checks
         require(TeleportJoinLike(TELEPORT_JOIN).vat() == address(vat));
-        require(TeleportJoinLike(TELEPORT_JOIN).vow() == DssExecLib.vow());
         require(TeleportJoinLike(TELEPORT_JOIN).daiJoin() ==  DssExecLib.daiJoin());
         require(TeleportJoinLike(TELEPORT_JOIN).ilk() == ILK);
         require(TeleportJoinLike(TELEPORT_JOIN).domain() == DOMAIN_ETH);
         require(TeleportOracleAuthLike(ORACLE_AUTH).teleportJoin() == TELEPORT_JOIN);
-        require(TeleportRouterLike(ROUTER).gateways(DOMAIN_ETH) == TELEPORT_JOIN);
-        require(TeleportRouterLike(ROUTER).domains(TELEPORT_JOIN) == DOMAIN_ETH);
         require(TeleportRouterLike(ROUTER).dai() == dai);
 
         vat.init(ILK);
@@ -152,7 +150,10 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         vat.rely(TELEPORT_JOIN);
 
         // Configure TeleportJoin
-        // Note: vow already set
+        TeleportJoinLike(TELEPORT_JOIN).rely(ORACLE_AUTH);
+        TeleportJoinLike(TELEPORT_JOIN).rely(ROUTER);
+
+        TeleportJoinLike(TELEPORT_JOIN).file("vow", DssExecLib.vow());
 
         TeleportJoinLike(TELEPORT_JOIN).file("fees", DOMAIN_OPT, LINEAR_FEE);
         TeleportJoinLike(TELEPORT_JOIN).file("line", DOMAIN_OPT, 1_000_000 * WAD);
@@ -181,7 +182,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         TeleportOracleAuthLike(ORACLE_AUTH).addSigners(oracles);
 
         // Configure TeleportRouter
-        // Note: ETH-GOER-A route already defined
+        TeleportRouterLike(ROUTER).file("gateway", DOMAIN_ETH, TELEPORT_JOIN);
         TeleportRouterLike(ROUTER).file("gateway", DOMAIN_OPT, TELEPORT_GATEWAY_OPT);
         TeleportRouterLike(ROUTER).file("gateway", DOMAIN_ARB, TELEPORT_GATEWAY_ARB);
 
