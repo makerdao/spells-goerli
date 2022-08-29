@@ -1137,16 +1137,19 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         }
 
         // Check oracle auth mint -- add custom signatures to test
+        uint256 fee = toMint * expectedFee / WAD;
         {
+            uint256 prevDai = vat.dai(address(vow));
             oracleAuthRequestMint(sourceDomain, targetDomain, toMint, expectedFee);
-            assertEq(dai.balanceOf(address(this)), toMint * 2 - toMint * expectedFee / WAD);
+            assertEq(dai.balanceOf(address(this)), toMint * 2 - fee);
             assertEq(join.debt(sourceDomain), int256(toMint * 2));
+            assertEq(vat.dai(address(vow)) - prevDai, fee * RAY);
         }
 
         // Check settle
-        dai.transfer(gateway, toMint * 2 - toMint * expectedFee / WAD);
+        dai.transfer(gateway, toMint * 2 - fee);
         hevm.startPrank(gateway);
-        router.settle(targetDomain, toMint * 2 - toMint * expectedFee / WAD);
+        router.settle(targetDomain, toMint * 2 - fee);
         hevm.stopPrank();
         assertEq(dai.balanceOf(gateway), 0);
         assertEq(join.debt(sourceDomain), int256(WAD / 100));
