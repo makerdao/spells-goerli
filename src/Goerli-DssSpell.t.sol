@@ -561,7 +561,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         );
     }
 
-    // NOTE: Only executable by forge
     function testCureTeleport() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
