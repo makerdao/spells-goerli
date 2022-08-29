@@ -506,6 +506,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         assertEq(join.wards(address(oracleAuth)), 1);
         assertEq(join.wards(address(router)), 1);
+        assertEq(join.wards(address(esm)), 1);
         assertEq(join.vow(), address(vow));
         assertEq(join.daiJoin(), address(daiJoin));
         assertEq(join.vat(), address(vat));
@@ -529,11 +530,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         
         assertEq(oracleAuth.teleportJoin(), address(join));
         assertEq(oracleAuth.threshold(), 1);
+        assertEq(oracleAuth.wards(address(esm)), 1);
 
         assertEq(router.gateways(domain), address(join));
         assertEq(router.domains(address(join)), domain);
         assertEq(router.dai(), address(dai));
         assertEq(router.numDomains(), 3);
+        assertEq(router.wards(address(esm)), 1);
 
         assertEq(CureLike(cure).srcs(CureLike(cure).tCount() - 1), address(join));
 

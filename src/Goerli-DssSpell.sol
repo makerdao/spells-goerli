@@ -48,6 +48,7 @@ interface TeleportJoinLike {
 }
 
 interface TeleportRouterLike {
+    function rely(address) external;
     function file(bytes32,bytes32,address) external;
     function gateways(bytes32) external view returns (address);
     function domains(address) external view returns (bytes32);
@@ -55,6 +56,7 @@ interface TeleportRouterLike {
 }
 
 interface TeleportOracleAuthLike {
+    function rely(address) external;
     function file(bytes32,uint256) external;
     function addSigners(address[] calldata) external;
     function teleportJoin() external view returns (address);
@@ -62,6 +64,10 @@ interface TeleportOracleAuthLike {
 
 interface EscrowLike {
     function approve(address,address,uint256) external;
+}
+
+interface RelyLike {
+    function rely(address) external;
 }
 
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
@@ -129,6 +135,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         CureLike cure = CureLike(DssExecLib.getChangelogAddress("MCD_CURE"));
         address dai = DssExecLib.dai();
         IlkRegistryAbstract ilkRegistry = IlkRegistryAbstract(DssExecLib.getChangelogAddress("ILK_REGISTRY"));
+        address esm = DssExecLib.esm();
 
         // Run sanity checks
         require(TeleportJoinLike(TELEPORT_JOIN).vat() == address(vat));
@@ -152,6 +159,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // Configure TeleportJoin
         TeleportJoinLike(TELEPORT_JOIN).rely(ORACLE_AUTH);
         TeleportJoinLike(TELEPORT_JOIN).rely(ROUTER);
+        TeleportJoinLike(TELEPORT_JOIN).rely(esm);
 
         TeleportJoinLike(TELEPORT_JOIN).file("vow", DssExecLib.vow());
 
@@ -162,6 +170,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         TeleportJoinLike(TELEPORT_JOIN).file("line", DOMAIN_ARB, 1_000_000 * WAD);
 
         // Configure TeleportOracleAuth
+        TeleportOracleAuthLike(ORACLE_AUTH).rely(esm);
+
         TeleportOracleAuthLike(ORACLE_AUTH).file("threshold", 1);
         address[] memory oracles = new address[](14);
         // All are oracle keys except the last
@@ -182,6 +192,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         TeleportOracleAuthLike(ORACLE_AUTH).addSigners(oracles);
 
         // Configure TeleportRouter
+        TeleportRouterLike(ROUTER).rely(esm);
+
         TeleportRouterLike(ROUTER).file("gateway", DOMAIN_ETH, TELEPORT_JOIN);
         TeleportRouterLike(ROUTER).file("gateway", DOMAIN_OPT, TELEPORT_GATEWAY_OPT);
         TeleportRouterLike(ROUTER).file("gateway", DOMAIN_ARB, TELEPORT_GATEWAY_ARB);
