@@ -540,29 +540,35 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         assertEq(CureLike(cure).srcs(CureLike(cure).tCount() - 1), address(join));
 
+        OptimismTeleportBridgeLike optimismBridge = OptimismTeleportBridgeLike(addr.addr("OPTIMISM_TELEPORT_BRIDGE"));
         checkTeleportFWIntegration(
             "OPT-GOER-A",
             domain,
             1_000_000 * WAD,
-            addr.addr("OPTIMISM_TELEPORT_BRIDGE"),
+            address(optimismBridge),
             addr.addr("OPTIMISM_TELEPORT_FEE"),
             addr.addr("OPTIMISM_ESCROW"),
             100 * WAD,
             WAD / 10000,   // 1bps
             8 days
         );
+        assertEq(optimismBridge.l2TeleportGateway(), 0xd9e000C419F3aA4EA1C519497f5aF249b496a00f);
+        assertEq(optimismBridge.messenger(), 0x5086d1eEF304eb5284A0f6720f79403b4e9bE294);
 
+        ArbitrumTeleportBridgeLike arbitrumBridge = ArbitrumTeleportBridgeLike(addr.addr("ARBITRUM_TELEPORT_BRIDGE"));
         checkTeleportFWIntegration(
             "ARB-GOER-A",
             domain,
             1_000_000 * WAD,
-            addr.addr("ARBITRUM_TELEPORT_BRIDGE"),
+            address(arbitrumBridge),
             addr.addr("ARBITRUM_TELEPORT_FEE"),
             addr.addr("ARBITRUM_ESCROW"),
             100 * WAD,
             WAD / 10000,   // 1bps
             8 days
         );
+        assertEq(arbitrumBridge.l2TeleportGateway(), 0x8334a747731Be3a58bCcAf9a3D35EbC968806223);
+        assertEq(arbitrumBridge.inbox(), 0x6BEbC4925716945D46F0Ec336D5C2564F419682C);
     }
 
     function testCureTeleport() public {

@@ -124,6 +124,21 @@ interface TeleportRouterLike {
     function settle(bytes32, uint256) external;
 }
 
+interface TeleportBridgeLike {
+    function l1Escrow() external view returns (address);
+    function l1TeleportRouter() external view returns (address);
+    function l1Token() external view returns (address);
+    function l2TeleportGateway() external view returns (address);
+}
+
+interface OptimismTeleportBridgeLike is TeleportBridgeLike {
+    function messenger() external view returns (address);
+}
+
+interface ArbitrumTeleportBridgeLike is TeleportBridgeLike {
+    function inbox() external view returns (address);
+}
+
 contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     Hevm hevm;
 
@@ -1134,6 +1149,9 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(TeleportFeeLike(fee).ttl(), expectedTtl);
         assertEq(router.gateways(sourceDomain), gateway);
         assertEq(router.domains(gateway), sourceDomain);
+        assertEq(TeleportBridgeLike(gateway).l1Escrow(), escrow);
+        assertEq(TeleportBridgeLike(gateway).l1TeleportRouter(), address(router));
+        assertEq(TeleportBridgeLike(gateway).l1Token(), address(dai));
 
         {
             // NOTE: We are calling the router directly because the bridge code is minimal and unique to each domain
