@@ -66,10 +66,6 @@ interface EscrowLike {
     function approve(address,address,uint256) external;
 }
 
-interface RelyLike {
-    function rely(address) external;
-}
-
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     // Provides a descriptive tag for bot consumption
