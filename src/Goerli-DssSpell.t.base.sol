@@ -514,15 +514,17 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             }
 
             {
-            (,uint256 mat) = spotter.ilks(ilk);
-            // Convert BP to system expected value
-            uint256 normalizedTestMat = (values.collaterals[ilk].mat * 10**23);
-            if ( values.collaterals[ilk].lerp ) {
-                assertTrue(mat <= normalizedTestMat, concat("TestError/vat-lerping-mat-", ilk));
-                assertTrue(mat >= RAY && mat <= 300 * RAY, concat("TestError/vat-mat-range-", ilk));  // cr eq 100% and lt 30000%
-            } else {
-                assertEq(mat, normalizedTestMat, concat("TestError/vat-mat-", ilk));
-                assertTrue(mat >= 0 && mat < 10 * RAY, concat("TestError/vat-mat-range-", ilk));    // cr gt 0% and lt 1000%
+            (address pip, uint256 mat) = spotter.ilks(ilk);
+            if (pip != address(0)) {
+                // Convert BP to system expected value
+                uint256 normalizedTestMat = (values.collaterals[ilk].mat * 10**23);
+                if ( values.collaterals[ilk].lerp ) {
+                    assertTrue(mat <= normalizedTestMat, concat("TestError/vat-lerping-mat-", ilk));
+                    assertTrue(mat >= RAY && mat <= 300 * RAY, concat("TestError/vat-mat-range-", ilk));  // cr gt 100% and lt 30000%
+                } else {
+                    assertEq(mat, normalizedTestMat, concat("TestError/vat-mat-", ilk));
+                    assertTrue(mat >= RAY && mat < 10 * RAY, concat("TestError/vat-mat-range-", ilk));    // cr gt 100% and lt 1000%
+                }
             }
             }
 
