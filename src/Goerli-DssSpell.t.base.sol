@@ -1169,7 +1169,6 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(join.debt(sourceDomain), int256(fee));
     }
 
-    // NOTE: Only executable by forge
     function checkCureLoadTeleport(
         bytes32 sourceDomain,
         bytes32 targetDomain,
