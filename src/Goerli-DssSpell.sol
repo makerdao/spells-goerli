@@ -74,22 +74,22 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     address internal constant ROUTER = 0x5A16311D32662E71f1E0beAD41372f60cEb61b26;
     address internal constant LINEAR_FEE = 0x89bcDc64090ddAbB9AFBeeFB7999d564e2875907;
 
-    bytes32 constant internal ILK = "TELEPORT-FW-A";
-    bytes32 constant internal DOMAIN_ETH = "ETH-GOER-A";
+    bytes32 internal constant ILK = "TELEPORT-FW-A";
+    bytes32 internal constant DOMAIN_ETH = "ETH-GOER-A";
 
-    bytes32 constant internal DOMAIN_OPT = "OPT-GOER-A";
+    bytes32 internal constant DOMAIN_OPT = "OPT-GOER-A";
     address internal constant TELEPORT_GATEWAY_OPT = 0x5d49a6BCEc49072D1612cA6d60c8D7985cfc4988;
     address internal constant ESCROW_OPT = 0xbc892A208705862273008B2Fb7D01E968be42653;
     address internal constant DAI_BRIDGE_OPT = 0x05a388Db09C2D44ec0b00Ee188cD42365c42Df23;
     address internal constant GOV_RELAY_OPT = 0xD9b2835A5bFC8bD5f54DB49707CF48101C66793a;
 
-    bytes32 constant internal DOMAIN_ARB = "ARB-GOER-A";
+    bytes32 internal constant DOMAIN_ARB = "ARB-GOER-A";
     address internal constant TELEPORT_GATEWAY_ARB = 0x737D2B14571b58204403267A198BFa470F0D696e;
     address internal constant ESCROW_ARB = 0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1;
     address internal constant DAI_BRIDGE_ARB = 0x467194771dAe2967Aef3ECbEDD3Bf9a310C76C65;
     address internal constant GOV_RELAY_ARB = 0x10E6593CDda8c58a1d0f14C5164B376352a55f2F;
 
-    uint256 constant RWA009_DRAW_AMOUNT = 25_000_000 * WAD;
+    uint256 internal constant RWA009_DRAW_AMOUNT = 25_000_000 * WAD;
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
