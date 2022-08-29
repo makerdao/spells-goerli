@@ -130,7 +130,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         JugAbstract jug = JugAbstract(DssExecLib.jug());
         CureLike cure = CureLike(DssExecLib.getChangelogAddress("MCD_CURE"));
         address dai = DssExecLib.dai();
-        IlkRegistryAbstract ilkRegistry = IlkRegistryAbstract(DssExecLib.getChangelogAddress("ILK_REGISTRY"));
+        IlkRegistryAbstract ilkRegistry = IlkRegistryAbstract(DssExecLib.reg());
         address esm = DssExecLib.esm();
 
         // Run sanity checks
