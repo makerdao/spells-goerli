@@ -420,15 +420,15 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             }
             // We are skipping this part of the test because we need to update the chainlog without bumping the version.
 
-            // // Fail if the chainlog is the same size but local keys don't match the chainlog.
-            // for(uint256 i = 0; i < _count; i++) {
-            //     (, address _val) = chainLog.get(i);
-            //     if (_chainlog_addrs[i] != _val) {
-            //         emit log_named_string("Error", concat("TestError/chainlog-version-not-updated-address-change-", _version));
-            //         fail();
-            //         return;
-            //     }
-            // }
+            // Fail if the chainlog is the same size but local keys don't match the chainlog.
+            for(uint256 i = 0; i < _count; i++) {
+                (, address _val) = chainLog.get(i);
+                if (_chainlog_addrs[i] != _val) {
+                    emit log_named_string("Error", concat("TestError/chainlog-version-not-updated-address-change-", _version));
+                    fail();
+                    return;
+                }
+            }
         }
     }
 
