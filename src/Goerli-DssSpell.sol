@@ -97,10 +97,10 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // Increase the WSTETH-B Maximum Debt Ceiling from 100 million DAI to 200 million DAI.
         DssExecLib.setIlkAutoLineDebtCeiling("WSTETH-B", 200 * MILLION);
 
-        // Increase the CRVV1ETHSTETH-A Maximum Debt Ceiling from 5 million DAI to 50 million DAI.
+        // Increase the CRVV1ETHSTETH-A Maximum Debt Ceiling from 5 million DAI to 20 million DAI
         // Increase the CRVV1ETHSTETH-A Target Available Debt from 3 million DAI to 10 million DAI.
         // NOTE: ignore in goerli
-        // DssExecLib.setIlkAutoLineParameters("CRVV1ETHSTETH-A", 50 * MILLION, 10 * MILLION, 8 hours);
+        // DssExecLib.setIlkAutoLineParameters("CRVV1ETHSTETH-A", 20 * MILLION, 10 * MILLION, 8 hours);
     }
 }
 
