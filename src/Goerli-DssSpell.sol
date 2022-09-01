@@ -65,15 +65,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // ------------------ PPG - Maker Open Market Committee ------------------
         // https://vote.makerdao.com/polling/QmXHnn2u#poll-detail
 
-        // Option 1
-
-        // Increase the WSTETH-B Maximum Debt Ceiling from 100 million DAI to 200 million DAI.
-        DssExecLib.setIlkAutoLineDebtCeiling("WSTETH-B", 200 * MILLION);
-
-        // Increase the CRVV1ETHSTETH-A Maximum Debt Ceiling from 5 million DAI to 50 million DAI.
-        // Increase the CRVV1ETHSTETH-A Target Available Debt from 3 million DAI to 10 million DAI.
-        // NOTE: ignore in goerli
-        // DssExecLib.setIlkAutoLineParameters("CRVV1ETHSTETH-A", 50 * MILLION, 10 * MILLION, 8 hours);
+        ////// Stability Fee Changes //////
 
         // Decrease the CRVV1ETHSTETH-A Stability Fee from 2.25% to 2.0%.
         // NOTE: ignore in goerli
@@ -81,8 +73,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
         // Decrease the MANA-A Stability Fee from 6% to 4.5%.
         DssExecLib.setIlkStabilityFee("MANA-A", FOUR_FIVE_PCT_RATE, true);
-
-        // Option 2 (on top of option 1)
 
         // Decrease the ETH-A Stability Fee from 2.25% to 1.5%.
         DssExecLib.setIlkStabilityFee("ETH-A", ONE_FIVE_PCT_RATE, true);
@@ -101,6 +91,16 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
         // Decrease the RENBTC-A Stability Fee from 2.5% to 2.25%.
         DssExecLib.setIlkStabilityFee("RENBTC-A", TWO_TWO_FIVE_PCT_RATE, true);
+
+        ////// Maximum Debt Ceiling Changes + Target Available Debt Change //////
+
+        // Increase the WSTETH-B Maximum Debt Ceiling from 100 million DAI to 200 million DAI.
+        DssExecLib.setIlkAutoLineDebtCeiling("WSTETH-B", 200 * MILLION);
+
+        // Increase the CRVV1ETHSTETH-A Maximum Debt Ceiling from 5 million DAI to 50 million DAI.
+        // Increase the CRVV1ETHSTETH-A Target Available Debt from 3 million DAI to 10 million DAI.
+        // NOTE: ignore in goerli
+        // DssExecLib.setIlkAutoLineParameters("CRVV1ETHSTETH-A", 50 * MILLION, 10 * MILLION, 8 hours);
     }
 }
 
