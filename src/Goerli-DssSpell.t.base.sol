@@ -18,7 +18,7 @@ pragma solidity 0.6.12;
 pragma experimental ABIEncoderV2;
 
 import "ds-math/math.sol";
-import "ds-test/test.sol";
+import "forge-std/Test.sol";
 import "dss-interfaces/Interfaces.sol";
 
 import "./test/rates.sol";
@@ -139,7 +139,7 @@ interface ArbitrumTeleportBridgeLike is TeleportBridgeLike {
     function inbox() external view returns (address);
 }
 
-contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
+contract GoerliDssSpellTestBase is Config, Test, DSMath {
     Hevm hevm;
 
     Rates         rates = new Rates();
