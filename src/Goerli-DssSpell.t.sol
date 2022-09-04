@@ -159,43 +159,31 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() public { // make public to use
+    function testNewChainlogValues() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        checkChainlogKey("MCD_JOIN_TELEPORT_FW_A");
-        checkChainlogKey("MCD_ORACLE_AUTH_TELEPORT_FW_A");
-        checkChainlogKey("MCD_ROUTER_TELEPORT_FW_A");
-        checkChainlogKey("OPTIMISM_TELEPORT_BRIDGE");
-        checkChainlogKey("OPTIMISM_TELEPORT_FEE");
-        checkChainlogKey("OPTIMISM_DAI_BRIDGE");
-        checkChainlogKey("OPTIMISM_ESCROW");
-        checkChainlogKey("OPTIMISM_GOV_RELAY");
-        checkChainlogKey("ARBITRUM_TELEPORT_BRIDGE");
-        checkChainlogKey("ARBITRUM_TELEPORT_FEE");
-        checkChainlogKey("ARBITRUM_DAI_BRIDGE");
-        checkChainlogKey("ARBITRUM_ESCROW");
-        checkChainlogKey("ARBITRUM_GOV_RELAY");
-        checkChainlogVersion("1.14.0");
+        // checkChainlogKey("MCD_JOIN_TELEPORT_FW_A");
+        // checkChainlogVersion("1.14.0");
     }
 
-    function testNewIlkRegistryValues() public { // make public to use
+    function testNewIlkRegistryValues() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        assertEq(reg.pos("TELEPORT-FW-A"), 52);
-        assertEq(reg.join("TELEPORT-FW-A"), addr.addr("MCD_JOIN_TELEPORT_FW_A"));
-        assertEq(reg.gem("TELEPORT-FW-A"), address(0));
-        assertEq(reg.dec("TELEPORT-FW-A"), 0);
-        assertEq(reg.class("TELEPORT-FW-A"), 4);
-        assertEq(reg.pip("TELEPORT-FW-A"), address(0));
-        assertEq(reg.xlip("TELEPORT-FW-A"), address(0));
-        assertEq(reg.name("TELEPORT-FW-A"), "");
-        assertEq(reg.symbol("TELEPORT-FW-A"), "");
+        // assertEq(reg.pos("TELEPORT-FW-A"), 52);
+        // assertEq(reg.join("TELEPORT-FW-A"), addr.addr("MCD_JOIN_TELEPORT_FW_A"));
+        // assertEq(reg.gem("TELEPORT-FW-A"), address(0));
+        // assertEq(reg.dec("TELEPORT-FW-A"), 0);
+        // assertEq(reg.class("TELEPORT-FW-A"), 4);
+        // assertEq(reg.pip("TELEPORT-FW-A"), address(0));
+        // assertEq(reg.xlip("TELEPORT-FW-A"), address(0));
+        // assertEq(reg.name("TELEPORT-FW-A"), "");
+        // assertEq(reg.symbol("TELEPORT-FW-A"), "");
     }
 
     function testFailWrongDay() public {
