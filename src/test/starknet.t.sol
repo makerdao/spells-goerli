@@ -67,6 +67,7 @@ interface StarknetGovRelayLike {
 
 interface StarknetCoreLike {
     function implementation() external returns (address);
+    function isNotFinalized() external returns (bool);
 }
 
 interface DaiLike {
@@ -137,6 +138,11 @@ contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
     function checkStarknetCore() public {
         StarknetCoreLike core = StarknetCoreLike(addr.addr("STARKNET_CORE"));
 
-        assertEq(core.implementation(), starknetValues.core_implementation, "StarknetTest/core-implementation");
+        // Starknet Core is currently out of scope.
+        // It is updating frequently and the implementation is not ready to be
+        //    brought into our simulation tests yet.
+        //assertEq(core.implementation(), starknetValues.core_implementation, "StarknetTest/core-implementation");
+
+        assertTrue(core.isNotFinalized());
     }
 }
