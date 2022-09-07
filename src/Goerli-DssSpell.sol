@@ -23,6 +23,11 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
+interface RwaLiquidationLike {
+    function ilks(bytes32) external returns (string memory, address, uint48, uint48);
+    function init(bytes32, uint256, string calldata, uint48) external;
+}
+
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     // Provides a descriptive tag for bot consumption
@@ -38,14 +43,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
 
-    uint256 internal constant ONE_FIVE_PCT_RATE     = 1000000000472114805215157978;
-    uint256 internal constant TWO_PCT_RATE          = 1000000000627937192491029810;
-    uint256 internal constant TWO_TWO_FIVE_PCT_RATE = 1000000000705562181084137268;
-    uint256 internal constant THREE_PCT_RATE        = 1000000000937303470807876289;
-    uint256 internal constant THREE_FIVE_PCT_RATE   = 1000000001090862085746321732;
-    uint256 internal constant FOUR_FIVE_PCT_RATE    = 1000000001395766281313196627;
-
-    uint256 internal constant MILLION = 10**6;
+    // HVB (RWA009-A) legal update doc
+    string constant DOC = "QmPH6gMsoqrGFN8ECGGbuaaR5KSD4mtnuiuNkHzHgryp48";
 
     function officeHours() public override returns (bool) {
         return false;
@@ -55,52 +54,40 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
         // onboardNewCollaterals();
+        // offboardCollaterals();
 
-        // ----------------------------- MKR Vesting -----------------------------
+        // ---------------------- CU DAI Vesting Streams -----------------------
         // NOTE: ignore in goerli
 
-        // ------------------------ Delegate Compensation ------------------------
+        // ---------------------- SPF Funding Transfers ------------------------
         // NOTE: ignore in goerli
 
-        // ------------------ PPG - Maker Open Market Committee ------------------
-        // https://vote.makerdao.com/polling/QmXHnn2u#poll-detail
-
-        ////// Stability Fee Changes //////
-
-        // Decrease the CRVV1ETHSTETH-A Stability Fee from 2.25% to 2.0%.
+        // ------------------- GRO-001 MKR Stream Clean-up ---------------------
         // NOTE: ignore in goerli
-        // DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", TWO_PCT_RATE, true);
 
-        // Decrease the MANA-A Stability Fee from 6% to 4.5%.
-        DssExecLib.setIlkStabilityFee("MANA-A", FOUR_FIVE_PCT_RATE, true);
+        // -------------------- Update HVB Legal Documents ---------------------
+        bytes32 ilk                      = "RWA009-A";
+        address MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress(
+            "MIP21_LIQUIDATION_ORACLE"
+        );
 
-        // Decrease the ETH-A Stability Fee from 2.25% to 1.5%.
-        DssExecLib.setIlkStabilityFee("ETH-A", ONE_FIVE_PCT_RATE, true);
+        ( , address pip, uint48 tau, ) = RwaLiquidationLike(
+            MIP21_LIQUIDATION_ORACLE
+        ).ilks(ilk);
 
-        // Decrease the ETH-B Stability Fee from 3.75% to 3.0%.
-        DssExecLib.setIlkStabilityFee("ETH-B", THREE_PCT_RATE, true);
+        require(pip != address(0), "Abort spell execution: pip must be set");
 
-        // Decrease the WSTETH-A Stability Fee from 2.25% to 1.5%.
-        DssExecLib.setIlkStabilityFee("WSTETH-A", ONE_FIVE_PCT_RATE, true);
+        // Init the RwaLiquidationOracle to reset the doc
+        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(
+            ilk,       // ilk to update
+            0,         // price ignored if init() has already been called
+            DOC,       // new legal document
+            tau        // old tau value
+        );
 
-        // Decrease the WBTC-A Stability Fee from 2.25% to 2%.
-        DssExecLib.setIlkStabilityFee("WBTC-A", TWO_PCT_RATE, true);
-
-        // Decrease the WBTC-B Stability Fee from 3.75% to 3.5%.
-        DssExecLib.setIlkStabilityFee("WBTC-B", THREE_FIVE_PCT_RATE, true);
-
-        // Decrease the RENBTC-A Stability Fee from 2.5% to 2.25%.
-        DssExecLib.setIlkStabilityFee("RENBTC-A", TWO_TWO_FIVE_PCT_RATE, true);
-
-        ////// Maximum Debt Ceiling Changes + Target Available Debt Change //////
-
-        // Increase the WSTETH-B Maximum Debt Ceiling from 100 million DAI to 200 million DAI.
-        DssExecLib.setIlkAutoLineDebtCeiling("WSTETH-B", 200 * MILLION);
-
-        // Increase the CRVV1ETHSTETH-A Maximum Debt Ceiling from 5 million DAI to 20 million DAI
-        // Increase the CRVV1ETHSTETH-A Target Available Debt from 3 million DAI to 10 million DAI.
+        // ------------ Fomer RWF-001 Contributor Retroactive MKR --------------
         // NOTE: ignore in goerli
-        // DssExecLib.setIlkAutoLineParameters("CRVV1ETHSTETH-A", 20 * MILLION, 10 * MILLION, 8 hours);
+
     }
 }
 

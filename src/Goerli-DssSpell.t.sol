@@ -19,6 +19,10 @@ pragma experimental ABIEncoderV2;
 
 import "./Goerli-DssSpell.t.base.sol";
 
+interface RwaLiquidationLike {
+    function ilks(bytes32) external returns (string memory, address, uint48, uint48);
+}
+
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -306,14 +310,14 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function test_Medianizers() private { // make public to use
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        // vote(address(spell));
+        // scheduleWaitAndCast(address(spell));
+        // assertTrue(spell.done());
 
-        // Track Median authorizations here
-        address SET_TOKEN    = address(0);
-        address TOKENUSD_MED = OsmAbstract(addr.addr("PIP_TOKEN")).src();
-        assertEq(MedianAbstract(TOKENUSD_MED).bud(SET_TOKEN), 1);
+        // // Track Median authorizations here
+        // address SET_TOKEN    = address(0);
+        // address TOKENUSD_MED = OsmAbstract(addr.addr("PIP_TOKEN")).src();
+        // assertEq(MedianAbstract(TOKENUSD_MED).bud(SET_TOKEN), 1);
     }
 
     function test_auth() public {
@@ -425,31 +429,56 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testVestDAI() private { // make public to use
-        VestAbstract vest = VestAbstract(addr.addr("MCD_VEST_DAI"));
+        // VestAbstract vest = VestAbstract(addr.addr("MCD_VEST_DAI"));
 
-        assertEq(vest.ids(), 0);
+        // assertEq(vest.ids(), 0);
+
+        // vote(address(spell));
+        // scheduleWaitAndCast(address(spell));
+        // assertTrue(spell.done());
+
+        // assertEq(vest.ids(), 1);
+
+        // assertEq(vest.cap(), 1 * MILLION * WAD / 30 days);
+
+        // assertEq(vest.usr(1), address(pauseProxy));
+        // assertEq(vest.bgn(1), block.timestamp - 1 days);
+        // assertEq(vest.clf(1), block.timestamp - 1 days);
+        // assertEq(vest.fin(1), block.timestamp);
+        // assertEq(vest.mgr(1), address(0));
+        // assertEq(vest.res(1), 0);
+        // assertEq(vest.tot(1), WAD);
+        // assertEq(vest.rxd(1), 0);
+
+        // uint256 prevBalance = dai.balanceOf(address(pauseProxy));
+        // assertTrue(tryVest(address(vest), 1));
+        // assertEq(dai.balanceOf(address(pauseProxy)), prevBalance + WAD);
+
+        // assertEq(vest.rxd(1), WAD);
+    }
+
+    // RWA tests
+
+    string OLDDOC = "QmZG31b6iLGGCLGD7ZUn8EDkE9kANPVMcHzEYkvyNWCZpG";
+    string NEWDOC = "QmPH6gMsoqrGFN8ECGGbuaaR5KSD4mtnuiuNkHzHgryp48";
+
+    function testDocChange() public {
+        bytes32 ilk = "RWA009-A";
+        RwaLiquidationLike oracle = RwaLiquidationLike(
+            chainLog.getAddress("MIP21_LIQUIDATION_ORACLE")
+        );
+
+        (string memory doc, , , ) = oracle.ilks(ilk);
+
+        assertEq(doc, OLDDOC, "Bad Old Document");
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        assertEq(vest.ids(), 1);
+        (doc, , , ) = oracle.ilks(ilk);
 
-        assertEq(vest.cap(), 1 * MILLION * WAD / 30 days);
-
-        assertEq(vest.usr(1), address(pauseProxy));
-        assertEq(vest.bgn(1), block.timestamp - 1 days);
-        assertEq(vest.clf(1), block.timestamp - 1 days);
-        assertEq(vest.fin(1), block.timestamp);
-        assertEq(vest.mgr(1), address(0));
-        assertEq(vest.res(1), 0);
-        assertEq(vest.tot(1), WAD);
-        assertEq(vest.rxd(1), 0);
-
-        uint256 prevBalance = dai.balanceOf(address(pauseProxy));
-        assertTrue(tryVest(address(vest), 1));
-        assertEq(dai.balanceOf(address(pauseProxy)), prevBalance + WAD);
-
-        assertEq(vest.rxd(1), WAD);
+        assertEq(doc, NEWDOC, "Bad New Document");
     }
+
 }
