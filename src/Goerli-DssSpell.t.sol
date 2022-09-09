@@ -310,14 +310,14 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function test_Medianizers() private { // make public to use
-        // vote(address(spell));
-        // scheduleWaitAndCast(address(spell));
-        // assertTrue(spell.done());
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
 
-        // // Track Median authorizations here
-        // address SET_TOKEN    = address(0);
-        // address TOKENUSD_MED = OsmAbstract(addr.addr("PIP_TOKEN")).src();
-        // assertEq(MedianAbstract(TOKENUSD_MED).bud(SET_TOKEN), 1);
+        // Track Median authorizations here
+        address SET_TOKEN    = address(0);
+        address TOKENUSD_MED = OsmAbstract(addr.addr("PIP_TOKEN")).src();
+        assertEq(MedianAbstract(TOKENUSD_MED).bud(SET_TOKEN), 1);
     }
 
     function test_auth() public {
@@ -429,38 +429,37 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testVestDAI() private { // make public to use
-        // VestAbstract vest = VestAbstract(addr.addr("MCD_VEST_DAI"));
+        VestAbstract vest = VestAbstract(addr.addr("MCD_VEST_DAI"));
 
-        // assertEq(vest.ids(), 0);
+        assertEq(vest.ids(), 0);
 
-        // vote(address(spell));
-        // scheduleWaitAndCast(address(spell));
-        // assertTrue(spell.done());
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
 
-        // assertEq(vest.ids(), 1);
+        assertEq(vest.ids(), 1);
 
-        // assertEq(vest.cap(), 1 * MILLION * WAD / 30 days);
+        assertEq(vest.cap(), 1 * MILLION * WAD / 30 days);
 
-        // assertEq(vest.usr(1), address(pauseProxy));
-        // assertEq(vest.bgn(1), block.timestamp - 1 days);
-        // assertEq(vest.clf(1), block.timestamp - 1 days);
-        // assertEq(vest.fin(1), block.timestamp);
-        // assertEq(vest.mgr(1), address(0));
-        // assertEq(vest.res(1), 0);
-        // assertEq(vest.tot(1), WAD);
-        // assertEq(vest.rxd(1), 0);
+        assertEq(vest.usr(1), address(pauseProxy));
+        assertEq(vest.bgn(1), block.timestamp - 1 days);
+        assertEq(vest.clf(1), block.timestamp - 1 days);
+        assertEq(vest.fin(1), block.timestamp);
+        assertEq(vest.mgr(1), address(0));
+        assertEq(vest.res(1), 0);
+        assertEq(vest.tot(1), WAD);
+        assertEq(vest.rxd(1), 0);
 
-        // uint256 prevBalance = dai.balanceOf(address(pauseProxy));
-        // assertTrue(tryVest(address(vest), 1));
-        // assertEq(dai.balanceOf(address(pauseProxy)), prevBalance + WAD);
+        uint256 prevBalance = dai.balanceOf(address(pauseProxy));
+        assertTrue(tryVest(address(vest), 1));
+        assertEq(dai.balanceOf(address(pauseProxy)), prevBalance + WAD);
 
-        // assertEq(vest.rxd(1), WAD);
+        assertEq(vest.rxd(1), WAD);
     }
 
     // RWA tests
-
     string OLDDOC = "QmZG31b6iLGGCLGD7ZUn8EDkE9kANPVMcHzEYkvyNWCZpG";
-    string NEWDOC = "QmPH6gMsoqrGFN8ECGGbuaaR5KSD4mtnuiuNkHzHgryp48";
+    string NEWDOC = "QmQx3bMtjncka2jUsGwKu7ButuPJFn9yDEEvpg9xZ71ECh";
 
     function testDocChange() public {
         bytes32 ilk = "RWA009-A";
@@ -468,23 +467,21 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             chainLog.getAddress("MIP21_LIQUIDATION_ORACLE")
         );
 
-        // (string memory, address, uint48, uint48);
-        (string memory tal, address why, uint48 oppressing, uint48 me) =
+        (string memory docOld, address pipOld, uint48 tauOld, uint48 tocOld) =
             oracle.ilks(ilk);
 
-        assertEq(tal, OLDDOC, "bad old document");
+        assertEq(docOld, OLDDOC, "bad old document");
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        (string memory your, address words, uint48 are, uint48 violence) =
+        (string memory docNew, address pipNew, uint48 tauNew, uint48 tocNew) =
             oracle.ilks(ilk);
 
-        assertEq(your, NEWDOC,        "bad new document");
-        assertEq(why, words,          "pip is the same");
-        assertTrue(oppressing == are, "tau is the same");
-        assertTrue(me == violence,    "toc is the same");
+        assertEq(docNew, NEWDOC,     "bad new document");
+        assertEq(pipOld, pipNew,     "pip is the same");
+        assertTrue(tauOld == tauNew, "tau is the same");
+        assertTrue(tocOld == tocNew, "toc is the same");
     }
-
 }
