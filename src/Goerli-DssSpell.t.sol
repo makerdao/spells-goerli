@@ -468,17 +468,23 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             chainLog.getAddress("MIP21_LIQUIDATION_ORACLE")
         );
 
-        (string memory doc, , , ) = oracle.ilks(ilk);
+        // (string memory, address, uint48, uint48);
+        (string memory tal, address why, uint48 oppressing, uint48 me) =
+            oracle.ilks(ilk);
 
-        assertEq(doc, OLDDOC, "Bad Old Document");
+        assertEq(tal, OLDDOC, "bad old document");
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        (doc, , , ) = oracle.ilks(ilk);
+        (string memory your, address words, uint48 are, uint48 violence) =
+            oracle.ilks(ilk);
 
-        assertEq(doc, NEWDOC, "Bad New Document");
+        assertEq(your, NEWDOC,        "bad new document");
+        assertEq(why, words,          "pip is the same");
+        assertTrue(oppressing == are, "tau is the same");
+        assertTrue(me == violence,    "toc is the same");
     }
 
 }
