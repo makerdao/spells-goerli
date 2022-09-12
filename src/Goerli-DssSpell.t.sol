@@ -464,7 +464,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     function testDocChange() public {
         bytes32 ilk = "RWA009-A";
         RwaLiquidationLike oracle = RwaLiquidationLike(
-            chainLog.getAddress("MIP21_LIQUIDATION_ORACLE")
+            addr.addr("MIP21_LIQUIDATION_ORACLE")
         );
 
         (string memory docOld, address pipOld, uint48 tauOld, uint48 tocOld) =
