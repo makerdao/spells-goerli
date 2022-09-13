@@ -654,7 +654,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // as we have SF 0 we need to pay exectly the same amount of DAI we have drawn
         uint256 daiToPay = drawAmount;
 
-
         // wards
         giveAuth(address(rwaconduitinurn_007), address(this));
         // may
@@ -743,9 +742,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         end.skim("RWA007-A", address(rwaurn_007));
 
         (ink, art) = vat.urns("RWA007-A", address(rwaurn_007));
-        uint256 skimmedInk = drawAmount / 1_000_000;
-        log_uint(ink);
-        log_uint(skimmedInk);
+        uint256 skimmedInk = drawAmount / 250_000_000;
         assertEq(ink, 1 * WAD - skimmedInk, "RWA007: wrong ink in urn after skim");
         assertEq(art, 0, "RWA007: wrong art in urn after skim");
 
@@ -771,9 +768,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         vat.hope(address(end));
         end.pack(1_000_000 * WAD);
 
+        // Check DAI redemption after "cage()"
         assertEq(vat.gem("RWA007-A", address(this)), 0, "RWA007: wrong vat gem");
         assertEq(rwagem_007.balanceOf(address(this)), 0, "RWA007: wrong gem balance");
-        end.cash("RWA008-A", 1_000_000 * WAD);
+        end.cash("RWA007-A", 1_000_000 * WAD);
         assertGt(vat.gem("RWA007-A", address(this)), 0, "RWA007: wrong vat gem after cash");
         assertEq(rwagem_007.balanceOf(address(this)), 0, "RWA007: wrong gem balance after cash");
         rwajoin_007.exit(address(this), vat.gem("RWA007-A", address(this)));
