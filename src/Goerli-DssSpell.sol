@@ -23,15 +23,20 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
-interface RwaLiquidationLike {
-    function ilks(bytes32) external returns (string memory, address, uint48, uint48);
-    function init(bytes32, uint256, string calldata, uint48) external;
+interface ERC20Like {
+    function approve(address, uint256) external returns (bool);
+}
+
+interface RwaUrnLike {
+    function lock(uint256) external;
+    function draw(uint256) external;
 }
 
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
-
     // Provides a descriptive tag for bot consumption
-    string public constant override description = "Goerli Spell";
+    // This should be modified weekly to provide a summary of the actions
+    // Hash: cast keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/969f04cfec25e56791fbe4503bcbe2df7a58df1e/governance/votes/Executive%20vote%20-%20July%2029%2C%202022.md -q -O - 2>/dev/null)"
+    string public constant override description ="RWA-007 Onboarding";
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -40,56 +45,25 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // $ bc -l <<< 'scale=27; e( l(1.08)/(60 * 60 * 24 * 365) )'
     //
     // A table of rates can be found at
-    //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
+    //    https://ipfs.io/ipfs/QmX2QMoM1SZq2XMoTbMak8pZP86Y2icpgPAKDjQg4r4YHn
     //
 
-    // HVB (RWA009-A) legal update doc
-    string constant DOC = "QmQx3bMtjncka2jUsGwKu7ButuPJFn9yDEEvpg9xZ71ECh";
-
     function officeHours() public override returns (bool) {
-        return false;
+        return true;
     }
 
     function actions() public override {
+
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
-        // onboardNewCollaterals();
+        onboardNewCollaterals();
         // offboardCollaterals();
 
-        // ---------------------- CU DAI Vesting Streams -----------------------
-        // https://vote.makerdao.com/polling/QmQJ9hYq#poll-detail
-        // NOTE: ignore in goerli
+        // lock RWA007 Token in the URN
+        ERC20Like(RWA007).approve(RWA007_A_URN, 1 * WAD);
+        RwaUrnLike(RWA007_A_URN).lock(1 * WAD);
 
-        // ---------------------- SPF Funding Transfers ------------------------
-        // https://forum.makerdao.com/t/mip55c3-sp6-legal-domain-work-on-greenlit-collateral-bibta-special-purpose-fund/17166
-        // https://vote.makerdao.com/polling/QmdaG8mo#vote-breakdown
-        // NOTE: ignore in goerli
-
-        // ------------------- GRO-001 MKR Stream Clean-up ---------------------
-        // https://forum.makerdao.com/t/executive-inclusion-gro-001-mkr-vesting-stream-clean-up/17820
-        // NOTE: ignore in goerli
-
-        // -------------------- Update HVB Legal Documents ---------------------
-        // https://forum.makerdao.com/t/poll-inclusion-request-hvbank-legal-update/17547
-        // https://vote.makerdao.com/polling/QmX81EhP#vote-breakdown
-        bytes32 ilk                      = "RWA009-A";
-        address MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress(
-            "MIP21_LIQUIDATION_ORACLE"
-        );
-
-        ( , address pip, uint48 tau, ) = RwaLiquidationLike(
-            MIP21_LIQUIDATION_ORACLE
-        ).ilks(ilk);
-
-        require(pip != address(0), "Abort spell execution: pip must be set");
-
-        // Init the RwaLiquidationOracle to reset the doc
-        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(
-            ilk,       // ilk to update
-            0,         // price ignored if init() has already been called
-            DOC,       // new legal document
-            tau        // old tau value
-        );
+        DssExecLib.setChangelogVersion("1.14.1");
     }
 }
 

@@ -311,6 +311,14 @@ contract Addresses {
         addr["RWA009_A_URN"]                    = 0xd334bbA9172a6F615Be93d194d1322148fb5222e;
         addr["RWA009_A_JAR"]                    = 0xad4e1696d008A656F810498A974C5D3dC4A6150d;
         addr["RWA009_A_OUTPUT_CONDUIT"]         = 0x5DCdbD3cCF9B09EAAD03bc5f50fA2B3d3ACA0121;
+        addr["RWA007"]                          = 0x02091C59C92fc5E0575b3B133c3caa4f57D79b0e;
+        addr["PIP_RWA007"]                      = 0xEB87118831B52B53FF11430c71B946fEafC903a2;
+        addr["MCD_JOIN_RWA007_A"]               = 0xe3BA7B6c922cb4622AfF00C2e2A467fF6A06CA29;
+        addr["RWA007_A_URN"]                    = 0x78D9ccbe652E2aE7B11289B4F202278058aEfeeA;
+        addr["RWA007_A_JAR"]                    = 0xcF8A6445B6e22A8e2Fe9d7bd21410bB7a8b8D054;
+        addr["RWA007_A_OUTPUT_CONDUIT"]         = 0x9B4Af5F55b23cC2D86f58d7c08cD025bA1901013;
+        addr["RWA007_A_INPUT_CONDUIT_URN"]      = 0xFC80d4037dDadDb380e752AE46Aca262eEb812fC;
+        addr["RWA007_A_INPUT_CONDUIT_JAR"]      = 0x9ca5F7b1F5DCC287657c20547176a6733EB2c046;
         addr["PROXY_PAUSE_ACTIONS"]             = 0x8D1187FCa9A104211bd25c689C08718AD8730C83;
         addr["PROXY_DEPLOYER"]                  = 0xc9476Fd378de5b0de5C4280D4323f6F89f723c15;
         addr["GUNIV3DAIUSDC1"]                  = 0xc5D83e829Ecdce4d67645EE1a1317451e0b4c68d;
