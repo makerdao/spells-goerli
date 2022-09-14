@@ -233,7 +233,7 @@ contract DssSpellCollateralAction {
 
         // --------------------------- RWA Collateral onboarding ---------------------------
 
-        // Onboard Monetalis: TODO: https://vote.makerdao.com/polling/QmQMDasC
+        // Onboard Monetalis: https://vote.makerdao.com/polling/TODO
         onboardRwa007(CHANGELOG, REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI, MCD_PSM_USDC_A);
     }
 

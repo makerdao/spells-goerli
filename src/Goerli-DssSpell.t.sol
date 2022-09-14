@@ -49,6 +49,7 @@ interface RwaOutputConduitLike {
 
 interface RwaInputConduitLike {
     function may(address) external view returns (uint256);
+    function quitTo() external view returns (address);
     function mate(address) external;
     function push() external;
 }
@@ -496,7 +497,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     // RWA tests
 
-    RwaLiquidationLike oracle = RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
+    address RWA007_A_OPERATOR                  = addr.addr("RWA007_A_OPERATOR");
+    address RWA007_A_COINBASE_CUSTODY          = addr.addr("RWA007_A_COINBASE_CUSTODY");
+    address RWA007_A_INPUT_CONDUIT_QUIT_TO     = addr.addr("RWA007_A_INPUT_CONDUIT_QUIT_TO");
+    
+    RwaLiquidationLike oracle                  = RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
     DSTokenAbstract      rwagem_007            = DSTokenAbstract(addr.addr("RWA007"));
     GemJoinAbstract      rwajoin_007           = GemJoinAbstract(addr.addr("MCD_JOIN_RWA007_A"));
@@ -506,6 +511,27 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     RwaInputConduitLike  rwaconduitinurn_007   = RwaInputConduitLike(addr.addr("RWA007_A_INPUT_CONDUIT_URN"));
     RwaInputConduitLike  rwaconduitinjar_007   = RwaInputConduitLike(addr.addr("RWA007_A_INPUT_CONDUIT_JAR"));
     uint256 daiPsmGemDiffDecimals              = 10**sub(dai.decimals(), psmGem.decimals());
+
+    function testRWA007_INTEGRATION_CONDUITS_SETUP() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(rwaconduitout_007.can(pauseProxy), 1, "OutputConduit/pause-proxy-not-operator");
+        assertEq(rwaconduitout_007.can(RWA007_A_OPERATOR), 1, "OutputConduit/monetalis-not-operator");
+        assertEq(rwaconduitout_007.may(pauseProxy), 1, "OutputConduit/pause-proxy-not-mate");
+        assertEq(rwaconduitout_007.may(RWA007_A_OPERATOR), 1, "OutputConduit/monetalis-not-mate");
+        
+        assertEq(rwaconduitout_007.bud(RWA007_A_COINBASE_CUSTODY), 1, "OutputConduit/coinbase-custody-not-whitelisted-for-pick");
+
+        assertEq(rwaconduitinurn_007.may(pauseProxy), 1, "InputConduitUrn/pause-proxy-not-mate");
+        assertEq(rwaconduitinurn_007.may(RWA007_A_OPERATOR), 1, "InputConduitUrn/monetalis-not-mate");
+        assertEq(rwaconduitinurn_007.quitTo(), RWA007_A_INPUT_CONDUIT_QUIT_TO, "InputConduitUrn/quit-to-not-set");
+
+        assertEq(rwaconduitinjar_007.may(pauseProxy), 1, "InputConduitJar/pause-proxy-not-mate");
+        assertEq(rwaconduitinjar_007.may(RWA007_A_OPERATOR), 1, "InputConduitJar/monetalis-not-mate");
+        assertEq(rwaconduitinjar_007.quitTo(), RWA007_A_INPUT_CONDUIT_QUIT_TO, "InputConduitJar/quit-to-not-set");
+    }
 
     function testRWA007_INTEGRATION_BUMP() public {
         vote(address(spell));
