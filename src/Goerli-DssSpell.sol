@@ -53,8 +53,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // onboardNewCollaterals();
         // offboardCollaterals();
 
-
-
         // ------------------ Update Teleport Feeds ----------------- 
         TeleportOracleAuthLike teleportOracleAuth = TeleportOracleAuthLike(DssExecLib.getChangelogAddress("MCD_ORACLE_AUTH_TELEPORT_FW_A"));
         address[] memory feedsToRemove = new address[](9);
