@@ -23,11 +23,6 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
-interface RwaLiquidationLike {
-    function ilks(bytes32) external returns (string memory, address, uint48, uint48);
-    function init(bytes32, uint256, string calldata, uint48) external;
-}
-
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     // Provides a descriptive tag for bot consumption
@@ -43,9 +38,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
 
-    // HVB (RWA009-A) legal update doc
-    string constant DOC = "QmQx3bMtjncka2jUsGwKu7ButuPJFn9yDEEvpg9xZ71ECh";
-
     function officeHours() public override returns (bool) {
         return false;
     }
@@ -55,41 +47,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // Includes changes from the DssSpellCollateralAction
         // onboardNewCollaterals();
         // offboardCollaterals();
-
-        // ---------------------- CU DAI Vesting Streams -----------------------
-        // https://vote.makerdao.com/polling/QmQJ9hYq#poll-detail
-        // NOTE: ignore in goerli
-
-        // ---------------------- SPF Funding Transfers ------------------------
-        // https://forum.makerdao.com/t/mip55c3-sp6-legal-domain-work-on-greenlit-collateral-bibta-special-purpose-fund/17166
-        // https://vote.makerdao.com/polling/QmdaG8mo#vote-breakdown
-        // NOTE: ignore in goerli
-
-        // ------------------- GRO-001 MKR Stream Clean-up ---------------------
-        // https://forum.makerdao.com/t/executive-inclusion-gro-001-mkr-vesting-stream-clean-up/17820
-        // NOTE: ignore in goerli
-
-        // -------------------- Update HVB Legal Documents ---------------------
-        // https://forum.makerdao.com/t/poll-inclusion-request-hvbank-legal-update/17547
-        // https://vote.makerdao.com/polling/QmX81EhP#vote-breakdown
-        bytes32 ilk                      = "RWA009-A";
-        address MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress(
-            "MIP21_LIQUIDATION_ORACLE"
-        );
-
-        ( , address pip, uint48 tau, ) = RwaLiquidationLike(
-            MIP21_LIQUIDATION_ORACLE
-        ).ilks(ilk);
-
-        require(pip != address(0), "Abort spell execution: pip must be set");
-
-        // Init the RwaLiquidationOracle to reset the doc
-        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(
-            ilk,       // ilk to update
-            0,         // price ignored if init() has already been called
-            DOC,       // new legal document
-            tau        // old tau value
-        );
     }
 }
 

@@ -458,10 +458,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     // RWA tests
-    string OLDDOC = "QmZG31b6iLGGCLGD7ZUn8EDkE9kANPVMcHzEYkvyNWCZpG";
-    string NEWDOC = "QmQx3bMtjncka2jUsGwKu7ButuPJFn9yDEEvpg9xZ71ECh";
+    string OLDDOC = "";
+    string NEWDOC = "";
 
-    function testDocChange() public {
+    function testDocChange() private { // make public to use
         bytes32 ilk = "RWA009-A";
         RwaLiquidationLike oracle = RwaLiquidationLike(
             addr.addr("MIP21_LIQUIDATION_ORACLE")
