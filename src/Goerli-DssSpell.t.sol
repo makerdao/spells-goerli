@@ -486,6 +486,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
      function testUpdateTeleportFeeds() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
         TeleportOracleAuthLike oracleAuth = TeleportOracleAuthLike(addr.addr("MCD_ORACLE_AUTH_TELEPORT_FW_A"));
 
         // old feeds that were kept
