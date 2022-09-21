@@ -74,8 +74,6 @@ contract DssSpellCollateralAction {
 
     // --- Math ---
     uint256 public constant WAD = 10**18;
-    uint256 public constant RAY = 10**27;
-    uint256 public constant RAD = 10**45;
 
     // -- RWA007 MIP21 components --
     address constant RWA007                         = 0x02091C59C92fc5E0575b3B133c3caa4f57D79b0e;

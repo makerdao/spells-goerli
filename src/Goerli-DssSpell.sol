@@ -25,6 +25,7 @@ import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
 interface GemLike {
     function approve(address, uint256) external returns (bool);
+}
 
 interface StarknetLike {
     function setMaxDeposit(uint256) external;
@@ -55,9 +56,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // A table of rates can be found at
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
-
-    // Math
-    uint256 internal constant WAD = 10 ** 18;
 
     function officeHours() public override returns (bool) {
         return false;
