@@ -42,6 +42,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
 
+    // Math
+    uint256 internal constant WAD = 10 ** 18;
+
     function officeHours() public override returns (bool) {
         return false;
     }
