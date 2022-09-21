@@ -52,6 +52,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // onboardNewCollaterals();
         // offboardCollaterals();
 
+        // Increase Starknet Bridge Deposit Limit from 50 DAI to 1000 DAI
+        // https://vote.makerdao.com/polling/QmbWkTvW
         StarknetLike(DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE")).setMaxDeposit(1000 * WAD);
 
     }
