@@ -23,6 +23,10 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
+interface StarknetLike {
+    function setMaxDeposit(uint256) external;
+}
+
 interface TeleportOracleAuthLike {
     function addSigners(address[] calldata) external;
     function removeSigners(address[] calldata) external;
@@ -43,6 +47,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
 
+    // Math
+    uint256 internal constant WAD = 10 ** 18;
+
     function officeHours() public override returns (bool) {
         return false;
     }
@@ -52,6 +59,10 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // Includes changes from the DssSpellCollateralAction
         // onboardNewCollaterals();
         // offboardCollaterals();
+
+        // Increase Starknet Bridge Deposit Limit from 50 DAI to 1000 DAI
+        // https://vote.makerdao.com/polling/QmbWkTvW
+        StarknetLike(DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE")).setMaxDeposit(1000 * WAD);
 
         // ------------------ Update Teleport Feeds ----------------- 
         TeleportOracleAuthLike teleportOracleAuth = TeleportOracleAuthLike(DssExecLib.getChangelogAddress("MCD_ORACLE_AUTH_TELEPORT_FW_A"));
