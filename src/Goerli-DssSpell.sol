@@ -23,6 +23,10 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
+interface StarknetLike {
+    function setMaxDeposit(uint256) external;
+}
+
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     // Provides a descriptive tag for bot consumption
@@ -47,6 +51,11 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // Includes changes from the DssSpellCollateralAction
         // onboardNewCollaterals();
         // offboardCollaterals();
+
+        // Increase Starknet Bridge Deposit Limit from 50 DAI to 1000 DAI
+        // https://vote.makerdao.com/polling/QmbWkTvW
+        StarknetLike(DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE")).setMaxDeposit(1000 * WAD);
+
     }
 }
 
