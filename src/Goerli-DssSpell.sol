@@ -36,7 +36,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // Provides a descriptive tag for bot consumption
     // This should be modified weekly to provide a summary of the actions
     // Hash: cast keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/969f04cfec25e56791fbe4503bcbe2df7a58df1e/governance/votes/Executive%20vote%20-%20July%2029%2C%202022.md -q -O - 2>/dev/null)"
-    string public constant override description ="RWA-007 Onboarding";
+    string public constant override description ="Goerli Spell";
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -45,11 +45,11 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // $ bc -l <<< 'scale=27; e( l(1.08)/(60 * 60 * 24 * 365) )'
     //
     // A table of rates can be found at
-    //    https://ipfs.io/ipfs/QmX2QMoM1SZq2XMoTbMak8pZP86Y2icpgPAKDjQg4r4YHn
+    //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
 
     function officeHours() public override returns (bool) {
-        return true;
+        return false;
     }
 
     function actions() public override {
@@ -57,10 +57,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
         onboardNewCollaterals();
-        // offboardCollaterals();
 
         // lock RWA007 Token in the URN
-        ERC20Like(RWA007).approve(RWA007_A_URN, 1 * WAD);
+        GemLike(RWA007).approve(RWA007_A_URN, 1 * WAD);
         RwaUrnLike(RWA007_A_URN).lock(1 * WAD);
 
         DssExecLib.setChangelogVersion("1.14.1");
