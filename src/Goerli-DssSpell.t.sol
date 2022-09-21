@@ -500,7 +500,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     // RWA tests
-
     address RWA007_A_OPERATOR                  = addr.addr("RWA007_A_OPERATOR");
     address RWA007_A_COINBASE_CUSTODY          = addr.addr("RWA007_A_COINBASE_CUSTODY");
     address RWA007_A_INPUT_CONDUIT_QUIT_TO     = addr.addr("RWA007_A_INPUT_CONDUIT_QUIT_TO");
@@ -516,6 +515,29 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     RwaInputConduitLike  rwaconduitinjar_007   = RwaInputConduitLike(addr.addr("RWA007_A_INPUT_CONDUIT_JAR"));
     uint256 daiPsmGemDiffDecimals              = 10**sub(dai.decimals(), psmGem.decimals());
 
+    string OLDDOC = "";
+    string NEWDOC = "";
+
+    function testDocChange() private { // make public to use
+        bytes32 ilk = "RWA009-A";
+        RwaLiquidationLike oracle = RwaLiquidationLike(
+            addr.addr("MIP21_LIQUIDATION_ORACLE")
+        );
+        
+        (string memory docOld, address pipOld, uint48 tauOld, uint48 tocOld) =
+            oracle.ilks(ilk);
+        assertEq(docOld, OLDDOC, "bad old document");
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+        (string memory docNew, address pipNew, uint48 tauNew, uint48 tocNew) =
+            oracle.ilks(ilk);
+        assertEq(docNew, NEWDOC,     "bad new document");
+        assertEq(pipOld, pipNew,     "pip is the same");
+        assertTrue(tauOld == tauNew, "tau is the same");
+        assertTrue(tocOld == tocNew, "toc is the same");
+    }
+    
     function testRWA007_INTEGRATION_CONDUITS_SETUP() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
@@ -806,5 +828,52 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         rwajoin_007.exit(address(this), vat.gem("RWA007-A", address(this)));
         assertEq(vat.gem("RWA007-A", address(this)), 0, "RWA007: wrong vat gem after exit");
         assertGt(rwagem_007.balanceOf(address(this)), 0, "RWA007: wrong gem balance after exit");
+    }
+
+     function testUpdateTeleportFeeds() public {
+        TeleportOracleAuthLike oracleAuth = TeleportOracleAuthLike(addr.addr("MCD_ORACLE_AUTH_TELEPORT_FW_A"));
+
+        assertEq(oracleAuth.signers(0xC4756A9DaE297A046556261Fa3CD922DFC32Db78), 1);
+        assertEq(oracleAuth.signers(0x23ce419DcE1De6b3647Ca2484A25F595132DfBd2), 1);
+        assertEq(oracleAuth.signers(0x774D5AA0EeE4897a9a6e65Cbed845C13Ffbc6d16), 1);
+        assertEq(oracleAuth.signers(0xb41E8d40b7aC4Eb34064E079C8Eca9d7570EBa1d), 1);
+        assertEq(oracleAuth.signers(0x0E0cDcbbE170f6d81f87b45c2227526B6779A083), 1);
+        assertEq(oracleAuth.signers(0x73093A55d5703C7A81D7381F7F24FCf432c64652), 1);
+        assertEq(oracleAuth.signers(0x2a2b83700c990FDFEFD22968fc7C4A4B80783E60), 1);
+        assertEq(oracleAuth.signers(0x1BC7410DD4D18bf8f613F4B6a646FA3953D3A0f2), 1);
+        assertEq(oracleAuth.signers(0xE5D5b00cc04596461a5527616b4F88B754879aE8), 1);
+        assertEq(oracleAuth.signers(0xA5E6053Fe351883036d13C2219b68102AbdFcBB6), 1);
+        assertEq(oracleAuth.signers(0x59524b843866b9686c520fB3d3613A73fe303d30), 1);
+        assertEq(oracleAuth.signers(0x794D810a3d524B9E25227bFA22E69CaaC8544EF2), 1);
+        assertEq(oracleAuth.signers(0xE85963ACc9A361E13306c6395186aa950f750883), 1);
+        assertEq(oracleAuth.signers(0xc65EF2D17B05ADbd8e4968bCB01b325ab799aBd8), 1);
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // old feeds that were kept
+        assertEq(oracleAuth.signers(0xC4756A9DaE297A046556261Fa3CD922DFC32Db78), 1);
+        assertEq(oracleAuth.signers(0x23ce419DcE1De6b3647Ca2484A25F595132DfBd2), 1);
+        assertEq(oracleAuth.signers(0x774D5AA0EeE4897a9a6e65Cbed845C13Ffbc6d16), 1);
+        assertEq(oracleAuth.signers(0xb41E8d40b7aC4Eb34064E079C8Eca9d7570EBa1d), 1);
+        assertEq(oracleAuth.signers(0xc65EF2D17B05ADbd8e4968bCB01b325ab799aBd8), 1);
+
+        // newly added feeds
+        assertEq(oracleAuth.signers(0x0c4FC7D66b7b6c684488c1F218caA18D4082da18), 1);
+        assertEq(oracleAuth.signers(0x5C01f0F08E54B85f4CaB8C6a03c9425196fe66DD), 1);
+        assertEq(oracleAuth.signers(0xC50DF8b5dcb701aBc0D6d1C7C99E6602171Abbc4), 1);
+        assertEq(oracleAuth.signers(0x75FBD0aaCe74Fb05ef0F6C0AC63d26071Eb750c9), 1);
+
+        // old feeds that were removed
+        assertEq(oracleAuth.signers(0x0E0cDcbbE170f6d81f87b45c2227526B6779A083), 0);
+        assertEq(oracleAuth.signers(0x73093A55d5703C7A81D7381F7F24FCf432c64652), 0);
+        assertEq(oracleAuth.signers(0x2a2b83700c990FDFEFD22968fc7C4A4B80783E60), 0);
+        assertEq(oracleAuth.signers(0x1BC7410DD4D18bf8f613F4B6a646FA3953D3A0f2), 0);
+        assertEq(oracleAuth.signers(0xE5D5b00cc04596461a5527616b4F88B754879aE8), 0);
+        assertEq(oracleAuth.signers(0xA5E6053Fe351883036d13C2219b68102AbdFcBB6), 0);
+        assertEq(oracleAuth.signers(0x59524b843866b9686c520fB3d3613A73fe303d30), 0);
+        assertEq(oracleAuth.signers(0x794D810a3d524B9E25227bFA22E69CaaC8544EF2), 0);
+        assertEq(oracleAuth.signers(0xE85963ACc9A361E13306c6395186aa950f750883), 0);
     }
 }
