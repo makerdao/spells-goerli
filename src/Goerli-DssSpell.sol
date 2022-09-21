@@ -23,7 +23,7 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
-interface ERC20Like {
+interface GemLike {
     function approve(address, uint256) external returns (bool);
 }
 
