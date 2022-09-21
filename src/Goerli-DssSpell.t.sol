@@ -212,7 +212,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkChainlogVersion("1.14.1");
     }
 
-    function testNewIlkRegistryValues() public { // make public to use
+    function testNewIlkRegistryValues() public { // make private to disable
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
