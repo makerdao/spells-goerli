@@ -523,6 +523,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         RwaLiquidationLike oracle = RwaLiquidationLike(
             addr.addr("MIP21_LIQUIDATION_ORACLE")
         );
+
         (string memory docOld, address pipOld, uint48 tauOld, uint48 tocOld) =
             oracle.ilks(ilk);
 
