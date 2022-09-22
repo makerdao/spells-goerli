@@ -124,7 +124,7 @@ contract DssSpellCollateralAction {
         uint256 decimals = GemAbstract(RWA007).decimals();
 
         // Sanity checks
-        require(GemJoinAbstract(MCD_JOIN_RWA007_A).vat()                             == MCD_VAT,               "join-vat-not-match");
+        require(GemJoinAbstract(MCD_JOIN_RWA007_A).vat()                             == MCD_VAT,                 "join-vat-not-match");
         require(GemJoinAbstract(MCD_JOIN_RWA007_A).ilk()                             == ilk,                     "join-ilk-not-match");
         require(GemJoinAbstract(MCD_JOIN_RWA007_A).gem()                             == RWA007,                  "join-gem-not-match");
         require(GemJoinAbstract(MCD_JOIN_RWA007_A).dec()                             == decimals,                "join-dec-not-match");
