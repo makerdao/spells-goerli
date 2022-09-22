@@ -523,15 +523,18 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         RwaLiquidationLike oracle = RwaLiquidationLike(
             addr.addr("MIP21_LIQUIDATION_ORACLE")
         );
-        
         (string memory docOld, address pipOld, uint48 tauOld, uint48 tocOld) =
             oracle.ilks(ilk);
+
         assertEq(docOld, OLDDOC, "bad old document");
+
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
+
         (string memory docNew, address pipNew, uint48 tauNew, uint48 tocNew) =
             oracle.ilks(ilk);
+
         assertEq(docNew, NEWDOC,     "bad new document");
         assertEq(pipOld, pipNew,     "pip is the same");
         assertTrue(tauOld == tauNew, "tau is the same");

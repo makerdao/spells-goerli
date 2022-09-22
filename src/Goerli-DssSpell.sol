@@ -43,9 +43,7 @@ interface RwaUrnLike {
 
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // Provides a descriptive tag for bot consumption
-    // This should be modified weekly to provide a summary of the actions
-    // Hash: cast keccak -- "$(wget https://raw.githubusercontent.com/makerdao/community/969f04cfec25e56791fbe4503bcbe2df7a58df1e/governance/votes/Executive%20vote%20-%20July%2029%2C%202022.md -q -O - 2>/dev/null)"
-    string public constant override description ="Goerli Spell";
+    string public constant override description = "Goerli Spell";
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -62,15 +60,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     }
 
     function actions() public override {
-
-        // ---------------------------------------------------------------------
-        // Includes changes from the DssSpellCollateralAction
-        onboardNewCollaterals();
-
-        // lock RWA007 Token in the URN
-        GemLike(RWA007).approve(RWA007_A_URN, 1 * WAD);
-        RwaUrnLike(RWA007_A_URN).lock(1 * WAD);
-
         // Increase Starknet Bridge Deposit Limit from 50 DAI to 1000 DAI
         // https://vote.makerdao.com/polling/QmbWkTvW
         StarknetLike(DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE")).setMaxDeposit(1000 * WAD);
@@ -94,6 +83,14 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         feedsToAdd[2] = 0xC50DF8b5dcb701aBc0D6d1C7C99E6602171Abbc4;
         feedsToAdd[3] = 0x75FBD0aaCe74Fb05ef0F6C0AC63d26071Eb750c9;
         teleportOracleAuth.addSigners(feedsToAdd);
+
+        // ---------------------------------------------------------------------
+        // Includes changes from the DssSpellCollateralAction
+        onboardNewCollaterals();
+
+        // lock RWA007 Token in the URN
+        GemLike(RWA007).approve(RWA007_A_URN, 1 * WAD);
+        RwaUrnLike(RWA007_A_URN).lock(1 * WAD);
         
         DssExecLib.setChangelogVersion("1.14.1");
     }
