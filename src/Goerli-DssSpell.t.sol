@@ -228,7 +228,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(reg.dec("RWA007-A"),    GemAbstract(addr.addr("RWA007")).decimals());
         assertEq(reg.class("RWA007-A"),  3);
         assertEq(reg.pip("RWA007-A"),    pipRwa007);
-        assertEq(reg.name("RWA007-A"),   "RWA007-A: Monetalis");
+        assertEq(reg.name("RWA007-A"),   "RWA007-A: Monetalis Clydesdale");
         assertEq(reg.symbol("RWA007-A"), GemAbstract(addr.addr("RWA007")).symbol());
     }
 
@@ -506,7 +506,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     
     RwaLiquidationLike oracle                  = RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
-    DSTokenAbstract      rwagem_007            = DSTokenAbstract(addr.addr("RWA007"));
+    GemAbstract          rwagem_007            = GemAbstract(addr.addr("RWA007"));
     GemJoinAbstract      rwajoin_007           = GemJoinAbstract(addr.addr("MCD_JOIN_RWA007_A"));
     RwaUrnLike           rwaurn_007            = RwaUrnLike(addr.addr("RWA007_A_URN"));
     RwaOutputConduitLike rwaconduitout_007     = RwaOutputConduitLike(addr.addr("RWA007_A_OUTPUT_CONDUIT"));

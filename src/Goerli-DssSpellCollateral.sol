@@ -70,42 +70,42 @@ contract DssSpellCollateralAction {
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
 
-    uint256 constant ZERO_PCT_RATE                  = 1000000000000000000000000000;
+    uint256 internal constant ZERO_PCT_RATE                  = 1000000000000000000000000000;
 
     // --- Math ---
-    uint256 public constant WAD = 10**18;
+    uint256 internal constant WAD = 10**18;
 
     // -- RWA007 MIP21 components --
-    address constant RWA007                         = 0x02091C59C92fc5E0575b3B133c3caa4f57D79b0e;
-    address constant MCD_JOIN_RWA007_A              = 0xe3BA7B6c922cb4622AfF00C2e2A467fF6A06CA29;
-    address constant RWA007_A_URN                   = 0x78D9ccbe652E2aE7B11289B4F202278058aEfeeA;
-    address constant RWA007_A_JAR                   = 0xcF8A6445B6e22A8e2Fe9d7bd21410bB7a8b8D054;
+    address internal constant RWA007                         = 0x02091C59C92fc5E0575b3B133c3caa4f57D79b0e;
+    address internal constant MCD_JOIN_RWA007_A              = 0xe3BA7B6c922cb4622AfF00C2e2A467fF6A06CA29;
+    address internal constant RWA007_A_URN                   = 0x78D9ccbe652E2aE7B11289B4F202278058aEfeeA;
+    address internal constant RWA007_A_JAR                   = 0xcF8A6445B6e22A8e2Fe9d7bd21410bB7a8b8D054;
     // Goerli: Coinbase / Mainnet: Coinbase
-    address constant RWA007_A_OUTPUT_CONDUIT        = 0x9B4Af5F55b23cC2D86f58d7c08cD025bA1901013;
+    address internal constant RWA007_A_OUTPUT_CONDUIT        = 0x9B4Af5F55b23cC2D86f58d7c08cD025bA1901013;
     // Jar and URN Input Conduits
-    address constant RWA007_A_INPUT_CONDUIT_URN     = 0xFC80d4037dDadDb380e752AE46Aca262eEb812fC;
-    address constant RWA007_A_INPUT_CONDUIT_JAR     = 0x9ca5F7b1F5DCC287657c20547176a6733EB2c046;
+    address internal constant RWA007_A_INPUT_CONDUIT_URN     = 0xFC80d4037dDadDb380e752AE46Aca262eEb812fC;
+    address internal constant RWA007_A_INPUT_CONDUIT_JAR     = 0x9ca5F7b1F5DCC287657c20547176a6733EB2c046;
 
     // MIP21_LIQUIDATION_ORACLE params
-    string  constant RWA007_DOC                     = "QmRe77P2JsvQWygVr9ZAMs4SHnjUQXz6uawdSboAaj2ryF"; // TODO
+    string  internal constant RWA007_DOC                     = "QmRe77P2JsvQWygVr9ZAMs4SHnjUQXz6uawdSboAaj2ryF"; // TODO
     // There is no DssExecLib helper, so WAD precision is used.
-    uint256 constant RWA007_A_INITIAL_PRICE         = 250_000_000 * WAD;
-    uint48  constant RWA007_A_TAU                   = 0;
+    uint256 internal constant RWA007_A_INITIAL_PRICE         = 250_000_000 * WAD;
+    uint48  internal constant RWA007_A_TAU                   = 0;
 
     // Ilk registry params
-    uint256 constant RWA007_REG_CLASS_RWA           = 3;
+    uint256 internal constant RWA007_REG_CLASS_RWA           = 3;
 
     // Remaining params
-    uint256 constant RWA007_A_LINE                  = 1_000_000;
-    uint256 constant RWA007_A_MAT                   = 100_00; // 100% in basis-points
-    uint256 constant RWA007_A_RATE                  = ZERO_PCT_RATE;
+    uint256 internal constant RWA007_A_LINE                  = 1_000_000;
+    uint256 internal constant RWA007_A_MAT                   = 100_00; // 100% in basis-points
+    uint256 internal constant RWA007_A_RATE                  = ZERO_PCT_RATE;
 
     // Monetalis operator address
-    address constant RWA007_A_OPERATOR              = 0xb4c79daB8f259C7Aee6E5b2Aa729821864227e84; // TODO
+    address internal constant RWA007_A_OPERATOR              = 0xb4c79daB8f259C7Aee6E5b2Aa729821864227e84; // TODO
     // Coinbase custody address
-    address constant RWA007_A_COINBASE_CUSTODY      = 0xb4c79daB8f259C7Aee6E5b2Aa729821864227e84; // TODO
+    address internal constant RWA007_A_COINBASE_CUSTODY      = 0xb4c79daB8f259C7Aee6E5b2Aa729821864227e84; // TODO
     // Input conduit "quitTo" address
-    address constant RWA007_A_INPUT_CONDUIT_QUIT_TO = 0xb4c79daB8f259C7Aee6E5b2Aa729821864227e84; // TODO
+    address internal constant RWA007_A_INPUT_CONDUIT_QUIT_TO = RWA007_A_COINBASE_CUSTODY;
 
     // -- RWA007 END --
 
@@ -222,7 +222,7 @@ contract DssSpellCollateralAction {
             RWA007_REG_CLASS_RWA,
             pip,
             address(0),
-            "RWA007-A: Monetalis",
+            "RWA007-A: Monetalis Clydesdale",
             GemAbstract(RWA007).symbol()
         );
     }
