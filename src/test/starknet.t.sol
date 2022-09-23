@@ -18,12 +18,14 @@ pragma experimental ABIEncoderV2;
 
 import "../Goerli-DssSpell.t.base.sol";
 
+
 contract ConfigStarknet {
 
     StarknetValues starknetValues;
 
     struct StarknetValues {
         address core_implementation;
+        uint256 l2_teleport_gateway;
         uint256 dai_bridge_isOpen;
         uint256 dai_bridge_ceiling;
         uint256 dai_bridge_maxDeposit;
@@ -32,6 +34,7 @@ contract ConfigStarknet {
     function setValues() public {
         starknetValues = StarknetValues({
             core_implementation:       0x60C5fA1763cC9CB9c7c25458C6cDDFbc8F125256,
+            l2_teleport_gateway:       0x03a85abf730fb56410c92841a4439efcf24a2efe0085fb2e7807f0a6f48a1b39,
             dai_bridge_isOpen:         1,        // 1 open, 0 closed
             dai_bridge_ceiling:        200_000,  // Whole Dai Units
             dai_bridge_maxDeposit:     50        // Whole Dai Units
@@ -73,6 +76,15 @@ interface StarknetCoreLike {
 interface DaiLike {
     function allowance(address, address) external view returns (uint256);
 }
+
+interface StarknetTeleportBridgeLike {
+    function starkNet() external view returns (address);
+    function dai() external view returns (address);
+    function l2DaiTeleportGateway() external view returns (uint256);
+    function escrow() external view returns (address);
+    function teleportRouter() external view returns (address);
+}
+
 
 contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
 
@@ -145,4 +157,118 @@ contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
 
         assertTrue(core.isNotFinalized());
     }
+
+    function testTeleportFW() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        address router = addr.addr("MCD_ROUTER_TELEPORT_FW_A");
+        StarknetTeleportBridgeLike bridge = StarknetTeleportBridgeLike(addr.addr("STARKNET_TELEPORT_BRIDGE"));
+        address escrow = addr.addr("STARKNET_ESCROW");
+
+        bytes32 ilk = "TELEPORT-FW-A";
+        bytes23 domain = "ETH-GOER-A";
+
+        emit log_address(address(spell));
+        emit log_address(addr.addr("STARKNET_TELEPORT_BRIDGE"));
+        emit log_address(addr.addr("STARKNET_TELEPORT_FEE"));
+
+        assertEq(bridge.escrow(), escrow);
+        assertEq(bridge.teleportRouter(), address(router));
+        assertEq(bridge.dai(), address(dai));
+
+        checkTeleportFWIntegrationInternals(
+            "STA-GOER-A",
+            domain,
+            100_000 * WAD,
+            address(bridge),
+            addr.addr("STARKNET_TELEPORT_FEE"),
+            escrow,
+            100 * WAD,
+            WAD / 10000,   // 1bps
+            8 days
+        );
+        assertEq(bridge.l2DaiTeleportGateway(), starknetValues.l2_teleport_gateway);
+
+    }
+
+    function testCureTeleport() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        bytes23 domain = "ETH-GOER-A";
+
+        checkCureLoadTeleport(
+            "STA-GOER-A",
+            domain,
+            100_000 * WAD,
+            TeleportFeeLike(addr.addr("STARKNET_TELEPORT_FEE")).fee(),
+            100_000 * RAD,
+            true
+        );
+    }
+
+    function checkTeleportFWIntegrationInternals(
+        bytes32 sourceDomain,
+        bytes32 targetDomain,
+        uint256 line,
+        address gateway,
+        address fee,
+        address escrow,
+        uint256 toMint,
+        uint256 expectedFee,
+        uint256 expectedTtl
+    ) internal {
+        TeleportJoinLike join = TeleportJoinLike(addr.addr("MCD_JOIN_TELEPORT_FW_A"));
+        TeleportRouterLike router = TeleportRouterLike(addr.addr("MCD_ROUTER_TELEPORT_FW_A"));
+
+        // Sanity checks
+        assertEq(join.line(sourceDomain), line);
+        assertEq(join.fees(sourceDomain), address(fee));
+        assertEq(dai.allowance(escrow, gateway), type(uint256).max);
+        assertEq(dai.allowance(gateway, address(router)), type(uint256).max);
+        assertEq(TeleportFeeLike(fee).fee(), expectedFee);
+        assertEq(TeleportFeeLike(fee).ttl(), expectedTtl);
+        assertEq(router.gateways(sourceDomain), gateway);
+        assertEq(router.domains(gateway), sourceDomain);
+
+        {
+            // NOTE: We are calling the router directly because the bridge code is minimal and unique to each domain
+            // This tests the slow path via the router
+            hevm.startPrank(gateway);
+            router.requestMint(TeleportGUID({
+                sourceDomain: sourceDomain,
+                targetDomain: targetDomain,
+                receiver: bytes32(uint256(uint160(address(this)))),
+                operator: bytes32(0),
+                amount: uint128(toMint),
+                nonce: 0,
+                timestamp: uint48(block.timestamp - TeleportFeeLike(fee).ttl())
+            }), 0, 0);
+            hevm.stopPrank();
+            assertEq(dai.balanceOf(address(this)), toMint);
+            assertEq(join.debt(sourceDomain), int256(toMint));
+        }
+
+        // Check oracle auth mint -- add custom signatures to test
+        uint256 _fee = toMint * expectedFee / WAD;
+        {
+            uint256 prevDai = vat.dai(address(vow));
+            oracleAuthRequestMint(sourceDomain, targetDomain, toMint, expectedFee);
+            assertEq(dai.balanceOf(address(this)), toMint * 2 - _fee);
+            assertEq(join.debt(sourceDomain), int256(toMint * 2));
+            assertEq(vat.dai(address(vow)) - prevDai, _fee * RAY);
+        }
+
+        // Check settle
+        dai.transfer(gateway, toMint * 2 - _fee);
+        hevm.startPrank(gateway);
+        router.settle(targetDomain, toMint * 2 - _fee);
+        hevm.stopPrank();
+        assertEq(dai.balanceOf(gateway), 0);
+        assertEq(join.debt(sourceDomain), int256(_fee));
+    }
+
 }
