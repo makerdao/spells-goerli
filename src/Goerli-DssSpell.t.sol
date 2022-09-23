@@ -46,6 +46,7 @@ interface RwaOutputConduitLike {
     function quit() external;
     function kiss(address) external;
     function mate(address) external;
+    function hope(address) external;
 }
 
 interface RwaInputConduitLike {
@@ -502,7 +503,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     // RWA tests
     address RWA007_A_OPERATOR                  = addr.addr("RWA007_A_OPERATOR");
     address RWA007_A_COINBASE_CUSTODY          = addr.addr("RWA007_A_COINBASE_CUSTODY");
-    address RWA007_A_INPUT_CONDUIT_QUIT_TO     = addr.addr("RWA007_A_INPUT_CONDUIT_QUIT_TO");
     
     RwaLiquidationLike oracle                  = RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
@@ -556,11 +556,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         assertEq(rwaconduitinurn_007.may(pauseProxy), 1, "InputConduitUrn/pause-proxy-not-mate");
         assertEq(rwaconduitinurn_007.may(RWA007_A_OPERATOR), 1, "InputConduitUrn/monetalis-not-mate");
-        assertEq(rwaconduitinurn_007.quitTo(), RWA007_A_INPUT_CONDUIT_QUIT_TO, "InputConduitUrn/quit-to-not-set");
+        assertEq(rwaconduitinurn_007.quitTo(), RWA007_A_COINBASE_CUSTODY, "InputConduitUrn/quit-to-not-set");
 
         assertEq(rwaconduitinjar_007.may(pauseProxy), 1, "InputConduitJar/pause-proxy-not-mate");
         assertEq(rwaconduitinjar_007.may(RWA007_A_OPERATOR), 1, "InputConduitJar/monetalis-not-mate");
-        assertEq(rwaconduitinjar_007.quitTo(), RWA007_A_INPUT_CONDUIT_QUIT_TO, "InputConduitJar/quit-to-not-set");
+        assertEq(rwaconduitinjar_007.quitTo(), RWA007_A_COINBASE_CUSTODY, "InputConduitJar/quit-to-not-set");
     }
 
     function testRWA007_INTEGRATION_BUMP() public {
@@ -694,6 +694,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // may
         rwaconduitout_007.mate(address(this));
         assertEq(rwaconduitout_007.may(address(this)), 1);
+        rwaconduitout_007.hope(address(this));
+        assertEq(rwaconduitout_007.can(address(this)), 1);
 
         rwaconduitout_007.kiss(address(this));
         assertEq(rwaconduitout_007.bud(address(this)), 1);
@@ -776,6 +778,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         giveAuth(address(rwaconduitout_007), address(this));
         // may
         rwaconduitout_007.mate(address(this));
+        rwaconduitout_007.hope(address(this));
 
         rwaconduitout_007.kiss(address(this));
         assertEq(rwaconduitout_007.bud(address(this)), 1);

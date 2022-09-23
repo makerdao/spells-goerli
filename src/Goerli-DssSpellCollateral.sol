@@ -76,15 +76,15 @@ contract DssSpellCollateralAction {
     uint256 internal constant WAD = 10**18;
 
     // -- RWA007 MIP21 components --
-    address internal constant RWA007                         = 0x02091C59C92fc5E0575b3B133c3caa4f57D79b0e;
-    address internal constant MCD_JOIN_RWA007_A              = 0xe3BA7B6c922cb4622AfF00C2e2A467fF6A06CA29;
-    address internal constant RWA007_A_URN                   = 0x78D9ccbe652E2aE7B11289B4F202278058aEfeeA;
-    address internal constant RWA007_A_JAR                   = 0xcF8A6445B6e22A8e2Fe9d7bd21410bB7a8b8D054;
+    address internal constant RWA007                         = 0xD063270642ff718DA1c58E12BD6a2598f7e874B3;
+    address internal constant MCD_JOIN_RWA007_A              = 0x9C9E33E22b683F789411288497f8DC560f1F0466;
+    address internal constant RWA007_A_URN                   = 0xa1b1D392fCB99F8B39c7530a599bCfcd2f1fB22f;
+    address internal constant RWA007_A_JAR                   = 0x708bC8bF869c336ab6f04cf6A62a86a8DFc5f7c4;
     // Goerli: Coinbase / Mainnet: Coinbase
-    address internal constant RWA007_A_OUTPUT_CONDUIT        = 0x9B4Af5F55b23cC2D86f58d7c08cD025bA1901013;
+    address internal constant RWA007_A_OUTPUT_CONDUIT        = 0x87EaB54D118529Eb15a4286b8A96455ECBdbFD27;
     // Jar and URN Input Conduits
-    address internal constant RWA007_A_INPUT_CONDUIT_URN     = 0xFC80d4037dDadDb380e752AE46Aca262eEb812fC;
-    address internal constant RWA007_A_INPUT_CONDUIT_JAR     = 0x9ca5F7b1F5DCC287657c20547176a6733EB2c046;
+    address internal constant RWA007_A_INPUT_CONDUIT_URN     = 0x1C3faBF61B470B0e9aA4Ca5F1A08fcf44ADAb414;
+    address internal constant RWA007_A_INPUT_CONDUIT_JAR     = 0xA7ae4F30f237BB8E8975d22eD777778202F64c91;
 
     // MIP21_LIQUIDATION_ORACLE params
     string  internal constant RWA007_DOC                     = "QmRe77P2JsvQWygVr9ZAMs4SHnjUQXz6uawdSboAaj2ryF"; // TODO
@@ -101,11 +101,9 @@ contract DssSpellCollateralAction {
     uint256 internal constant RWA007_A_RATE                  = ZERO_PCT_RATE;
 
     // Monetalis operator address
-    address internal constant RWA007_A_OPERATOR              = 0xb4c79daB8f259C7Aee6E5b2Aa729821864227e84; // TODO
+    address internal constant RWA007_A_OPERATOR              = 0x94cfBF071f8be325A5821bFeAe00eEbE9CE7c279;
     // Coinbase custody address
-    address internal constant RWA007_A_COINBASE_CUSTODY      = 0xb4c79daB8f259C7Aee6E5b2Aa729821864227e84; // TODO
-    // Input conduit "quitTo" address
-    address internal constant RWA007_A_INPUT_CONDUIT_QUIT_TO = RWA007_A_COINBASE_CUSTODY;
+    address internal constant RWA007_A_COINBASE_CUSTODY      = 0xC3acf3B96E46Aa35dBD2aA3BD12D23c11295E774;
 
     // -- RWA007 END --
 
@@ -195,13 +193,13 @@ contract DssSpellCollateralAction {
         RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).mate(address(this));
         RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).mate(RWA007_A_OPERATOR);
         // Set "quitTo" address for RWA007_A_INPUT_CONDUIT_URN
-        RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).file("quitTo", RWA007_A_INPUT_CONDUIT_QUIT_TO);
+        RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).file("quitTo", RWA007_A_COINBASE_CUSTODY);
 
         // MCD_PAUSE_PROXY and Monetails permission on RWA007_A_INPUT_CONDUIT_JAR
         RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_JAR).mate(address(this));
         RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_JAR).mate(RWA007_A_OPERATOR);
         // Set "quitTo" address for RWA007_A_INPUT_CONDUIT_JAR
-        RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_JAR).file("quitTo", RWA007_A_INPUT_CONDUIT_QUIT_TO);
+        RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_JAR).file("quitTo", RWA007_A_COINBASE_CUSTODY);
 
         // Add RWA007 contract to the changelog
         CHANGELOG.setAddress("RWA007",                     RWA007);
