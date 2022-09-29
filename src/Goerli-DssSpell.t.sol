@@ -485,7 +485,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(tocOld == tocNew, "toc is the same");
     }
 
-     function testUpdateTeleportFeeds() public {
+     function testUpdateTeleportFeeds() private { // make public to use
         TeleportOracleAuthLike oracleAuth = TeleportOracleAuthLike(addr.addr("MCD_ORACLE_AUTH_TELEPORT_FW_A"));
 
         assertEq(oracleAuth.signers(0xC4756A9DaE297A046556261Fa3CD922DFC32Db78), 1);

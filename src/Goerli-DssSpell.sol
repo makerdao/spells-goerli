@@ -23,15 +23,6 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
-interface StarknetLike {
-    function setMaxDeposit(uint256) external;
-}
-
-interface TeleportOracleAuthLike {
-    function addSigners(address[] calldata) external;
-    function removeSigners(address[] calldata) external;
-}
-
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     // Provides a descriptive tag for bot consumption
@@ -60,29 +51,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // onboardNewCollaterals();
         // offboardCollaterals();
 
-        // Increase Starknet Bridge Deposit Limit from 50 DAI to 1000 DAI
-        // https://vote.makerdao.com/polling/QmbWkTvW
-        StarknetLike(DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE")).setMaxDeposit(1000 * WAD);
-
-        // ------------------ Update Teleport Feeds ----------------- 
-        TeleportOracleAuthLike teleportOracleAuth = TeleportOracleAuthLike(DssExecLib.getChangelogAddress("MCD_ORACLE_AUTH_TELEPORT_FW_A"));
-        address[] memory feedsToRemove = new address[](9);
-        feedsToRemove[0] = 0x0E0cDcbbE170f6d81f87b45c2227526B6779A083;
-        feedsToRemove[1] = 0x73093A55d5703C7A81D7381F7F24FCf432c64652;
-        feedsToRemove[2] = 0x2a2b83700c990FDFEFD22968fc7C4A4B80783E60;
-        feedsToRemove[3] = 0x1BC7410DD4D18bf8f613F4B6a646FA3953D3A0f2;
-        feedsToRemove[4] = 0xE5D5b00cc04596461a5527616b4F88B754879aE8;
-        feedsToRemove[5] = 0xA5E6053Fe351883036d13C2219b68102AbdFcBB6;
-        feedsToRemove[6] = 0x59524b843866b9686c520fB3d3613A73fe303d30;
-        feedsToRemove[7] = 0x794D810a3d524B9E25227bFA22E69CaaC8544EF2;
-        feedsToRemove[8] = 0xE85963ACc9A361E13306c6395186aa950f750883;
-        teleportOracleAuth.removeSigners(feedsToRemove);
-        address[] memory feedsToAdd = new address[](4);
-        feedsToAdd[0] = 0x0c4FC7D66b7b6c684488c1F218caA18D4082da18;
-        feedsToAdd[1] = 0x5C01f0F08E54B85f4CaB8C6a03c9425196fe66DD;
-        feedsToAdd[2] = 0xC50DF8b5dcb701aBc0D6d1C7C99E6602171Abbc4;
-        feedsToAdd[3] = 0x75FBD0aaCe74Fb05ef0F6C0AC63d26071Eb750c9;
-        teleportOracleAuth.addSigners(feedsToAdd);
+        // MIP65 Deployment - 1 million Pilot Transaction (RWA-007-A)
+        // https://vote.makerdao.com/polling/QmXHM6us
     }
 }
 
