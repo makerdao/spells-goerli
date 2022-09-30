@@ -852,7 +852,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // Check if spell draw 25mm DAI to Output Conduit (Pause Proxy)
+        // Check if spell draw 1mm DAI to Output Conduit (Pause Proxy)
         assertEq(dai.balanceOf(address(rwaUrn007Output)), prevBalance + drawAmount, "RWA007/dai-drawn-was-not-send-to-the-recipient");
 
         (uint256 ink, uint256 art) = vat.urns("RWA007-A", address(rwaUrn007));
