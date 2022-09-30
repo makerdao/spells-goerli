@@ -839,7 +839,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     function testRWA007_SPELL_DRAW() public {
         address rwaUrn007       = addr.addr("RWA007_A_URN");
-        address rwaUrn007Output = addr.addr("RWA007_A_OUTPUT_CONDUIT"); // for goerli, we use the pause proxy
+        address rwaUrn007Output = addr.addr("RWA007_A_OUTPUT_CONDUIT");
 
         (uint256 pink, uint256 part) = vat.urns("RWA007-A", address(rwaUrn007));
         uint256 prevBalance = dai.balanceOf(address(rwaUrn007Output));
@@ -852,7 +852,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // Check if spell draw 1mm DAI to Output Conduit (Pause Proxy)
+        // Check if spell draw 1mm DAI to Output Conduit
         assertEq(dai.balanceOf(address(rwaUrn007Output)), prevBalance + drawAmount, "RWA007/dai-drawn-was-not-send-to-the-recipient");
 
         (uint256 ink, uint256 art) = vat.urns("RWA007-A", address(rwaUrn007));
