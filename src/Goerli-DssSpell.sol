@@ -23,8 +23,16 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
-contract DssSpellAction is DssAction, DssSpellCollateralAction {
+interface GemLike {
+    function approve(address, uint256) external returns (bool);
+}
 
+interface RwaUrnLike {
+    function lock(uint256) external;
+    function draw(uint256) external;
+}
+
+contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
@@ -45,11 +53,16 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     function actions() public override {
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
-        // onboardNewCollaterals();
-        // offboardCollaterals();
+        onboardNewCollaterals();
+
+        // lock RWA007 Token in the URN
+        GemLike(RWA007).approve(RWA007_A_URN, 1 * WAD);
+        RwaUrnLike(RWA007_A_URN).lock(1 * WAD);
 
         // MIP65 Deployment - 1 million Pilot Transaction (RWA-007-A)
         // https://vote.makerdao.com/polling/QmXHM6us
+        
+        DssExecLib.setChangelogVersion("1.14.1");
     }
 }
 
