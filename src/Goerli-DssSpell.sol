@@ -29,15 +29,12 @@ interface GemLike {
 
 interface RwaUrnLike {
     function lock(uint256) external;
-    function draw(uint256) external;
 }
 
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
-
-    uint256 constant RWA007_DRAW_AMOUNT = 1_000_000 * WAD;
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
