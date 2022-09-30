@@ -33,8 +33,11 @@ interface RwaUrnLike {
 }
 
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
+
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
+
+    uint256 constant RWA007_DRAW_AMOUNT = 1_000_000 * WAD;
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -61,8 +64,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
         // MIP65 Deployment - 1 million Pilot Transaction (RWA-007-A)
         // https://vote.makerdao.com/polling/QmXHM6us
+        RwaUrnLike(RWA007_A_URN).draw(RWA007_DRAW_AMOUNT);
         
-        DssExecLib.setChangelogVersion("1.14.1");
+        DssExecLib.setChangelogVersion("1.14.2");
     }
 }
 
