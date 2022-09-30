@@ -212,7 +212,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkChainlogKey("RWA007_A_INPUT_CONDUIT_JAR");
         checkChainlogKey("PIP_RWA007");
 
-        checkChainlogVersion("1.14.1");
+        checkChainlogVersion("1.14.2");
     }
 
     function testNewIlkRegistryValues() public { // make private to disable
