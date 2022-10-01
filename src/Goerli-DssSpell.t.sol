@@ -521,9 +521,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     function testDocChange() private { // make public to use
         bytes32 ilk = "RWA009-A";
-        RwaLiquidationLike oracle = RwaLiquidationLike(
-            addr.addr("MIP21_LIQUIDATION_ORACLE")
-        );
 
         (string memory docOld, address pipOld, uint48 tauOld, uint48 tocOld) =
             oracle.ilks(ilk);
@@ -702,7 +699,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(rwaconduitout_007.bud(address(this)), 1);
         rwaconduitout_007.pick(address(this));
 
-        uint256 pushAmount = 100 * WAD; // We push only 100 DAI
+        uint256 pushAmount = 100 * WAD; // We push only 100 DAI on Görli
         rwaconduitout_007.push(pushAmount);
         rwaconduitout_007.quit();
 
@@ -799,7 +796,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(rwaconduitout_007.bud(address(this)), 1);
         rwaconduitout_007.pick(address(this));
 
-        uint256 pushAmount = 100 * WAD; // We push only 100 DAI
+        uint256 pushAmount = 100 * WAD; // We push only 100 DAI on Görli
         rwaconduitout_007.push(pushAmount);
         rwaconduitout_007.quit();
 
@@ -820,8 +817,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(art, 0, "RWA007: wrong art in urn after skim");
 
         hevm.warp(block.timestamp + end.wait());
-
-        vow.heal(min(vat.dai(address(vow)), sub(sub(vat.sin(address(vow)), vow.Sin()), vow.Ash())));
 
         // Removing the surplus to allow continuing the execution.
         hevm.store(
@@ -856,6 +851,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         (uint256 pink, uint256 part) = vat.urns("RWA007-A", address(rwaurn_007));
         uint256 prevBalance = rwagem_007.balanceOf(address(rwaurn_007.gemJoin()));
 
+        assertEq(part, 0, "RWA007/bad-art-before-spell");
         assertEq(pink, 0, "RWA007/bad-ink-before-spell");
 
         uint256 lockAmount = 1 * WAD;
