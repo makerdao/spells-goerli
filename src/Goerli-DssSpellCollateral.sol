@@ -23,46 +23,8 @@ import "dss-interfaces/dss/GemJoinAbstract.sol";
 import "dss-interfaces/dss/IlkRegistryAbstract.sol";
 import "dss-interfaces/ERC/GemAbstract.sol";
 
-interface RwaLiquidationLike {
-    function ilks(bytes32) external returns (string memory, address, uint48, uint48);
-    function init(bytes32, uint256, string calldata, uint48) external;
-}
-
-interface RwaUrnLike {
-    function vat() external view returns(address);
-    function jug() external view returns(address);
-    function gemJoin() external view returns(address);
-    function daiJoin() external view returns(address);
-    function outputConduit() external view returns(address);
-    function hope(address) external;
-}
-
-interface RwaJarLike {
-    function chainlog() external view returns(address);
-    function dai() external view returns(address);
-    function daiJoin() external view returns(address);
-}
-
-interface RwaOutputConduitLike {
-    function dai() external view returns(address);
-    function gem() external view returns(address);
-    function psm() external view returns(address);
-    function file(bytes32 what, address data) external;
-    function hope(address) external;
-    function mate(address) external;
-    function kiss(address) external;
-}
-
-interface RwaInputConduitLike {
-    function dai() external view returns(address);
-    function gem() external view returns(address);
-    function psm() external view returns(address);
-    function to() external view returns(address);
-    function mate(address usr) external;
-    function file(bytes32 what, address data) external;
-}
-
 contract DssSpellCollateralAction {
+
     // --- Rates ---
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -71,178 +33,67 @@ contract DssSpellCollateralAction {
     // $ bc -l <<< 'scale=27; e( l(1.08)/(60 * 60 * 24 * 365) )'
     //
     // A table of rates can be found at
-    //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
+    // https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
 
     // --- Math ---
-    uint256 internal constant WAD = 10**18;
+    uint256 constant MILLION  = 10 ** 6;
+    uint256 constant THOUSAND = 10 ** 3;
 
-    // -- RWA007 MIP21 components --
-    address internal constant RWA007                         = 0xD063270642ff718DA1c58E12BD6a2598f7e874B3;
-    address internal constant MCD_JOIN_RWA007_A              = 0x9C9E33E22b683F789411288497f8DC560f1F0466;
-    address internal constant RWA007_A_URN                   = 0xa1b1D392fCB99F8B39c7530a599bCfcd2f1fB22f;
-    address internal constant RWA007_A_JAR                   = 0x708bC8bF869c336ab6f04cf6A62a86a8DFc5f7c4;
-    // Goerli: Coinbase / Mainnet: Coinbase
-    address internal constant RWA007_A_OUTPUT_CONDUIT        = 0x87EaB54D118529Eb15a4286b8A96455ECBdbFD27;
-    // Jar and URN Input Conduits
-    address internal constant RWA007_A_INPUT_CONDUIT_URN     = 0x1C3faBF61B470B0e9aA4Ca5F1A08fcf44ADAb414;
-    address internal constant RWA007_A_INPUT_CONDUIT_JAR     = 0xA7ae4F30f237BB8E8975d22eD777778202F64c91;
+    uint256 constant ONE_FIVE_PCT_RATE        = 1000000000472114805215157978;
 
-    // MIP21_LIQUIDATION_ORACLE params
+    // --- DEPLOYED COLLATERAL ADDRESSES ---
+    address constant RETH                     = 0x62BC478FFC429161115A6E4090f819CE5C50A5d9;
+    // TODO: Update these once oracles and clip and calc fabs finalized
+    // OSM for RETH has been deployed to mainnet at this address 0xeE7F0b350aA119b3d05DC733a4621a81972f7D47
+    address constant PIP_RETH                 = 0x27a25935D8b0006A97E11cAdDc2b3bf3a6721c13;
+    address constant MCD_JOIN_RETH_A          = 0xDEF7D394a4eD62273265CE983107B3748F775265;
+    address constant MCD_CLIP_RETH_A          = 0xBa496CB9637d56466dc112033BF28CC7EC544E3A;
+    address constant MCD_CLIP_CALC_RETH_A     = 0xC3A95477616c9Db6C772179e74a9A717E8B148a7;
 
-    // https://gateway.pinata.cloud/ipfs/QmRLwB7Ty3ywSzq17GdDdwHvsZGwBg79oUTpSTJGtodToY
-    string  internal constant RWA007_DOC                     = "QmRLwB7Ty3ywSzq17GdDdwHvsZGwBg79oUTpSTJGtodToY";
-    // There is no DssExecLib helper, so WAD precision is used.
-    uint256 internal constant RWA007_A_INITIAL_PRICE         = 250_000_000 * WAD;
-    uint48  internal constant RWA007_A_TAU                   = 0;
+    function onboardCollaterals() internal {
+        // ----------------------------- Collateral onboarding -----------------------------
+        //  Add RETH-A as a new Vault Type
+        //  Poll Link: [https://vote.makerdao.com/polling/QmfMswF2]
 
-    // Ilk registry params
-    uint256 internal constant RWA007_REG_CLASS_RWA           = 3;
-
-    // Remaining params
-    uint256 internal constant RWA007_A_LINE                  = 1_000_000;
-    uint256 internal constant RWA007_A_MAT                   = 100_00; // 100% in basis-points
-
-    // Monetalis operator address
-    address internal constant RWA007_A_OPERATOR              = 0x94cfBF071f8be325A5821bFeAe00eEbE9CE7c279;
-    // Coinbase custody address
-    address internal constant RWA007_A_COINBASE_CUSTODY      = 0xC3acf3B96E46Aa35dBD2aA3BD12D23c11295E774;
-
-    // -- RWA007 END --
-
-    function onboardRwa007(
-        IlkRegistryAbstract REGISTRY,
-        address MIP21_LIQUIDATION_ORACLE,
-        address MCD_VAT,
-        address MCD_JUG,
-        address MCD_SPOT,
-        address MCD_JOIN_DAI,
-        address MCD_PSM_USDC_A
-    ) internal {
-        // RWA007-A collateral deploy
-        bytes32 ilk      = "RWA007-A";
-        uint256 decimals = GemAbstract(RWA007).decimals();
-
-        // Sanity checks
-        require(GemJoinAbstract(MCD_JOIN_RWA007_A).vat()                             == MCD_VAT,                                    "join-vat-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA007_A).ilk()                             == ilk,                                        "join-ilk-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA007_A).gem()                             == RWA007,                                     "join-gem-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA007_A).dec()                             == decimals,                                   "join-dec-not-match");
-
-        require(RwaUrnLike(RWA007_A_URN).vat()                                       == MCD_VAT,                                    "urn-vat-not-match");
-        require(RwaUrnLike(RWA007_A_URN).jug()                                       == MCD_JUG,                                    "urn-jug-not-match");
-        require(RwaUrnLike(RWA007_A_URN).daiJoin()                                   == MCD_JOIN_DAI,                               "urn-daijoin-not-match");
-        require(RwaUrnLike(RWA007_A_URN).gemJoin()                                   == MCD_JOIN_RWA007_A,                          "urn-gemjoin-not-match");
-        require(RwaUrnLike(RWA007_A_URN).outputConduit()                             == RWA007_A_OUTPUT_CONDUIT,                    "urn-outputconduit-not-match");
-        
-        require(RwaJarLike(RWA007_A_JAR).chainlog()                                  == DssExecLib.LOG,                             "jar-chainlog-not-match");
-        require(RwaJarLike(RWA007_A_JAR).dai()                                       == DssExecLib.dai(),                           "jar-dai-not-match");
-        require(RwaJarLike(RWA007_A_JAR).daiJoin()                                   == MCD_JOIN_DAI,                               "jar-daijoin-not-match");
-
-        require(RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).dai()                  == DssExecLib.dai(),                           "output-conduit-dai-not-match");
-        require(RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).gem()                  == DssExecLib.getChangelogAddress("USDC"),     "output-conduit-gem-not-match");
-        require(RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).psm()                  == MCD_PSM_USDC_A,                             "output-conduit-psm-not-match");
-        
-        require(RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).psm()                == MCD_PSM_USDC_A,                             "input-conduit-urn-psm-not-match");
-        require(RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).to()                 == RWA007_A_URN,                               "input-conduit-urn-to-not-match");
-        require(RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).dai()                == DssExecLib.dai(),                           "input-conduit-urn-dai-not-match");
-        require(RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).gem()                == DssExecLib.getChangelogAddress("USDC"),     "input-conduit-urn-gem-not-match");
-
-        require(RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_JAR).psm()                == MCD_PSM_USDC_A,                             "input-conduit-jar-psm-not-match");
-        require(RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_JAR).to()                 == RWA007_A_JAR,                               "input-conduit-jar-to-not-match");
-        require(RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_JAR).dai()                == DssExecLib.dai(),                           "input-conduit-jar-dai-not-match");
-        require(RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_JAR).gem()                == DssExecLib.getChangelogAddress("USDC"),     "input-conduit-jar-gem-not-match");
-
-
-        // Init the RwaLiquidationOracle
-        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA007_A_INITIAL_PRICE, RWA007_DOC, RWA007_A_TAU);
-        (, address pip, , ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
-
-        // Init RWA007 in Vat
-        Initializable(MCD_VAT).init(ilk);
-        // Init RWA007 in Jug
-        Initializable(MCD_JUG).init(ilk);
-
-        // Allow RWA007 Join to modify Vat registry
-        DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA007_A);
-
-        // 1m debt ceiling
-        DssExecLib.increaseIlkDebtCeiling(ilk, RWA007_A_LINE, /* _global = */ true);
-
-        // Set price feed for RWA007
-        DssExecLib.setContract(MCD_SPOT, ilk, "pip", pip);
-
-        // Set collateralization ratio
-        DssExecLib.setIlkLiquidationRatio(ilk, RWA007_A_MAT);
-
-        // Poke the spotter to pull in a price
-        DssExecLib.updateCollateralPrice(ilk);
-
-        // Give the urn permissions on the join adapter
-        DssExecLib.authorize(MCD_JOIN_RWA007_A, RWA007_A_URN);
-
-        // MCD_PAUSE_PROXY and Monetalis permission on URN
-        RwaUrnLike(RWA007_A_URN).hope(address(this));
-        RwaUrnLike(RWA007_A_URN).hope(address(RWA007_A_OPERATOR));
-
-        // MCD_PAUSE_PROXY and Monetalis permission on RWA007_A_OUTPUT_CONDUIT
-        RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).hope(address(this));
-        RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).mate(address(this));
-        RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).hope(RWA007_A_OPERATOR);
-        RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).mate(RWA007_A_OPERATOR);
-        // Coinbase custody whitelist for URN destination address
-        RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).kiss(address(RWA007_A_COINBASE_CUSTODY));
-        // Set "quitTo" address for RWA007_A_OUTPUT_CONDUIT
-        RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).file("quitTo", RWA007_A_URN);
-
-        // MCD_PAUSE_PROXY and Monetalis permission on RWA007_A_INPUT_CONDUIT_URN
-        RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).mate(address(this));
-        RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).mate(RWA007_A_OPERATOR);
-        // Set "quitTo" address for RWA007_A_INPUT_CONDUIT_URN
-        RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).file("quitTo", RWA007_A_COINBASE_CUSTODY);
-
-        // MCD_PAUSE_PROXY and Monetalis permission on RWA007_A_INPUT_CONDUIT_JAR
-        RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_JAR).mate(address(this));
-        RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_JAR).mate(RWA007_A_OPERATOR);
-        // Set "quitTo" address for RWA007_A_INPUT_CONDUIT_JAR
-        RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_JAR).file("quitTo", RWA007_A_COINBASE_CUSTODY);
-
-        // Add RWA007 contract to the changelog
-        DssExecLib.setChangelogAddress("RWA007",                     RWA007);
-        DssExecLib.setChangelogAddress("PIP_RWA007",                 pip);
-        DssExecLib.setChangelogAddress("MCD_JOIN_RWA007_A",          MCD_JOIN_RWA007_A);
-        DssExecLib.setChangelogAddress("RWA007_A_URN",               RWA007_A_URN);
-        DssExecLib.setChangelogAddress("RWA007_A_JAR",               RWA007_A_JAR);
-        DssExecLib.setChangelogAddress("RWA007_A_INPUT_CONDUIT_URN", RWA007_A_INPUT_CONDUIT_URN);
-        DssExecLib.setChangelogAddress("RWA007_A_INPUT_CONDUIT_JAR", RWA007_A_INPUT_CONDUIT_JAR);
-        DssExecLib.setChangelogAddress("RWA007_A_OUTPUT_CONDUIT",    RWA007_A_OUTPUT_CONDUIT);
-
-        // Add RWA007 to ILK REGISTRY
-        REGISTRY.put(
-            ilk,
-            MCD_JOIN_RWA007_A,
-            RWA007,
-            decimals,
-            RWA007_REG_CLASS_RWA,
-            pip,
-            address(0),
-            "RWA007-A: Monetalis Clydesdale",
-            GemAbstract(RWA007).symbol()
+        DssExecLib.addNewCollateral(
+            CollateralOpts({
+                ilk:                   "RETH-A",
+                gem:                   RETH,
+                join:                  MCD_JOIN_RETH_A,
+                clip:                  MCD_CLIP_RETH_A,
+                calc:                  MCD_CLIP_CALC_RETH_A,
+                pip:                   PIP_RETH,
+                isLiquidatable:        true,
+                isOSM:                 true,
+                whitelistOSM:          true,
+                ilkDebtCeiling:        5 * MILLION,
+                minVaultAmount:        15 * THOUSAND,                // debt floor - dust in DAI
+                maxLiquidationAmount:  2 * MILLION,
+                liquidationPenalty:    1300,                         // 13% penalty on liquidation
+                ilkStabilityFee:       ONE_FIVE_PCT_RATE,            // 1.50% stability fee
+                startingPriceFactor:   11000,                        // Auction price begins at 110% of oracle price
+                breakerTolerance:      5000,                         // Allows for a 50% hourly price drop before disabling liquidation
+                auctionDuration:       120 minutes,
+                permittedDrop:         4500,                         // 45% price drop before reset
+                liquidationRatio:      17000,                        // 170% collateralization
+                kprFlatReward:         250,                          // 300 DAI tip - flat fee per kpr
+                kprPctReward:          1000                          // 10% chip - per kpr
+            })
         );
-    }
 
-    function onboardNewCollaterals() internal {
-        IlkRegistryAbstract REGISTRY     = IlkRegistryAbstract(DssExecLib.reg());
-        address MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
-        address MCD_PSM_USDC_A           = DssExecLib.getChangelogAddress("MCD_PSM_USDC_A");
-        address MCD_VAT                  = DssExecLib.vat();
-        address MCD_JUG                  = DssExecLib.jug();
-        address MCD_SPOT                 = DssExecLib.spotter();
-        address MCD_JOIN_DAI             = DssExecLib.daiJoin();
+        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_RETH_A, 90 seconds, 9900);
+        DssExecLib.setIlkAutoLineParameters("RETH-A", 5 * MILLION, 3 * MILLION, 8 hours);
+        // ChainLog Updates
+        // Add the new join, clip, and abacus to the Chainlog
+        DssExecLib.setChangelogAddress("RETH",                 RETH);
+        DssExecLib.setChangelogAddress("PIP_RETH",             PIP_RETH);
+        DssExecLib.setChangelogAddress("MCD_JOIN_RETH_A",      MCD_JOIN_RETH_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_RETH_A",      MCD_CLIP_RETH_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_RETH_A", MCD_CLIP_CALC_RETH_A);
 
-        // --------------------------- RWA Collateral onboarding ---------------------------
+          // Rely Median to Oracles team
 
-        // Onboard Monetalis: https://vote.makerdao.com/polling/QmXHM6us
-        onboardRwa007(REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI, MCD_PSM_USDC_A);
+        // DssExecLib.authorize(OsmAbstract(PIP_RETH).src(),   0xeE7F0b350aA119b3d05DC733a4621a81972f7D47);
     }
 }
