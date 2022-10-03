@@ -43,7 +43,7 @@ interface RwaOutputConduitLike {
     function wards(address) external view returns(uint256);
     function dai() external view returns(address);
     function psm() external view returns(address);
-    function quitTo() external view returns(address);
+    function file(bytes32 what, address data) external;
     function hope(address) external;
     function mate(address) external;
     function kiss(address) external;
@@ -136,8 +136,7 @@ contract DssSpellCollateralAction {
         require(RwaUrnLike(RWA007_A_URN).outputConduit()                             == RWA007_A_OUTPUT_CONDUIT, "urn-outputconduit-not-match");
 
         require(RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).psm()                  == MCD_PSM_USDC_A,          "output-conduit-psm-not-match");
-        require(RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).quitTo()               == RWA007_A_URN,            "output-conduit-quit-to-not-match");
-
+        
         require(RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).psm()                == MCD_PSM_USDC_A,          "input-conduit-urn-psm-not-match");
         require(RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).to()                 == RWA007_A_URN,            "input-conduit-urn-to-not-match");
 
@@ -186,6 +185,8 @@ contract DssSpellCollateralAction {
         RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).mate(RWA007_A_OPERATOR);
         // Coinbase custody whitelist for URN destination address
         RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).kiss(address(RWA007_A_COINBASE_CUSTODY));
+        // Set "quitTo" address for RWA007_A_OUTPUT_CONDUIT
+        RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).file("quitTo", RWA007_A_URN);
 
         // MCD_PAUSE_PROXY and Monetails permission on RWA007_A_INPUT_CONDUIT_URN
         RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).mate(address(this));
