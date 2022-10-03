@@ -209,9 +209,9 @@ contract DssSpellCollateralAction {
         CHANGELOG.setAddress("MCD_JOIN_RWA007_A",          MCD_JOIN_RWA007_A);
         CHANGELOG.setAddress("RWA007_A_URN",               RWA007_A_URN);
         CHANGELOG.setAddress("RWA007_A_JAR",               RWA007_A_JAR);
-        CHANGELOG.setAddress("RWA007_A_OUTPUT_CONDUIT",    RWA007_A_OUTPUT_CONDUIT);
         CHANGELOG.setAddress("RWA007_A_INPUT_CONDUIT_URN", RWA007_A_INPUT_CONDUIT_URN);
         CHANGELOG.setAddress("RWA007_A_INPUT_CONDUIT_JAR", RWA007_A_INPUT_CONDUIT_JAR);
+        CHANGELOG.setAddress("RWA007_A_OUTPUT_CONDUIT",    RWA007_A_OUTPUT_CONDUIT);
 
         // Add RWA007 to ILK REGISTRY
         REGISTRY.put(
