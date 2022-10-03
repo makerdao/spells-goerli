@@ -134,19 +134,15 @@ contract DssSpellCollateralAction {
         require(RwaUrnLike(RWA007_A_URN).daiJoin()                                   == MCD_JOIN_DAI,            "urn-daijoin-not-match");
         require(RwaUrnLike(RWA007_A_URN).gemJoin()                                   == MCD_JOIN_RWA007_A,       "urn-gemjoin-not-match");
         require(RwaUrnLike(RWA007_A_URN).outputConduit()                             == RWA007_A_OUTPUT_CONDUIT, "urn-outputconduit-not-match");
-        require(RwaUrnLike(RWA007_A_URN).wards(address(this))                        == 1,                       "pause-proxy-not-relyed-on-urn");
 
         require(RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).psm()                  == MCD_PSM_USDC_A,          "output-conduit-psm-not-match");
         require(RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).quitTo()               == RWA007_A_URN,            "output-conduit-quit-to-not-match");
-        require(RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).wards(address(this))   == 1,                       "pause-proxy-not-relyed-on-output-conduit");
 
         require(RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).psm()                == MCD_PSM_USDC_A,          "input-conduit-urn-psm-not-match");
         require(RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).to()                 == RWA007_A_URN,            "input-conduit-urn-to-not-match");
-        require(RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).wards(address(this)) == 1,                       "pause-proxy-not-relyed-on-input-conduit-urn");
 
         require(RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_JAR).psm()                == MCD_PSM_USDC_A,          "input-conduit-jar-psm-not-match");
         require(RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_JAR).to()                 == RWA007_A_JAR,            "input-conduit-har-to-not-match");
-        require(RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_JAR).wards(address(this)) == 1,                       "pause-proxy-not-relyed-on-input-conduit-jar");
 
 
         // Init the RwaLiquidationOracle
