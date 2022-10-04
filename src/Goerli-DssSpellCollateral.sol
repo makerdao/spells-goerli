@@ -42,6 +42,7 @@ interface RwaUrnLike {
 interface RwaOutputConduitLike {
     function wards(address) external view returns(uint256);
     function dai() external view returns(address);
+    function gem() external view returns(address);
     function psm() external view returns(address);
     function file(bytes32 what, address data) external;
     function hope(address) external;
