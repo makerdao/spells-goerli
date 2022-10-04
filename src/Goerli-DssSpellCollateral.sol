@@ -19,7 +19,6 @@ pragma solidity 0.6.12;
 // pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExecLib.sol";
-import "dss-interfaces/dss/ChainlogAbstract.sol";
 import "dss-interfaces/dss/GemJoinAbstract.sol";
 import "dss-interfaces/dss/IlkRegistryAbstract.sol";
 import "dss-interfaces/ERC/GemAbstract.sol";
