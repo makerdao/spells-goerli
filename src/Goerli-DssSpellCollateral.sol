@@ -173,7 +173,7 @@ contract DssSpellCollateralAction {
         // Allow RWA007 Join to modify Vat registry
         DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA007_A);
 
-        // 100m debt ceiling
+        // 1m debt ceiling
         DssExecLib.increaseIlkDebtCeiling(ilk, RWA007_A_LINE, /* _global = */ true);
 
         // Set the stability fee
@@ -192,7 +192,7 @@ contract DssSpellCollateralAction {
         RwaUrnLike(RWA007_A_URN).hope(address(this));
         RwaUrnLike(RWA007_A_URN).hope(address(RWA007_A_OPERATOR));
 
-        // MCD_PAUSE_PROXY and Monetails permission on RWA007_A_OUTPUT_CONDUIT
+        // MCD_PAUSE_PROXY and Monetalis permission on RWA007_A_OUTPUT_CONDUIT
         RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).hope(address(this));
         RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).mate(address(this));
         RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).hope(RWA007_A_OPERATOR);
@@ -202,13 +202,13 @@ contract DssSpellCollateralAction {
         // Set "quitTo" address for RWA007_A_OUTPUT_CONDUIT
         RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).file("quitTo", RWA007_A_URN);
 
-        // MCD_PAUSE_PROXY and Monetails permission on RWA007_A_INPUT_CONDUIT_URN
+        // MCD_PAUSE_PROXY and Monetalis permission on RWA007_A_INPUT_CONDUIT_URN
         RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).mate(address(this));
         RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).mate(RWA007_A_OPERATOR);
         // Set "quitTo" address for RWA007_A_INPUT_CONDUIT_URN
         RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).file("quitTo", RWA007_A_COINBASE_CUSTODY);
 
-        // MCD_PAUSE_PROXY and Monetails permission on RWA007_A_INPUT_CONDUIT_JAR
+        // MCD_PAUSE_PROXY and Monetalis permission on RWA007_A_INPUT_CONDUIT_JAR
         RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_JAR).mate(address(this));
         RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_JAR).mate(RWA007_A_OPERATOR);
         // Set "quitTo" address for RWA007_A_INPUT_CONDUIT_JAR
