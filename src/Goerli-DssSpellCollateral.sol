@@ -135,11 +135,8 @@ contract DssSpellCollateralAction {
         require(RwaUrnLike(RWA007_A_URN).gemJoin()                                   == MCD_JOIN_RWA007_A,       "urn-gemjoin-not-match");
         require(RwaUrnLike(RWA007_A_URN).outputConduit()                             == RWA007_A_OUTPUT_CONDUIT, "urn-outputconduit-not-match");
 
-        require(RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).dai()                  == DssExecLib.dai(),        
-               "output-conduit-dai-not-match");
+        require(RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).dai()                  == DssExecLib.dai(),        "output-conduit-dai-not-match");
         require(RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).gem()                  == DssExecLib.getChangelogAddress("USDC"), "output-conduit-gem-not-match");
-        require(RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).quitTo()               == RWA007_A_URN,            
-               "output-conduit-quitTo-not-match");
         require(RwaOutputConduitLike(RWA007_A_OUTPUT_CONDUIT).psm()                  == MCD_PSM_USDC_A,          "output-conduit-psm-not-match");
         
         require(RwaInputConduitLike(RWA007_A_INPUT_CONDUIT_URN).psm()                == MCD_PSM_USDC_A,          "input-conduit-urn-psm-not-match");
