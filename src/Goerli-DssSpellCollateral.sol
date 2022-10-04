@@ -53,6 +53,7 @@ interface RwaOutputConduitLike {
 interface RwaInputConduitLike {
     function wards(address) external view returns(uint256);
     function dai() external view returns(address);
+    function gem() external view returns(address);
     function psm() external view returns(address);
     function to() external view returns(address);
     function mate(address usr) external;
