@@ -805,7 +805,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         rwaconduitout_007.push(pushAmount);
         rwaconduitout_007.quit();
 
-        assertEq(dai.balanceOf(address(rwaconduitout_007)), 0, "RWA007: Output conduit still holds Dai after push()");
+        assertEq(dai.balanceOf(address(rwaconduitout_007)), 0, "RWA007: Output conduit still holds Dai after quit()");
         assertEq(psmGem.balanceOf(address(this)), pushAmount / daiPsmGemDiffDecimals, "RWA007: Psm GEM not sent to destination after push()");
         assertEq(dai.balanceOf(address(rwaurn_007)), drawAmount - pushAmount, "RWA007: Dai not sent to destination after push()");
 
