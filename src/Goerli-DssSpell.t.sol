@@ -48,6 +48,7 @@ interface RwaOutputConduitLike {
     function kiss(address) external;
     function mate(address) external;
     function hope(address) external;
+    function quitTo() external view returns (address);
 }
 
 interface RwaInputConduitLike {
@@ -547,6 +548,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(rwaconduitout_007.can(RWA007_A_OPERATOR), 1, "OutputConduit/monetalis-not-operator");
         assertEq(rwaconduitout_007.may(pauseProxy), 1, "OutputConduit/pause-proxy-not-mate");
         assertEq(rwaconduitout_007.may(RWA007_A_OPERATOR), 1, "OutputConduit/monetalis-not-mate");
+        assertEq(rwaconduitout_007.quitTo(), address(rwaurn_007), "OutputConduit/quit-to-not-urn");
         
         assertEq(rwaconduitout_007.bud(RWA007_A_COINBASE_CUSTODY), 1, "OutputConduit/coinbase-custody-not-whitelisted-for-pick");
 
@@ -557,6 +559,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(rwaconduitinjar_007.may(pauseProxy), 1, "InputConduitJar/pause-proxy-not-mate");
         assertEq(rwaconduitinjar_007.may(RWA007_A_OPERATOR), 1, "InputConduitJar/monetalis-not-mate");
         assertEq(rwaconduitinjar_007.quitTo(), RWA007_A_COINBASE_CUSTODY, "InputConduitJar/quit-to-not-set");
+
+        assertEq(rwajoin_007.wards(address(rwaurn_007)), 1, "Join/ward-urn-not-set");
+
+        assertEq(rwaurn_007.can(pauseProxy), 1, "Urn/pause-proxy-not-hoped");
+        assertEq(rwaurn_007.can(RWA007_A_OPERATOR), 1, "Urn/operator-not-hoped");
     }
 
     function testRWA007_INTEGRATION_BUMP() public {
