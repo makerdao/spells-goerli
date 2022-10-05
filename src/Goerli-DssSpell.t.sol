@@ -37,7 +37,6 @@ interface RwaUrnLike {
 }
 
 interface RwaOutputConduitLike {
-    function can(address) external view returns (uint256);
     function may(address) external view returns (uint256);
     function gem() external view returns (GemAbstract);
     function bud(address) external view returns (uint256);
@@ -48,6 +47,7 @@ interface RwaOutputConduitLike {
     function kiss(address) external;
     function mate(address) external;
     function hope(address) external;
+    function can(address) external view returns (uint256);
     function quitTo() external view returns (address);
 }
 
@@ -160,7 +160,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     }
 
-    function testCollateralIntegrations() private {
+    function testCollateralIntegrations() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -175,8 +175,22 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         //     true,
         //     false
         // );
+    }
 
+    function testIlkClipper() private { // make public to use
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
 
+        // // Insert new ilk clipper tests here
+        // checkIlkClipper(
+        //     "TOKEN-X",
+        //     GemJoinAbstract(addr.addr("MCD_JOIN_TOKEN_X")),
+        //     ClipAbstract(addr.addr("MCD_CLIP_TOKEN_X")),
+        //     addr.addr("MCD_CLIP_CALC_TOKEN_X"),
+        //     OsmAbstract(addr.addr("PIP_TOKEN")),
+        //     20_000 * WAD
+        // );
     }
 
     function testLerpSurplusBuffer() private { // make public to use
@@ -352,7 +366,20 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(castTime, spell.eta());
     }
 
-    function test_Medianizers() private { // make public to use
+    function testOSMs() private { // make public to use
+        address READER = address(0);
+
+        // Track OSM authorizations here
+        assertEq(OsmAbstract(addr.addr("PIP_TOKEN")).bud(READER), 0);
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(OsmAbstract(addr.addr("PIP_TOKEN")).bud(READER), 1);
+    }
+
+    function testMedianizers() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -503,7 +530,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     // RWA tests
     address RWA007_A_OPERATOR                  = addr.addr("RWA007_A_OPERATOR");
     address RWA007_A_COINBASE_CUSTODY          = addr.addr("RWA007_A_COINBASE_CUSTODY");
-    
+
     RwaLiquidationLike oracle                  = RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
     GemAbstract          rwagem_007            = GemAbstract(addr.addr("RWA007"));
@@ -538,7 +565,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(tauOld == tauNew, "tau is the same");
         assertTrue(tocOld == tocNew, "toc is the same");
     }
-    
+
     function testRWA007_INTEGRATION_CONDUITS_SETUP() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
@@ -549,7 +576,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(rwaconduitout_007.may(pauseProxy), 1, "OutputConduit/pause-proxy-not-mate");
         assertEq(rwaconduitout_007.may(RWA007_A_OPERATOR), 1, "OutputConduit/monetalis-not-mate");
         assertEq(rwaconduitout_007.quitTo(), address(rwaurn_007), "OutputConduit/quit-to-not-urn");
-        
+
         assertEq(rwaconduitout_007.bud(RWA007_A_COINBASE_CUSTODY), 1, "OutputConduit/coinbase-custody-not-whitelisted-for-pick");
 
         assertEq(rwaconduitinurn_007.may(pauseProxy), 1, "InputConduitUrn/pause-proxy-not-mate");
@@ -724,7 +751,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // transfer PSM GEM to input conduit
         psmGem.transfer(address(rwaconduitinurn_007), pushAmount / daiPsmGemDiffDecimals);
         assertEq(psmGem.balanceOf(address(rwaconduitinurn_007)), pushAmount / daiPsmGemDiffDecimals, "RWA007: Psm GEM not sent to input conduit");
-        
+
         // input conduit 'push()' to the urn
         rwaconduitinurn_007.push();
 
@@ -867,7 +894,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         // Check if spell lock whole unit of RWA007 Token to the Urn
         assertEq(rwagem_007.balanceOf(address(rwaurn_007.gemJoin())), prevBalance + lockAmount, "RWA007/spell-do-not-lock-rwa007-token");
-        
+
         (uint256 ink, uint256 art) = vat.urns("RWA007-A", address(rwaurn_007));
         assertEq(art, 0, "RWA007/bad-art-after-spell");
         assertEq(ink, lockAmount, "RWA007/bad-ink-after-spell"); // Whole unit of collateral is locked
