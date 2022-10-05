@@ -72,7 +72,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     address internal constant TELEPORT_GATEWAY_STA = 0x140f746CcFbb1C2618838C063048949685d7A6eD;
     uint256 internal constant TELEPORT_L2_GATEWAY_STA = 0x042b46146f0a377e0a028ed44bc1c0567196b8b96f3c7ab469e593ca497e2a83;
     address internal constant LINEAR_FEE = 0x95532D5c4e2064e8dC51F4D41C21f24B33c78BBC;
-    uint256 internal constant WAD = 10**18;
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module

@@ -168,12 +168,6 @@ contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
         bytes32 ilk = "TELEPORT-FW-A";
         bytes23 domain = "ETH-GOER-A";
 
-        emit log_address(address(spell));
-        emit log_address(addr.addr("STARKNET_TELEPORT_BRIDGE"));
-        emit log_address(addr.addr("STARKNET_TELEPORT_FEE"));
-        emit log_uint(bridge.l2DaiTeleportGateway());
-        emit log_uint(starknetValues.l2_teleport_gateway);
-
         assertEq(bridge.escrow(), escrow);
         assertEq(bridge.teleportRouter(), address(router));
         assertEq(bridge.dai(), address(dai));
@@ -191,66 +185,5 @@ contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
             30 minutes
         );
 
-    }
-
-    function checkTeleportFWIntegrationInternals(
-        bytes32 sourceDomain,
-        bytes32 targetDomain,
-        uint256 line,
-        address gateway,
-        address fee,
-        address escrow,
-        uint256 toMint,
-        uint256 expectedFee,
-        uint256 expectedTtl
-    ) internal {
-        TeleportJoinLike join = TeleportJoinLike(addr.addr("MCD_JOIN_TELEPORT_FW_A"));
-        TeleportRouterLike router = TeleportRouterLike(addr.addr("MCD_ROUTER_TELEPORT_FW_A"));
-
-        // Sanity checks
-        assertEq(join.line(sourceDomain), line);
-        assertEq(join.fees(sourceDomain), address(fee));
-        assertEq(dai.allowance(escrow, gateway), type(uint256).max);
-        assertEq(dai.allowance(gateway, address(router)), type(uint256).max);
-        assertEq(TeleportFeeLike(fee).fee(), expectedFee);
-        assertEq(TeleportFeeLike(fee).ttl(), expectedTtl);
-        assertEq(router.gateways(sourceDomain), gateway);
-        assertEq(router.domains(gateway), sourceDomain);
-
-        {
-            // NOTE: We are calling the router directly because the bridge code is minimal and unique to each domain
-            // This tests the slow path via the router
-            hevm.startPrank(gateway);
-            router.requestMint(TeleportGUID({
-                sourceDomain: sourceDomain,
-                targetDomain: targetDomain,
-                receiver: bytes32(uint256(uint160(address(this)))),
-                operator: bytes32(0),
-                amount: uint128(toMint),
-                nonce: 0,
-                timestamp: uint48(block.timestamp - TeleportFeeLike(fee).ttl())
-            }), 0, 0);
-            hevm.stopPrank();
-            assertEq(dai.balanceOf(address(this)), toMint);
-            assertEq(join.debt(sourceDomain), int256(toMint));
-        }
-
-        // Check oracle auth mint -- add custom signatures to test
-        uint256 _fee = toMint * expectedFee / WAD;
-        {
-            uint256 prevDai = vat.dai(address(vow));
-            oracleAuthRequestMint(sourceDomain, targetDomain, toMint, expectedFee);
-            assertEq(dai.balanceOf(address(this)), toMint * 2 - _fee);
-            assertEq(join.debt(sourceDomain), int256(toMint * 2));
-            assertEq(vat.dai(address(vow)) - prevDai, _fee * RAY);
-        }
-
-        // Check settle
-        dai.transfer(gateway, toMint * 2 - _fee);
-        hevm.startPrank(gateway);
-        router.settle(targetDomain, toMint * 2 - _fee);
-        hevm.stopPrank();
-        assertEq(dai.balanceOf(gateway), 0);
-        assertEq(join.debt(sourceDomain), int256(_fee));
     }
 }
