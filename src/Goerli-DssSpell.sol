@@ -20,7 +20,6 @@ pragma solidity 0.6.12;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
-import "dss-interfaces/dss/IlkRegistryAbstract.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
@@ -98,9 +97,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         address join = DssExecLib.getChangelogAddress("MCD_JOIN_TELEPORT_FW_A");
         address starkNet = DssExecLib.getChangelogAddress("STARKNET_CORE");
 
-
         address dai = DssExecLib.dai();
-        IlkRegistryAbstract ilkRegistry = IlkRegistryAbstract(DssExecLib.reg());
 
         // Run sanity checks
         require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).escrow() == escrow);
