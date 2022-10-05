@@ -503,7 +503,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     // RWA tests
     address RWA007_A_OPERATOR                  = addr.addr("RWA007_A_OPERATOR");
     address RWA007_A_COINBASE_CUSTODY          = addr.addr("RWA007_A_COINBASE_CUSTODY");
-
+    
     RwaLiquidationLike oracle                  = RwaLiquidationLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
     GemAbstract          rwagem_007            = GemAbstract(addr.addr("RWA007"));
@@ -538,7 +538,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(tauOld == tauNew, "tau is the same");
         assertTrue(tocOld == tocNew, "toc is the same");
     }
-
+    
     function testRWA007_INTEGRATION_CONDUITS_SETUP() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
@@ -549,7 +549,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(rwaconduitout_007.may(pauseProxy), 1, "OutputConduit/pause-proxy-not-mate");
         assertEq(rwaconduitout_007.may(RWA007_A_OPERATOR), 1, "OutputConduit/monetalis-not-mate");
         assertEq(rwaconduitout_007.quitTo(), address(rwaurn_007), "OutputConduit/quit-to-not-urn");
-
+        
         assertEq(rwaconduitout_007.bud(RWA007_A_COINBASE_CUSTODY), 1, "OutputConduit/coinbase-custody-not-whitelisted-for-pick");
 
         assertEq(rwaconduitinurn_007.may(pauseProxy), 1, "InputConduitUrn/pause-proxy-not-mate");
@@ -724,7 +724,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // transfer PSM GEM to input conduit
         psmGem.transfer(address(rwaconduitinurn_007), pushAmount / daiPsmGemDiffDecimals);
         assertEq(psmGem.balanceOf(address(rwaconduitinurn_007)), pushAmount / daiPsmGemDiffDecimals, "RWA007: Psm GEM not sent to input conduit");
-
+        
         // input conduit 'push()' to the urn
         rwaconduitinurn_007.push();
 
@@ -867,7 +867,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         // Check if spell lock whole unit of RWA007 Token to the Urn
         assertEq(rwagem_007.balanceOf(address(rwaurn_007.gemJoin())), prevBalance + lockAmount, "RWA007/spell-do-not-lock-rwa007-token");
-
+        
         (uint256 ink, uint256 art) = vat.urns("RWA007-A", address(rwaurn_007));
         assertEq(art, 0, "RWA007/bad-art-after-spell");
         assertEq(ink, lockAmount, "RWA007/bad-ink-after-spell"); // Whole unit of collateral is locked
