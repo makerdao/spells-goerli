@@ -23,14 +23,6 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
-interface GemLike {
-    function approve(address, uint256) external returns (bool);
-}
-
-interface RwaUrnLike {
-    function lock(uint256) external;
-}
-
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     // Provides a descriptive tag for bot consumption
@@ -53,13 +45,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     function actions() public override {
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
-        onboardNewCollaterals();
-
-        // lock RWA007 Token in the URN
-        GemLike(RWA007).approve(RWA007_A_URN, 1 * WAD);
-        RwaUrnLike(RWA007_A_URN).lock(1 * WAD);
-        
-        DssExecLib.setChangelogVersion("1.14.2");
+        // onboardNewCollaterals();
     }
 }
 
