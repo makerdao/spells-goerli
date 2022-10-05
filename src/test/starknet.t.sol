@@ -25,7 +25,6 @@ contract ConfigStarknet {
 
     struct StarknetValues {
         address core_implementation;
-        uint256 l2_teleport_gateway;
         uint256 dai_bridge_isOpen;
         uint256 dai_bridge_ceiling;
         uint256 dai_bridge_maxDeposit;
@@ -34,7 +33,6 @@ contract ConfigStarknet {
     function setValues() public {
         starknetValues = StarknetValues({
             core_implementation:       0x60C5fA1763cC9CB9c7c25458C6cDDFbc8F125256,
-            l2_teleport_gateway:       0x042b46146f0a377e0a028ed44bc1c0567196b8b96f3c7ab469e593ca497e2a83,
             dai_bridge_isOpen:         1,        // 1 open, 0 closed
             dai_bridge_ceiling:        200_000,  // Whole Dai Units
             dai_bridge_maxDeposit:     1000      // Whole Dai Units
@@ -77,15 +75,6 @@ interface DaiLike {
     function allowance(address, address) external view returns (uint256);
 }
 
-interface StarknetTeleportBridgeLike {
-    function starkNet() external view returns (address);
-    function dai() external view returns (address);
-    function l2DaiTeleportGateway() external view returns (uint256);
-    function escrow() external view returns (address);
-    function teleportRouter() external view returns (address);
-}
-
-
 contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
 
     function testStarknet() public {
@@ -100,7 +89,6 @@ contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
         checkStarknetDaiBridge();
         checkStarknetGovRelay();
         checkStarknetCore();
-        checkTeleportFW();
     }
 
     function checkStarknetEscrowMom() public {
@@ -157,33 +145,5 @@ contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
         //assertEq(core.implementation(), starknetValues.core_implementation, "StarknetTest/core-implementation");
 
         assertTrue(core.isNotFinalized());
-    }
-
-    function checkTeleportFW() public {
-
-        address router = addr.addr("MCD_ROUTER_TELEPORT_FW_A");
-        StarknetTeleportBridgeLike bridge = StarknetTeleportBridgeLike(addr.addr("STARKNET_TELEPORT_BRIDGE"));
-        address escrow = addr.addr("STARKNET_ESCROW");
-
-        bytes32 ilk = "TELEPORT-FW-A";
-        bytes23 domain = "ETH-GOER-A";
-
-        assertEq(bridge.escrow(), escrow);
-        assertEq(bridge.teleportRouter(), address(router));
-        assertEq(bridge.dai(), address(dai));
-        assertEq(bridge.l2DaiTeleportGateway(), starknetValues.l2_teleport_gateway);
-
-        checkTeleportFWIntegrationInternals(
-            "STA-GOER-A",
-            domain,
-            100_000 * WAD,
-            address(bridge),
-            addr.addr("STARKNET_TELEPORT_FEE"),
-            escrow,
-            100 * WAD,
-            WAD / 10000,   // 1bps
-            30 minutes
-        );
-
     }
 }

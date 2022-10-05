@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
+pragma experimental ABIEncoderV2;
 
 import "./Goerli-DssSpell.t.base.sol";
 
@@ -57,6 +58,14 @@ interface RwaInputConduitLike {
     function quitTo() external view returns (address);
     function mate(address) external;
     function push() external;
+}
+
+interface StarknetTeleportBridgeLike {
+    function starkNet() external view returns (address);
+    function dai() external view returns (address);
+    function l2DaiTeleportGateway() external view returns (uint256);
+    function escrow() external view returns (address);
+    function teleportRouter() external view returns (address);
 }
 
 contract DssSpellTest is GoerliDssSpellTestBase {
@@ -871,5 +880,35 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         (uint256 ink, uint256 art) = vat.urns("RWA007-A", address(rwaurn_007));
         assertEq(art, 0, "RWA007/bad-art-after-spell");
         assertEq(ink, lockAmount, "RWA007/bad-ink-after-spell"); // Whole unit of collateral is locked
+    }
+
+    function testTeleportFW() public {
+
+        address router = addr.addr("MCD_ROUTER_TELEPORT_FW_A");
+        StarknetTeleportBridgeLike bridge = StarknetTeleportBridgeLike(addr.addr("STARKNET_TELEPORT_BRIDGE"));
+        address escrow = addr.addr("STARKNET_ESCROW");
+
+        bytes32 ilk = "TELEPORT-FW-A";
+        bytes23 domain = "ETH-GOER-A";
+
+        uint256 l2_teleport_gateway = 0x042b46146f0a377e0a028ed44bc1c0567196b8b96f3c7ab469e593ca497e2a83;
+
+        assertEq(bridge.escrow(), escrow);
+        assertEq(bridge.teleportRouter(), address(router));
+        assertEq(bridge.dai(), address(dai));
+        assertEq(bridge.l2DaiTeleportGateway(), l2_teleport_gateway);
+
+        checkTeleportFWIntegrationInternals(
+            "STA-GOER-A",
+            domain,
+            100_000 * WAD,
+            address(bridge),
+            addr.addr("STARKNET_TELEPORT_FEE"),
+            escrow,
+            100 * WAD,
+            WAD / 10000,   // 1bps
+            30 minutes
+        );
+
     }
 }
