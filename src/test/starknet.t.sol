@@ -34,10 +34,10 @@ contract ConfigStarknet {
     function setValues() public {
         starknetValues = StarknetValues({
             core_implementation:       0x60C5fA1763cC9CB9c7c25458C6cDDFbc8F125256,
-            l2_teleport_gateway:       0x03a85abf730fb56410c92841a4439efcf24a2efe0085fb2e7807f0a6f48a1b39,
+            l2_teleport_gateway:       0x042b46146f0a377e0a028ed44bc1c0567196b8b96f3c7ab469e593ca497e2a83,
             dai_bridge_isOpen:         1,        // 1 open, 0 closed
             dai_bridge_ceiling:        200_000,  // Whole Dai Units
-            dai_bridge_maxDeposit:     50        // Whole Dai Units
+            dai_bridge_maxDeposit:     1000      // Whole Dai Units
         });
     }
 }
@@ -100,6 +100,7 @@ contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
         checkStarknetDaiBridge();
         checkStarknetGovRelay();
         checkStarknetCore();
+        checkTeleportFW();
     }
 
     function checkStarknetEscrowMom() public {
@@ -158,10 +159,7 @@ contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
         assertTrue(core.isNotFinalized());
     }
 
-    function testTeleportFW() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+    function checkTeleportFW() public {
 
         address router = addr.addr("MCD_ROUTER_TELEPORT_FW_A");
         StarknetTeleportBridgeLike bridge = StarknetTeleportBridgeLike(addr.addr("STARKNET_TELEPORT_BRIDGE"));
@@ -173,10 +171,13 @@ contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
         emit log_address(address(spell));
         emit log_address(addr.addr("STARKNET_TELEPORT_BRIDGE"));
         emit log_address(addr.addr("STARKNET_TELEPORT_FEE"));
+        emit log_uint(bridge.l2DaiTeleportGateway());
+        emit log_uint(starknetValues.l2_teleport_gateway);
 
         assertEq(bridge.escrow(), escrow);
         assertEq(bridge.teleportRouter(), address(router));
         assertEq(bridge.dai(), address(dai));
+        assertEq(bridge.l2DaiTeleportGateway(), starknetValues.l2_teleport_gateway);
 
         checkTeleportFWIntegrationInternals(
             "STA-GOER-A",
@@ -187,27 +188,9 @@ contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
             escrow,
             100 * WAD,
             WAD / 10000,   // 1bps
-            8 days
+            30 minutes
         );
-        assertEq(bridge.l2DaiTeleportGateway(), starknetValues.l2_teleport_gateway);
 
-    }
-
-    function testCureTeleport() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        bytes23 domain = "ETH-GOER-A";
-
-        checkCureLoadTeleport(
-            "STA-GOER-A",
-            domain,
-            100_000 * WAD,
-            TeleportFeeLike(addr.addr("STARKNET_TELEPORT_FEE")).fee(),
-            100_000 * RAD,
-            true
-        );
     }
 
     function checkTeleportFWIntegrationInternals(
@@ -270,5 +253,4 @@ contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
         assertEq(dai.balanceOf(gateway), 0);
         assertEq(join.debt(sourceDomain), int256(_fee));
     }
-
 }

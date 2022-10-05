@@ -20,6 +20,7 @@ pragma solidity 0.6.12;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
+import "dss-interfaces/dss/IlkRegistryAbstract.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
@@ -68,8 +69,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     bytes32 internal constant DOMAIN_ETH = "ETH-GOER-A";
 
     bytes32 internal constant DOMAIN_STA = "STA-GOER-A";
-    address internal constant TELEPORT_GATEWAY_STA = 0x61A1E227fd6Fdfa93F2bb50703E26637141714AE;
-    uint256 internal constant TELEPORT_L2_GATEWAY_STA = 0x03a85abf730fb56410c92841a4439efcf24a2efe0085fb2e7807f0a6f48a1b39;
+    address internal constant TELEPORT_GATEWAY_STA = 0x140f746CcFbb1C2618838C063048949685d7A6eD;
+    uint256 internal constant TELEPORT_L2_GATEWAY_STA = 0x042b46146f0a377e0a028ed44bc1c0567196b8b96f3c7ab469e593ca497e2a83;
     address internal constant LINEAR_FEE = 0x95532D5c4e2064e8dC51F4D41C21f24B33c78BBC;
     uint256 internal constant WAD = 10**18;
 
@@ -125,7 +126,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         DssExecLib.setChangelogAddress("STARKNET_TELEPORT_FEE", LINEAR_FEE);
 
         // TODO: set changelog version
-        DssExecLib.setChangelogVersion("1.14.0");
+        DssExecLib.setChangelogVersion("1.15.0");
 
     }
 }
