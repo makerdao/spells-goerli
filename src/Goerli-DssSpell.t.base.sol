@@ -623,7 +623,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
                 assertEq(uint256(clip.buf()), normalizedTestBuf, concat("TestError/clip-buf-", ilk));
                 assertTrue(clip.buf() >= RAY && clip.buf() <= 2 * RAY, concat("TestError/clip-buf-range-", ilk)); // gte 0% and lte 100%
                 assertEq(uint256(clip.tail()), values.collaterals[ilk].clip_tail, concat("TestError/clip-tail-", ilk));
-                if (ilk == "TUSD-A") {
+                if (ilk == "TUSD-A") { // long tail liquidation
                     assertTrue(clip.tail() >= 1200 && clip.tail() < 30 days, concat("TestError/TUSD-clip-tail-range-", ilk)); // gt eq 20 minutes and lt 10 hours
                 } else {
                     assertTrue(clip.tail() >= 1200 && clip.tail() < 10 hours, concat("TestError/clip-tail-range-", ilk)); // gt eq 20 minutes and lt 10 hours
@@ -716,27 +716,56 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         // Edge case - balance is already set for some reason
         if (GemAbstract(token).balanceOf(address(this)) == amount) return;
 
+        // Scan the storage for the balance storage slot
         for (uint256 i = 0; i < 200; i++) {
-            // Scan the storage for the balance storage slot
-            bytes32 prevValue = hevm.load(
-                address(token),
-                keccak256(abi.encode(address(this), uint256(i)))
-            );
-            hevm.store(
-                address(token),
-                keccak256(abi.encode(address(this), uint256(i))),
-                bytes32(amount)
-            );
-            if (GemAbstract(token).balanceOf(address(this)) == amount) {
-                // Found it
-                return;
-            } else {
-                // Keep going after restoring the original value
+            // Solidity-style storage layout for maps
+            {
+                bytes32 prevValue = hevm.load(
+                    address(token),
+                    keccak256(abi.encode(address(this), uint256(i)))
+                );
+
                 hevm.store(
                     address(token),
                     keccak256(abi.encode(address(this), uint256(i))),
-                    prevValue
+                    bytes32(amount)
                 );
+                if (GemAbstract(token).balanceOf(address(this)) == amount) {
+                    // Found it
+                    return;
+                } else {
+                    // Keep going after restoring the original value
+                    hevm.store(
+                        address(token),
+                        keccak256(abi.encode(address(this), uint256(i))),
+                        prevValue
+                    );
+                }
+            }
+
+            // Vyper-style storage layout for maps
+            {
+                bytes32 prevValue = hevm.load(
+                    address(token),
+                    keccak256(abi.encode(uint256(i), address(this)))
+                );
+
+                hevm.store(
+                    address(token),
+                    keccak256(abi.encode(uint256(i), address(this))),
+                    bytes32(amount)
+                );
+                if (GemAbstract(token).balanceOf(address(this)) == amount) {
+                    // Found it
+                    return;
+                } else {
+                    // Keep going after restoring the original value
+                    hevm.store(
+                        address(token),
+                        keccak256(abi.encode(uint256(i), address(this))),
+                        prevValue
+                    );
+                }
             }
         }
 
@@ -893,6 +922,126 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         // Dump all dai for next run
         vat.move(address(this), address(0x0), vat.dai(address(this)));
     }
+
+    function checkIlkClipper(
+        bytes32 ilk,
+        GemJoinAbstract join,
+        ClipAbstract clipper,
+        address calc,
+        OsmAbstract pip,
+        uint256 ilkAmt
+    ) internal {
+
+        // Contracts set
+        assertEq(dog.vat(), address(vat));
+        assertEq(dog.vow(), address(vow));
+        {
+        (address clip,,,) = dog.ilks(ilk);
+        assertEq(clip, address(clipper));
+        }
+        assertEq(clipper.ilk(), ilk);
+        assertEq(clipper.vat(), address(vat));
+        assertEq(clipper.vow(), address(vow));
+        assertEq(clipper.dog(), address(dog));
+        assertEq(clipper.spotter(), address(spotter));
+        assertEq(clipper.calc(), calc);
+
+        // Authorization
+        assertEq(vat.wards(address(clipper))    , 1);
+        assertEq(dog.wards(address(clipper))    , 1);
+        assertEq(clipper.wards(address(dog))    , 1);
+        assertEq(clipper.wards(address(end))    , 1);
+        assertEq(clipper.wards(address(clipMom)), 1);
+        assertEq(clipper.wards(address(esm)), 1);
+
+        try pip.bud(address(spotter)) returns (uint256 bud) {
+            assertEq(bud, 1);
+        } catch {}
+        try pip.bud(address(clipper)) returns (uint256 bud) {
+            assertEq(bud, 1);
+        } catch {}
+        try pip.bud(address(clipMom)) returns (uint256 bud) {
+            assertEq(bud, 1);
+        } catch {}
+        try pip.bud(address(end)) returns (uint256 bud) {
+            assertEq(bud, 1);
+        } catch {}
+
+        // Force max Hole
+        hevm.store(
+            address(dog),
+            bytes32(uint256(4)),
+            bytes32(uint256(-1))
+        );
+
+        // ----------------------- Check Clipper works and bids can be made -----------------------
+
+        {
+        GemAbstract token = GemAbstract(join.gem());
+        uint256 tknAmt =  ilkAmt / 10 ** (18 - join.dec());
+        giveTokens(address(token), tknAmt);
+        assertEq(token.balanceOf(address(this)), tknAmt);
+
+        // Join to adapter
+        assertEq(vat.gem(ilk, address(this)), 0);
+        assertEq(token.allowance(address(this), address(join)), 0);
+        token.approve(address(join), tknAmt);
+        join.join(address(this), tknAmt);
+        assertEq(token.balanceOf(address(this)), 0);
+        assertEq(vat.gem(ilk, address(this)), ilkAmt);
+        }
+
+        {
+        // Generate new DAI to force a liquidation
+        uint256 rate;
+        int256 art;
+        uint256 spot;
+        uint256 line;
+        (,rate, spot, line,) = vat.ilks(ilk);
+        art = int256(mul(ilkAmt, spot) / rate);
+
+        // dart max amount of DAI
+        setIlkLine(ilk, uint256(-1));
+        vat.frob(ilk, address(this), address(this), address(this), int256(ilkAmt), art);
+        setIlkLine(ilk, line);
+        setIlkMat(ilk, 100000 * RAY);
+        hevm.warp(block.timestamp + 10 days);
+        spotter.poke(ilk);
+        assertEq(clipper.kicks(), 0);
+        dog.bark(ilk, address(this), address(this));
+        assertEq(clipper.kicks(), 1);
+
+        (, rate,,,) = vat.ilks(ilk);
+        uint256 debt = mul(mul(rate, uint256(art)), dog.chop(ilk)) / WAD;
+        hevm.store(
+            address(vat),
+            keccak256(abi.encode(address(this), uint256(5))),
+            bytes32(debt)
+        );
+        assertEq(vat.dai(address(this)), debt);
+        assertEq(vat.gem(ilk, address(this)), 0);
+
+        hevm.warp(block.timestamp + 20 minutes);
+        (, uint256 tab, uint256 lot, address usr,, uint256 top) = clipper.sales(1);
+
+        assertEq(usr, address(this));
+        assertEq(tab, debt);
+        assertEq(lot, ilkAmt);
+        assertTrue(mul(lot, top) > tab); // There is enough collateral to cover the debt at current price
+
+        vat.hope(address(clipper));
+        clipper.take(1, lot, top, address(this), bytes(""));
+        }
+
+        {
+        (, uint256 tab, uint256 lot, address usr,,) = clipper.sales(1);
+        assertEq(usr, address(0));
+        assertEq(tab, 0);
+        assertEq(lot, 0);
+        assertEq(vat.dai(address(this)), 0);
+        assertEq(vat.gem(ilk, address(this)), ilkAmt); // What was purchased + returned back as it is the owner of the vault
+        }
+     }
 
     function checkUNILPIntegration(
         bytes32 _ilk,
@@ -1135,7 +1284,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     ) internal {
         TeleportJoinLike join = TeleportJoinLike(addr.addr("MCD_JOIN_TELEPORT_FW_A"));
         TeleportRouterLike router = TeleportRouterLike(addr.addr("MCD_ROUTER_TELEPORT_FW_A"));
-        
+
         // Sanity checks
         assertEq(join.line(sourceDomain), line);
         assertEq(join.fees(sourceDomain), address(fee));
@@ -1224,19 +1373,21 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         uint256 _start,
         uint256 _cliff,
         uint256 _end,
+        uint256 _days,
         address _manager,
         uint256 _restricted,
         uint256 _reward,
         uint256 _claimed
-        ) public {
-        assertEq(vestDai.usr(_index), _wallet,     "usr");
-        assertEq(vestDai.bgn(_index), _start,      "bgn");
-        assertEq(vestDai.clf(_index), _cliff,      "clf");
-        assertEq(vestDai.fin(_index), _end,        "fin");
-        assertEq(vestDai.mgr(_index), _manager,    "mgr");
-        assertEq(vestDai.res(_index), _restricted, "res");
-        assertEq(vestDai.tot(_index), _reward,     "tot");
-        assertEq(vestDai.rxd(_index), _claimed,    "rxd");
+    ) public {
+        assertEq(vestDai.usr(_index), _wallet,            "usr");
+        assertEq(vestDai.bgn(_index), _start,             "bgn");
+        assertEq(vestDai.clf(_index), _cliff,             "clf");
+        assertEq(vestDai.fin(_index), _end,               "fin");
+        assertEq(vestDai.fin(_index), _start + _days - 1, "fin");
+        assertEq(vestDai.mgr(_index), _manager,           "mgr");
+        assertEq(vestDai.res(_index), _restricted,        "res");
+        assertEq(vestDai.tot(_index), _reward,            "tot");
+        assertEq(vestDai.rxd(_index), _claimed,           "rxd");
     }
 
     function getIlkMat(bytes32 _ilk) internal view returns (uint256 mat) {
