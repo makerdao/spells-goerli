@@ -886,6 +886,9 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testTeleportFW() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
 
         address router = addr.addr("MCD_ROUTER_TELEPORT_FW_A");
         StarknetTeleportBridgeLike bridge = StarknetTeleportBridgeLike(addr.addr("STARKNET_TELEPORT_BRIDGE"));
