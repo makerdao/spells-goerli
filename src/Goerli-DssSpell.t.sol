@@ -223,6 +223,9 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkChainlogKey("RWA007_A_OUTPUT_CONDUIT");
         checkChainlogKey("PIP_RWA007");
 
+        checkChainlogKey("STARKNET_TELEPORT_BRIDGE");
+        checkChainlogKey("STARKNET_TELEPORT_FEE");
+
         checkChainlogVersion("1.15.0");
     }
 
