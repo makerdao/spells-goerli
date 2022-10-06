@@ -628,7 +628,7 @@ contract Config {
             line:         0,
             dust:         10 * THOUSAND,
             pct:          400,
-            mat:          2430000,
+            mat:          2430000,  // 24,300%
             liqType:      "clip",
             liqOn:        true,
             chop:         0,
