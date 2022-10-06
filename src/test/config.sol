@@ -1610,6 +1610,36 @@ contract Config {
             calc_cut:     9900,
             lerp:         false
         });
+        afterSpell.collaterals["WSTETH-B"] = CollateralValues({
+            aL_enabled:   true,
+            aL_line:      200 * MILLION,
+            aL_gap:       30 * MILLION,
+            aL_ttl:       8 hours,
+            line:         0,
+            dust:         5 * THOUSAND,
+            pct:          0,
+            mat:          18500,
+            liqType:      "clip",
+            liqOn:        true,
+            chop:         1300,
+            cat_dunk:     0,
+            flip_beg:     0,
+            flip_ttl:     0,
+            flip_tau:     0,
+            flipper_mom:  0,
+            dog_hole:     10 * MILLION,
+            clip_buf:     12000,
+            clip_tail:    140 minutes,
+            clip_cusp:    4000,
+            clip_chip:    10,
+            clip_tip:     300,
+            clipper_mom:  1,
+            cm_tolerance: 5000,
+            calc_tau:     0,
+            calc_step:    90,
+            calc_cut:     9900,
+            lerp:         false
+        });
 //        afterSpell.collaterals["DIRECT-AAVEV2-DAI"] = CollateralValues({
 //            aL_enabled:   true,
 //            aL_line:      300 * MILLION,

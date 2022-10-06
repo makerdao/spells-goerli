@@ -20,6 +20,7 @@ import "./Goerli-DssSpell.t.base.sol";
 
 interface DssExecLike {
     function action() external returns (address);
+
 }
 
 contract DssSpellTest is GoerliDssSpellTestBase {
