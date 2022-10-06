@@ -894,9 +894,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         StarknetTeleportBridgeLike bridge = StarknetTeleportBridgeLike(addr.addr("STARKNET_TELEPORT_BRIDGE"));
         address escrow = addr.addr("STARKNET_ESCROW");
 
-        bytes32 ilk = "TELEPORT-FW-A";
-        bytes23 domain = "ETH-GOER-A";
-
         uint256 l2_teleport_gateway = 0x042b46146f0a377e0a028ed44bc1c0567196b8b96f3c7ab469e593ca497e2a83;
 
         assertEq(bridge.escrow(), escrow);
@@ -906,7 +903,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         checkTeleportFWIntegrationInternals(
             "STA-GOER-A",
-            domain,
+            "ETH-GOER-A",
             100_000 * WAD,
             address(bridge),
             addr.addr("STARKNET_TELEPORT_FEE"),
