@@ -189,7 +189,7 @@ contract Config {
             flipper_mom:  0,
             dog_hole:     15 * MILLION,
             clip_buf:     110_00,
-            clip_tail:    4800 seconds,
+            clip_tail:    4800 seconds, // TODO Note: Governance said 5400 but it was 8400 prior
             clip_cusp:    45_00,
             clip_chip:    10,
             clip_tip:     250,
