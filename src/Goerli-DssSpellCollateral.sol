@@ -77,6 +77,49 @@ contract DssSpellCollateralAction {
     // --- Math ---
     uint256 internal constant WAD = 10**18;
 
+
+    // Change clip parameters
+    function collateralAuctionParameterChanges(
+        IlkRegistryAbstract REGISTRY,
+        address MIP21_LIQUIDATION_ORACLE,
+        address MCD_VAT,
+        address MCD_JUG,
+        address MCD_SPOT,
+        address MCD_JOIN_DAI,
+        address MCD_PSM_USDC_A
+    ) internal {
+        
+        // Auction Price Multiplier (buf) changes
+       
+        // Max Auction Drawdown (cusp) changes
+     
+        // Max Auction Duration (tail) changes
+        // NOTE needs conf from GovAlpha
+
+        // ilk.hole changes
+
+        // tip Changes
+        
+    }
+
+    // NOTE: Awaiting confirmation: MOMC Parameter Changes - vote ends Thursday
+
+    // Skip on Goerli - Delegate Compensation - September 2022
+
+    function systemParameterChanges(
+        IlkRegistryAbstract REGISTRY,
+        address MIP21_LIQUIDATION_ORACLE,
+        address MCD_VAT,
+        address MCD_JUG,
+        address MCD_SPOT,
+        address MCD_JOIN_DAI,
+        address MCD_PSM_USDC_A
+    ) internal {
+
+        // System hole Change
+
+    }
+
     function onboardNewCollaterals() internal {
         IlkRegistryAbstract REGISTRY     = IlkRegistryAbstract(DssExecLib.reg());
         address MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
@@ -86,9 +129,11 @@ contract DssSpellCollateralAction {
         address MCD_SPOT                 = DssExecLib.spotter();
         address MCD_JOIN_DAI             = DssExecLib.daiJoin();
 
-        // --------------------------- RWA Collateral onboarding ---------------------------
-
-        // Onboard Monetalis: https://vote.makerdao.com/polling/QmXHM6us
-        onboardRwa007(REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI, MCD_PSM_USDC_A);
+        // --------------------------- System parameter changes ---------------------------
+        // Parameter changes : https://vote.makerdao.com/polling/QmREbu1j
+        // Change clip parameters
+        collateralAuctionParameterChanges(REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI, MCD_PSM_USDC_A);(REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI, MCD_PSM_USDC_A);
+        // Change system parameters
+        systemParameterChanges(REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI, MCD_PSM_USDC_A);(REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI, MCD_PSM_USDC_A);
     }
 }
