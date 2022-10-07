@@ -123,7 +123,7 @@ contract Config {
             flap_tau:              72 hours,                // in seconds
             flap_lid:              30 * THOUSAND,           // in whole Dai units
             cat_box:               20 * MILLION,            // In whole Dai units
-            dog_Hole:              100 * MILLION,           // In whole Dai units
+            dog_Hole:              70 * MILLION,            // In whole Dai units
             esm_min:               150 * THOUSAND,          // In whole MKR units
             pause_authority:       chief,                   // Pause authority
             osm_mom_authority:     chief,                   // OsmMom authority
@@ -157,12 +157,12 @@ contract Config {
             flip_ttl:     0,               // In seconds
             flip_tau:     0,               // In seconds
             flipper_mom:  0,               // 1 if circuit breaker enabled
-            dog_hole:     65 * MILLION,    // In whole Dai units
+            dog_hole:     40 * MILLION,    // In whole Dai units // Same as ilk.hole 
             clip_buf:     110_00,          // In basis points
             clip_tail:    7200 seconds,    // In seconds
             clip_cusp:    45_00,           // In basis points
             clip_chip:    10,              // In basis points
-            clip_tip:     300,             // In whole Dai units
+            clip_tip:     250,             // In whole Dai units
             clipper_mom:  1,               // 1 if circuit breaker enabled
             cm_tolerance: 5000,            // In basis points
             calc_tau:     0,               // In seconds
@@ -187,12 +187,12 @@ contract Config {
             flip_ttl:     0,
             flip_tau:     0,
             flipper_mom:  0,
-            dog_hole:     30 * MILLION,
+            dog_hole:     15 * MILLION,
             clip_buf:     110_00,
             clip_tail:    4800 seconds,
             clip_cusp:    45_00,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     250,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
@@ -222,7 +222,7 @@ contract Config {
             clip_tail:    7200 seconds,
             clip_cusp:    45_00,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     250,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
@@ -337,12 +337,12 @@ contract Config {
             flip_ttl:     0,
             flip_tau:     0,
             flipper_mom:  0,
-            dog_hole:     40 * MILLION,
+            dog_hole:     30 * MILLION,
             clip_buf:     110_00,
             clip_tail:    7200 seconds,
             clip_cusp:    45_00,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     250,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
@@ -367,12 +367,12 @@ contract Config {
             flip_ttl:     0,
             flip_tau:     0,
             flipper_mom:  0,
-            dog_hole:     25 * MILLION,
+            dog_hole:     10 * MILLION,
             clip_buf:     110_00,
             clip_tail:    4800 seconds,
             clip_cusp:    45_00,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     250,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
@@ -397,12 +397,12 @@ contract Config {
             flip_ttl:     0,
             flip_tau:     0,
             flipper_mom:  0,
-            dog_hole:     25 * MILLION,
+            dog_hole:     20 * MILLION,
             clip_buf:     110_00,
             clip_tail:    7200 seconds,
             clip_cusp:    45_00,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     250,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
@@ -522,7 +522,7 @@ contract Config {
             clip_tail:    140 minutes,
             clip_cusp:    40_00,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     250,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
@@ -667,12 +667,12 @@ contract Config {
             flip_ttl:     0,
             flip_tau:     0,
             flipper_mom:  0,
-            dog_hole:     6 * MILLION,
+            dog_hole:     3 * MILLION,
             clip_buf:     120_00,
             clip_tail:    140 minutes,
             clip_cusp:    40_00,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     250,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
@@ -727,12 +727,12 @@ contract Config {
             flip_ttl:     0,
             flip_tau:     0,
             flipper_mom:  0,
-            dog_hole:     5 * MILLION,
+            dog_hole:     1 * MILLION,
             clip_buf:     130_00,
             clip_tail:    140 minutes,
             clip_cusp:    40_00,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     250,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
@@ -817,12 +817,12 @@ contract Config {
             flip_ttl:     0,
             flip_tau:     0,
             flipper_mom:  0,
-            dog_hole:     3 * MILLION,
+            dog_hole:     2 * MILLION,
             clip_buf:     120_00,
             clip_tail:    140 minutes,
             clip_cusp:    40_00,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     250,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
@@ -1482,7 +1482,7 @@ contract Config {
             clip_tail:    140 minutes,
             clip_cusp:    40_00,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     250,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
@@ -1572,7 +1572,7 @@ contract Config {
             clip_tail:    140 minutes,
             clip_cusp:    45_00,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     250,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
@@ -1602,7 +1602,7 @@ contract Config {
             clip_tail:    140 minutes,
             clip_cusp:    45_00,
             clip_chip:    10,
-            clip_tip:     300,
+            clip_tip:     250,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
