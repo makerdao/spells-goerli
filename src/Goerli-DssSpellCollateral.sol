@@ -19,48 +19,10 @@ pragma solidity 0.6.12;
 // pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExecLib.sol";
-import "dss-interfaces/dss/GemJoinAbstract.sol";
-import "dss-interfaces/dss/IlkRegistryAbstract.sol";
-import "dss-interfaces/ERC/GemAbstract.sol";
+//import "dss-interfaces/dss/DogAbstract.sol";  TODO remove
+//import "dss-interfaces/dss/ClipAbstract.sol";  TODO remove
 
-interface RwaLiquidationLike {
-    function ilks(bytes32) external returns (string memory, address, uint48, uint48);
-    function init(bytes32, uint256, string calldata, uint48) external;
-}
 
-interface RwaUrnLike {
-    function vat() external view returns(address);
-    function jug() external view returns(address);
-    function gemJoin() external view returns(address);
-    function daiJoin() external view returns(address);
-    function outputConduit() external view returns(address);
-    function hope(address) external;
-}
-
-interface RwaJarLike {
-    function chainlog() external view returns(address);
-    function dai() external view returns(address);
-    function daiJoin() external view returns(address);
-}
-
-interface RwaOutputConduitLike {
-    function dai() external view returns(address);
-    function gem() external view returns(address);
-    function psm() external view returns(address);
-    function file(bytes32 what, address data) external;
-    function hope(address) external;
-    function mate(address) external;
-    function kiss(address) external;
-}
-
-interface RwaInputConduitLike {
-    function dai() external view returns(address);
-    function gem() external view returns(address);
-    function psm() external view returns(address);
-    function to() external view returns(address);
-    function mate(address usr) external;
-    function file(bytes32 what, address data) external;
-}
 
 contract DssSpellCollateralAction {
     // --- Rates ---
@@ -75,65 +37,114 @@ contract DssSpellCollateralAction {
     //
 
     // --- Math ---
-    uint256 internal constant WAD = 10**18;
-
+    uint256 internal constant WAD    = 10 ** 18;
+    uint256 internal constant MILLION = 10 ** 6;
+    uint256 internal constant RAY = 10 ** 27;
+    uint256 internal constant RAD = 10 ** 45;
 
     // Change clip parameters
     function collateralAuctionParameterChanges(
-        IlkRegistryAbstract REGISTRY,
-        address MIP21_LIQUIDATION_ORACLE,
-        address MCD_VAT,
-        address MCD_JUG,
-        address MCD_SPOT,
-        address MCD_JOIN_DAI,
-        address MCD_PSM_USDC_A
+        address MCD_DOG
     ) internal {
         
-        // Auction Price Multiplier (buf) changes
-       
-        // Max Auction Drawdown (cusp) changes
-     
-        // Max Auction Duration (tail) changes
-        // NOTE needs conf from GovAlpha
+        // Load Clippers for ilks being modified
+        address MCD_CLIP_ETH_A   = DssExecLib.getChangelogAddress("MCD_CLIP_ETH_A"); 
+        address MCD_CLIP_ETH_B   = DssExecLib.getChangelogAddress("MCD_CLIP_ETH_B");
+        address MCD_CLIP_ETH_C   = DssExecLib.getChangelogAddress("MCD_CLIP_ETH_C");
+        address MCD_CLIP_WBTC_A   = DssExecLib.getChangelogAddress("MCD_CLIP_WBTC_A");
+        address MCD_CLIP_WBTC_B   = DssExecLib.getChangelogAddress("MCD_CLIP_WBTC_B");
+        address MCD_CLIP_WBTC_C   = DssExecLib.getChangelogAddress("MCD_CLIP_WBTC_C");
+        address MCD_CLIP_WSTETH_A   = DssExecLib.getChangelogAddress("MCD_CLIP_WSTETH_A");
+        address MCD_CLIP_WSTETH_B   = DssExecLib.getChangelogAddress("MCD_CLIP_WSTETH_B");
+        // address MCD_CLIP_CRVV1ETHSTETH_A   = DssExecLib.getChangelogAddress("MCD_CLIP_CRVV1ETHSTETH_A"); // Not on Goerli
+        address MCD_CLIP_LINK_A   = DssExecLib.getChangelogAddress("MCD_CLIP_LINK_A");
+        address MCD_CLIP_MANA_A   = DssExecLib.getChangelogAddress("MCD_CLIP_MANA_A");
+        address MCD_CLIP_MATIC_A   = DssExecLib.getChangelogAddress("MCD_CLIP_MATIC_A");
+        address MCD_CLIP_RENBTC_A   = DssExecLib.getChangelogAddress("MCD_CLIP_RENBTC_A");
+        address MCD_CLIP_YFI_A   = DssExecLib.getChangelogAddress("MCD_CLIP_YFI_A");
 
-        // ilk.hole changes
-
-        // tip Changes
+        // buf changes (Auction price multiplier)
+        Fileable(MCD_CLIP_ETH_A).file("buf", 110 * RAY / 100);
+        Fileable(MCD_CLIP_ETH_B).file("buf", 110 * RAY / 100);
+        Fileable(MCD_CLIP_ETH_C).file("buf", 110 * RAY / 100);
+        Fileable(MCD_CLIP_WBTC_A).file("buf", 110 * RAY / 100);
+        Fileable(MCD_CLIP_WBTC_B).file("buf", 110 * RAY / 100);
+        Fileable(MCD_CLIP_WBTC_C).file("buf", 110 * RAY / 100);
+        Fileable(MCD_CLIP_WSTETH_A).file("buf", 110 * RAY / 100);
+        Fileable(MCD_CLIP_WSTETH_B).file("buf", 110 * RAY / 100);
+        //Fileable(MCD_CLIP_CRVV1ETHSTETH_A).file("buf", 120 * RAY / 100); // Not on Goerli
+        Fileable(MCD_CLIP_LINK_A).file("buf", 120 * RAY / 100);
+        Fileable(MCD_CLIP_MANA_A).file("buf", 120 * RAY / 100);
+        Fileable(MCD_CLIP_MATIC_A).file("buf", 120 * RAY / 100);
+        Fileable(MCD_CLIP_RENBTC_A).file("buf", 120 * RAY / 100);
         
+        // cusp changes (Max asset drawdown)
+        Fileable(MCD_CLIP_ETH_A).file("cusp", 45 * RAY / 100);
+        Fileable(MCD_CLIP_ETH_B).file("cusp", 45 * RAY / 100);
+        Fileable(MCD_CLIP_ETH_C).file("cusp", 45 * RAY / 100);
+        Fileable(MCD_CLIP_WBTC_A).file("cusp", 45 * RAY / 100);
+        Fileable(MCD_CLIP_WBTC_B).file("cusp", 45 * RAY / 100);
+        Fileable(MCD_CLIP_WBTC_C).file("cusp", 45 * RAY / 100);
+        Fileable(MCD_CLIP_WSTETH_A).file("cusp", 45 * RAY / 100);
+        Fileable(MCD_CLIP_WSTETH_B).file("cusp", 45 * RAY / 100);
+        
+        // tail changes (Max auction duration)
+        Fileable(MCD_CLIP_ETH_A).file("tail", 7200 seconds);
+        Fileable(MCD_CLIP_ETH_C).file("tail", 7200 seconds);
+        Fileable(MCD_CLIP_WBTC_A).file("tail", 7200 seconds);
+        Fileable(MCD_CLIP_WSTETH_A).file("tail", 7200 seconds);
+        Fileable(MCD_CLIP_WSTETH_B).file("tail", 7200 seconds);
+        Fileable(MCD_CLIP_ETH_B).file("tail", 4800 seconds); 
+        Fileable(MCD_CLIP_WBTC_B).file("tail", 4800 seconds);
+        Fileable(MCD_CLIP_WBTC_C).file("tail", 7200 seconds);
+        
+        // dog.hole changes (ilk.hole)
+        Fileable(MCD_DOG).file("ETH-A", "hole", 40_000_000 * RAD);
+        Fileable(MCD_DOG).file("ETH-B", "hole", 15_000_000 * RAD);
+        Fileable(MCD_DOG).file("WBTC-A", "hole", 30_000_000 * RAD);
+        Fileable(MCD_DOG).file("WBTC-B", "hole", 10_000_000 * RAD);
+        Fileable(MCD_DOG).file("WBTC-C", "hole", 20_000_000 * RAD);
+        Fileable(MCD_DOG).file("LINK-A", "hole", 3_000_000 * RAD);
+        Fileable(MCD_DOG).file("YFI-A", "hole", 1_000_000 * RAD);
+        Fileable(MCD_DOG).file("RENBTC-A", "hole", 2_000_000 * RAD);
+
+        // tip changes 
+        Fileable(MCD_CLIP_ETH_A).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_ETH_B).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_ETH_C).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_WBTC_A).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_WBTC_B).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_WBTC_C).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_WSTETH_A).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_WSTETH_B).file("tip", 250 * RAD);
+        //Fileable(MCD_CLIP_CRVV1ETHSTETH_A).file("tip", 250 * RAD); // Not on Goerli
+        Fileable(MCD_CLIP_LINK_A).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_MANA_A).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_MATIC_A).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_RENBTC_A).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_YFI_A).file("tip", 250 * RAD);
+
     }
 
     // NOTE: Awaiting confirmation: MOMC Parameter Changes - vote ends Thursday
 
-    // Skip on Goerli - Delegate Compensation - September 2022
+    // TODO: Skip on Goerli - Delegate Compensation - September 2022
 
     function systemParameterChanges(
-        IlkRegistryAbstract REGISTRY,
-        address MIP21_LIQUIDATION_ORACLE,
-        address MCD_VAT,
-        address MCD_JUG,
-        address MCD_SPOT,
-        address MCD_JOIN_DAI,
-        address MCD_PSM_USDC_A
+        address MCD_DOG
     ) internal {
-
-        // System hole Change
-
+        // Reduce the Hole from 100,000,000 DAI to 70,000,000 DAI
+        dog. file("Hole", 70 * MILLION);
     }
 
     function onboardNewCollaterals() internal {
-        IlkRegistryAbstract REGISTRY     = IlkRegistryAbstract(DssExecLib.reg());
-        address MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
-        address MCD_PSM_USDC_A           = DssExecLib.getChangelogAddress("MCD_PSM_USDC_A");
-        address MCD_VAT                  = DssExecLib.vat();
-        address MCD_JUG                  = DssExecLib.jug();
-        address MCD_SPOT                 = DssExecLib.spotter();
-        address MCD_JOIN_DAI             = DssExecLib.daiJoin();
 
-        // --------------------------- System parameter changes ---------------------------
+        // --------------------------- Auction parameter changes ---------------------------
         // Parameter changes : https://vote.makerdao.com/polling/QmREbu1j
-        // Change clip parameters
-        collateralAuctionParameterChanges(REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI, MCD_PSM_USDC_A);(REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI, MCD_PSM_USDC_A);
-        // Change system parameters
-        systemParameterChanges(REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI, MCD_PSM_USDC_A);(REGISTRY, MIP21_LIQUIDATION_ORACLE, MCD_VAT, MCD_JUG, MCD_SPOT, MCD_JOIN_DAI, MCD_PSM_USDC_A);
+        address MCD_DOG = DssExecLib.getChangelogAddress("MCD_DOG");
+        // Change ilk-specific auction parameters
+        collateralAuctionParameterChanges(MCD_DOG);
+        // Change global auction parameters
+        systemParameterChanges(MCD_DOG);
     }
 }

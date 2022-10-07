@@ -157,7 +157,7 @@ contract Config {
             flip_ttl:     0,               // In seconds
             flip_tau:     0,               // In seconds
             flipper_mom:  0,               // 1 if circuit breaker enabled
-            dog_hole:     40 * MILLION,    // In whole Dai units // Same as ilk.hole 
+            dog_hole:     40 * MILLION,    // In whole Dai units
             clip_buf:     110_00,          // In basis points
             clip_tail:    7200 seconds,    // In seconds
             clip_cusp:    45_00,           // In basis points
