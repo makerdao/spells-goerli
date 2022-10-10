@@ -35,10 +35,10 @@ contract DssSpellCollateralAction {
     //
 
     // --- Math ---
-    uint256 internal constant WAD    = 10 ** 18;
-    uint256 internal constant MILLION = 10 ** 6;
-    uint256 internal constant RAY = 10 ** 27;
-    uint256 internal constant RAD = 10 ** 45;
+    uint256 internal constant MILLION = 10 **  6;
+    uint256 internal constant WAD     = 10 ** 18;
+    uint256 internal constant RAY     = 10 ** 27;
+    uint256 internal constant RAD     = 10 ** 45;
 
     // Change clip parameters
     function collateralAuctionParameterChanges(
