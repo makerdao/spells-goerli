@@ -24,11 +24,13 @@ import "dss-exec-lib/DssAction.sol";
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
-
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
-    uint256 internal constant MILLION = 10 ** 6;
+    // Turn office hours off
+    function officeHours() public override returns (bool) {
+        return false;
+    }
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -39,11 +41,12 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // A table of rates can be found at
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
+    // --- Rates ---
     uint256 internal constant ONE_FIVE_PCT_RATE = 1000000000472114805215157978; 
+    // --- Math ---
+    uint256 internal constant MILLION = 10 ** 6;
 
-    function officeHours() public override returns (bool) {
-        return false;
-    }
+    
 
     function actions() public override {
 
@@ -113,7 +116,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         DssExecLib.setKeeperIncentiveFlatRate("LINK-A"          , 250);
         DssExecLib.setKeeperIncentiveFlatRate("MANA-A"          , 250);
         DssExecLib.setKeeperIncentiveFlatRate("MATIC-A"         , 250);
-        //DssExecLib.setKeeperIncentiveFlatRate("RENBTC-A"        , 250); // Not on Goerli
+        DssExecLib.setKeeperIncentiveFlatRate("RENBTC-A"        , 250); 
         DssExecLib.setKeeperIncentiveFlatRate("YFI-A"           , 250);
 
         // dog Hole change (Max concurrent global liquidation value)
@@ -125,7 +128,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // https://forum.makerdao.com/t/parameter-changes-proposal-ppg-omc-001-29-september-2022/18143
         
         // CRVV1ETHSTETH-A stability fee change (2.0% --> 1.5%) // Not on Goerli
-        //DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", ONE_FIVE_PCT_RATE, true);
+        //DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", ONE_FIVE_PCT_RATE, true); // Not on Goerli
         
         // YFI-A DC IAM line change (25M --> 10M)
         DssExecLib.setIlkAutoLineDebtCeiling("YFI-A" , 10 * MILLION);
