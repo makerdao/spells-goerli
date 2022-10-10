@@ -44,17 +44,17 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     function actions() public override {
         // ---------------------------------------------------------------------
-        // Includes changes from the DssSpellCollateralAction
 
-        // Auction parameter changes (ilk-specific and system-wide)
+        // Collateral Auction Parameter Changes
         // https://vote.makerdao.com/polling/QmREbu1j#vote-breakdown
-        onboardNewCollaterals();
-
-        // MOMC parameter changes
-        // https://vote.makerdao.com/polling/QmbLyNUd#vote-breakdown
+        // https://forum.makerdao.com/t/collateral-auctions-analysis-parameter-updates-september-2022/18063
         
-        // TODO change CRVV1ETHSTETH-A stability fee // Not on Goerli
-        // TODO change YFI-A line 
+
+        // MOMC Parameter Changes
+        // https://vote.makerdao.com/polling/QmbLyNUd#vote-breakdown
+        // https://forum.makerdao.com/t/parameter-changes-proposal-ppg-omc-001-29-september-2022/18143
+        
+        // Delegate Compensation - September 2022 // Not on Goerli
 
     }
 }

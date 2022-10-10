@@ -78,6 +78,7 @@ contract DssSpellCollateralAction {
         Fileable(MCD_CLIP_MANA_A).file("buf", 120 * RAY / 100);
         Fileable(MCD_CLIP_MATIC_A).file("buf", 120 * RAY / 100);
         Fileable(MCD_CLIP_RENBTC_A).file("buf", 120 * RAY / 100);
+        //DssExecLib.setStartingPriceMultiplicativeFactor("ETH-A", 110_00);
         
         // cusp changes (Max asset drawdown)
         Fileable(MCD_CLIP_ETH_A   ).file("cusp", 45 * RAY / 100);
@@ -88,6 +89,7 @@ contract DssSpellCollateralAction {
         Fileable(MCD_CLIP_WBTC_C  ).file("cusp", 45 * RAY / 100);
         Fileable(MCD_CLIP_WSTETH_A).file("cusp", 45 * RAY / 100);
         Fileable(MCD_CLIP_WSTETH_B).file("cusp", 45 * RAY / 100);
+        //DssExecLib.setAuctionPermittedDrop("ETH-A", 45_00);
         
         // tail changes (Max auction duration to 7200)
         Fileable(MCD_CLIP_ETH_A   ).file("tail", 7200 seconds);
@@ -96,6 +98,7 @@ contract DssSpellCollateralAction {
         Fileable(MCD_CLIP_WBTC_C  ).file("tail", 7200 seconds);
         Fileable(MCD_CLIP_WSTETH_A).file("tail", 7200 seconds);
         Fileable(MCD_CLIP_WSTETH_B).file("tail", 7200 seconds);
+        //DssExecLib.setAuctionTimeBeforeReset("ETH-A", 7200 seconds);
 
         // tail changes (Max auction duration to 4800)
         Fileable(MCD_CLIP_ETH_B ).file("tail", 4800 seconds); 
@@ -110,6 +113,7 @@ contract DssSpellCollateralAction {
         Fileable(MCD_DOG).file("LINK-A"  , "hole",  3_000_000 * RAD);
         Fileable(MCD_DOG).file("YFI-A"   , "hole",  1_000_000 * RAD);
         Fileable(MCD_DOG).file("RENBTC-A", "hole",  2_000_000 * RAD);
+        //DssExecLib.setIlkMaxLiquidationAmount("ETH-A", 40 * MILLION);
 
         // tip changes 
         Fileable(MCD_CLIP_ETH_A   ).file("tip", 250 * RAD);
@@ -126,6 +130,7 @@ contract DssSpellCollateralAction {
         Fileable(MCD_CLIP_MATIC_A ).file("tip", 250 * RAD);
         Fileable(MCD_CLIP_RENBTC_A).file("tip", 250 * RAD);
         Fileable(MCD_CLIP_YFI_A   ).file("tip", 250 * RAD);
+        //DssExecLib.setKeeperIncentiveFlatRate("ETH-A",250);
 
     }
 
@@ -137,7 +142,8 @@ contract DssSpellCollateralAction {
         address MCD_DOG
     ) internal {
         // Reduce the Hole from 100,000,000 DAI to 70,000,000 DAI
-        dog. file("Hole", 70 * MILLION);
+        //dog.file("Hole", 70 * MILLION); //TODO this line as DssExecLib
+        DssExecLib.setMaxTotalDAILiquidationAmount(70 * MILLION);
     }
 
     function onboardNewCollaterals() internal {
