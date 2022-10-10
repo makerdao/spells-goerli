@@ -188,6 +188,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
+        // Insert new chainlog query tests here
+
         // RWA007
         checkChainlogKey("RWA007_A_JAR");
         checkChainlogKey("RWA007");
@@ -205,6 +207,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
+
+        // Insert new ilk registry query tests here
 
         // RWA007
         assertEq(reg.pos("RWA007-A"),    53);

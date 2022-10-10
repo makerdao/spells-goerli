@@ -45,7 +45,17 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     function actions() public override {
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
-        // onboardNewCollaterals();
+
+        // Auction parameter changes (ilk-specific and system-wide)
+        // https://vote.makerdao.com/polling/QmREbu1j#vote-breakdown
+        onboardNewCollaterals();
+
+        // MOMC parameter changes
+        // https://vote.makerdao.com/polling/QmbLyNUd#vote-breakdown
+        
+        // TODO change CRVV1ETHSTETH-A stability fee // Not on Goerli
+        // TODO change YFI-A line 
+
     }
 }
 

@@ -45,6 +45,9 @@ contract DssSpellCollateralAction {
         address MCD_DOG
     ) internal {
         
+        // Post: https://forum.makerdao.com/t/collateral-auctions-analysis-parameter-updates-september-2022/18063
+        // Vote: https://vote.makerdao.com/polling/QmREbu1j#vote-breakdown
+        
         // Load Clippers for ilks being modified
         address MCD_CLIP_ETH_A    = DssExecLib.getChangelogAddress("MCD_CLIP_ETH_A"); 
         address MCD_CLIP_ETH_B    = DssExecLib.getChangelogAddress("MCD_CLIP_ETH_B");
