@@ -46,20 +46,20 @@ contract DssSpellCollateralAction {
     ) internal {
         
         // Load Clippers for ilks being modified
-        address MCD_CLIP_ETH_A   = DssExecLib.getChangelogAddress("MCD_CLIP_ETH_A"); 
-        address MCD_CLIP_ETH_B   = DssExecLib.getChangelogAddress("MCD_CLIP_ETH_B");
-        address MCD_CLIP_ETH_C   = DssExecLib.getChangelogAddress("MCD_CLIP_ETH_C");
+        address MCD_CLIP_ETH_A    = DssExecLib.getChangelogAddress("MCD_CLIP_ETH_A"); 
+        address MCD_CLIP_ETH_B    = DssExecLib.getChangelogAddress("MCD_CLIP_ETH_B");
+        address MCD_CLIP_ETH_C    = DssExecLib.getChangelogAddress("MCD_CLIP_ETH_C");
         address MCD_CLIP_WBTC_A   = DssExecLib.getChangelogAddress("MCD_CLIP_WBTC_A");
         address MCD_CLIP_WBTC_B   = DssExecLib.getChangelogAddress("MCD_CLIP_WBTC_B");
         address MCD_CLIP_WBTC_C   = DssExecLib.getChangelogAddress("MCD_CLIP_WBTC_C");
-        address MCD_CLIP_WSTETH_A   = DssExecLib.getChangelogAddress("MCD_CLIP_WSTETH_A");
-        address MCD_CLIP_WSTETH_B   = DssExecLib.getChangelogAddress("MCD_CLIP_WSTETH_B");
+        address MCD_CLIP_WSTETH_A = DssExecLib.getChangelogAddress("MCD_CLIP_WSTETH_A");
+        address MCD_CLIP_WSTETH_B = DssExecLib.getChangelogAddress("MCD_CLIP_WSTETH_B");
         // address MCD_CLIP_CRVV1ETHSTETH_A   = DssExecLib.getChangelogAddress("MCD_CLIP_CRVV1ETHSTETH_A"); // Not on Goerli
         address MCD_CLIP_LINK_A   = DssExecLib.getChangelogAddress("MCD_CLIP_LINK_A");
         address MCD_CLIP_MANA_A   = DssExecLib.getChangelogAddress("MCD_CLIP_MANA_A");
-        address MCD_CLIP_MATIC_A   = DssExecLib.getChangelogAddress("MCD_CLIP_MATIC_A");
-        address MCD_CLIP_RENBTC_A   = DssExecLib.getChangelogAddress("MCD_CLIP_RENBTC_A");
-        address MCD_CLIP_YFI_A   = DssExecLib.getChangelogAddress("MCD_CLIP_YFI_A");
+        address MCD_CLIP_MATIC_A  = DssExecLib.getChangelogAddress("MCD_CLIP_MATIC_A");
+        address MCD_CLIP_RENBTC_A = DssExecLib.getChangelogAddress("MCD_CLIP_RENBTC_A");
+        address MCD_CLIP_YFI_A    = DssExecLib.getChangelogAddress("MCD_CLIP_YFI_A");
 
         // buf changes (Auction price multiplier)
         Fileable(MCD_CLIP_ETH_A).file("buf", 110 * RAY / 100);
