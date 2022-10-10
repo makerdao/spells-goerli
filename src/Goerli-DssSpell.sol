@@ -37,7 +37,7 @@ contract DssSpellAction is DssAction {
     // A table of rates can be found at
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
-    
+    uint256 internal constant ONE_POINT_FIVE_PCT = 1.000000000472114805215157978; 
 
     function officeHours() public override returns (bool) {
         return false;
@@ -94,7 +94,6 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkMaxLiquidationAmount("LINK-A",   3 * MILLION);
         DssExecLib.setIlkMaxLiquidationAmount("YFI-A",    1 * MILLION);
         DssExecLib.setIlkMaxLiquidationAmount("RENBTC-A", 2 * MILLION);
-        //
 
         // tip changes (Max keeper incentive in DAI)
         DssExecLib.setKeeperIncentiveFlatRate("ETH-A",           250);
@@ -119,6 +118,12 @@ contract DssSpellAction is DssAction {
         // MOMC Parameter Changes
         // https://vote.makerdao.com/polling/QmbLyNUd#vote-breakdown
         // https://forum.makerdao.com/t/parameter-changes-proposal-ppg-omc-001-29-september-2022/18143
+        
+        // CRVV1ETHSTETH-A stability fee change (2.0% --> 1.5%)
+        DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", ONE_POINT_FIVE_PCT, true);
+        
+        // YFI-A line change (Decrease from 25M to 10M, so a 15M decrease)
+        DssExecLib.decreaseIlkDebtCeiling("YFI-A", 15 * MILLION, true);
         
         // ---------------------------------------------------------------------
         // Delegate Compensation - September 2022 // Not on Goerli
