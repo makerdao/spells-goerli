@@ -21,6 +21,8 @@ pragma solidity 0.6.12;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
+import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
+
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     // Provides a descriptive tag for bot consumption
