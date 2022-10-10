@@ -77,50 +77,52 @@ contract DssSpellCollateralAction {
         Fileable(MCD_CLIP_RENBTC_A).file("buf", 120 * RAY / 100);
         
         // cusp changes (Max asset drawdown)
-        Fileable(MCD_CLIP_ETH_A).file("cusp", 45 * RAY / 100);
-        Fileable(MCD_CLIP_ETH_B).file("cusp", 45 * RAY / 100);
-        Fileable(MCD_CLIP_ETH_C).file("cusp", 45 * RAY / 100);
-        Fileable(MCD_CLIP_WBTC_A).file("cusp", 45 * RAY / 100);
-        Fileable(MCD_CLIP_WBTC_B).file("cusp", 45 * RAY / 100);
-        Fileable(MCD_CLIP_WBTC_C).file("cusp", 45 * RAY / 100);
+        Fileable(MCD_CLIP_ETH_A   ).file("cusp", 45 * RAY / 100);
+        Fileable(MCD_CLIP_ETH_B   ).file("cusp", 45 * RAY / 100);
+        Fileable(MCD_CLIP_ETH_C   ).file("cusp", 45 * RAY / 100);
+        Fileable(MCD_CLIP_WBTC_A  ).file("cusp", 45 * RAY / 100);
+        Fileable(MCD_CLIP_WBTC_B  ).file("cusp", 45 * RAY / 100);
+        Fileable(MCD_CLIP_WBTC_C  ).file("cusp", 45 * RAY / 100);
         Fileable(MCD_CLIP_WSTETH_A).file("cusp", 45 * RAY / 100);
         Fileable(MCD_CLIP_WSTETH_B).file("cusp", 45 * RAY / 100);
         
-        // tail changes (Max auction duration)
-        Fileable(MCD_CLIP_ETH_A).file("tail", 7200 seconds);
-        Fileable(MCD_CLIP_ETH_C).file("tail", 7200 seconds);
-        Fileable(MCD_CLIP_WBTC_A).file("tail", 7200 seconds);
+        // tail changes (Max auction duration to 7200)
+        Fileable(MCD_CLIP_ETH_A   ).file("tail", 7200 seconds);
+        Fileable(MCD_CLIP_ETH_C   ).file("tail", 7200 seconds);
+        Fileable(MCD_CLIP_WBTC_A  ).file("tail", 7200 seconds);
+        Fileable(MCD_CLIP_WBTC_C  ).file("tail", 7200 seconds);
         Fileable(MCD_CLIP_WSTETH_A).file("tail", 7200 seconds);
         Fileable(MCD_CLIP_WSTETH_B).file("tail", 7200 seconds);
-        Fileable(MCD_CLIP_ETH_B).file("tail", 4800 seconds); 
+
+        // tail changes (Max auction duration to 4800)
+        Fileable(MCD_CLIP_ETH_B ).file("tail", 4800 seconds); 
         Fileable(MCD_CLIP_WBTC_B).file("tail", 4800 seconds);
-        Fileable(MCD_CLIP_WBTC_C).file("tail", 7200 seconds);
         
         // dog.hole changes (ilk.hole)
-        Fileable(MCD_DOG).file("ETH-A", "hole", 40_000_000 * RAD);
-        Fileable(MCD_DOG).file("ETH-B", "hole", 15_000_000 * RAD);
-        Fileable(MCD_DOG).file("WBTC-A", "hole", 30_000_000 * RAD);
-        Fileable(MCD_DOG).file("WBTC-B", "hole", 10_000_000 * RAD);
-        Fileable(MCD_DOG).file("WBTC-C", "hole", 20_000_000 * RAD);
-        Fileable(MCD_DOG).file("LINK-A", "hole", 3_000_000 * RAD);
-        Fileable(MCD_DOG).file("YFI-A", "hole", 1_000_000 * RAD);
-        Fileable(MCD_DOG).file("RENBTC-A", "hole", 2_000_000 * RAD);
+        Fileable(MCD_DOG).file("ETH-A"   , "hole", 40_000_000 * RAD);
+        Fileable(MCD_DOG).file("ETH-B"   , "hole", 15_000_000 * RAD);
+        Fileable(MCD_DOG).file("WBTC-A"  , "hole", 30_000_000 * RAD);
+        Fileable(MCD_DOG).file("WBTC-B"  , "hole", 10_000_000 * RAD);
+        Fileable(MCD_DOG).file("WBTC-C"  , "hole", 20_000_000 * RAD);
+        Fileable(MCD_DOG).file("LINK-A"  , "hole",  3_000_000 * RAD);
+        Fileable(MCD_DOG).file("YFI-A"   , "hole",  1_000_000 * RAD);
+        Fileable(MCD_DOG).file("RENBTC-A", "hole",  2_000_000 * RAD);
 
         // tip changes 
-        Fileable(MCD_CLIP_ETH_A).file("tip", 250 * RAD);
-        Fileable(MCD_CLIP_ETH_B).file("tip", 250 * RAD);
-        Fileable(MCD_CLIP_ETH_C).file("tip", 250 * RAD);
-        Fileable(MCD_CLIP_WBTC_A).file("tip", 250 * RAD);
-        Fileable(MCD_CLIP_WBTC_B).file("tip", 250 * RAD);
-        Fileable(MCD_CLIP_WBTC_C).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_ETH_A   ).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_ETH_B   ).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_ETH_C   ).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_WBTC_A  ).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_WBTC_B  ).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_WBTC_C  ).file("tip", 250 * RAD);
         Fileable(MCD_CLIP_WSTETH_A).file("tip", 250 * RAD);
         Fileable(MCD_CLIP_WSTETH_B).file("tip", 250 * RAD);
         //Fileable(MCD_CLIP_CRVV1ETHSTETH_A).file("tip", 250 * RAD); // Not on Goerli
-        Fileable(MCD_CLIP_LINK_A).file("tip", 250 * RAD);
-        Fileable(MCD_CLIP_MANA_A).file("tip", 250 * RAD);
-        Fileable(MCD_CLIP_MATIC_A).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_LINK_A  ).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_MANA_A  ).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_MATIC_A ).file("tip", 250 * RAD);
         Fileable(MCD_CLIP_RENBTC_A).file("tip", 250 * RAD);
-        Fileable(MCD_CLIP_YFI_A).file("tip", 250 * RAD);
+        Fileable(MCD_CLIP_YFI_A   ).file("tip", 250 * RAD);
 
     }
 
