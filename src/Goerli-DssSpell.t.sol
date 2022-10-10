@@ -188,19 +188,9 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // Insert new chainlog query tests here
-
-        // RWA007
-        checkChainlogKey("RWA007_A_JAR");
-        checkChainlogKey("RWA007");
-        checkChainlogKey("MCD_JOIN_RWA007_A");
-        checkChainlogKey("RWA007_A_URN");
-        checkChainlogKey("RWA007_A_INPUT_CONDUIT_URN");
-        checkChainlogKey("RWA007_A_INPUT_CONDUIT_JAR");
-        checkChainlogKey("RWA007_A_OUTPUT_CONDUIT");
-        checkChainlogKey("PIP_RWA007");
-
-        checkChainlogVersion("1.14.2");
+        // Insert new chainlog values tests here
+        // checkChainlogKey("MCD_JOIN_TELEPORT_FW_A");
+        // checkChainlogVersion("1.14.0");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
@@ -208,17 +198,16 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // Insert new ilk registry query tests here
-
-        // RWA007
-        assertEq(reg.pos("RWA007-A"),    53);
-        assertEq(reg.join("RWA007-A"),   addr.addr("MCD_JOIN_RWA007_A"));
-        assertEq(reg.gem("RWA007-A"),    addr.addr("RWA007"));
-        assertEq(reg.dec("RWA007-A"),    GemAbstract(addr.addr("RWA007")).decimals());
-        assertEq(reg.class("RWA007-A"),  3);
-        assertEq(reg.pip("RWA007-A"),    addr.addr("PIP_RWA007"));
-        assertEq(reg.name("RWA007-A"),   "RWA007-A: Monetalis Clydesdale");
-        assertEq(reg.symbol("RWA007-A"), GemAbstract(addr.addr("RWA007")).symbol());
+        // Insert new ilk registry values tests here
+        // assertEq(reg.pos("TELEPORT-FW-A"), 52);
+        // assertEq(reg.join("TELEPORT-FW-A"), addr.addr("MCD_JOIN_TELEPORT_FW_A"));
+        // assertEq(reg.gem("TELEPORT-FW-A"), address(0));
+        // assertEq(reg.dec("TELEPORT-FW-A"), 0);
+        // assertEq(reg.class("TELEPORT-FW-A"), 4);
+        // assertEq(reg.pip("TELEPORT-FW-A"), address(0));
+        // assertEq(reg.xlip("TELEPORT-FW-A"), address(0));
+        // assertEq(reg.name("TELEPORT-FW-A"), "");
+        // assertEq(reg.symbol("TELEPORT-FW-A"), "");
     }
 
     function testFailWrongDay() public {
