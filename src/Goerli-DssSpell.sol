@@ -37,7 +37,7 @@ contract DssSpellAction is DssAction {
     // A table of rates can be found at
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
-    uint256 internal constant ONE_POINT_FIVE_PCT = 1.000000000472114805215157978; 
+    uint256 internal constant ONE_POINT_FIVE_PCT = 1000000000472114805215157978; 
 
     function officeHours() public override returns (bool) {
         return false;
@@ -122,9 +122,9 @@ contract DssSpellAction is DssAction {
         // CRVV1ETHSTETH-A stability fee change (2.0% --> 1.5%)
         DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", ONE_POINT_FIVE_PCT, true);
         
-        // YFI-A line change (Decrease from 25M to 10M, so a 15M decrease)
-        DssExecLib.decreaseIlkDebtCeiling("YFI-A", 15 * MILLION, true);
-        
+        // YFI-A DC IAM line change (25M --> 10M)
+        DssExecLib.setIlkAutoLineDebtCeiling("YFI-A", 10 * MILLION);
+
         // ---------------------------------------------------------------------
         // Delegate Compensation - September 2022 // Not on Goerli
 
