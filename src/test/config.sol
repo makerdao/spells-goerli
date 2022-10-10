@@ -712,7 +712,7 @@ contract Config {
         });
         afterSpell.collaterals["YFI-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      25 * MILLION,
+            aL_line:      10 * MILLION,
             aL_gap:       7 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
