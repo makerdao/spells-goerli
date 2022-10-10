@@ -19,8 +19,6 @@ pragma solidity 0.6.12;
 // pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExecLib.sol";
-//import "dss-interfaces/dss/DogAbstract.sol";  TODO remove
-//import "dss-interfaces/dss/ClipAbstract.sol";  TODO remove
 
 
 
