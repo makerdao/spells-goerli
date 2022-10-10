@@ -21,12 +21,12 @@ pragma solidity 0.6.12;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
-
-contract DssSpellAction is DssAction, DssSpellCollateralAction {
+contract DssSpellAction is DssAction {
 
     // Provides a descriptive tag for bot consumption
-    string public constant override description = "Goerli Spell";
+    string public constant override description = "Goerli Spell"; //TODO add Exec Hash
+
+    uint256 internal constant MILLION = 10 ** 6;
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -37,25 +37,93 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // A table of rates can be found at
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
+    
 
     function officeHours() public override returns (bool) {
         return false;
     }
 
     function actions() public override {
-        // ---------------------------------------------------------------------
 
+        // ---------------------------------------------------------------------
         // Collateral Auction Parameter Changes
         // https://vote.makerdao.com/polling/QmREbu1j#vote-breakdown
         // https://forum.makerdao.com/t/collateral-auctions-analysis-parameter-updates-september-2022/18063
         
+        // buf changes (Starting auction price multiplier)
+        DssExecLib.setStartingPriceMultiplicativeFactor("ETH-A"          , 110_00);
+        DssExecLib.setStartingPriceMultiplicativeFactor("ETH-B"          , 110_00);
+        DssExecLib.setStartingPriceMultiplicativeFactor("ETH-C"          , 110_00);
+        DssExecLib.setStartingPriceMultiplicativeFactor("WBTC-A"         , 110_00);
+        DssExecLib.setStartingPriceMultiplicativeFactor("WBTC-B"         , 110_00);
+        DssExecLib.setStartingPriceMultiplicativeFactor("WBTC-C"         , 110_00);
+        DssExecLib.setStartingPriceMultiplicativeFactor("WSTETH-A"       , 110_00);
+        DssExecLib.setStartingPriceMultiplicativeFactor("WSTETH-B"       , 110_00);
+        //DssExecLib.setStartingPriceMultiplicativeFactor("CRVV1ETHSTETH-A", 120_00); // Not on Goerli
+        DssExecLib.setStartingPriceMultiplicativeFactor("LINK-A"         , 120_00);
+        DssExecLib.setStartingPriceMultiplicativeFactor("MANA-A"         , 120_00);
+        DssExecLib.setStartingPriceMultiplicativeFactor("MATIC-A"        , 120_00);
+        DssExecLib.setStartingPriceMultiplicativeFactor("RENBTC-A"       , 120_00);
+        
+        // cusp changes (Max percentage drop permitted before auction reset)
+        DssExecLib.setAuctionPermittedDrop("ETH-A"    , 45_00);
+        DssExecLib.setAuctionPermittedDrop("ETH-B"    , 45_00);
+        DssExecLib.setAuctionPermittedDrop("ETH-C"    , 45_00);
+        DssExecLib.setAuctionPermittedDrop("WBTC-A"   , 45_00);
+        DssExecLib.setAuctionPermittedDrop("WBTC-B"   , 45_00);
+        DssExecLib.setAuctionPermittedDrop("WBTC-C"   , 45_00);
+        DssExecLib.setAuctionPermittedDrop("WSTETH-A" , 45_00);
+        DssExecLib.setAuctionPermittedDrop("WSTETH-B" , 45_00);
+        
+        // tail changes (Max auction duration)
+        DssExecLib.setAuctionTimeBeforeReset("ETH-A",    7200 seconds);
+        DssExecLib.setAuctionTimeBeforeReset("ETH-C",    7200 seconds);
+        DssExecLib.setAuctionTimeBeforeReset("WBTC-A",   7200 seconds);
+        DssExecLib.setAuctionTimeBeforeReset("WBTC-B",   7200 seconds);
+        DssExecLib.setAuctionTimeBeforeReset("WSTETH-A", 7200 seconds);
+        DssExecLib.setAuctionTimeBeforeReset("WSTETH-B", 7200 seconds);
+        DssExecLib.setAuctionTimeBeforeReset("ETH-B",    4800 seconds);
+        DssExecLib.setAuctionTimeBeforeReset("WBTC-B",   4800 seconds);
+        
+        // ilk hole changes (Max concurrent liquidation amount for an ilk)
+        DssExecLib.setIlkMaxLiquidationAmount("ETH-A",    40 * MILLION);
+        DssExecLib.setIlkMaxLiquidationAmount("ETH-B",    15 * MILLION);
+        DssExecLib.setIlkMaxLiquidationAmount("WBTC-A",   30 * MILLION);
+        DssExecLib.setIlkMaxLiquidationAmount("WBTC-B",   10 * MILLION);
+        DssExecLib.setIlkMaxLiquidationAmount("WBTC-C",   20 * MILLION);
+        DssExecLib.setIlkMaxLiquidationAmount("LINK-A",   3 * MILLION);
+        DssExecLib.setIlkMaxLiquidationAmount("YFI-A",    1 * MILLION);
+        DssExecLib.setIlkMaxLiquidationAmount("RENBTC-A", 2 * MILLION);
+        //
 
+        // tip changes (Max keeper incentive in DAI)
+        DssExecLib.setKeeperIncentiveFlatRate("ETH-A",           250);
+        DssExecLib.setKeeperIncentiveFlatRate("ETH-B",           250);
+        DssExecLib.setKeeperIncentiveFlatRate("ETH-C",           250);
+        DssExecLib.setKeeperIncentiveFlatRate("WBTC-A",          250);
+        DssExecLib.setKeeperIncentiveFlatRate("WBTC-B",          250);
+        DssExecLib.setKeeperIncentiveFlatRate("WBTC-C",          250);
+        DssExecLib.setKeeperIncentiveFlatRate("WSTETH-A",        250);
+        DssExecLib.setKeeperIncentiveFlatRate("WSTETH-B",        250);
+        //DssExecLib.setKeeperIncentiveFlatRate("CRVV1ETHSTETH-A", 250); // Not on Goerli
+        DssExecLib.setKeeperIncentiveFlatRate("LINK-A",          250);
+        DssExecLib.setKeeperIncentiveFlatRate("MANA-A",          250);
+        DssExecLib.setKeeperIncentiveFlatRate("MATIC-A",         250);
+        DssExecLib.setKeeperIncentiveFlatRate("RENBTC-A",        250);
+        DssExecLib.setKeeperIncentiveFlatRate("YFI-A",           250);
+
+        // dog Hole change
+        DssExecLib.setMaxTotalDAILiquidationAmount( 70 * MILLION);
+
+        // ---------------------------------------------------------------------
         // MOMC Parameter Changes
         // https://vote.makerdao.com/polling/QmbLyNUd#vote-breakdown
         // https://forum.makerdao.com/t/parameter-changes-proposal-ppg-omc-001-29-september-2022/18143
         
+        // ---------------------------------------------------------------------
         // Delegate Compensation - September 2022 // Not on Goerli
 
+        // ---------------------------------------------------------------------
     }
 }
 
