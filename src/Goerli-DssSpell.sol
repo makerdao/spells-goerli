@@ -91,7 +91,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         DssExecLib.setAuctionTimeBeforeReset("WSTETH-A" , 7200 seconds);
         DssExecLib.setAuctionTimeBeforeReset("WSTETH-B" , 7200 seconds);
         DssExecLib.setAuctionTimeBeforeReset("ETH-B"    , 4800 seconds);
-        DssExecLib.setAuctionTimeBeforeReset("WBTC-B"   ,  4800 seconds);
+        DssExecLib.setAuctionTimeBeforeReset("WBTC-B"   , 4800 seconds);
         
         // ilk hole changes (Max concurrent liquidation amount for an ilk)
         DssExecLib.setIlkMaxLiquidationAmount("ETH-A"    , 40 * MILLION);
