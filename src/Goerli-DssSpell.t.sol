@@ -189,8 +189,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        // checkChainlogKey("MCD_JOIN_TELEPORT_FW_A");
-        // checkChainlogVersion("1.14.0");
+        // checkChainlogKey("CONTRACT_KEY");
+        // checkChainlogVersion("X.XX.X");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
