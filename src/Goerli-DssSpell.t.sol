@@ -199,7 +199,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-                // assertEq(reg.pos("TOKEN-X"), 50);
+        // assertEq(reg.pos("TOKEN-X"), 50);
         // assertEq(reg.join("TOKEN-X"), addr.addr("MCD_JOIN_TOKEN_X"));
         // assertEq(reg.gem("TOKEN-X"), addr.addr("TOKEN"));
         // assertEq(reg.dec("TOKEN-X"), GemAbstract(addr.addr("TOKEN")).decimals());
