@@ -91,7 +91,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         DssExecLib.setAuctionTimeBeforeReset("WSTETH-A" , 7200 seconds);
         DssExecLib.setAuctionTimeBeforeReset("WSTETH-B" , 7200 seconds);
         DssExecLib.setAuctionTimeBeforeReset("ETH-B"    , 4800 seconds);
-        DssExecLib.setAuctionTimeBeforeReset("WBTC-B"   ,  4800 seconds);
+        DssExecLib.setAuctionTimeBeforeReset("WBTC-B"   , 4800 seconds);
         
         // ilk hole changes (Max concurrent liquidation amount for an ilk)
         DssExecLib.setIlkMaxLiquidationAmount("ETH-A"    , 40 * MILLION);
@@ -99,9 +99,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         DssExecLib.setIlkMaxLiquidationAmount("WBTC-A"   , 30 * MILLION);
         DssExecLib.setIlkMaxLiquidationAmount("WBTC-B"   , 10 * MILLION);
         DssExecLib.setIlkMaxLiquidationAmount("WBTC-C"   , 20 * MILLION);
-        DssExecLib.setIlkMaxLiquidationAmount("LINK-A"   , 3 * MILLION);
-        DssExecLib.setIlkMaxLiquidationAmount("YFI-A"    , 1 * MILLION);
-        DssExecLib.setIlkMaxLiquidationAmount("RENBTC-A" , 2 * MILLION);
+        DssExecLib.setIlkMaxLiquidationAmount("LINK-A"   ,  3 * MILLION);
+        DssExecLib.setIlkMaxLiquidationAmount("YFI-A"    ,  1 * MILLION);
+        DssExecLib.setIlkMaxLiquidationAmount("RENBTC-A" ,  2 * MILLION);
 
         // tip changes (Max keeper incentive in DAI)
         DssExecLib.setKeeperIncentiveFlatRate("ETH-A"           , 250);

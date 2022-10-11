@@ -189,8 +189,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        // checkChainlogKey("MCD_JOIN_TELEPORT_FW_A");
-        // checkChainlogVersion("1.14.0");
+        // checkChainlogKey("CONTRACT_KEY");
+        // checkChainlogVersion("X.XX.X");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
@@ -199,15 +199,15 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        // assertEq(reg.pos("TELEPORT-FW-A"), 52);
-        // assertEq(reg.join("TELEPORT-FW-A"), addr.addr("MCD_JOIN_TELEPORT_FW_A"));
-        // assertEq(reg.gem("TELEPORT-FW-A"), address(0));
-        // assertEq(reg.dec("TELEPORT-FW-A"), 0);
-        // assertEq(reg.class("TELEPORT-FW-A"), 4);
-        // assertEq(reg.pip("TELEPORT-FW-A"), address(0));
-        // assertEq(reg.xlip("TELEPORT-FW-A"), address(0));
-        // assertEq(reg.name("TELEPORT-FW-A"), "");
-        // assertEq(reg.symbol("TELEPORT-FW-A"), "");
+                // assertEq(reg.pos("TOKEN-X"), 50);
+        // assertEq(reg.join("TOKEN-X"), addr.addr("MCD_JOIN_TOKEN_X"));
+        // assertEq(reg.gem("TOKEN-X"), addr.addr("TOKEN"));
+        // assertEq(reg.dec("TOKEN-X"), GemAbstract(addr.addr("TOKEN")).decimals());
+        // assertEq(reg.class("TOKEN-X"), 3);
+        // assertEq(reg.pip("TOKEN-X"), addr.addr("PIP_TOKEN"));
+        // assertEq(reg.xlip("TOKEN-X"), address(0));
+        // assertEq(reg.name("TOKEN-X"), "NAME");
+        // assertEq(reg.symbol("TOKEN-X"), "SYMBOL");
     }
 
     function testFailWrongDay() public {
