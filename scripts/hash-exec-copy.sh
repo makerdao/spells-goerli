@@ -10,12 +10,15 @@ do
 
     case "$KEY" in
             url)      URL="$VALUE" ;;
-            *)        URL="$KEY" 
+            *)        exit 1
     esac
 done
 
-if ! [[ -x "$(command -v wget)" ]]; then
-    cast keccak -- "$(curl "$URL" -o - 2>/dev/null)"
-else   
+if [[ -x "$(command -v wget)" ]]; then
     cast keccak -- "$(wget "$URL" -q -O - 2>/dev/null)"
+elif [[ -x "$(command -v curl)" ]]; then
+    cast keccak -- "$(curl "$URL" -o - 2>/dev/null)"
+else
+    echo "Please install either wget or curl";
+    exit 1;
 fi
