@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-[[ "$1" =~ https://raw.githubusercontent.com/makerdao/community/* ]] || { echo "Please provide the correct exec copy link to hash (e.g. https://raw.githubusercontent.com/makerdao/community/...)"; exit 1; }
+[[ "$1" =~ https://raw.githubusercontent.com/makerdao/community/* ]] || { echo "Please provide the correct exec copy link to hash (e.g. url=https://raw.githubusercontent.com/makerdao/community/...)"; exit 1; }
 
 for ARGUMENT in "$@"
 do
