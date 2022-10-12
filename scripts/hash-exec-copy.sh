@@ -10,7 +10,7 @@ do
 
     case "$KEY" in
             url)      URL="$VALUE" ;;
-            *)        exit 1
+            *)        URL="$VALUE"
     esac
 done
 
