@@ -1,12 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-[[ "$1" =~ https://raw.githubusercontent.com/makerdao/community/* ]] || { echo "Please provide the correct exec copy link to hash (e.g. url=https://raw.githubusercontent.com/makerdao/community/...)"; exit 1; }
+URL=$(echo "$1" | cut -f2 -d=)
 
-for ARGUMENT in "$@"
-do
-    URL=$(echo "$ARGUMENT" | cut -f2 -d=)
-done
+[[ "$URL" == https://raw.githubusercontent.com/makerdao/community/*/governance/votes/*.md ]] || { echo "Please provide the correct exec copy link to hash (e.g. url=https://raw.githubusercontent.com/makerdao/community/<commit>/governance/votes/*.md)"; exit 1; }
 
 if [[ -x "$(command -v wget)" ]]; then
     cast keccak -- "$(wget "$URL" -q -O - 2>/dev/null)"
