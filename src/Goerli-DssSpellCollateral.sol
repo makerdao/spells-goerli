@@ -52,6 +52,7 @@ contract DssSpellCollateralAction {
         // ------------------------------- Collateral updates -------------------------------
 
         // Enable autoline for MIP65
+        // https://forum.makerdao.com/t/rwa007-mip65-monetalis-clydesdale-ces-domain-team-assessment/17787
         DssExecLib.setIlkAutoLineParameters(
             RWA007_A,
             RWA007_A_AUTOLINE_AMOUNT,
