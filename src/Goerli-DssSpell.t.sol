@@ -20,7 +20,10 @@ import "./Goerli-DssSpell.t.base.sol";
 
 interface DssExecLike {
     function action() external returns (address);
+}
 
+interface DssPsmLike {
+    function tout() external view returns (uint256);
 }
 
 contract DssSpellTest is GoerliDssSpellTestBase {
@@ -113,6 +116,17 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkSystemValues(afterSpell);
 
         checkCollateralValues(afterSpell);
+    }
+
+    function testSpellIsCast_PSM_GUSD_A_tout() public {
+        DssPsmLike psmPSMGUSD = DssPsmLike(addr.addr("MCD_PSM_GUSD_A"));
+        assertEq(psmPSMGUSD.tout(), 0);
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(psmPSMGUSD.tout(), 2000000000000000);
     }
 
     function testRemoveChainlogValues() private { // make public to use
