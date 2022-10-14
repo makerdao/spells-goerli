@@ -53,8 +53,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // ---------------------------------------------------------------------
         // Includes changes from the 
         // onboardCollaterals();
-        // offboardCollaterals();
         updateCollaterals();
+        // offboardCollaterals();
     }
 }
 
