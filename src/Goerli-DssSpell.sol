@@ -52,8 +52,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     function actions() public override {
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
-        // onboardCollaterals();
-        // offboardCollaterals();
+        updateCollaterals();
     }
 }
 
