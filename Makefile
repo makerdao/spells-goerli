@@ -8,6 +8,7 @@ test-forge         :; ./scripts/test-dssspell-forge.sh match="$(match)" block="$
 estimate           :; ./scripts/estimate-deploy-gas.sh
 deploy             :; ./scripts/deploy.sh
 deploy-stamp       :; ./scripts/get-created-timestamp.sh tx=$(tx)
+deploy-stamp-forge :; ./scripts/get-created-timestamp-forge.sh tx=$(tx)
 flatten            :; hevm flatten --source-file "src/Goerli-DssSpell.sol" > out/flat.sol
 cast-spell         :; ./scripts/cast-dssspell.sh $(spell)
 archive-spell      :; ./scripts/archive-dssspell.sh "$(if $(date),$(date),$(shell date +'%Y-%m-%d'))"
