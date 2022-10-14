@@ -45,7 +45,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // uint256 constant THREE_PCT_RATE          = 1000000000937303470807876289;
 
     // --- Math ---
-    // uint256 internal constant MILLION = 10 ** 6;
+    uint256 internal constant WAD     = 10 ** 18;
+    uint256 internal constant MILLION = 10 **  6;
 
 
 
@@ -54,6 +55,18 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // Includes changes from the DssSpellCollateralAction
         // onboardCollaterals();
         // offboardCollaterals();
+
+        // ---------------------------------------------------------------------
+        // Vote: https://vote.makerdao.com/polling/QmYffkvR#poll-detail
+        // Forum: https://forum.makerdao.com/t/signal-request-change-psm-gusd-a-parameters/18142
+        address MCD_PSM_GUSD_A = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
+        DssExecLib.setIlkAutoLineParameters({
+            _ilk:    "PSM-GUSD-A",
+            _amount: 500 * MILLION,
+            _gap:    50 * MILLION,
+            _ttl:    24 hours
+        });
+        DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 2 * WAD / 1000);
     }
 }
 
