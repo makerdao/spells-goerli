@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
+pragma experimental ABIEncoderV2;
 
 import "./Goerli-DssSpell.t.base.sol";
 
@@ -114,6 +115,17 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
+    // function testSpellIsCast_PSM_GUSD_A_tout() public {
+    //     DssPsmLike psmPSMGUSD = DssPsmLike(addr.addr("MCD_PSM_GUSD_A"));
+    //     assertEq(psmPSMGUSD.tout(), 0);
+
+    //     vote(address(spell));
+    //     scheduleWaitAndCast(address(spell));
+    //     assertTrue(spell.done());
+
+    //     assertEq(psmPSMGUSD.tout(), 2000000000000000);
+    // }
+
     function testRemoveChainlogValues() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
@@ -135,15 +147,15 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new collateral tests here
-        // checkIlkIntegration(
-        //     "TOKEN-X",
-        //     GemJoinAbstract(addr.addr("MCD_JOIN_TOKEN_X")),
-        //     ClipAbstract(addr.addr("MCD_CLIP_TOKEN_X")),
-        //     addr.addr("PIP_TOKEN"),
-        //     true,
-        //     true,
-        //     false
-        // );
+        checkIlkIntegration(
+            "RETH-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
+            addr.addr("PIP_RETH"),
+            true,
+            true,
+            false
+        );
     }
 
     function testIlkClipper() private { // make public to use
