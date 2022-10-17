@@ -64,7 +64,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
             _gap:    50 * MILLION,
             _ttl:    24 hours
         });
-        DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 2 * WAD / 1000);
+        DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 20 * WAD / 100_00);
     }
 }
 
