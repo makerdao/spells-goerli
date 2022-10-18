@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
-// Enable ABIEncoderV2 when onboarding collateral
+// Enable ABIEncoderV2 when onboarding collateral through `DssExecLib.addNewCollateral()`
 pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
@@ -72,6 +72,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
         onboardCollaterals();
+        // updateCollaterals();
         // offboardCollaterals();
         DssExecLib.setChangelogVersion("1.14.4");
     }

@@ -125,10 +125,10 @@ contract Config {
             cat_box:               20 * MILLION,            // In whole Dai units
             dog_Hole:              70 * MILLION,            // In whole Dai units
             esm_min:               150 * THOUSAND,          // In whole MKR units
-            pause_authority:       chief,                 // Pause authority
-            osm_mom_authority:     chief,                 // OsmMom authority
-            flipper_mom_authority: chief,                 // FlipperMom authority
-            clipper_mom_authority: chief,                 // ClipperMom authority
+            pause_authority:       chief,                   // Pause authority
+            osm_mom_authority:     chief,                   // OsmMom authority
+            flipper_mom_authority: chief,                   // FlipperMom authority
+            clipper_mom_authority: chief,                   // ClipperMom authority
             ilk_count:             55                       // Num expected in system
         });
 
