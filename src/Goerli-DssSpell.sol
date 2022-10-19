@@ -51,7 +51,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // rETH Onboarding
         // https://vote.makerdao.com/polling/QmfMswF2#poll-detail 
         // https://vote.makerdao.com/polling/QmS7dBuQ#poll-detail 
-        // 
+        // https://forum.makerdao.com/t/reth-collateral-onboarding-risk-evaluation/15286
 
         // Forum
 
