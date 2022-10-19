@@ -43,12 +43,31 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     //
 
     // --- Rates ---
-    // uint256 constant THREE_PCT_RATE          = 1000000000937303470807876289;
 
     // --- Math ---
-    // uint256 constant MILLION = 10**6;
 
     function actions() public override {
+        // ---------------------------------------------------------------------
+        // rETH Onboarding
+        // https://vote.makerdao.com/polling/QmfMswF2#poll-detail 
+        // https://vote.makerdao.com/polling/QmS7dBuQ#poll-detail 
+        // 
+
+        // Forum
+
+        // Liquidation Parameters
+        // Limits
+        // Incentives
+
+        // ---------------------------------------------------------------------
+        // Oracle Whitelisting
+        // https://vote.makerdao.com/polling/QmZzFPFs#poll-detail
+        // https://forum.makerdao.com/t/mip10c9-sp31-proposal-to-whitelist-oasis-app-on-rethusd-oracle/18195
+
+        // ---------------------------------------------------------------------
+        // Starknet Bridge Fee Upgrade
+        // TBD
+
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
         // onboardCollaterals();

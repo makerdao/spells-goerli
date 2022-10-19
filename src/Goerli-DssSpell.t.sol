@@ -22,10 +22,6 @@ interface DssExecLike {
     function action() external returns (address);
 }
 
-interface DssPsmLike {
-    function tout() external view returns (uint256);
-}
-
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
