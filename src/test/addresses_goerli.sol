@@ -362,10 +362,5 @@ contract Addresses {
         addr["ARBITRUM_DAI_BRIDGE"]             = 0x467194771dAe2967Aef3ECbEDD3Bf9a310C76C65;
         addr["ARBITRUM_ESCROW"]                 = 0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1;
         addr["ARBITRUM_GOV_RELAY"]              = 0x10E6593CDda8c58a1d0f14C5164B376352a55f2F;
-        addr["RETH"]                            = 0x62BC478FFC429161115A6E4090f819CE5C50A5d9;
-        addr["PIP_RETH"]                        = 0x27a25935D8b0006A97E11cAdDc2b3bf3a6721c13;
-        addr["MCD_JOIN_RETH_A"]                 = 0xDEF7D394a4eD62273265CE983107B3748F775265;
-        addr["MCD_CLIP_RETH_A"]                 = 0xBa496CB9637d56466dc112033BF28CC7EC544E3A;
-        addr["MCD_CLIP_CALC_RETH_A"]            = 0xC3A95477616c9Db6C772179e74a9A717E8B148a7;
     }
 }
