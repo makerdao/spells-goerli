@@ -17,9 +17,6 @@
 pragma solidity 0.6.12;
 
 import "dss-exec-lib/DssExecLib.sol";
-import "dss-interfaces/dss/GemJoinAbstract.sol";
-import "dss-interfaces/dss/IlkRegistryAbstract.sol";
-import "dss-interfaces/ERC/GemAbstract.sol";
 
 contract DssSpellCollateralAction {
 
@@ -77,7 +74,7 @@ contract DssSpellCollateralAction {
             })
         );
 
-        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_RETH_A, 90 seconds, 9900);
+        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_RETH_A, 90 seconds, 99_00);
         DssExecLib.setIlkAutoLineParameters("RETH-A", 5 * MILLION, 3 * MILLION, 8 hours);
         // ChainLog Updates
         // Add the new join, clip, and abacus to the Chainlog
