@@ -88,8 +88,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
         // Starknet Bridge Upgrade
         // https://github.com/makerdao/starknet-dai-bridge#upgrades
-
-
+        
         // close current bridge
         address currentStarknetDAIBridge = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");
         StarknetBridgeLike(currentStarknetDAIBridge).close();
@@ -101,6 +100,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         StarknetEscrowLike(starknetEscrow).approve(dai, NEW_STARKNET_DAI_BRIDGE, type(uint).max);
 
         // relay l2 spell
+        // See: https://goerli.voyager.online/contract/0x04363a4e51a9d2eaccef7a7ef5f0c8872f8183db2179802c0907f547c87864fc#code
         address starknetGovRelay = DssExecLib.getChangelogAddress("STARKNET_GOV_RELAY");
         uint256 L2_FEE_SPELL = 0x04363a4e51a9d2eaccef7a7ef5f0c8872f8183db2179802c0907f547c87864fc;
         StarknetGovRelayLike(starknetGovRelay).relay(L2_FEE_SPELL);
