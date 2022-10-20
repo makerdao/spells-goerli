@@ -16,7 +16,7 @@
 
 pragma solidity 0.6.12;
 // Enable ABIEncoderV2 when onboarding collateral through `DssExecLib.addNewCollateral()`
-// pragma experimental ABIEncoderV2;
+pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
@@ -45,15 +45,16 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // --- Rates ---
 
     // --- Math ---
+    // uint256 internal constant WAD = 10 ** 18;
 
     function actions() public override {
         // ---------------------------------------------------------------------
         // rETH Onboarding
         // https://vote.makerdao.com/polling/QmfMswF2#poll-detail 
         // https://vote.makerdao.com/polling/QmS7dBuQ#poll-detail 
-        // https://forum.makerdao.com/t/reth-collateral-onboarding-risk-evaluation/15286
 
         // Forum
+        // https://forum.makerdao.com/t/reth-collateral-onboarding-risk-evaluation/15286
 
         // Liquidation Parameters
         // Limits
@@ -70,8 +71,10 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
         // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
-        // onboardCollaterals();
+        onboardCollaterals();
+        // updateCollaterals();
         // offboardCollaterals();
+        DssExecLib.setChangelogVersion("1.14.4");
     }
 }
 
