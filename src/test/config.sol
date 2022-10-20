@@ -1816,7 +1816,7 @@ contract Config {
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
-            calc_cut:     9900,
+            calc_cut:     99_00,
             lerp:         false
         });
     }
