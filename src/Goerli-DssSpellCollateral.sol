@@ -35,9 +35,9 @@ contract DssSpellCollateralAction {
     //
 
     // --- Math ---
-    uint256 constant MILLION  = 10 ** 6;
-    uint256 constant THOUSAND = 10 ** 3;
-    uint256 constant ONE_FIVE_PCT_RATE        = 1000000000472114805215157978;
+    uint256 internal constant MILLION  = 10 ** 6;
+    uint256 internal constant THOUSAND = 10 ** 3;
+    uint256 internal constant ONE_FIVE_PCT_RATE        = 1000000000472114805215157978;
 
     // --- DEPLOYED COLLATERAL ADDRESSES ---
     address constant RETH                     = 0x62BC478FFC429161115A6E4090f819CE5C50A5d9;
@@ -65,15 +65,15 @@ contract DssSpellCollateralAction {
                 ilkDebtCeiling:        5 * MILLION,
                 minVaultAmount:        15 * THOUSAND,                // debt floor - dust in DAI
                 maxLiquidationAmount:  2 * MILLION,
-                liquidationPenalty:    1300,                         // 13% penalty on liquidation
+                liquidationPenalty:    13_00,                        // 13% penalty on liquidation
                 ilkStabilityFee:       ONE_FIVE_PCT_RATE,            // 1.50% stability fee
-                startingPriceFactor:   11000,                        // Auction price begins at 110% of oracle price
-                breakerTolerance:      5000,                         // Allows for a 50% hourly price drop before disabling liquidation
+                startingPriceFactor:   110_00,                       // Auction price begins at 110% of oracle price
+                breakerTolerance:      50_00,                        // Allows for a 50% hourly price drop before disabling liquidation
                 auctionDuration:       120 minutes,
-                permittedDrop:         4500,                         // 45% price drop before reset
-                liquidationRatio:      17000,                        // 170% collateralization
-                kprFlatReward:         250,                          // 300 DAI tip - flat fee per kpr
-                kprPctReward:          1000                          // 10% chip - per kpr
+                permittedDrop:         45_00,                        // 45% price drop before reset
+                liquidationRatio:      170_00,                       // 170% collateralization
+                kprFlatReward:         250,                          // 250 DAI tip - flat fee per kpr
+                kprPctReward:          10                            // 10% chip - per kpr
             })
         );
 
