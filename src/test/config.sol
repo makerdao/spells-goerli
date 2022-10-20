@@ -1813,7 +1813,7 @@ contract Config {
             clip_chip:    10,
             clip_tip:     250,
             clipper_mom:  1,
-            cm_tolerance: 5000,
+            cm_tolerance: 50_00,
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     99_00,
