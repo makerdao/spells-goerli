@@ -108,6 +108,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // ChangeLog
         DssExecLib.setChangelogAddress("STARKNET_DAI_BRIDGE", NEW_STARKNET_DAI_BRIDGE);
         DssExecLib.setChangelogAddress("STARKNET_DAI_BRIDGE_LEGACY", currentStarknetDAIBridge);
+
+        DssExecLib.setChangelogVersion("1.14.3");
     }
 }
 

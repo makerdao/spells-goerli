@@ -347,6 +347,7 @@ contract Addresses {
         addr["STARKNET_ESCROW_MOM"]             = 0x464379BD1aC523DdA45b7B78eCB1F703661cad2a;
         addr["STARKNET_ESCROW"]                 = 0x38c3DDF1eF3e045abDDEb94f4e7a1a0d5440EB44;
         addr["STARKNET_DAI_BRIDGE"]             = 0xaB00D7EE6cFE37cCCAd006cEC4Db6253D7ED3a22;
+        addr["STARKNET_DAI_BRIDGE_LEGACY"]      = 0xd8beAa22894Cd33F24075459cFba287a10a104E4;
         addr["STARKNET_GOV_RELAY"]              = 0x73c0049Dd6560E644984Fa3Af30A55a02a7D81fB;
         addr["STARKNET_CORE"]                   = 0xde29d060D45901Fb19ED6C6e959EB22d8626708e;
         addr["MCD_JOIN_TELEPORT_FW_A"]          = 0xE2fddf4e0f5A4B6d0Cc1D162FBFbEF7B6c5D6f69;
