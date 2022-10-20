@@ -1796,7 +1796,7 @@ contract Config {
             aL_ttl:       8 hours,
             line:         0,
             dust:         15 * THOUSAND,
-            pct:          150,
+            pct:          1_50,
             mat:          170_00,
             liqType:      "clip",
             liqOn:        true,
