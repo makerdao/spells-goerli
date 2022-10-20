@@ -40,11 +40,11 @@ contract DssSpellCollateralAction {
     uint256 internal constant ONE_FIVE_PCT_RATE        = 1000000000472114805215157978;
 
     // --- DEPLOYED COLLATERAL ADDRESSES ---
-    address constant RETH                     = 0x62BC478FFC429161115A6E4090f819CE5C50A5d9;
-    address constant PIP_RETH                 = 0x27a25935D8b0006A97E11cAdDc2b3bf3a6721c13;
-    address constant MCD_JOIN_RETH_A          = 0xDEF7D394a4eD62273265CE983107B3748F775265;
-    address constant MCD_CLIP_RETH_A          = 0xBa496CB9637d56466dc112033BF28CC7EC544E3A;
-    address constant MCD_CLIP_CALC_RETH_A     = 0xC3A95477616c9Db6C772179e74a9A717E8B148a7;
+    address internal constant RETH                     = 0x62BC478FFC429161115A6E4090f819CE5C50A5d9;
+    address internal constant PIP_RETH                 = 0x27a25935D8b0006A97E11cAdDc2b3bf3a6721c13;
+    address internal constant MCD_JOIN_RETH_A          = 0xDEF7D394a4eD62273265CE983107B3748F775265;
+    address internal constant MCD_CLIP_RETH_A          = 0xBa496CB9637d56466dc112033BF28CC7EC544E3A;
+    address internal constant MCD_CLIP_CALC_RETH_A     = 0xC3A95477616c9Db6C772179e74a9A717E8B148a7;
 
     function onboardCollaterals() internal {
         // ----------------------------- Collateral onboarding -----------------------------
