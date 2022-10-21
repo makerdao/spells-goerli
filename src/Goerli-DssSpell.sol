@@ -88,7 +88,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
         // Starknet Bridge Upgrade
         // https://github.com/makerdao/starknet-dai-bridge#upgrades
-        
+
         // close current bridge
         address currentStarknetDAIBridge = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");
         StarknetBridgeLike(currentStarknetDAIBridge).close();
@@ -108,8 +108,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // ChangeLog
         DssExecLib.setChangelogAddress("STARKNET_DAI_BRIDGE", NEW_STARKNET_DAI_BRIDGE);
         DssExecLib.setChangelogAddress("STARKNET_DAI_BRIDGE_LEGACY", currentStarknetDAIBridge);
-
-        DssExecLib.setChangelogVersion("1.14.3");
     }
 }
 
