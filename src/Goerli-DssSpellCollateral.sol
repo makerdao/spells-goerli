@@ -59,7 +59,7 @@ contract DssSpellCollateralAction {
                 isLiquidatable:        true,
                 isOSM:                 true,
                 whitelistOSM:          true,
-                ilkDebtCeiling:        5 * MILLION,
+                ilkDebtCeiling:        0,                            // line updated to 0 (previously 5M)
                 minVaultAmount:        15 * THOUSAND,                // debt floor - dust in DAI
                 maxLiquidationAmount:  2 * MILLION,
                 liquidationPenalty:    13_00,                        // 13% penalty on liquidation
@@ -75,7 +75,6 @@ contract DssSpellCollateralAction {
         );
 
         DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_RETH_A, 90 seconds, 99_00);
-        DssExecLib.setIlkAutoLineParameters("RETH-A", 5 * MILLION, 3 * MILLION, 8 hours);
         // ChainLog Updates
         // Add the new join, clip, and abacus to the Chainlog
         DssExecLib.setChangelogAddress("RETH",                 RETH);

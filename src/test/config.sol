@@ -1790,10 +1790,10 @@ contract Config {
             lerp:         false
         });
         afterSpell.collaterals["RETH-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      5 * MILLION,
-            aL_gap:       3 * MILLION,
-            aL_ttl:       8 hours,
+            aL_enabled:   false,
+            aL_line:      0,
+            aL_gap:       0,
+            aL_ttl:       0,
             line:         0,
             dust:         15 * THOUSAND,
             pct:          1_50,
