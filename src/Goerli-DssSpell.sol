@@ -23,6 +23,19 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
+interface StarknetBridgeLike {
+    function close() external;
+}
+
+interface StarknetGovRelayLike {
+    function relay(uint256 spell) external;
+}
+
+interface StarknetEscrowLike {
+    function approve(address token, address spender, uint256 value) external;
+}
+
+
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -52,6 +65,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // rETH Onboarding
         // https://vote.makerdao.com/polling/QmfMswF2#poll-detail
         // https://vote.makerdao.com/polling/QmS7dBuQ#poll-detail
+        // https://forum.makerdao.com/t/reth-collateral-onboarding-risk-evaluation/15286
 
         // Forum
         // https://forum.makerdao.com/t/reth-collateral-onboarding-risk-evaluation/15286
@@ -75,6 +89,29 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // updateCollaterals();
         // offboardCollaterals();
         DssExecLib.setChangelogVersion("1.14.3");
+
+        // Starknet Bridge Upgrade
+        // https://github.com/makerdao/starknet-dai-bridge#upgrades
+
+        // close current bridge
+        address currentStarknetDAIBridge = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");
+        StarknetBridgeLike(currentStarknetDAIBridge).close();
+
+        // approve new bridge
+        address NEW_STARKNET_DAI_BRIDGE = 0xaB00D7EE6cFE37cCCAd006cEC4Db6253D7ED3a22;
+        address starknetEscrow = DssExecLib.getChangelogAddress("STARKNET_ESCROW");
+        address dai = DssExecLib.getChangelogAddress("MCD_DAI");
+        StarknetEscrowLike(starknetEscrow).approve(dai, NEW_STARKNET_DAI_BRIDGE, type(uint).max);
+
+        // relay l2 spell
+        // See: https://goerli.voyager.online/contract/0x04363a4e51a9d2eaccef7a7ef5f0c8872f8183db2179802c0907f547c87864fc#code
+        address starknetGovRelay = DssExecLib.getChangelogAddress("STARKNET_GOV_RELAY");
+        uint256 L2_FEE_SPELL = 0x04363a4e51a9d2eaccef7a7ef5f0c8872f8183db2179802c0907f547c87864fc;
+        StarknetGovRelayLike(starknetGovRelay).relay(L2_FEE_SPELL);
+
+        // ChangeLog
+        DssExecLib.setChangelogAddress("STARKNET_DAI_BRIDGE", NEW_STARKNET_DAI_BRIDGE);
+        DssExecLib.setChangelogAddress("STARKNET_DAI_BRIDGE_LEGACY", currentStarknetDAIBridge);
     }
 }
 
