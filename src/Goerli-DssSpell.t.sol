@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
+pragma experimental ABIEncoderV2;
 
 import "./Goerli-DssSpell.t.base.sol";
 
@@ -135,15 +136,15 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new collateral tests here
-        // checkIlkIntegration(
-        //     "TOKEN-X",
-        //     GemJoinAbstract(addr.addr("MCD_JOIN_TOKEN_X")),
-        //     ClipAbstract(addr.addr("MCD_CLIP_TOKEN_X")),
-        //     addr.addr("PIP_TOKEN"),
-        //     true,
-        //     true,
-        //     false
-        // );
+        checkIlkIntegration(
+            "RETH-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
+            addr.addr("PIP_RETH"),
+            /* _isOSM             */ true,
+            /* _checkLiquidations */ true,
+            /* _transferFee       */ false
+        );
     }
 
     function testIlkClipper() private { // make public to use
@@ -182,31 +183,35 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() private { // make public to use
+    function testNewChainlogValues() public { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        // checkChainlogKey("CONTRACT_KEY");
-        // checkChainlogVersion("X.XX.X");
+        checkChainlogKey("RETH");
+        checkChainlogKey("PIP_RETH");
+        checkChainlogKey("MCD_JOIN_RETH_A");
+        checkChainlogKey("MCD_CLIP_RETH_A");
+        checkChainlogKey("MCD_CLIP_CALC_RETH_A");
+        checkChainlogVersion("1.14.3");
     }
 
-    function testNewIlkRegistryValues() private { // make public to use
+    function testNewIlkRegistryValues() public { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        // assertEq(reg.pos("TOKEN-X"), 50);
-        // assertEq(reg.join("TOKEN-X"), addr.addr("MCD_JOIN_TOKEN_X"));
-        // assertEq(reg.gem("TOKEN-X"), addr.addr("TOKEN"));
-        // assertEq(reg.dec("TOKEN-X"), GemAbstract(addr.addr("TOKEN")).decimals());
-        // assertEq(reg.class("TOKEN-X"), 3);
-        // assertEq(reg.pip("TOKEN-X"), addr.addr("PIP_TOKEN"));
-        // assertEq(reg.xlip("TOKEN-X"), address(0));
-        // assertEq(reg.name("TOKEN-X"), "NAME");
-        // assertEq(reg.symbol("TOKEN-X"), "SYMBOL");
+        // RETH-A
+        assertEq(reg.pos("RETH-A"),    54);
+        assertEq(reg.join("RETH-A"),   addr.addr("MCD_JOIN_RETH_A"));
+        assertEq(reg.gem("RETH-A"),    addr.addr("RETH"));
+        assertEq(reg.dec("RETH-A"),    GemAbstract(addr.addr("RETH")).decimals());
+        assertEq(reg.class("RETH-A"),  1);
+        assertEq(reg.pip("RETH-A"),    addr.addr("PIP_RETH"));
+        assertEq(reg.name("RETH-A"),   "Rocket Pool ETH");
+        assertEq(reg.symbol("RETH-A"), GemAbstract(addr.addr("RETH")).symbol());
     }
 
     function testFailWrongDay() public {

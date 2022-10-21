@@ -129,7 +129,7 @@ contract Config {
             osm_mom_authority:     chief,                   // OsmMom authority
             flipper_mom_authority: chief,                   // FlipperMom authority
             clipper_mom_authority: chief,                   // ClipperMom authority
-            ilk_count:             54                       // Num expected in system
+            ilk_count:             55                       // Num expected in system
         });
 
         //
@@ -1787,6 +1787,36 @@ contract Config {
             calc_tau:     0,
             calc_step:    0,
             calc_cut:     0,
+            lerp:         false
+        });
+        afterSpell.collaterals["RETH-A"] = CollateralValues({
+            aL_enabled:   true,
+            aL_line:      5 * MILLION,
+            aL_gap:       3 * MILLION,
+            aL_ttl:       8 hours,
+            line:         0,
+            dust:         15 * THOUSAND,
+            pct:          1_50,
+            mat:          170_00,
+            liqType:      "clip",
+            liqOn:        true,
+            chop:         13_00,
+            cat_dunk:     0,
+            flip_beg:     0,
+            flip_ttl:     0,
+            flip_tau:     0,
+            flipper_mom:  0,
+            dog_hole:     2 * MILLION,
+            clip_buf:     110_00,
+            clip_tail:    120 minutes,
+            clip_cusp:    45_00,
+            clip_chip:    10,
+            clip_tip:     250,
+            clipper_mom:  1,
+            cm_tolerance: 50_00,
+            calc_tau:     0,
+            calc_step:    90,
+            calc_cut:     99_00,
             lerp:         false
         });
     }
