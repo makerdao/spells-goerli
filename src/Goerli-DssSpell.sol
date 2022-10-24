@@ -25,6 +25,7 @@ import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
 interface StarknetBridgeLike {
     function close() external;
+    function isOpen() external returns (uint256);
 }
 
 interface StarknetGovRelayLike {
@@ -81,7 +82,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         (bool currentBridgeClosed,) = currentStarknetDAIBridge.call(abi.encodeWithSignature("close()"));
 
         // Approve new bridge and cast spell only if the current bridge has closed successfully
-        if(currentBridgeClosed == true){
+        if(currentBridgeClosed == true && StarknetBridgeLike(currentStarknetDAIBridge).isOpen() == 0){
             // Bridge code at time of casting: https://github.com/makerdao/starknet-dai-bridge/blob/ad9f53425582c39c29cb3a7420e430ab01a46d4d/contracts/l1/L1DAIBridge.sol
             address NEW_STARKNET_DAI_BRIDGE = 0xaB00D7EE6cFE37cCCAd006cEC4Db6253D7ED3a22;
             address starknetEscrow = DssExecLib.getChangelogAddress("STARKNET_ESCROW");
