@@ -30,11 +30,11 @@ contract DssSpellCollateralAction {
     // A table of rates can be found at
     // https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
+    uint256 internal constant ONE_FIVE_PCT_RATE        = 1000000000472114805215157978;
 
     // --- Math ---
     uint256 internal constant MILLION  = 10 ** 6;
     uint256 internal constant THOUSAND = 10 ** 3;
-    uint256 internal constant ONE_FIVE_PCT_RATE        = 1000000000472114805215157978;
 
     // --- DEPLOYED COLLATERAL ADDRESSES ---
     address internal constant RETH                     = 0x62BC478FFC429161115A6E4090f819CE5C50A5d9;
