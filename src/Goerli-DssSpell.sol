@@ -75,11 +75,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // Incentives
 
         // ---------------------------------------------------------------------
-        // Oracle Whitelisting
-        // https://vote.makerdao.com/polling/QmZzFPFs#poll-detail
-        // https://forum.makerdao.com/t/mip10c9-sp31-proposal-to-whitelist-oasis-app-on-rethusd-oracle/18195
-
-        // ---------------------------------------------------------------------
         // Starknet Bridge Fee Upgrade
         // TBD
 
