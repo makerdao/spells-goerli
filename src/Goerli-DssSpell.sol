@@ -67,25 +67,15 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // https://vote.makerdao.com/polling/QmS7dBuQ#poll-detail
         // https://forum.makerdao.com/t/reth-collateral-onboarding-risk-evaluation/15286
 
-        // Forum
-        // https://forum.makerdao.com/t/reth-collateral-onboarding-risk-evaluation/15286
-
-        // Liquidation Parameters
-        // Limits
-        // Incentives
-
-        // ---------------------------------------------------------------------
-        // Starknet Bridge Fee Upgrade
-        // TBD
-
-        // ---------------------------------------------------------------------
         // Includes changes from the DssSpellCollateralAction
         onboardCollaterals();
         // updateCollaterals();
         // offboardCollaterals();
 
-        // Starknet Bridge Upgrade
-        // https://github.com/makerdao/starknet-dai-bridge#upgrades
+        // ---------------------------------------------------------------------
+        // Starknet Bridge Fee Upgrade
+        // https://vote.makerdao.com/polling/QmbWkTvW#poll-detail
+        // https://forum.makerdao.com/t/starknet-changes-for-2022-10-26-executive-spell/18468
 
         // close current bridge
         address currentStarknetDAIBridge = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");

@@ -46,7 +46,8 @@ contract DssSpellCollateralAction {
     function onboardCollaterals() internal {
         // ----------------------------- Collateral onboarding -----------------------------
         //  Add RETH-A as a new Vault Type
-        //  Poll Link: [https://vote.makerdao.com/polling/QmfMswF2]
+        //  Poll Link 1: [https://vote.makerdao.com/polling/QmfMswF2]
+        //  Poll Link 2: [https://vote.makerdao.com/polling/QmS7dBuQ]
 
         DssExecLib.addNewCollateral(
             CollateralOpts({
