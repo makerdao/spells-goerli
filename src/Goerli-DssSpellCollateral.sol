@@ -45,8 +45,8 @@ contract DssSpellCollateralAction {
 
     function collateralAction() internal {
         onboardCollaterals();
-        updateCollaterals();
-        offboardCollaterals();
+        //updateCollaterals();
+        //offboardCollaterals();
     }
 
     function onboardCollaterals() internal {
