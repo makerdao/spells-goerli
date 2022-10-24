@@ -70,7 +70,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // https://forum.makerdao.com/t/reth-collateral-onboarding-risk-evaluation/15286
 
         // Includes changes from the DssSpellCollateralAction
-        collateralEngineeringAction();
+        collateralAction();
 
         // ---------------------------------------------------------------------
         // Starknet Bridge Fee Upgrade

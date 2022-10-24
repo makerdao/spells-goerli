@@ -43,7 +43,7 @@ contract DssSpellCollateralAction {
     address internal constant MCD_CLIP_RETH_A      = 0xBa496CB9637d56466dc112033BF28CC7EC544E3A;
     address internal constant MCD_CLIP_CALC_RETH_A = 0xC3A95477616c9Db6C772179e74a9A717E8B148a7;
 
-    function collateralEngineeringAction() internal {
+    function collateralAction() internal {
         onboardCollaterals();
         updateCollaterals();
         offboardCollaterals();
