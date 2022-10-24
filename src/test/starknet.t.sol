@@ -128,7 +128,6 @@ contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
         assertEq(daiBridge.wards(addr.addr("MCD_PAUSE_PROXY")), 1, "StarknetTest/pause-proxy-not-ward-on-dai-bridge");
         assertEq(daiBridge.wards(addr.addr("MCD_ESM")),         1, "StarknetTest/esm-not-ward-on-dai-bridge");
 
-        uint256 l2DaiBridge = daiBridge.l2DaiBridge();
         assertEq(daiBridge.l2DaiBridge(), starknetValues.l2_dai_bridge, "StarknetTest/wrong-l2-dai-bridge-on-dai-bridge");
     }
 
