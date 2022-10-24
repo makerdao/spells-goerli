@@ -69,9 +69,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // https://forum.makerdao.com/t/reth-collateral-onboarding-risk-evaluation/15286
 
         // Includes changes from the DssSpellCollateralAction
-        onboardCollaterals();
-        // updateCollaterals();
-        // offboardCollaterals();
+        collateralEngineeringAction();
 
         // ---------------------------------------------------------------------
         // Starknet Bridge Fee Upgrade
@@ -80,7 +78,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
         // close current bridge
         address currentStarknetDAIBridge = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");
-        (bool currentBridgeClosed, bytes memory val) = currentStarknetDAIBridge.call(abi.encodeWithSignature("close()"));
+        (bool currentBridgeClosed,) = currentStarknetDAIBridge.call(abi.encodeWithSignature("close()"));
 
         // Approve new bridge and cast spell only if the current bridge has closed successfully
         if(currentBridgeClosed == true){
@@ -98,6 +96,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
             DssExecLib.setChangelogAddress("STARKNET_DAI_BRIDGE", NEW_STARKNET_DAI_BRIDGE);
             DssExecLib.setChangelogAddress("STARKNET_DAI_BRIDGE_LEGACY", currentStarknetDAIBridge);
         }
+
+        // GOERLI ONLY - DENY OLD PE DEPLOYER FROM CHAINLOG
+        DssExecLib.deauthorize(DssExecLib.getChangelogAddress("CHANGELOG"), 0xDa0c0De020F80d43dde58c2653aa73d28Df1fBe1);
 
         // Bump changelog version either way, due to rETH onboarding
         DssExecLib.setChangelogVersion("1.14.3");
