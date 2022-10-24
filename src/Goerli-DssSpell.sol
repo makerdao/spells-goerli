@@ -25,6 +25,7 @@ import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
 interface StarknetBridgeLike {
     function close() external;
+    function isOpen() external returns (uint256);
 }
 
 interface StarknetGovRelayLike {
@@ -69,9 +70,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // https://forum.makerdao.com/t/reth-collateral-onboarding-risk-evaluation/15286
 
         // Includes changes from the DssSpellCollateralAction
-        onboardCollaterals();
-        // updateCollaterals();
-        // offboardCollaterals();
+        collateralAction();
 
         // ---------------------------------------------------------------------
         // Starknet Bridge Fee Upgrade
@@ -80,10 +79,10 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
         // close current bridge
         address currentStarknetDAIBridge = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");
-        (bool currentBridgeClosed, bytes memory val) = currentStarknetDAIBridge.call(abi.encodeWithSignature("close()"));
+        (bool currentBridgeClosed,) = currentStarknetDAIBridge.call(abi.encodeWithSignature("close()"));
 
         // Approve new bridge and cast spell only if the current bridge has closed successfully
-        if(currentBridgeClosed == true){
+        if(currentBridgeClosed == true && StarknetBridgeLike(currentStarknetDAIBridge).isOpen() == 0){
             // Bridge code at time of casting: https://github.com/makerdao/starknet-dai-bridge/blob/ad9f53425582c39c29cb3a7420e430ab01a46d4d/contracts/l1/L1DAIBridge.sol
             address NEW_STARKNET_DAI_BRIDGE = 0xaB00D7EE6cFE37cCCAd006cEC4Db6253D7ED3a22;
             address starknetEscrow = DssExecLib.getChangelogAddress("STARKNET_ESCROW");
@@ -98,6 +97,9 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
             DssExecLib.setChangelogAddress("STARKNET_DAI_BRIDGE", NEW_STARKNET_DAI_BRIDGE);
             DssExecLib.setChangelogAddress("STARKNET_DAI_BRIDGE_LEGACY", currentStarknetDAIBridge);
         }
+
+        // GOERLI ONLY - DENY OLD PE DEPLOYER FROM CHAINLOG
+        DssExecLib.deauthorize(DssExecLib.getChangelogAddress("CHANGELOG"), 0xDa0c0De020F80d43dde58c2653aa73d28Df1fBe1);
 
         // Bump changelog version either way, due to rETH onboarding
         DssExecLib.setChangelogVersion("1.14.3");

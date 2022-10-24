@@ -141,9 +141,9 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
             ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
             addr.addr("PIP_RETH"),
-            /* _isOSM */ true,
-            /* _checkLiquidations */ true,
-            /* _transferFee */ false
+            true, /* _isOSM */
+            true, /* _checkLiquidations */
+            false /* _transferFee */
         );
     }
 
