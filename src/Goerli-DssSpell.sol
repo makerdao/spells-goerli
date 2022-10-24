@@ -82,6 +82,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         StarknetBridgeLike(currentStarknetDAIBridge).close();
 
         // approve new bridge
+        // Bridge code at time of casting: https://github.com/makerdao/starknet-dai-bridge/blob/ad9f53425582c39c29cb3a7420e430ab01a46d4d/contracts/l1/L1DAIBridge.sol
         address NEW_STARKNET_DAI_BRIDGE = 0xaB00D7EE6cFE37cCCAd006cEC4Db6253D7ED3a22;
         address starknetEscrow = DssExecLib.getChangelogAddress("STARKNET_ESCROW");
         address dai = DssExecLib.getChangelogAddress("MCD_DAI");
