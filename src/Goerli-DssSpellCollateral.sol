@@ -70,7 +70,7 @@ contract DssSpellCollateralAction {
                 permittedDrop:         45_00,                        // 45% price drop before reset
                 liquidationRatio:      170_00,                       // 170% collateralization
                 kprFlatReward:         250,                          // 250 DAI tip - flat fee per kpr
-                kprPctReward:          10                            // 10% chip - per kpr
+                kprPctReward:          10                            // 0.1% chip - per kpr
             })
         );
 
