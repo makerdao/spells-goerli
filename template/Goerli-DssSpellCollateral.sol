@@ -163,4 +163,18 @@ contract DssSpellCollateralAction {
         // });
 
     }
+
+    function updateCollaterals() internal {
+        // ------------------------------- Collateral updates -------------------------------
+
+        // Enable autoline for XXX-A
+        // Poll Link:
+        // Forum Link:
+        // DssExecLib.setIlkAutoLineParameters(
+        //    XXX-A,
+        //    AMOUNT,
+        //    GAP,
+        //    TTL
+        // );
+    }
 }

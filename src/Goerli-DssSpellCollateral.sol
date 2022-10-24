@@ -84,6 +84,20 @@ contract DssSpellCollateralAction {
         DssExecLib.setChangelogAddress("MCD_CLIP_CALC_RETH_A", MCD_CLIP_CALC_RETH_A);
     }
 
+    function updateCollaterals() internal {
+        // ------------------------------- Collateral updates -------------------------------
+
+        // Enable autoline for XXX-A
+        // Poll Link:
+        // Forum Link:
+        // DssExecLib.setIlkAutoLineParameters(
+        //    XXX-A,
+        //    AMOUNT,
+        //    GAP,
+        //    TTL
+        // );
+    }
+
     function offboardCollaterals() internal {
         // ----------------------------- Collateral offboarding -----------------------------
         // 1st Stage of Collateral Offboarding Process
