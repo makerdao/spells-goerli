@@ -1505,7 +1505,10 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             deployer == deployers.PE_CURRENT()
         ) ||
         (
-            deployer == deployers.ORACLES()
+            deployer == deployers.ORACLES_1()
+        ) ||
+        (
+            deployer == deployers.ORACLES_2()
         );
     }
 
