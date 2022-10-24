@@ -30,18 +30,18 @@ contract DssSpellCollateralAction {
     // A table of rates can be found at
     // https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
-    uint256 internal constant ONE_FIVE_PCT_RATE        = 1000000000472114805215157978;
+    uint256 internal constant ONE_FIVE_PCT_RATE = 1000000000472114805215157978;
 
     // --- Math ---
-    uint256 internal constant MILLION  = 10 ** 6;
-    uint256 internal constant THOUSAND = 10 ** 3;
+    // uint256 internal constant MILLION  = 10 ** 6;
+    // uint256 internal constant THOUSAND = 10 ** 3;
 
     // --- DEPLOYED COLLATERAL ADDRESSES ---
-    address internal constant RETH                     = 0x62BC478FFC429161115A6E4090f819CE5C50A5d9;
-    address internal constant PIP_RETH                 = 0x27a25935D8b0006A97E11cAdDc2b3bf3a6721c13;
-    address internal constant MCD_JOIN_RETH_A          = 0xDEF7D394a4eD62273265CE983107B3748F775265;
-    address internal constant MCD_CLIP_RETH_A          = 0xBa496CB9637d56466dc112033BF28CC7EC544E3A;
-    address internal constant MCD_CLIP_CALC_RETH_A     = 0xC3A95477616c9Db6C772179e74a9A717E8B148a7;
+    address internal constant RETH                 = 0x62BC478FFC429161115A6E4090f819CE5C50A5d9;
+    address internal constant PIP_RETH             = 0x27a25935D8b0006A97E11cAdDc2b3bf3a6721c13;
+    address internal constant MCD_JOIN_RETH_A      = 0xDEF7D394a4eD62273265CE983107B3748F775265;
+    address internal constant MCD_CLIP_RETH_A      = 0xBa496CB9637d56466dc112033BF28CC7EC544E3A;
+    address internal constant MCD_CLIP_CALC_RETH_A = 0xC3A95477616c9Db6C772179e74a9A717E8B148a7;
 
     function onboardCollaterals() internal {
         // ----------------------------- Collateral onboarding -----------------------------
@@ -51,31 +51,32 @@ contract DssSpellCollateralAction {
 
         DssExecLib.addNewCollateral(
             CollateralOpts({
-                ilk:                   "RETH-A",
-                gem:                   RETH,
-                join:                  MCD_JOIN_RETH_A,
-                clip:                  MCD_CLIP_RETH_A,
-                calc:                  MCD_CLIP_CALC_RETH_A,
-                pip:                   PIP_RETH,
-                isLiquidatable:        true,
-                isOSM:                 true,
-                whitelistOSM:          true,
-                ilkDebtCeiling:        0,                            // line updated to 0 (previously 5M)
-                minVaultAmount:        15 * THOUSAND,                // debt floor - dust in DAI
-                maxLiquidationAmount:  2 * MILLION,
-                liquidationPenalty:    13_00,                        // 13% penalty on liquidation
-                ilkStabilityFee:       ONE_FIVE_PCT_RATE,            // 1.50% stability fee
-                startingPriceFactor:   110_00,                       // Auction price begins at 110% of oracle price
-                breakerTolerance:      50_00,                        // Allows for a 50% hourly price drop before disabling liquidation
-                auctionDuration:       120 minutes,
-                permittedDrop:         45_00,                        // 45% price drop before reset
-                liquidationRatio:      170_00,                       // 170% collateralization
-                kprFlatReward:         250,                          // 250 DAI tip - flat fee per kpr
-                kprPctReward:          10                            // 0.1% chip - per kpr
+                ilk:                  "RETH-A",
+                gem:                  RETH,
+                join:                 MCD_JOIN_RETH_A,
+                clip:                 MCD_CLIP_RETH_A,
+                calc:                 MCD_CLIP_CALC_RETH_A,
+                pip:                  PIP_RETH,
+                isLiquidatable:       true,
+                isOSM:                true,
+                whitelistOSM:         true,
+                ilkDebtCeiling:       0,                 // line updated to 0 (previously 5M)
+                minVaultAmount:       15_000,            // debt floor - dust in DAI
+                maxLiquidationAmount: 2_000_000,
+                liquidationPenalty:   13_00,             // 13% penalty on liquidation
+                ilkStabilityFee:      ONE_FIVE_PCT_RATE, // 1.50% stability fee
+                startingPriceFactor:  110_00,            // Auction price begins at 110% of oracle price
+                breakerTolerance:     50_00,             // Allows for a 50% hourly price drop before disabling liquidation
+                auctionDuration:      120 minutes,
+                permittedDrop:        45_00,             // 45% price drop before reset
+                liquidationRatio:     170_00,            // 170% collateralization
+                kprFlatReward:        250,               // 250 DAI tip - flat fee per kpr
+                kprPctReward:         10                 // 0.1% chip - per kpr
             })
         );
 
         DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_RETH_A, 90 seconds, 99_00);
+
         // ChainLog Updates
         // Add the new join, clip, and abacus to the Chainlog
         DssExecLib.setChangelogAddress("RETH",                 RETH);
