@@ -22,7 +22,8 @@ contract Deployers {
 
     // Skip Ward Deployers see Goerli-DssSpell.t.base.sol#skipWards(address,address)
     address public constant PE_CURRENT  = 0xC1E6d8136441FC66612Df3584007f7CB68765e5D;
-    address public constant ORACLES     = 0x1f42e41A34B71606FcC60b4e624243b365D99745;
+    address public constant ORACLES_1   = 0x1f42e41A34B71606FcC60b4e624243b365D99745;
+    address public constant ORACLES_2   = 0x39aBD7819E5632Fa06D2ECBba45Dca5c90687EE3;
 
     // Known Team Deployers
     address public constant PE_01       = 0xda0fab060e6cc7b1C0AA105d29Bd50D71f036711;
@@ -36,14 +37,14 @@ contract Deployers {
     address public constant CES_02      = 0xc0b362cbb0117Ec6A4b589f744d4dECb2768A2eB;
     address public constant CES_03      = 0xb27B6fa77D7FBf3C1BD34B0f7DA59b39D3DB0f7e;
     address public constant CES_04      = 0x3ec4699bEc79F8FF862C220Ef0a718689A1d09f4;
-    address public constant CES_05      = 0x39aBD7819E5632Fa06D2ECBba45Dca5c90687EE3;
     address public constant STARKNET_01 = 0x8aa7c51A6D380F4d9E273adD4298D913416031Ec;
     address public constant STARKNET_02 = 0x38F8e3b67FA8329FE4BaA1775e5480807f78887B;
 
     constructor() public {
         addr = [
             PE_CURRENT,
-            ORACLES,
+            ORACLES_1,
+            ORACLES_2,
             PE_01,
             PE_02,
             PE_03,
@@ -55,7 +56,6 @@ contract Deployers {
             CES_02,
             CES_03,
             CES_04,
-            CES_05,
             STARKNET_01,
             STARKNET_02
         ];
