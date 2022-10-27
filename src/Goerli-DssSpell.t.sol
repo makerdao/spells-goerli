@@ -189,12 +189,9 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        checkChainlogKey("RETH");
-        checkChainlogKey("PIP_RETH");
-        checkChainlogKey("MCD_JOIN_RETH_A");
-        checkChainlogKey("MCD_CLIP_RETH_A");
-        checkChainlogKey("MCD_CLIP_CALC_RETH_A");
-        checkChainlogVersion("1.14.3");
+        //checkChainlogKey("RETH");
+
+        //checkChainlogVersion("1.14.3");
     }
 
     function testNewIlkRegistryValues() public { // make public to use
@@ -204,14 +201,14 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         // Insert new ilk registry values tests here
         // RETH-A
-        assertEq(reg.pos("RETH-A"),    54);
-        assertEq(reg.join("RETH-A"),   addr.addr("MCD_JOIN_RETH_A"));
-        assertEq(reg.gem("RETH-A"),    addr.addr("RETH"));
-        assertEq(reg.dec("RETH-A"),    GemAbstract(addr.addr("RETH")).decimals());
-        assertEq(reg.class("RETH-A"),  1);
-        assertEq(reg.pip("RETH-A"),    addr.addr("PIP_RETH"));
-        assertEq(reg.name("RETH-A"),   "Rocket Pool ETH");
-        assertEq(reg.symbol("RETH-A"), GemAbstract(addr.addr("RETH")).symbol());
+        //assertEq(reg.pos("RETH-A"),    54);
+        //assertEq(reg.join("RETH-A"),   addr.addr("MCD_JOIN_RETH_A"));
+        //assertEq(reg.gem("RETH-A"),    addr.addr("RETH"));
+        //assertEq(reg.dec("RETH-A"),    GemAbstract(addr.addr("RETH")).decimals());
+        //assertEq(reg.class("RETH-A"),  1);
+        //assertEq(reg.pip("RETH-A"),    addr.addr("PIP_RETH"));
+        //assertEq(reg.name("RETH-A"),   "Rocket Pool ETH");
+        //assertEq(reg.symbol("RETH-A"), GemAbstract(addr.addr("RETH")).symbol());
     }
 
     function testFailWrongDay() public {

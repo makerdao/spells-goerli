@@ -16,25 +16,12 @@
 
 pragma solidity 0.6.12;
 // Enable ABIEncoderV2 when onboarding collateral through `DssExecLib.addNewCollateral()`
-pragma experimental ABIEncoderV2;
+// pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
-
-interface StarknetBridgeLike {
-    function close() external;
-    function isOpen() external returns (uint256);
-}
-
-interface StarknetGovRelayLike {
-    function relay(uint256 spell) external;
-}
-
-interface StarknetEscrowLike {
-    function approve(address token, address spender, uint256 value) external;
-}
 
 
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
@@ -62,48 +49,13 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // --- Math ---
     // uint256 internal constant WAD = 10 ** 18;
 
-    address internal constant NEW_STARKNET_DAI_BRIDGE = 0xaB00D7EE6cFE37cCCAd006cEC4Db6253D7ED3a22;
-    uint256 internal constant L2_FEE_SPELL = 0x04363a4e51a9d2eaccef7a7ef5f0c8872f8183db2179802c0907f547c87864fc;
 
     function actions() public override {
-        // ---------------------------------------------------------------------
-        // rETH Onboarding
-        // https://vote.makerdao.com/polling/QmfMswF2#poll-detail
-        // https://vote.makerdao.com/polling/QmS7dBuQ#poll-detail
-        // https://forum.makerdao.com/t/reth-collateral-onboarding-risk-evaluation/15286
 
         // Includes changes from the DssSpellCollateralAction
-        collateralAction();
+        //collateralAction();
 
-        // ---------------------------------------------------------------------
-        // Starknet Bridge Fee Upgrade
-        // https://vote.makerdao.com/polling/QmbWkTvW#poll-detail
-        // https://forum.makerdao.com/t/starknet-changes-for-2022-10-26-executive-spell/18468
 
-        // close current bridge
-        address currentStarknetDAIBridge = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");
-        (bool currentBridgeClosed,) = currentStarknetDAIBridge.call(abi.encodeWithSignature("close()"));
-
-        // Approve new bridge and cast spell only if the current bridge has closed successfully
-        if(currentBridgeClosed == true && StarknetBridgeLike(currentStarknetDAIBridge).isOpen() == 0){
-            // Bridge code at time of casting: https://github.com/makerdao/starknet-dai-bridge/blob/ad9f53425582c39c29cb3a7420e430ab01a46d4d/contracts/l1/L1DAIBridge.sol
-            address starknetEscrow = DssExecLib.getChangelogAddress("STARKNET_ESCROW");
-            address dai = DssExecLib.getChangelogAddress("MCD_DAI");
-            StarknetEscrowLike(starknetEscrow).approve(dai, NEW_STARKNET_DAI_BRIDGE, type(uint).max);
-            // Relay l2 spell
-            // See: https://goerli.voyager.online/contract/0x04363a4e51a9d2eaccef7a7ef5f0c8872f8183db2179802c0907f547c87864fc#code
-            address starknetGovRelay = DssExecLib.getChangelogAddress("STARKNET_GOV_RELAY");
-            StarknetGovRelayLike(starknetGovRelay).relay(L2_FEE_SPELL);
-            // ChangeLog
-            DssExecLib.setChangelogAddress("STARKNET_DAI_BRIDGE", NEW_STARKNET_DAI_BRIDGE);
-            DssExecLib.setChangelogAddress("STARKNET_DAI_BRIDGE_LEGACY", currentStarknetDAIBridge);
-        }
-
-        // GOERLI ONLY - DENY OLD PE DEPLOYER FROM CHAINLOG
-        DssExecLib.deauthorize(DssExecLib.getChangelogAddress("CHANGELOG"), 0xDa0c0De020F80d43dde58c2653aa73d28Df1fBe1);
-
-        // Bump changelog version either way, due to rETH onboarding
-        DssExecLib.setChangelogVersion("1.14.3");
     }
 }
 
