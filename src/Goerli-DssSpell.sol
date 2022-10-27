@@ -59,6 +59,10 @@ interface TeleportBridgeLike {
     function teleportRouter() external view returns (address);
 }
 
+interface StarknetDaiBridgeLike {
+    function deny(address) external;
+}
+
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
     // Provides a descriptive tag for bot consumption
@@ -96,6 +100,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         address router = DssExecLib.getChangelogAddress("MCD_ROUTER_TELEPORT_FW_A");
         address join = DssExecLib.getChangelogAddress("MCD_JOIN_TELEPORT_FW_A");
         address starkNet = DssExecLib.getChangelogAddress("STARKNET_CORE");
+        address daiBridge = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");
 
         address dai = DssExecLib.dai();
 
@@ -118,12 +123,14 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
         EscrowLike(escrow).approve(dai, TELEPORT_GATEWAY_STA, type(uint256).max);
 
+        // Deny STARKNET_ESCROW_MOM on daiBridge
+        StarknetDaiBridgeLike(daiBridge).deny(DssExecLib.getChangelogAddress("STARKNET_ESCROW_MOM"));
+
         DssExecLib.setChangelogAddress("STARKNET_TELEPORT_BRIDGE", TELEPORT_GATEWAY_STA);
         DssExecLib.setChangelogAddress("STARKNET_TELEPORT_FEE", LINEAR_FEE);
 
         // TODO: set changelog version
         DssExecLib.setChangelogVersion("1.15.0");
-
     }
 }
 

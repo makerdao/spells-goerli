@@ -28,6 +28,7 @@ contract ConfigStarknet {
         uint256 dai_bridge_isOpen;
         uint256 dai_bridge_ceiling;
         uint256 dai_bridge_maxDeposit;
+        uint256 l2_dai_bridge;
     }
 
     function setValues() public {
@@ -35,7 +36,8 @@ contract ConfigStarknet {
             core_implementation:       0x60C5fA1763cC9CB9c7c25458C6cDDFbc8F125256,
             dai_bridge_isOpen:         1,        // 1 open, 0 closed
             dai_bridge_ceiling:        200_000,  // Whole Dai Units
-            dai_bridge_maxDeposit:     1000      // Whole Dai Units
+            dai_bridge_maxDeposit:     1000,     // Whole Dai Units
+            l2_dai_bridge:             0x057b7fe4e59d295de5e7955c373023514ede5b972e872e9aa5dcdf563f5cfacb
         });
     }
 }
