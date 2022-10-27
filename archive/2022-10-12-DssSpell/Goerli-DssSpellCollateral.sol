@@ -30,42 +30,81 @@ contract DssSpellCollateralAction {
     // A table of rates can be found at
     // https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
-    //uint256 internal constant ONE_FIVE_PCT_RATE = 1000000000472114805215157978;
 
     // --- Math ---
-    // uint256 internal constant MILLION  = 10 ** 6;
-    // uint256 internal constant THOUSAND = 10 ** 3;
+    // uint256 constant THOUSAND   = 10 ** 3;
+    // uint256 constant MILLION    = 10 ** 6;
+    // uint256 constant BILLION    = 10 ** 9;
 
+    // --- DEPLOYED COLLATERAL ADDRESSES ---
+    // address constant XXX                  = 0x0000000000000000000000000000000000000000;
+    // address constant PIP_XXX              = 0x0000000000000000000000000000000000000000;
+    // address constant MCD_JOIN_XXX_A       = 0x0000000000000000000000000000000000000000;
+    // address constant MCD_CLIP_XXX_A       = 0x0000000000000000000000000000000000000000;
+    // address constant MCD_CLIP_CALC_XXX_A  = 0x0000000000000000000000000000000000000000;
 
+    // --- Offboarding: Current Liquidation Ratio ---
+    // uint256 constant CURRENT_XXX_A_MAT              =  XYZ * RAY / 100;
 
-    function collateralAction() internal {
-        onboardCollaterals();
-        updateCollaterals();
-        offboardCollaterals();
-    }
+    // --- Offboarding: Target Liquidation Ratio ---
+    // uint256 constant TARGET_XXX_A_MAT               =  XYZ * RAY / 100;
+
 
     function onboardCollaterals() internal {
+        // ----------------------------- Collateral onboarding -----------------------------
+        //  Add ______________ as a new Vault Type
+        //  Poll Link:
 
-
-
-    }
-
-    function updateCollaterals() internal {
-        // ------------------------------- Collateral updates -------------------------------
-
-        // Enable autoline for XXX-A
-        // Poll Link:
-        // Forum Link:
-        // DssExecLib.setIlkAutoLineParameters(
-        //    XXX-A,
-        //    AMOUNT,
-        //    GAP,
-        //    TTL
+        // DssExecLib.addNewCollateral(
+        //     CollateralOpts({
+        //         ilk:                   "XXX-A",
+        //         gem:                   XXX,
+        //         join:                  MCD_JOIN_XXX_A,
+        //         clip:                  MCD_CLIP_XXX_A,
+        //         calc:                  MCD_CLIP_CALC_XXX_A,
+        //         pip:                   PIP_XXX,
+        //         isLiquidatable:        BOOL,
+        //         isOSM:                 BOOL,
+        //         whitelistOSM:          BOOL,
+        //         ilkDebtCeiling:        line,
+        //         minVaultAmount:        dust,
+        //         maxLiquidationAmount:  hole,
+        //         liquidationPenalty:    chop,
+        //         ilkStabilityFee:       duty,
+        //         startingPriceFactor:   buf,
+        //         breakerTolerance:      tolerance,
+        //         auctionDuration:       tail,
+        //         permittedDrop:         cusp,
+        //         liquidationRatio:      mat,
+        //         kprFlatReward:         tip,
+        //         kprPctReward:          chip
+        //     })
         // );
+
+        // DssExecLib.setStairstepExponentialDecrease(
+        //     CALC_ADDR,
+        //     DURATION,
+        //     PCT_BPS
+        // );
+
+        // DssExecLib.setIlkAutoLineParameters(
+        //     "XXX-A",
+        //     AMOUNT,
+        //     GAP,
+        //     TTL
+        // );
+
+        // ChainLog Updates
+        // DssExecLib.setChangelogAddress("XXX", XXX);
+        // DssExecLib.setChangelogAddress("PIP_XXX", PIP_XXX);
+        // DssExecLib.setChangelogAddress("MCD_JOIN_XXX_A", MCD_JOIN_XXX_A);
+        // DssExecLib.setChangelogAddress("MCD_CLIP_XXX_A", MCD_CLIP_XXX_A);
+        // DssExecLib.setChangelogAddress("MCD_CLIP_CALC_XXX_A", MCD_CLIP_CALC_XXX_A);
     }
 
     function offboardCollaterals() internal {
         // ----------------------------- Collateral offboarding -----------------------------
+
         // 1st Stage of Collateral Offboarding Process
         // Poll Link:
         // uint256 line;
@@ -122,5 +161,6 @@ contract DssSpellCollateralAction {
         //     _end:       TARGET_XXX_A_MAT,
         //     _duration:  30 days
         // });
+
     }
 }

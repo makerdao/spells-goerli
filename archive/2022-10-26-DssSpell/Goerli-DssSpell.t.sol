@@ -23,14 +23,6 @@ interface DssExecLike {
     function action() external returns (address);
 }
 
-interface StarknetTeleportBridgeLike {
-    function starkNet() external view returns (address);
-    function dai() external view returns (address);
-    function l2DaiTeleportGateway() external view returns (uint256);
-    function escrow() external view returns (address);
-    function teleportRouter() external view returns (address);
-}
-
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -197,12 +189,12 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        //checkChainlogKey("RETH");
-
-        checkChainlogKey("STARKNET_TELEPORT_BRIDGE");
-        checkChainlogKey("STARKNET_TELEPORT_FEE");
-
-        //checkChainlogVersion("1.14.3");
+        checkChainlogKey("RETH");
+        checkChainlogKey("PIP_RETH");
+        checkChainlogKey("MCD_JOIN_RETH_A");
+        checkChainlogKey("MCD_CLIP_RETH_A");
+        checkChainlogKey("MCD_CLIP_CALC_RETH_A");
+        checkChainlogVersion("1.14.3");
     }
 
     function testNewIlkRegistryValues() public { // make public to use
@@ -212,14 +204,14 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         // Insert new ilk registry values tests here
         // RETH-A
-        //assertEq(reg.pos("RETH-A"),    54);
-        //assertEq(reg.join("RETH-A"),   addr.addr("MCD_JOIN_RETH_A"));
-        //assertEq(reg.gem("RETH-A"),    addr.addr("RETH"));
-        //assertEq(reg.dec("RETH-A"),    GemAbstract(addr.addr("RETH")).decimals());
-        //assertEq(reg.class("RETH-A"),  1);
-        //assertEq(reg.pip("RETH-A"),    addr.addr("PIP_RETH"));
-        //assertEq(reg.name("RETH-A"),   "Rocket Pool ETH");
-        //assertEq(reg.symbol("RETH-A"), GemAbstract(addr.addr("RETH")).symbol());
+        assertEq(reg.pos("RETH-A"),    54);
+        assertEq(reg.join("RETH-A"),   addr.addr("MCD_JOIN_RETH_A"));
+        assertEq(reg.gem("RETH-A"),    addr.addr("RETH"));
+        assertEq(reg.dec("RETH-A"),    GemAbstract(addr.addr("RETH")).decimals());
+        assertEq(reg.class("RETH-A"),  1);
+        assertEq(reg.pip("RETH-A"),    addr.addr("PIP_RETH"));
+        assertEq(reg.name("RETH-A"),   "Rocket Pool ETH");
+        assertEq(reg.symbol("RETH-A"), GemAbstract(addr.addr("RETH")).symbol());
     }
 
     function testFailWrongDay() public {

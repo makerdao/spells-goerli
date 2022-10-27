@@ -18,7 +18,6 @@ pragma experimental ABIEncoderV2;
 
 import "../Goerli-DssSpell.t.base.sol";
 
-
 contract ConfigStarknet {
 
     StarknetValues starknetValues;
@@ -28,7 +27,6 @@ contract ConfigStarknet {
         uint256 dai_bridge_isOpen;
         uint256 dai_bridge_ceiling;
         uint256 dai_bridge_maxDeposit;
-        uint256 l2_dai_bridge;
     }
 
     function setValues() public {
@@ -36,8 +34,7 @@ contract ConfigStarknet {
             core_implementation:       0x60C5fA1763cC9CB9c7c25458C6cDDFbc8F125256,
             dai_bridge_isOpen:         1,        // 1 open, 0 closed
             dai_bridge_ceiling:        200_000,  // Whole Dai Units
-            dai_bridge_maxDeposit:     1000,     // Whole Dai Units
-            l2_dai_bridge:             0x057b7fe4e59d295de5e7955c373023514ede5b972e872e9aa5dcdf563f5cfacb
+            dai_bridge_maxDeposit:     1000      // Whole Dai Units
         });
     }
 }
@@ -61,7 +58,6 @@ interface StarknetDaiBridgeLike {
     function dai() external returns (address);
     function starkNet() external returns (address);
     function escrow() external returns (address);
-    function l2DaiBridge() external returns (uint256);
 }
 
 interface StarknetGovRelayLike {
@@ -128,9 +124,6 @@ contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
 
         assertEq(daiBridge.wards(addr.addr("MCD_PAUSE_PROXY")), 1, "StarknetTest/pause-proxy-not-ward-on-dai-bridge");
         assertEq(daiBridge.wards(addr.addr("MCD_ESM")),         1, "StarknetTest/esm-not-ward-on-dai-bridge");
-        assertEq(daiBridge.wards(addr.addr("STARKNET_ESCROW_MOM")), 0, "StarknetTest/escrow-mom-ward-on-dai-bridge");
-
-        assertEq(daiBridge.l2DaiBridge(), starknetValues.l2_dai_bridge, "StarknetTest/wrong-l2-dai-bridge-on-dai-bridge");
     }
 
     function checkStarknetGovRelay() public {

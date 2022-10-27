@@ -98,8 +98,8 @@ contract Config {
         // Values for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0),        // populate with deployed spell if deployed
-            deployed_spell_created:         0,        // use `./scripts/get-created-timestamp.sh <deployment-tx>`
+            deployed_spell:                 address(0x23990e11a1efD07a6000AF0E827A47f2F2086B6E),        // populate with deployed spell if deployed
+            deployed_spell_created:         1666026600,        // use `./scripts/get-created-timestamp.sh <deployment-tx>`
             previous_spell:                 address(0),        // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           false,             // true if officehours is expected to be enabled in the spell
             expiration_threshold:           weekly_expiration  // (weekly_expiration,monthly_expiration) if weekly or monthly spell
@@ -129,7 +129,7 @@ contract Config {
             osm_mom_authority:     chief,                   // OsmMom authority
             flipper_mom_authority: chief,                   // FlipperMom authority
             clipper_mom_authority: chief,                   // ClipperMom authority
-            ilk_count:             55                       // Num expected in system
+            ilk_count:             54                       // Num expected in system
         });
 
         //
@@ -1764,7 +1764,7 @@ contract Config {
             aL_line:      0,
             aL_gap:       0,
             aL_ttl:       0,
-            line:         2_100_000,
+            line:         2_000_000,
             dust:         0,
             pct:          0,
             mat:          0,
@@ -1787,36 +1787,6 @@ contract Config {
             calc_tau:     0,
             calc_step:    0,
             calc_cut:     0,
-            lerp:         false
-        });
-        afterSpell.collaterals["RETH-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         0,
-            dust:         15 * THOUSAND,
-            pct:          1_50,
-            mat:          170_00,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         13_00,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     2 * MILLION,
-            clip_buf:     110_00,
-            clip_tail:    120 minutes,
-            clip_cusp:    45_00,
-            clip_chip:    10,
-            clip_tip:     250,
-            clipper_mom:  1,
-            cm_tolerance: 50_00,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     99_00,
             lerp:         false
         });
     }

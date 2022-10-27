@@ -64,13 +64,17 @@ interface StarknetDaiBridgeLike {
 }
 
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
-
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
+    // Turn office hours off
+    function officeHours() public override returns (bool) {
+        return false;
+    }
+
+    uint constant WAD = 10 ** 18;
     bytes32 internal constant ILK = "TELEPORT-FW-A";
     bytes32 internal constant DOMAIN_ETH = "ETH-GOER-A";
-
     bytes32 internal constant DOMAIN_STA = "STA-GOER-A";
     address internal constant TELEPORT_GATEWAY_STA = 0x140f746CcFbb1C2618838C063048949685d7A6eD;
     uint256 internal constant TELEPORT_L2_GATEWAY_STA = 0x042b46146f0a377e0a028ed44bc1c0567196b8b96f3c7ab469e593ca497e2a83;
@@ -86,11 +90,17 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
 
-    function officeHours() public override returns (bool) {
-        return false;
-    }
+    // --- Rates ---
+    // uint256 internal constant ONE_FIVE_PCT_RATE = 1000000000472114805215157978;
+
+    // --- Math ---
+    // uint256 internal constant WAD = 10 ** 18;
+
 
     function actions() public override {
+
+        // Includes changes from the DssSpellCollateralAction
+        //collateralAction();
 
         // ------------------ Setup Starknet Teleport Fast Withdrawals -----------------
         // https://vote.makerdao.com/polling/QmZxRgvG
@@ -129,8 +139,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         DssExecLib.setChangelogAddress("STARKNET_TELEPORT_BRIDGE", TELEPORT_GATEWAY_STA);
         DssExecLib.setChangelogAddress("STARKNET_TELEPORT_FEE", LINEAR_FEE);
 
-        // TODO: set changelog version
-        DssExecLib.setChangelogVersion("1.15.0");
     }
 }
 

@@ -49,6 +49,11 @@ contract DssSpellCollateralAction {
     // --- Offboarding: Target Liquidation Ratio ---
     // uint256 constant TARGET_XXX_A_MAT               =  XYZ * RAY / 100;
 
+    function collateralAction() internal {
+        //onboardCollaterals();
+        //updateCollaterals();
+        //offboardCollaterals();
+    }
 
     function onboardCollaterals() internal {
         // ----------------------------- Collateral onboarding -----------------------------
@@ -162,5 +167,19 @@ contract DssSpellCollateralAction {
         //     _duration:  30 days
         // });
 
+    }
+
+    function updateCollaterals() internal {
+        // ------------------------------- Collateral updates -------------------------------
+
+        // Enable autoline for XXX-A
+        // Poll Link:
+        // Forum Link:
+        // DssExecLib.setIlkAutoLineParameters(
+        //    XXX-A,
+        //    AMOUNT,
+        //    GAP,
+        //    TTL
+        // );
     }
 }
