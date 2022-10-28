@@ -23,14 +23,6 @@ interface DssExecLike {
     function action() external returns (address);
 }
 
-interface StarknetTeleportBridgeLike {
-    function starkNet() external view returns (address);
-    function dai() external view returns (address);
-    function l2DaiTeleportGateway() external view returns (uint256);
-    function escrow() external view returns (address);
-    function teleportRouter() external view returns (address);
-}
-
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;

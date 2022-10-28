@@ -72,7 +72,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         return false;
     }
 
-    uint constant WAD = 10 ** 18;
     bytes32 internal constant ILK = "TELEPORT-FW-A";
     bytes32 internal constant DOMAIN_ETH = "ETH-GOER-A";
     bytes32 internal constant DOMAIN_STA = "STA-GOER-A";
@@ -94,7 +93,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // uint256 internal constant ONE_FIVE_PCT_RATE = 1000000000472114805215157978;
 
     // --- Math ---
-    // uint256 internal constant WAD = 10 ** 18;
+    uint256 internal constant WAD = 10 ** 18;
 
 
     function actions() public override {
