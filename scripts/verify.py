@@ -15,13 +15,13 @@ except KeyError:
 
 document = ''
 try:
-    document = open('out/dapp.sol.json')
+    document = open('out/Goerli-DssSpell.sol/DssSpell.json')
 except FileNotFoundError:
-    exit('run dapp build first')
+    exit('run forge build first')
 try:
     content = json.load(document)
 except json.decoder.JSONDecodeError:
-    exit('run dapp build again')
+    exit('run forge build again')
 
 if len(sys.argv) not in [3, 4]:
     print('''usage:\n
@@ -53,8 +53,8 @@ if contract_path == '':
     exit('contract name not found.')
 
 print('Obtaining chain... ')
-seth_chain = subprocess.run(['seth', 'chain'], capture_output=True)
-chain = seth_chain.stdout.decode('ascii').replace('\n', '')
+cast_chain = subprocess.run(['cast', 'chain'], capture_output=True)
+chain = cast_chain.stdout.decode('ascii').replace('\n', '')
 print(chain)
 
 text_metadata = content['contracts'][contract_path][contract_name]['metadata']
@@ -75,9 +75,8 @@ action = 'verifysourcecode'
 code_format = 'solidity-single-file'
 
 flatten = subprocess.run([
-    'hevm',
+    'forge',
     'flatten',
-    '--source-file',
     contract_path
 ], capture_output=True)
 code = flatten.stdout.decode('utf-8')

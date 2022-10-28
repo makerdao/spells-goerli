@@ -5,5 +5,5 @@ set -e
 [[ "$ETHERSCAN_API_KEY" ]] || { echo "Please set ETHERSCAN_API_KEY"; exit 1; }
 
 make && \
-  dapp create DssSpell | \
+  forge create DssSpell --libraries "lib/dss-exec-lib/src/DssExecLib.sol:DssExecLib:$(cat DssExecLib.address)" | \
   xargs ./scripts/verify.py DssSpell
