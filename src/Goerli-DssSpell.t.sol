@@ -23,6 +23,14 @@ interface DssExecLike {
     function action() external returns (address);
 }
 
+interface StarknetTeleportBridgeLike {
+    function starkNet() external view returns (address);
+    function dai() external view returns (address);
+    function l2DaiTeleportGateway() external view returns (uint256);
+    function escrow() external view returns (address);
+    function teleportRouter() external view returns (address);
+}
+
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -190,6 +198,9 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         // Insert new chainlog values tests here
         //checkChainlogKey("RETH");
+
+        checkChainlogKey("STARKNET_TELEPORT_BRIDGE");
+        checkChainlogKey("STARKNET_TELEPORT_FEE");
 
         //checkChainlogVersion("1.14.3");
     }
@@ -489,5 +500,38 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(dai.balanceOf(address(pauseProxy)), prevBalance + WAD);
 
         assertEq(vest.rxd(1), WAD);
+    }
+
+   function testTeleportFW() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        address router = addr.addr("MCD_ROUTER_TELEPORT_FW_A");
+        StarknetTeleportBridgeLike bridge = StarknetTeleportBridgeLike(addr.addr("STARKNET_TELEPORT_BRIDGE"));
+        address escrow = addr.addr("STARKNET_ESCROW");
+
+        bytes32 ilk = "TELEPORT-FW-A";
+        bytes23 domain = "ETH-GOER-A";
+
+        uint256 l2_teleport_gateway = 0x042b46146f0a377e0a028ed44bc1c0567196b8b96f3c7ab469e593ca497e2a83;
+
+        assertEq(bridge.escrow(), escrow);
+        assertEq(bridge.teleportRouter(), address(router));
+        assertEq(bridge.dai(), address(dai));
+        assertEq(bridge.l2DaiTeleportGateway(), l2_teleport_gateway);
+
+        checkTeleportFWIntegrationInternals(
+            "STA-GOER-A",
+            domain,
+            100_000 * WAD,
+            address(bridge),
+            addr.addr("STARKNET_TELEPORT_FEE"),
+            escrow,
+            100 * WAD,
+            WAD / 10000,   // 1bps
+            30 minutes
+        );
+
     }
 }
