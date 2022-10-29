@@ -3,6 +3,26 @@
 import os, sys, subprocess, time, re, json, requests
 from datetime import datetime
 
+# TODO remove debug
+## FOUNDRY OUTPUT:
+EXAMPLE_ARGS = ['./scripts/verify.py', 'DssSpell', 'Compiling', '76', 'files', 'with', '0.6.12', 'Solc', '0.6.12', 'finished', 'in', '2238.39s', 'Compiler', 'run', 'successful', '(with', 'warnings)', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:19:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'add(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:25:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'mul(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:22:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'sub(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:19:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'add(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:25:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'mul(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:22:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'sub(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:19:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'add(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:25:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'mul(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:22:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'sub(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:19:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'add(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:25:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'mul(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:22:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'sub(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:19:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'add(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:25:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'mul(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:22:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'sub(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:19:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'add(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:25:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'mul(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:22:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'sub(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:19:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'add(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:25:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'mul(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[8261]:', '\x1b[0m\x1b[33mlib/ds-math/src/math.sol:22:5:', 'Warning:', 'Variable', 'is', 'shadowed', 'in', 'inline', 'assembly', 'by', 'an', 'instruction', 'of', 'the', 'same', 'name', 'function', 'sub(uint', 'x,', 'uint', 'y)', 'internal', 'pure', 'returns', '(uint', 'z)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', '\x1b[33mwarning[2072]:', '\x1b[0m\x1b[33msrc/Goerli-DssSpell.t.sol:514:9:', 'Warning:', 'Unused', 'local', 'variable.', 'bytes32', 'ilk', '=', 'TELEPORT-FW-A;', '^---------^', '\x1b[0m', '\x1b[33mwarning[2018]:', '\x1b[0m\x1b[33mlib/dss-exec-lib/src/DssAction.sol:42:5:', 'Warning:', 'Function', 'state', 'mutability', 'can', 'be', 'restricted', 'to', 'pure', 'function', 'officeHours()', 'public', 'virtual', 'returns', '(bool)', '{', '^', '(Relevant', 'source', 'part', 'starts', 'here', 'and', 'spans', 'across', 'multiple', 'lines).', '\x1b[0m', 'Deployer:', '0xC1E6d8136441FC66612Df3584007f7CB68765e5D', 'Deployed', 'to:', '0xE0b8ea01093c96eC54E0616cC3EbaBb477B38307', 'Transaction', 'hash:', '0xf0d00eccb0f8371605f03f9baa865a9ff7ea43792fe47cee3b73f4c76dabd7e7']
+
+#print(EXAMPLE_ARGS)
+#print(sys.argv)
+sysargs = sys.argv
+#print(sysargs)
+sysargs = EXAMPLE_ARGS
+
+dappargs = {}
+for (i, arg) in enumerate(sysargs):
+    if i == 1:
+        dappargs['contractname'] = arg
+    if arg == "to:":
+        dappargs['address'] = sysargs[i + 1]
+
+print(dappargs)
+
+
 api_key = ''
 try:
     api_key = os.environ['ETHERSCAN_API_KEY']
@@ -23,14 +43,15 @@ try:
 except json.decoder.JSONDecodeError:
     exit('run forge build again')
 
-if len(sys.argv) not in [3, 4]:
-    print('''usage:\n
-./verify.py <contractname> <address> [constructorArgs]
-''')
-    exit()
 
-contract_name = sys.argv[1]
-contract_address = sys.argv[2]
+#if len(sysargs) not in [3, 4]:
+#    print('''usage:\n
+#./verify.py <contractname> <address> [constructorArgs]
+#''')
+#    exit()
+
+contract_name = dappargs['contractname']
+contract_address = dappargs['address']
 print('Attempting to verify contract {0} at address {1} ...'.format(
     contract_name,
     contract_address
@@ -39,36 +60,52 @@ print('Attempting to verify contract {0} at address {1} ...'.format(
 if len(contract_address) !=  42:
     exit('malformed address')
 constructor_arguments = ''
-if len(sys.argv) == 4:
-    constructor_arguments = sys.argv[3]
+#if len(sysargs) == 4:
+#    constructor_arguments = sysargs[3]
+
+print(content.keys())
+print(content['ast'].keys())
+print(content['metadata'].keys())
+print(content['metadata']['sources'].keys())
 
 contract_path = ''
-for path in content['contracts'].keys():
-    try:
-        content['contracts'][path][contract_name]
-        contract_path = path
-    except KeyError:
-        continue
+#for path in content['contracts'].keys():
+#    try:
+#        content['metadata']['sources'][path][contract_name]
+#        contract_path = path
+#    except KeyError:
+#        continue
+contract_path = content['ast']['absolutePath']
 if contract_path == '':
     exit('contract name not found.')
+
 
 print('Obtaining chain... ')
 cast_chain = subprocess.run(['cast', 'chain'], capture_output=True)
 chain = cast_chain.stdout.decode('ascii').replace('\n', '')
 print(chain)
 
-text_metadata = content['contracts'][contract_path][contract_name]['metadata']
+#text_metadata = content['contracts'][contract_path][contract_name]['metadata']
+text_metadata = content['rawMetadata']
 metadata = json.loads(text_metadata)
+#print(metadata)
 compiler_version = 'v' + metadata['compiler']['version']
+print(compiler_version)
 evm_version = metadata['settings']['evmVersion']
+print(evm_version)
 optimizer_enabled = metadata['settings']['optimizer']['enabled']
+print(metadata['settings']['optimizer'])
+print(optimizer_enabled)
 optimizer_runs = metadata['settings']['optimizer']['runs']
+print(optimizer_runs)
 license_name = metadata['sources'][contract_path]['license']
+print(license_name)
 license_numbers = {
     'GPL-3.0-or-later': 5,
     'AGPL-3.0-or-later': 13
 }
 license_number = license_numbers[license_name]
+print(license_number)
 
 module = 'contract'
 action = 'verifysourcecode'
@@ -225,6 +262,7 @@ data = {
     'libraryname1': library_name,
     'libraryaddress1': library_address,
 }
+#print(data)
 
 if chain in ['mainnet', 'ethlive']:
     chain_separator = False
