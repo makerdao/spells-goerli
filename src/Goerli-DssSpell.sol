@@ -95,6 +95,14 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // --- Math ---
     uint256 internal constant WAD = 10 ** 18;
 
+    address immutable escrow = DssExecLib.getChangelogAddress("STARKNET_ESCROW");
+    address immutable router = DssExecLib.getChangelogAddress("MCD_ROUTER_TELEPORT_FW_A");
+    address immutable join = DssExecLib.getChangelogAddress("MCD_JOIN_TELEPORT_FW_A");
+    address immutable starkNet = DssExecLib.getChangelogAddress("STARKNET_CORE");
+    address immutable daiBridge = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");
+    address immutable starknetEscrowMom = DssExecLib.getChangelogAddress("STARKNET_ESCROW_MOM");
+    address immutable MCD_DAI = DssExecLib.dai();
+
     function actions() public override {
 
         // Includes changes from the DssSpellCollateralAction
@@ -104,18 +112,10 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // https://vote.makerdao.com/polling/QmZxRgvG
         // https://forum.makerdao.com/t/request-for-poll-starknet-bridge-deposit-limit-and-starknet-teleport-fees/17187
 
-        address escrow = DssExecLib.getChangelogAddress("STARKNET_ESCROW");
-        address router = DssExecLib.getChangelogAddress("MCD_ROUTER_TELEPORT_FW_A");
-        address join = DssExecLib.getChangelogAddress("MCD_JOIN_TELEPORT_FW_A");
-        address starkNet = DssExecLib.getChangelogAddress("STARKNET_CORE");
-        address daiBridge = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");
-
-        address dai = DssExecLib.dai();
-
         // Run sanity checks
         require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).escrow() == escrow);
         require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).teleportRouter() == router);
-        require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).dai() == dai);
+        require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).dai() == MCD_DAI);
         require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).l2DaiTeleportGateway() == TELEPORT_L2_GATEWAY_STA);
         require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).starkNet() == starkNet);
         require(TeleportFeeLike(LINEAR_FEE).fee() == WAD / 10000);
@@ -129,16 +129,18 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
 
         TeleportRouterLike(router).file("gateway", DOMAIN_STA, TELEPORT_GATEWAY_STA);
 
-        EscrowLike(escrow).approve(dai, TELEPORT_GATEWAY_STA, type(uint256).max);
+        EscrowLike(escrow).approve(MCD_DAI, TELEPORT_GATEWAY_STA, type(uint256).max);
 
         // Deny STARKNET_ESCROW_MOM on daiBridge
-        StarknetDaiBridgeLike(daiBridge).deny(DssExecLib.getChangelogAddress("STARKNET_ESCROW_MOM"));
+        StarknetDaiBridgeLike(daiBridge).deny(starknetEscrowMom);
 
         DssExecLib.setChangelogAddress("STARKNET_TELEPORT_BRIDGE", TELEPORT_GATEWAY_STA);
         DssExecLib.setChangelogAddress("STARKNET_TELEPORT_FEE", LINEAR_FEE);
 
-        // MAINNET ONLY
+        DssExecLib.setChangelogVersion("1.14.4");
 
+
+        // MAINNET ONLY
 
         // CU Offboarding - Yank DAI Streams
         // https://forum.makerdao.com/t/executive-vote-cu-offboarding-next-steps/18522
