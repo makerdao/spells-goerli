@@ -103,6 +103,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     address immutable starknetEscrowMom = DssExecLib.getChangelogAddress("STARKNET_ESCROW_MOM");
     address immutable MCD_DAI = DssExecLib.dai();
 
+    uint256 constant CEILING = 100_000; // Whole Dai units
+
     function actions() public override {
 
         // Includes changes from the DssSpellCollateralAction
@@ -121,8 +123,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         require(TeleportFeeLike(LINEAR_FEE).fee() == WAD / 10000);
         require(TeleportFeeLike(LINEAR_FEE).ttl() == 30 minutes); // finalization time on Goerli
 
-        uint256 line = 100_000;
-        DssExecLib.increaseIlkDebtCeiling(ILK, line, true);
+        DssExecLib.increaseIlkDebtCeiling(ILK, CEILING, true);
 
         TeleportJoinLike(join).file("fees", DOMAIN_STA, LINEAR_FEE);
         TeleportJoinLike(join).file("line", DOMAIN_STA, line * WAD);
