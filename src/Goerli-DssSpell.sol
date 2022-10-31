@@ -95,12 +95,12 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // --- Math ---
     uint256 internal constant WAD = 10 ** 18;
 
-    address immutable escrow = DssExecLib.getChangelogAddress("STARKNET_ESCROW");
-    address immutable router = DssExecLib.getChangelogAddress("MCD_ROUTER_TELEPORT_FW_A");
-    address immutable join = DssExecLib.getChangelogAddress("MCD_JOIN_TELEPORT_FW_A");
-    address immutable starkNet = DssExecLib.getChangelogAddress("STARKNET_CORE");
-    address immutable daiBridge = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");
-    address immutable starknetEscrowMom = DssExecLib.getChangelogAddress("STARKNET_ESCROW_MOM");
+    address immutable STARKNET_ESCROW = DssExecLib.getChangelogAddress("STARKNET_ESCROW");
+    address immutable MCD_ROUTER_TELEPORT_FW_A = DssExecLib.getChangelogAddress("MCD_ROUTER_TELEPORT_FW_A");
+    address immutable MCD_JOIN_TELEPORT_FW_A = DssExecLib.getChangelogAddress("MCD_JOIN_TELEPORT_FW_A");
+    address immutable STARKNET_CORE = DssExecLib.getChangelogAddress("STARKNET_CORE");
+    address immutable STARKNET_DAI_BRIDGE = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");
+    address immutable STARKNET_ESCROW_MOM = DssExecLib.getChangelogAddress("STARKNET_ESCROW_MOM");
     address immutable MCD_DAI = DssExecLib.dai();
 
     uint256 constant CEILING = 100_000; // Whole Dai units
@@ -115,25 +115,25 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // https://forum.makerdao.com/t/request-for-poll-starknet-bridge-deposit-limit-and-starknet-teleport-fees/17187
 
         // Run sanity checks
-        require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).escrow() == escrow);
-        require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).teleportRouter() == router);
+        require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).escrow() == STARKNET_ESCROW);
+        require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).teleportRouter() == MCD_ROUTER_TELEPORT_FW_A);
         require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).dai() == MCD_DAI);
         require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).l2DaiTeleportGateway() == TELEPORT_L2_GATEWAY_STA);
-        require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).starkNet() == starkNet);
+        require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).starkNet() == STARKNET_CORE);
         require(TeleportFeeLike(LINEAR_FEE).fee() == WAD / 10000);
         require(TeleportFeeLike(LINEAR_FEE).ttl() == 30 minutes); // finalization time on Goerli
 
         DssExecLib.increaseIlkDebtCeiling(ILK, CEILING, true);
 
-        TeleportJoinLike(join).file("fees", DOMAIN_STA, LINEAR_FEE);
-        TeleportJoinLike(join).file("line", DOMAIN_STA, line * WAD);
+        TeleportJoinLike(MCD_JOIN_TELEPORT_FW_A).file("fees", DOMAIN_STA, LINEAR_FEE);
+        TeleportJoinLike(MCD_JOIN_TELEPORT_FW_A).file("line", DOMAIN_STA, CEILING * WAD);
 
-        TeleportRouterLike(router).file("gateway", DOMAIN_STA, TELEPORT_GATEWAY_STA);
+        TeleportRouterLike(MCD_ROUTER_TELEPORT_FW_A).file("gateway", DOMAIN_STA, TELEPORT_GATEWAY_STA);
 
-        EscrowLike(escrow).approve(MCD_DAI, TELEPORT_GATEWAY_STA, type(uint256).max);
+        EscrowLike(STARKNET_ESCROW).approve(MCD_DAI, TELEPORT_GATEWAY_STA, type(uint256).max);
 
         // Deny STARKNET_ESCROW_MOM on daiBridge
-        StarknetDaiBridgeLike(daiBridge).deny(starknetEscrowMom);
+        StarknetDaiBridgeLike(STARKNET_DAI_BRIDGE).deny(STARKNET_ESCROW_MOM);
 
         DssExecLib.setChangelogAddress("STARKNET_TELEPORT_BRIDGE", TELEPORT_GATEWAY_STA);
         DssExecLib.setChangelogAddress("STARKNET_TELEPORT_FEE", LINEAR_FEE);
