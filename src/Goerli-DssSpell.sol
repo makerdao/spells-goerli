@@ -95,7 +95,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // --- Math ---
     uint256 internal constant WAD = 10 ** 18;
 
-
     function actions() public override {
 
         // Includes changes from the DssSpellCollateralAction
