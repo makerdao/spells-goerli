@@ -11,7 +11,6 @@ ETH_KEYFILE="$(find $ETH_KEYSTORE | grep ${ETH_FROM_TRIMMED,,})"
 
 make && \
   forge create DssSpell \
-    --optimizer "false" \
     --keystore "$ETH_KEYFILE" \
     --password "$(cat $ETH_PASSWORD)" \
     --gas-price "$ETH_GAS_PRICE" \
