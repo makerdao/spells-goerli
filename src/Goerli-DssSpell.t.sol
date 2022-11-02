@@ -173,11 +173,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         LerpAbstract lerp = LerpAbstract(lerpFactory.lerps("NAME"));
 
         uint256 duration = 210 days;
-        hevm.warp(block.timestamp + duration / 2);
+        vm.warp(block.timestamp + duration / 2);
         assertEq(vow.hump(), 60 * MILLION * RAD);
         lerp.tick();
         assertEq(vow.hump(), 75 * MILLION * RAD);
-        hevm.warp(block.timestamp + duration / 2);
+        vm.warp(block.timestamp + duration / 2);
         lerp.tick();
         assertEq(vow.hump(), 90 * MILLION * RAD);
         assertTrue(lerp.done());
@@ -254,7 +254,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         spell.schedule();
 
         castPreviousSpell();
-        hevm.warp(spell.nextCastTime());
+        vm.warp(spell.nextCastTime());
         uint256 startGas = gasleft();
         spell.cast();
         uint256 endGas = gasleft();
@@ -267,7 +267,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     // The specific date doesn't matter that much since function is checking for difference between warps
     function test_nextCastTime() public {
-        hevm.warp(1606161600); // Nov 23, 20 UTC (could be cast Nov 26)
+        vm.warp(1606161600); // Nov 23, 20 UTC (could be cast Nov 26)
 
         vote(address(spell));
         spell.schedule();
@@ -276,29 +276,29 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         uint256 monday_2100_UTC = 1606770000; // Nov 30, 2020
 
         // Day tests
-        hevm.warp(monday_1400_UTC);                                    // Monday,   14:00 UTC
+        vm.warp(monday_1400_UTC);                                    // Monday,   14:00 UTC
         assertEq(spell.nextCastTime(), monday_1400_UTC);               // Monday,   14:00 UTC
 
         if (spell.officeHours()) {
-            hevm.warp(monday_1400_UTC - 1 days);                       // Sunday,   14:00 UTC
+            vm.warp(monday_1400_UTC - 1 days);                       // Sunday,   14:00 UTC
             assertEq(spell.nextCastTime(), monday_1400_UTC);           // Monday,   14:00 UTC
 
-            hevm.warp(monday_1400_UTC - 2 days);                       // Saturday, 14:00 UTC
+            vm.warp(monday_1400_UTC - 2 days);                       // Saturday, 14:00 UTC
             assertEq(spell.nextCastTime(), monday_1400_UTC);           // Monday,   14:00 UTC
 
-            hevm.warp(monday_1400_UTC - 3 days);                       // Friday,   14:00 UTC
+            vm.warp(monday_1400_UTC - 3 days);                       // Friday,   14:00 UTC
             assertEq(spell.nextCastTime(), monday_1400_UTC - 3 days);  // Able to cast
 
-            hevm.warp(monday_2100_UTC);                                // Monday,   21:00 UTC
+            vm.warp(monday_2100_UTC);                                // Monday,   21:00 UTC
             assertEq(spell.nextCastTime(), monday_1400_UTC + 1 days);  // Tuesday,  14:00 UTC
 
-            hevm.warp(monday_2100_UTC - 1 days);                       // Sunday,   21:00 UTC
+            vm.warp(monday_2100_UTC - 1 days);                       // Sunday,   21:00 UTC
             assertEq(spell.nextCastTime(), monday_1400_UTC);           // Monday,   14:00 UTC
 
-            hevm.warp(monday_2100_UTC - 2 days);                       // Saturday, 21:00 UTC
+            vm.warp(monday_2100_UTC - 2 days);                       // Saturday, 21:00 UTC
             assertEq(spell.nextCastTime(), monday_1400_UTC);           // Monday,   14:00 UTC
 
-            hevm.warp(monday_2100_UTC - 3 days);                       // Friday,   21:00 UTC
+            vm.warp(monday_2100_UTC - 3 days);                       // Friday,   21:00 UTC
             assertEq(spell.nextCastTime(), monday_1400_UTC);           // Monday,   14:00 UTC
 
             // Time tests
@@ -306,10 +306,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
             for(uint256 i = 0; i < 5; i++) {
                 castTime = monday_1400_UTC + i * 1 days; // Next day at 14:00 UTC
-                hevm.warp(castTime - 1 seconds); // 13:59:59 UTC
+                vm.warp(castTime - 1 seconds); // 13:59:59 UTC
                 assertEq(spell.nextCastTime(), castTime);
 
-                hevm.warp(castTime + 7 hours + 1 seconds); // 21:00:01 UTC
+                vm.warp(castTime + 7 hours + 1 seconds); // 21:00:01 UTC
                 if (i < 4) {
                     assertEq(spell.nextCastTime(), monday_1400_UTC + (i + 1) * 1 days); // Next day at 14:00 UTC
                 } else {
@@ -324,7 +324,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function test_use_eta() public {
-        hevm.warp(1606161600); // Nov 23, 20 UTC (could be cast Nov 26)
+        vm.warp(1606161600); // Nov 23, 20 UTC (could be cast Nov 26)
 
         vote(address(spell));
         spell.schedule();

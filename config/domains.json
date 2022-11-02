@@ -1,0 +1,17 @@
+{
+    "domains": {
+        "root": {
+            "rpc": "ETH_RPC_URL",
+            "chainlog": "0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F",
+            "block": "ROOT_BLOCK"
+        },
+        "optimism": {
+            "rpc": "OPT_RPC_URL",
+            "block": "OPT_BLOCK"
+        },
+        "arbitrum": {
+            "rpc": "ARB_RPC_URL",
+            "block": "ARB_BLOCK"
+        }
+    }
+}
