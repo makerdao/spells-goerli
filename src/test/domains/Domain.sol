@@ -38,6 +38,10 @@ contract Domain {
         string memory rpc = vm.envString(readConfigString("rpc"));
         if (bytes(rpc).length == 0) revert(stringConcat(stringConcat("Environment variable '", rpc), "' is not defined."));
         forkId = vm.createFork(rpc);
+        uint256 domainBlock = vm.envUint(readConfigString("block"));
+        if (domainBlock > 0) {
+            vm.rollFork(forkId, domainBlock);
+        }
         vm.makePersistent(address(this));
     }
 
@@ -67,12 +71,5 @@ contract Domain {
 
     function selectFork() public {
         vm.selectFork(forkId);
-    }
-
-    function rollFork() public {
-        uint256 domainBlock = vm.envUint(readConfigString("block"));
-        if (domainBlock > 0) {
-            vm.rollFork(domainBlock);
-        }
     }
 }

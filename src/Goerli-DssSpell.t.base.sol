@@ -311,7 +311,6 @@ contract GoerliDssSpellTestBase is Config, Test, DSMath {
         rootDomain = new Domain(vm, config, "root");
         optimismDomain = new Domain(vm, config, "optimism");
         rootDomain.selectFork();
-        rootDomain.rollFork();
 
         setValues(address(chief));
 
