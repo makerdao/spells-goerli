@@ -26,11 +26,11 @@ export ARB_BLOCK=0
 if [[ -z "$MATCH" && -z "$BLOCK" ]]; then
     forge test --force
 elif [[ -z "$BLOCK" ]]; then
-    forge test --match "$MATCH" -vvvvv --force
+    forge test --match "$MATCH" -vvv --force
 elif [[ -z "$MATCH" ]]; then
     export ROOT_BLOCK=$BLOCK
     forge test -vvv --force
 else
     export ROOT_BLOCK=$BLOCK
-    forge test --match "$MATCH" -vvvvv --force
+    forge test --match "$MATCH" -vvv --force
 fi
