@@ -101,10 +101,11 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     //
 
     // --- Rates ---
-    // uint256 internal constant ONE_FIVE_PCT_RATE = 1000000000472114805215157978;
+    uint256 internal constant SEVEN_PT_FIVE_PERCENT_RATE = 1000000002293273137447730714;
 
     // --- Math ---
     uint256 internal constant WAD = 10 ** 18;
+    uint256 internal constant MILLION = 10 ** 6;
 
     function actions() public override {
 
@@ -142,6 +143,15 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         DssExecLib.setChangelogAddress("STARKNET_TELEPORT_FEE", LINEAR_FEE_STA);
 
         DssExecLib.setChangelogVersion("1.14.5");
+
+        // ------------------ MOMC Parameter Changes -----------------
+        // https://vote.makerdao.com/polling/QmahDuNx#poll-detail
+
+        // Increase the MANA-A Stability Fee from 4.5% to 7.5%
+        DssExecLib.setIlkStabilityFee("MANA-A", SEVEN_PT_FIVE_PERCENT_RATE, true);
+
+        // Decrease the MANA-A line from 17 million DAI to 10 million DAI
+        DssExecLib.setIlkAutoLineDebtCeiling("MANA-A", 10 * MILLION);
     }
 }
 

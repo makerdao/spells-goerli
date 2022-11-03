@@ -499,12 +499,12 @@ contract Config {
         });
         afterSpell.collaterals["MANA-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      17 * MILLION,
+            aL_line:      10 * MILLION,
             aL_gap:       1 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
             dust:         15 * THOUSAND,
-            pct:          450,
+            pct:          750,
             mat:          17500,
             liqType:      "clip",
             liqOn:        true,
