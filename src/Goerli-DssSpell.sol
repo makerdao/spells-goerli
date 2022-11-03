@@ -142,7 +142,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         DssExecLib.setChangelogAddress("STARKNET_TELEPORT_BRIDGE", TELEPORT_GATEWAY_STA);
         DssExecLib.setChangelogAddress("STARKNET_TELEPORT_FEE", LINEAR_FEE_STA);
 
-        DssExecLib.setChangelogVersion("1.14.5");
+        DssExecLib.setChangelogVersion("1.14.4");
 
         // ------------------ MOMC Parameter Changes -----------------
         // https://vote.makerdao.com/polling/QmahDuNx#poll-detail

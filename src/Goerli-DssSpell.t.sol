@@ -192,7 +192,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkChainlogKey("STARKNET_TELEPORT_BRIDGE");
         checkChainlogKey("STARKNET_TELEPORT_FEE");
 
-        checkChainlogVersion("1.14.5");
+        checkChainlogVersion("1.14.4");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
