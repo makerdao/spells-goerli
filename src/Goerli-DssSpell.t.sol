@@ -23,14 +23,6 @@ interface DssExecLike {
     function action() external returns (address);
 }
 
-interface StarknetTeleportBridgeLike {
-    function starkNet() external view returns (address);
-    function dai() external view returns (address);
-    function l2DaiTeleportGateway() external view returns (uint256);
-    function escrow() external view returns (address);
-    function teleportRouter() external view returns (address);
-}
-
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -144,15 +136,15 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new collateral tests here
-        checkIlkIntegration(
-            "RETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
-            addr.addr("PIP_RETH"),
-            true, /* _isOSM */
-            true, /* _checkLiquidations */
-            false /* _transferFee */
-        );
+        // checkIlkIntegration(
+        //     "RETH-A",
+        //     GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
+        //     ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
+        //     addr.addr("PIP_RETH"),
+        //     true, /* _isOSM */
+        //     true, /* _checkLiquidations */
+        //     false /* _transferFee */
+        // );
     }
 
     function testIlkClipper() private { // make public to use
@@ -197,15 +189,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new chainlog values tests here
-        //checkChainlogKey("RETH");
-
         checkChainlogKey("STARKNET_TELEPORT_BRIDGE");
         checkChainlogKey("STARKNET_TELEPORT_FEE");
 
-        checkChainlogVersion("1.14.4");
+        checkChainlogVersion("1.14.5");
     }
 
-    function testNewIlkRegistryValues() public { // make public to use
+    function testNewIlkRegistryValues() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -474,32 +464,32 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testVestDAI() private { // make public to use
-        VestAbstract vest = VestAbstract(addr.addr("MCD_VEST_DAI"));
+        // VestAbstract vest = VestAbstract(addr.addr("MCD_VEST_DAI"));
 
-        assertEq(vest.ids(), 0);
+        // assertEq(vest.ids(), 0);
 
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        // vote(address(spell));
+        // scheduleWaitAndCast(address(spell));
+        // assertTrue(spell.done());
 
-        assertEq(vest.ids(), 1);
+        // assertEq(vest.ids(), 1);
 
-        assertEq(vest.cap(), 1 * MILLION * WAD / 30 days);
+        // assertEq(vest.cap(), 1 * MILLION * WAD / 30 days);
 
-        assertEq(vest.usr(1), address(pauseProxy));
-        assertEq(vest.bgn(1), block.timestamp - 1 days);
-        assertEq(vest.clf(1), block.timestamp - 1 days);
-        assertEq(vest.fin(1), block.timestamp);
-        assertEq(vest.mgr(1), address(0));
-        assertEq(vest.res(1), 0);
-        assertEq(vest.tot(1), WAD);
-        assertEq(vest.rxd(1), 0);
+        // assertEq(vest.usr(1), address(pauseProxy));
+        // assertEq(vest.bgn(1), block.timestamp - 1 days);
+        // assertEq(vest.clf(1), block.timestamp - 1 days);
+        // assertEq(vest.fin(1), block.timestamp);
+        // assertEq(vest.mgr(1), address(0));
+        // assertEq(vest.res(1), 0);
+        // assertEq(vest.tot(1), WAD);
+        // assertEq(vest.rxd(1), 0);
 
-        uint256 prevBalance = dai.balanceOf(address(pauseProxy));
-        assertTrue(tryVest(address(vest), 1));
-        assertEq(dai.balanceOf(address(pauseProxy)), prevBalance + WAD);
+        // uint256 prevBalance = dai.balanceOf(address(pauseProxy));
+        // assertTrue(tryVest(address(vest), 1));
+        // assertEq(dai.balanceOf(address(pauseProxy)), prevBalance + WAD);
 
-        assertEq(vest.rxd(1), WAD);
+        // assertEq(vest.rxd(1), WAD);
     }
 
    function testTeleportFW() public {
@@ -507,31 +497,26 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        address router = addr.addr("MCD_ROUTER_TELEPORT_FW_A");
+        TeleportRouterLike router = TeleportRouterLike(addr.addr("MCD_ROUTER_TELEPORT_FW_A"));
         StarknetTeleportBridgeLike bridge = StarknetTeleportBridgeLike(addr.addr("STARKNET_TELEPORT_BRIDGE"));
-        address escrow = addr.addr("STARKNET_ESCROW");
 
-        bytes32 ilk = "TELEPORT-FW-A";
-        bytes23 domain = "ETH-GOER-A";
+       // Sanity check
+        assertEq(router.numDomains(), 4);
 
-        uint256 l2_teleport_gateway = 0x042b46146f0a377e0a028ed44bc1c0567196b8b96f3c7ab469e593ca497e2a83;
-
-        assertEq(bridge.escrow(), escrow);
-        assertEq(bridge.teleportRouter(), address(router));
-        assertEq(bridge.dai(), address(dai));
-        assertEq(bridge.l2DaiTeleportGateway(), l2_teleport_gateway);
-
-        checkTeleportFWIntegrationInternals(
+       checkTeleportFWIntegration(
             "STA-GOER-A",
-            domain,
+            "ETH-GOER-A",
             100_000 * WAD,
             address(bridge),
             addr.addr("STARKNET_TELEPORT_FEE"),
-            escrow,
+            addr.addr("STARKNET_ESCROW"),
             100 * WAD,
-            WAD / 10000,   // 1bps
+            WAD / 10000, // 1bps
             30 minutes
         );
 
-    }
+       // Bridge domain specific checks
+       assertEq(bridge.l2TeleportGateway(), 0x078e1e7cc88114fe71be7433d1323782b4586c532a1868f072fc44ce9abf6714);
+       assertEq(bridge.starkNet(), 0xde29d060D45901Fb19ED6C6e959EB22d8626708e);
+   }
 }

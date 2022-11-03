@@ -52,15 +52,14 @@ interface EscrowLike {
 }
 
 interface TeleportBridgeLike {
-    function starkNet() external view returns (address);
-    function dai() external view returns (address);
-    function l2DaiTeleportGateway() external view returns (uint256);
-    function escrow() external view returns (address);
-    function teleportRouter() external view returns (address);
+    function l1Escrow() external view returns (address);
+    function l1TeleportRouter() external view returns (address);
+    function l1Token() external view returns (address);
 }
 
-interface StarknetDaiBridgeLike {
-    function deny(address) external;
+interface StarknetTeleportBridgeLike is TeleportBridgeLike {
+    function l2TeleportGateway() external view returns (uint256); // uniquely returning uint256 on starknet
+    function starkNet() external view returns (address);
 }
 
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
@@ -72,12 +71,24 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         return false;
     }
 
-    bytes32 internal constant ILK = "TELEPORT-FW-A";
+    address internal immutable DAI = DssExecLib.dai();
+
+    address internal immutable TELEPORT_JOIN = DssExecLib.getChangelogAddress("MCD_JOIN_TELEPORT_FW_A");
+    address internal immutable ROUTER        = DssExecLib.getChangelogAddress("MCD_ROUTER_TELEPORT_FW_A");
+
+    bytes32 internal constant ILK        = "TELEPORT-FW-A";
     bytes32 internal constant DOMAIN_ETH = "ETH-GOER-A";
     bytes32 internal constant DOMAIN_STA = "STA-GOER-A";
-    address internal constant TELEPORT_GATEWAY_STA = 0x140f746CcFbb1C2618838C063048949685d7A6eD;
-    uint256 internal constant TELEPORT_L2_GATEWAY_STA = 0x042b46146f0a377e0a028ed44bc1c0567196b8b96f3c7ab469e593ca497e2a83;
-    address internal constant LINEAR_FEE = 0x95532D5c4e2064e8dC51F4D41C21f24B33c78BBC;
+
+    address internal constant TELEPORT_GATEWAY_STA    = 0x6DcC2d81785B82f2d20eA9fD698d5738B5EE3589;
+    uint256 internal constant TELEPORT_L2_GATEWAY_STA = 0x078e1e7cc88114fe71be7433d1323782b4586c532a1868f072fc44ce9abf6714;
+    address internal constant LINEAR_FEE_STA          = 0x95532D5c4e2064e8dC51F4D41C21f24B33c78BBC;
+
+    address internal immutable ESCROW_STA     = DssExecLib.getChangelogAddress("STARKNET_ESCROW");
+    address internal immutable DAI_BRIDGE_STA = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");
+    address internal immutable STARKNET_CORE  = DssExecLib.getChangelogAddress("STARKNET_CORE");
+
+    uint256 internal constant CEILING = 100_000; // Whole Dai units
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -95,16 +106,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // --- Math ---
     uint256 internal constant WAD = 10 ** 18;
 
-    address immutable STARKNET_ESCROW = DssExecLib.getChangelogAddress("STARKNET_ESCROW");
-    address immutable MCD_ROUTER_TELEPORT_FW_A = DssExecLib.getChangelogAddress("MCD_ROUTER_TELEPORT_FW_A");
-    address immutable MCD_JOIN_TELEPORT_FW_A = DssExecLib.getChangelogAddress("MCD_JOIN_TELEPORT_FW_A");
-    address immutable STARKNET_CORE = DssExecLib.getChangelogAddress("STARKNET_CORE");
-    address immutable STARKNET_DAI_BRIDGE = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");
-    address immutable STARKNET_ESCROW_MOM = DssExecLib.getChangelogAddress("STARKNET_ESCROW_MOM");
-    address immutable MCD_DAI = DssExecLib.dai();
-
-    uint256 constant CEILING = 100_000; // Whole Dai units
-
     function actions() public override {
 
         // Includes changes from the DssSpellCollateralAction
@@ -115,75 +116,32 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // https://forum.makerdao.com/t/request-for-poll-starknet-bridge-deposit-limit-and-starknet-teleport-fees/17187
 
         // Run sanity checks
-        require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).escrow() == STARKNET_ESCROW);
-        require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).teleportRouter() == MCD_ROUTER_TELEPORT_FW_A);
-        require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).dai() == MCD_DAI);
-        require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).l2DaiTeleportGateway() == TELEPORT_L2_GATEWAY_STA);
-        require(TeleportBridgeLike(TELEPORT_GATEWAY_STA).starkNet() == STARKNET_CORE);
-        require(TeleportFeeLike(LINEAR_FEE).fee() == WAD / 10000);
-        require(TeleportFeeLike(LINEAR_FEE).ttl() == 30 minutes); // finalization time on Goerli
+        require(TeleportFeeLike(LINEAR_FEE_STA).fee() == WAD / 10000);
+        require(TeleportFeeLike(LINEAR_FEE_STA).ttl() == 30 minutes); // finalization time on Goerli
+        require(StarknetTeleportBridgeLike(TELEPORT_GATEWAY_STA).l1Escrow() == ESCROW_STA);
+        require(StarknetTeleportBridgeLike(TELEPORT_GATEWAY_STA).l1TeleportRouter() == ROUTER);
+        require(StarknetTeleportBridgeLike(TELEPORT_GATEWAY_STA).l1Token() == DAI);
+        require(StarknetTeleportBridgeLike(TELEPORT_GATEWAY_STA).l2TeleportGateway() == TELEPORT_L2_GATEWAY_STA);
+        require(StarknetTeleportBridgeLike(TELEPORT_GATEWAY_STA).starkNet() == STARKNET_CORE);
 
+        // Increase system debt ceilings
         DssExecLib.increaseIlkDebtCeiling(ILK, CEILING, true);
 
-        TeleportJoinLike(MCD_JOIN_TELEPORT_FW_A).file("fees", DOMAIN_STA, LINEAR_FEE);
-        TeleportJoinLike(MCD_JOIN_TELEPORT_FW_A).file("line", DOMAIN_STA, CEILING * WAD);
+        // Configure TeleportJoin
+        TeleportJoinLike(TELEPORT_JOIN).file("fees", DOMAIN_STA, LINEAR_FEE_STA);
+        TeleportJoinLike(TELEPORT_JOIN).file("line", DOMAIN_STA, CEILING * WAD);
 
-        TeleportRouterLike(MCD_ROUTER_TELEPORT_FW_A).file("gateway", DOMAIN_STA, TELEPORT_GATEWAY_STA);
+        // Configure TeleportRouter
+        TeleportRouterLike(ROUTER).file("gateway", DOMAIN_STA, TELEPORT_GATEWAY_STA);
 
-        EscrowLike(STARKNET_ESCROW).approve(MCD_DAI, TELEPORT_GATEWAY_STA, type(uint256).max);
+        // Authorize TeleportGateway to use the escrow
+        EscrowLike(ESCROW_STA).approve(DAI, TELEPORT_GATEWAY_STA, type(uint256).max);
 
-        // Deny STARKNET_ESCROW_MOM on daiBridge
-        StarknetDaiBridgeLike(STARKNET_DAI_BRIDGE).deny(STARKNET_ESCROW_MOM);
-
+        // Configure Chainlog
         DssExecLib.setChangelogAddress("STARKNET_TELEPORT_BRIDGE", TELEPORT_GATEWAY_STA);
-        DssExecLib.setChangelogAddress("STARKNET_TELEPORT_FEE", LINEAR_FEE);
+        DssExecLib.setChangelogAddress("STARKNET_TELEPORT_FEE", LINEAR_FEE_STA);
 
-        DssExecLib.setChangelogVersion("1.14.4");
-
-
-        // MAINNET ONLY
-
-        // CU Offboarding - Yank DAI Streams
-        // https://forum.makerdao.com/t/executive-vote-cu-offboarding-next-steps/18522
-        // Yank DAI Stream #4 (EVENTS-001)
-        // https://mips.makerdao.com/mips/details/MIP39c3SP4#sentence-summary
-        // Yank DAI Stream #5 (SH-001)
-        // https://mips.makerdao.com/mips/details/MIP39c3SP3#sentence-summary
-        // Yank DAI Stream #35 (RWF-001)
-        // https://mips.makerdao.com/mips/details/MIP39c3SP5#sentence-summary
-
-
-        // CU Offboarding - Yank MKR Stream
-        // Yank MKR Stream #23 (SH-001)
-        // https://mips.makerdao.com/mips/details/MIP39c3SP3#sentence-summary
-
-
-        // CU Offboarding - DAI Golden Parachutes
-        // EVENTS-001 - 167,666 DAI - 0x3D274fbAc29C92D2F624483495C0113B44dBE7d2
-        // https://mips.makerdao.com/mips/details/MIP39c3SP4#sentence-summary
-        // SH-001 - 43,332.0 DAI - 0xc657aC882Fb2D6CcF521801da39e910F8519508d
-        // https://mips.makerdao.com/mips/details/MIP39c3SP3#sentence-summary
-
-
-        // CU Offboarding - MKR Golden Parachutes
-        // https://forum.makerdao.com/t/executive-vote-cu-offboarding-next-steps/18522
-        // SH-001 - 26.04 MKR - 0xc657aC882Fb2D6CcF521801da39e910F8519508d
-        // https://mips.makerdao.com/mips/details/MIP39c3SP4#sentence-summary
-        // RWF-001 - 143.46 MKR - 0x96d7b01Cc25B141520C717fa369844d34FF116ec
-        // https://mips.makerdao.com/mips/details/MIP39c3SP5#sentence-summary
-
-
-        // SPF Funding
-        // BlockTower Legal and Risk Work SPF - 258,000 DAI - 0x117786ad59BC2f13cf25B2359eAa521acB0aDCD9
-        // https://mips.makerdao.com/mips/details/MIP39c3SP5#sentence-summary
-
-
-        // Oracle Whitelisting - carried over from last week, see confirms from Nik in week 43 sheet
-        // https://vote.makerdao.com/polling/QmZzFPFs#vote-breakdown
-        // Whitelist Oasis.app on RETH/USD oracle
-        // https://forum.makerdao.com/t/mip10c9-sp31-proposal-to-whitelist-oasis-app-on-rethusd-oracle/18195
-        // Oasis.app - 0x55Dc2Be8020bCa72E58e665dC931E03B749ea5E0 - OSM
-
+        DssExecLib.setChangelogVersion("1.14.5");
     }
 }
 

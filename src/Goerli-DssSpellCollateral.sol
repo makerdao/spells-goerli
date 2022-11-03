@@ -30,24 +30,60 @@ contract DssSpellCollateralAction {
     // A table of rates can be found at
     // https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
-    //uint256 internal constant ONE_FIVE_PCT_RATE = 1000000000472114805215157978;
+    // uint256 internal constant ONE_FIVE_PCT_RATE = 1000000000472114805215157978;
 
     // --- Math ---
     // uint256 internal constant MILLION  = 10 ** 6;
     // uint256 internal constant THOUSAND = 10 ** 3;
 
-
-
     function collateralAction() internal {
         onboardCollaterals();
-        updateCollaterals();
-        offboardCollaterals();
+        // updateCollaterals();
+        // offboardCollaterals();
     }
 
     function onboardCollaterals() internal {
+        // ----------------------------- Collateral onboarding -----------------------------
+        //  Add RETH-A as a new Vault Type
+        //  Poll Link 1: https://vote.makerdao.com/polling/QmfMswF2
+        //  Poll Link 2: https://vote.makerdao.com/polling/QmS7dBuQ
+        //  Forum Post:  https://forum.makerdao.com/t/reth-collateral-onboarding-risk-evaluation/15286
 
+        // DssExecLib.addNewCollateral(
+        //     CollateralOpts({
+        //         ilk:                  "RETH-A",
+        //         gem:                  RETH,
+        //         join:                 MCD_JOIN_RETH_A,
+        //         clip:                 MCD_CLIP_RETH_A,
+        //         calc:                 MCD_CLIP_CALC_RETH_A,
+        //         pip:                  PIP_RETH,
+        //         isLiquidatable:       true,
+        //         isOSM:                true,
+        //         whitelistOSM:         true,
+        //         ilkDebtCeiling:       0,                 // line updated to 0 (previously 5M)
+        //         minVaultAmount:       15_000,            // debt floor - dust in DAI
+        //         maxLiquidationAmount: 2_000_000,
+        //         liquidationPenalty:   13_00,             // 13% penalty on liquidation
+        //         ilkStabilityFee:      ONE_FIVE_PCT_RATE, // 1.50% stability fee
+        //         startingPriceFactor:  110_00,            // Auction price begins at 110% of oracle price
+        //         breakerTolerance:     50_00,             // Allows for a 50% hourly price drop before disabling liquidation
+        //         auctionDuration:      120 minutes,
+        //         permittedDrop:        45_00,             // 45% price drop before reset
+        //         liquidationRatio:     170_00,            // 170% collateralization
+        //         kprFlatReward:        250,               // 250 DAI tip - flat fee per kpr
+        //         kprPctReward:         10                 // 0.1% chip - per kpr
+        //     })
+        // );
 
+        // DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_RETH_A, 90 seconds, 99_00);
 
+        // ChainLog Updates
+        // Add the new join, clip, and abacus to the Chainlog
+        // DssExecLib.setChangelogAddress("RETH",                 RETH);
+        // DssExecLib.setChangelogAddress("PIP_RETH",             PIP_RETH);
+        // DssExecLib.setChangelogAddress("MCD_JOIN_RETH_A",      MCD_JOIN_RETH_A);
+        // DssExecLib.setChangelogAddress("MCD_CLIP_RETH_A",      MCD_CLIP_RETH_A);
+        // DssExecLib.setChangelogAddress("MCD_CLIP_CALC_RETH_A", MCD_CLIP_CALC_RETH_A);
     }
 
     function updateCollaterals() internal {
