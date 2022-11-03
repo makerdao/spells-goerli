@@ -27,6 +27,7 @@ contract Domain {
     string public name;
     Vm public vm;
     uint256 public forkId;
+    uint256 public live = 0;
 
     event Log(string, string);
     event Log(string, uint256);
@@ -35,15 +36,9 @@ contract Domain {
         config = _config;
         name = _name;
         vm = _vm;
-        string memory rpc = vm.envString(readConfigString("rpc"));
-        if (bytes(rpc).length == 0) revert(stringConcat(stringConcat("Environment variable '", rpc), "' is not defined."));
-        forkId = vm.createFork(rpc);
-        uint256 domainBlock = vm.envUint(readConfigString("block"));
-        if (domainBlock > 0) {
-            vm.rollFork(forkId, domainBlock);
-        }
         vm.makePersistent(address(this));
     }
+
 
     function stringConcat(string memory a, string memory b) pure internal returns(string memory) {
         return string(abi.encodePacked(a, b));
@@ -69,7 +64,30 @@ contract Domain {
         return config.readBytes32(stringConcat(stringConcat(stringConcat(".domains.", name), "."), key));
     }
 
+
+    function loadFork(uint256 _forkId) public {
+        forkId = _forkId;
+        live = 1;
+    }
+
+    function loadConfig() public {
+        string memory rpcEnv = readConfigString("rpc");
+        string memory rpc = vm.envString(rpcEnv);
+        if (bytes(rpc).length > 0) {
+            live = 1;
+            forkId = vm.createFork(rpc);
+            uint256 domainBlock = vm.envUint(readConfigString("block"));
+            if (domainBlock > 0) {
+                rollFork(domainBlock);
+            }
+        }
+    }
+
     function selectFork() public {
         vm.selectFork(forkId);
+    }
+
+    function rollFork(uint256 blockNum) public {
+        vm.rollFork(forkId, blockNum);
     }
 }

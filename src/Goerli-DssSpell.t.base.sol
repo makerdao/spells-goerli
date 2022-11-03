@@ -289,12 +289,12 @@ contract GoerliDssSpellTestBase is Config, Test, DSMath {
             }
         }
     }
+    event Log(string, string);
+    event Log(string, uint256);
 
     function stringConcat(string memory a, string memory b) pure internal returns(string memory) {
         return string(abi.encodePacked(a, b));
     }
-
-    event Log(string, string);
 
     function readInput(string memory input) internal returns (string memory) {
         string memory root = vm.projectRoot();
@@ -303,15 +303,35 @@ contract GoerliDssSpellTestBase is Config, Test, DSMath {
         return vm.readFile(path);
     }
 
-    event Log(string, uint256);
-
-    function setUp() public {
+    function setUpDomains() public {
         vm.makePersistent(address(addr));
         config = readInput("domains");
         rootDomain = new Domain(vm, config, "root");
-        optimismDomain = new Domain(vm, config, "optimism");
-        rootDomain.selectFork();
+        // This should be set from the forge test script
+        rootDomain.loadFork(vm.activeFork());
 
+        // Load optimism from config
+        optimismDomain = new Domain(vm, config, "optimism");
+        optimismDomain.loadConfig();
+        assertEq(vm.activeFork(), 0);
+        assertEq(block.number, 7838100);
+
+        if (optimismDomain.live() == 1) {
+            optimismDomain.selectFork();
+            assertEq(vm.activeFork(), 1);
+            assertEq(block.number, 2437710, "wrong optimism block");
+            optimismDomain.rollFork(2437710 + 10);
+            assertEq(block.number, 2437720, "wrong optimism block");
+
+            rootDomain.selectFork();
+            assertEq(vm.activeFork(), 0);
+            assertEq(block.number, 7838100);
+        }
+    }
+
+
+    function setUp() public {
+        setUpDomains();
         setValues(address(chief));
 
         spellValues.deployed_spell_created = spellValues.deployed_spell != address(0) ? spellValues.deployed_spell_created : block.timestamp;

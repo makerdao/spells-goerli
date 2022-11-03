@@ -4,7 +4,7 @@ all                :; DAPP_LIBRARIES=' lib/dss-exec-lib/src/DssExecLib.sol:DssEx
 clean              :; dapp clean
                       # Usage example: make test match=SpellIsCast
 test               :; ./scripts/test-dssspell.sh match="$(match)" optimizer="$(optimizer)" optimizer-runs="$(optimizer-runs)" block="$(block)"
-test-forge         :; ./scripts/test-dssspell-forge.sh match="$(match)" block="$(block)"
+test-forge         :; ./scripts/test-dssspell-forge.sh match="$(match)" block="$(block)" opt-block="$(opt-block)" arb-block="$(arb-block)"
 estimate           :; ./scripts/estimate-deploy-gas.sh
 deploy             :; ./scripts/deploy.sh
 deploy-stamp       :; ./scripts/get-created-timestamp.sh tx=$(tx)
