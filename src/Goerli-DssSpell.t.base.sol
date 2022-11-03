@@ -137,7 +137,7 @@ contract GoerliDssSpellTestBase is Config, Test, DSMath {
     string config;
     Domain rootDomain;
     Domain optimismDomain;
-    Domain arbitrumFork;
+    Domain arbitrumDomain;
 
     Rates         rates = new Rates();
     Addresses      addr = new Addresses();
@@ -309,24 +309,17 @@ contract GoerliDssSpellTestBase is Config, Test, DSMath {
         rootDomain = new Domain(vm, config, "root");
         // This should be set from the forge test script
         rootDomain.loadFork(vm.activeFork());
+        assertEq(vm.activeFork(), 0);
 
         // Load optimism from config
         optimismDomain = new Domain(vm, config, "optimism");
+        // Loads config and rolls to block set with opt-block
         optimismDomain.loadConfig();
-        assertEq(vm.activeFork(), 0);
-        assertEq(block.number, 7838100);
 
-        if (optimismDomain.live() == 1) {
-            optimismDomain.selectFork();
-            assertEq(vm.activeFork(), 1);
-            assertEq(block.number, 2437710, "wrong optimism block");
-            optimismDomain.rollFork(2437710 + 10);
-            assertEq(block.number, 2437720, "wrong optimism block");
-
-            rootDomain.selectFork();
-            assertEq(vm.activeFork(), 0);
-            assertEq(block.number, 7838100);
-        }
+        // Load arbitrum from config
+        arbitrumDomain = new Domain(vm, config, "arbitrum");
+        // Loads config and rolls to block set with arb-block
+        arbitrumDomain.loadConfig();
     }
 
 
