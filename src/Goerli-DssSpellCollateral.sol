@@ -38,52 +38,60 @@ contract DssSpellCollateralAction {
 
     function collateralAction() internal {
         onboardCollaterals();
-        // updateCollaterals();
-        // offboardCollaterals();
+        updateCollaterals();
+        offboardCollaterals();
     }
 
     function onboardCollaterals() internal {
         // ----------------------------- Collateral onboarding -----------------------------
-        //  Add RETH-A as a new Vault Type
-        //  Poll Link 1: https://vote.makerdao.com/polling/QmfMswF2
-        //  Poll Link 2: https://vote.makerdao.com/polling/QmS7dBuQ
-        //  Forum Post:  https://forum.makerdao.com/t/reth-collateral-onboarding-risk-evaluation/15286
+        // Add ______________ as a new Vault Type
+        // Poll Link:
 
         // DssExecLib.addNewCollateral(
         //     CollateralOpts({
-        //         ilk:                  "RETH-A",
-        //         gem:                  RETH,
-        //         join:                 MCD_JOIN_RETH_A,
-        //         clip:                 MCD_CLIP_RETH_A,
-        //         calc:                 MCD_CLIP_CALC_RETH_A,
-        //         pip:                  PIP_RETH,
-        //         isLiquidatable:       true,
-        //         isOSM:                true,
-        //         whitelistOSM:         true,
-        //         ilkDebtCeiling:       0,                 // line updated to 0 (previously 5M)
-        //         minVaultAmount:       15_000,            // debt floor - dust in DAI
-        //         maxLiquidationAmount: 2_000_000,
-        //         liquidationPenalty:   13_00,             // 13% penalty on liquidation
-        //         ilkStabilityFee:      ONE_FIVE_PCT_RATE, // 1.50% stability fee
-        //         startingPriceFactor:  110_00,            // Auction price begins at 110% of oracle price
-        //         breakerTolerance:     50_00,             // Allows for a 50% hourly price drop before disabling liquidation
-        //         auctionDuration:      120 minutes,
-        //         permittedDrop:        45_00,             // 45% price drop before reset
-        //         liquidationRatio:     170_00,            // 170% collateralization
-        //         kprFlatReward:        250,               // 250 DAI tip - flat fee per kpr
-        //         kprPctReward:         10                 // 0.1% chip - per kpr
+        //         ilk:                   "XXX-A",
+        //         gem:                   XXX,
+        //         join:                  MCD_JOIN_XXX_A,
+        //         clip:                  MCD_CLIP_XXX_A,
+        //         calc:                  MCD_CLIP_CALC_XXX_A,
+        //         pip:                   PIP_XXX,
+        //         isLiquidatable:        BOOL,
+        //         isOSM:                 BOOL,
+        //         whitelistOSM:          BOOL,
+        //         ilkDebtCeiling:        line,
+        //         minVaultAmount:        dust,
+        //         maxLiquidationAmount:  hole,
+        //         liquidationPenalty:    chop,
+        //         ilkStabilityFee:       duty,
+        //         startingPriceFactor:   buf,
+        //         breakerTolerance:      tolerance,
+        //         auctionDuration:       tail,
+        //         permittedDrop:         cusp,
+        //         liquidationRatio:      mat,
+        //         kprFlatReward:         tip,
+        //         kprPctReward:          chip
         //     })
         // );
 
-        // DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_RETH_A, 90 seconds, 99_00);
+        // DssExecLib.setStairstepExponentialDecrease(
+        //     CALC_ADDR,
+        //     DURATION,
+        //     PCT_BPS
+        // );
+
+        // DssExecLib.setIlkAutoLineParameters(
+        //     "XXX-A",
+        //     AMOUNT,
+        //     GAP,
+        //     TTL
+        // );
 
         // ChainLog Updates
-        // Add the new join, clip, and abacus to the Chainlog
-        // DssExecLib.setChangelogAddress("RETH",                 RETH);
-        // DssExecLib.setChangelogAddress("PIP_RETH",             PIP_RETH);
-        // DssExecLib.setChangelogAddress("MCD_JOIN_RETH_A",      MCD_JOIN_RETH_A);
-        // DssExecLib.setChangelogAddress("MCD_CLIP_RETH_A",      MCD_CLIP_RETH_A);
-        // DssExecLib.setChangelogAddress("MCD_CLIP_CALC_RETH_A", MCD_CLIP_CALC_RETH_A);
+        // DssExecLib.setChangelogAddress("XXX", XXX);
+        // DssExecLib.setChangelogAddress("PIP_XXX", PIP_XXX);
+        // DssExecLib.setChangelogAddress("MCD_JOIN_XXX_A", MCD_JOIN_XXX_A);
+        // DssExecLib.setChangelogAddress("MCD_CLIP_XXX_A", MCD_CLIP_XXX_A);
+        // DssExecLib.setChangelogAddress("MCD_CLIP_CALC_XXX_A", MCD_CLIP_CALC_XXX_A);
     }
 
     function updateCollaterals() internal {

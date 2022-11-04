@@ -77,7 +77,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     address internal immutable ROUTER        = DssExecLib.getChangelogAddress("MCD_ROUTER_TELEPORT_FW_A");
 
     bytes32 internal constant ILK        = "TELEPORT-FW-A";
-    bytes32 internal constant DOMAIN_ETH = "ETH-GOER-A";
     bytes32 internal constant DOMAIN_STA = "STA-GOER-A";
 
     address internal constant TELEPORT_GATEWAY_STA    = 0x6DcC2d81785B82f2d20eA9fD698d5738B5EE3589;
