@@ -24,22 +24,12 @@ import "dss-exec-lib/DssAction.sol";
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
 interface TeleportJoinLike {
-    function rely(address) external;
-    function file(bytes32,address) external;
     function file(bytes32,bytes32,address) external;
     function file(bytes32,bytes32,uint256) external;
-    function vat() external view returns (address);
-    function daiJoin() external view returns (address);
-    function ilk() external view returns (bytes32);
-    function domain() external view returns (bytes32);
 }
 
 interface TeleportRouterLike {
-    function rely(address) external;
     function file(bytes32,bytes32,address) external;
-    function gateways(bytes32) external view returns (address);
-    function domains(address) external view returns (bytes32);
-    function dai() external view returns (address);
 }
 
 interface TeleportFeeLike {

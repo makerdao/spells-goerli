@@ -492,7 +492,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // assertEq(vest.rxd(1), WAD);
     }
 
-   function testTeleportFW() public {
+    function testTeleportFW() public {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -500,10 +500,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         TeleportRouterLike router = TeleportRouterLike(addr.addr("MCD_ROUTER_TELEPORT_FW_A"));
         StarknetTeleportBridgeLike bridge = StarknetTeleportBridgeLike(addr.addr("STARKNET_TELEPORT_BRIDGE"));
 
-       // Sanity check
+        // Sanity check
         assertEq(router.numDomains(), 4);
 
-       checkTeleportFWIntegration(
+        checkTeleportFWIntegration(
             "STA-GOER-A",
             "ETH-GOER-A",
             100_000 * WAD,
@@ -515,8 +515,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             30 minutes
         );
 
-       // Bridge domain specific checks
-       assertEq(bridge.l2TeleportGateway(), 0x078e1e7cc88114fe71be7433d1323782b4586c532a1868f072fc44ce9abf6714);
-       assertEq(bridge.starkNet(), 0xde29d060D45901Fb19ED6C6e959EB22d8626708e);
-   }
+        // Bridge domain specific checks
+        assertEq(bridge.l2TeleportGateway(), 0x078e1e7cc88114fe71be7433d1323782b4586c532a1868f072fc44ce9abf6714);
+        assertEq(bridge.starkNet(), 0xde29d060D45901Fb19ED6C6e959EB22d8626708e);
+    }
 }
