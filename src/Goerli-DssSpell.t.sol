@@ -517,6 +517,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         // Bridge domain specific checks
         assertEq(bridge.l2TeleportGateway(), 0x078e1e7cc88114fe71be7433d1323782b4586c532a1868f072fc44ce9abf6714);
-        assertEq(bridge.starkNet(), 0xde29d060D45901Fb19ED6C6e959EB22d8626708e);
+        assertEq(bridge.starkNet(), addr.addr("STARKNET_CORE"));
     }
 }
