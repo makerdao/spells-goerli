@@ -99,7 +99,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     function actions() public override {
 
         // Includes changes from the DssSpellCollateralAction
-        //collateralAction();
+        // collateralAction();
 
         // ------------------ Setup Starknet Teleport Fast Withdrawals -----------------
         // https://vote.makerdao.com/polling/QmZxRgvG
