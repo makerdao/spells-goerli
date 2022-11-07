@@ -108,7 +108,7 @@ contract Config {
         afterSpell = SystemValues({
             line_offset:           500 * MILLION,           // Offset between the global line against the sum of local lines
             pot_dsr:               1,                       // In basis points
-            pause_delay:           60,                      // In seconds (Different on Mainnet)
+            pause_delay:           60,                      // In seconds (60 seconds on Goerli, 48 hours on Mainnet)
             vow_wait:              156 hours,               // In seconds
             vow_dump:              250,                     // In whole Dai units
             vow_sump:              50 * THOUSAND,           // In whole Dai units
@@ -429,7 +429,7 @@ contract Config {
             clip_tail:    120 hours,
             clip_cusp:    98_00,
             clip_chip:    0,
-            clip_tip:     500,      // TODO Discrepancy
+            clip_tip:     0,
             clipper_mom:  1,
             cm_tolerance: 9500,
             calc_tau:     250 days,
