@@ -1475,13 +1475,6 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         }
     }
 
-    function getExtcodehash(address target) public view returns (bytes32 hash)
-    {
-       assembly {
-            hash := extcodehash(target)
-       }
-    }
-
     function getBytecodeMetadataLength(address a) internal view returns (uint256 length) {
         // The Solidity compiler encodes the metadata length in the last two bytes of the contract bytecode.
         assembly {
