@@ -29,9 +29,6 @@ contract Domain {
     uint256 public forkId;
     uint256 public live = 0;
 
-    event Log(string, string);
-    event Log(string, uint256);
-
     constructor(Vm _vm, string memory _config, string memory _name) public {
         config = _config;
         name = _name;

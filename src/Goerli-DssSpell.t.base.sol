@@ -289,8 +289,6 @@ contract GoerliDssSpellTestBase is Config, Test, DSMath {
             }
         }
     }
-    event Log(string, string);
-    event Log(string, uint256);
 
     function stringConcat(string memory a, string memory b) pure internal returns(string memory) {
         return string(abi.encodePacked(a, b));
@@ -299,7 +297,6 @@ contract GoerliDssSpellTestBase is Config, Test, DSMath {
     function readInput(string memory input) internal returns (string memory) {
         string memory root = vm.projectRoot();
         string memory path = stringConcat(stringConcat(root, "/config/"), stringConcat(input, ".json"));
-        emit Log("path", path);
         return vm.readFile(path);
     }
 
@@ -1550,7 +1547,6 @@ contract GoerliDssSpellTestBase is Config, Test, DSMath {
             uint256 ward = abi.decode(data, (uint256));
             if (ward > 0) {
                 if (skipWards(_addr, deployers.addr(i))) continue; // ONLY ON GOERLI
-                emit log("Error: Bad Auth");
                 emit log_named_address("   Deployer Address", deployers.addr(i));
                 emit log_named_string("  Affected Contract", contractName);
                 fail();
