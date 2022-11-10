@@ -296,13 +296,13 @@ contract GoerliDssSpellTestBase is Config, Test, DSMath {
 
     function readInput(string memory input) internal returns (string memory) {
         string memory root = vm.projectRoot();
-        string memory path = stringConcat(stringConcat(root, "/config/"), stringConcat(input, ".json"));
+        string memory path = stringConcat(stringConcat(root, "/scripts/input/5/"), stringConcat(input, ".json"));
         return vm.readFile(path);
     }
 
     function setUpDomains() public {
         vm.makePersistent(address(addr));
-        config = readInput("domains");
+        config = readInput("config");
         rootDomain = new Domain(vm, config, "root");
         // This should be set from the forge test script
         rootDomain.loadFork(vm.activeFork());
