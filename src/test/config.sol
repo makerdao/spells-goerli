@@ -95,7 +95,7 @@ contract Config {
         // Values for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0x6523a7C0170126BE61c4A07749C709828d72874e),        // populate with deployed spell if deployed
+            deployed_spell:                 address(0),        // populate with deployed spell if deployed
             deployed_spell_created:         1667849388,        // use `./scripts/get-created-timestamp.sh <deployment-tx>`
             previous_spell:                 address(0),        // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           false,             // true if officehours is expected to be enabled in the spell
@@ -499,16 +499,16 @@ contract Config {
         });
         afterSpell.collaterals["MANA-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      10 * MILLION,
+            aL_line:      3 * MILLION,
             aL_gap:       1 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
             dust:         15 * THOUSAND,
-            pct:          750,
+            pct:          5000,
             mat:          17500,
             liqType:      "clip",
             liqOn:        true,
-            chop:         1300,
+            chop:         3000,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -1369,8 +1369,8 @@ contract Config {
         });
         afterSpell.collaterals["RWA007-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      250 * MILLION,
-            aL_gap:       50 * MILLION,
+            aL_line:      500 * MILLION,
+            aL_gap:       100 * MILLION,
             aL_ttl:       604_800, // 1 week
             line:         0,
             dust:         0,

@@ -29,12 +29,22 @@ contract DssSpellCollateralAction {
     //
     // A table of rates can be found at
     // https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
-    //
-    // uint256 internal constant ONE_FIVE_PCT_RATE = 1000000000472114805215157978;
 
     // --- Math ---
-    // uint256 internal constant MILLION  = 10 ** 6;
-    // uint256 internal constant THOUSAND = 10 ** 3;
+    uint256 constant MILLION                  = 10 ** 6;
+
+    uint256 constant FIFTY_PCT_RATE           = 1000000012857214317438491659;
+
+    // RWA007-A
+    bytes32 constant RWA007_A                 = "RWA007-A";
+    uint256 constant RWA007_A_AUTOLINE_AMOUNT = 500 * MILLION;
+    uint256 constant RWA007_A_AUTOLINE_GAP    = 100 * MILLION;
+    uint256 constant RWA007_A_AUTOLINE_TTL    = 1 weeks; 
+
+    // MANA-A
+    bytes32 constant MANA_A                   = "MANA-A";
+    uint256 constant MANA_A_AUTOLINE_AMOUNT   = 3 * MILLION;
+    uint256 constant MANA_A_CHOP              = 3000; // 30%
 
     function collateralAction() internal {
         onboardCollaterals();
@@ -44,127 +54,35 @@ contract DssSpellCollateralAction {
 
     function onboardCollaterals() internal {
         // ----------------------------- Collateral onboarding -----------------------------
-        // Add ______________ as a new Vault Type
-        // Poll Link:
-
-        // DssExecLib.addNewCollateral(
-        //     CollateralOpts({
-        //         ilk:                   "XXX-A",
-        //         gem:                   XXX,
-        //         join:                  MCD_JOIN_XXX_A,
-        //         clip:                  MCD_CLIP_XXX_A,
-        //         calc:                  MCD_CLIP_CALC_XXX_A,
-        //         pip:                   PIP_XXX,
-        //         isLiquidatable:        BOOL,
-        //         isOSM:                 BOOL,
-        //         whitelistOSM:          BOOL,
-        //         ilkDebtCeiling:        line,
-        //         minVaultAmount:        dust,
-        //         maxLiquidationAmount:  hole,
-        //         liquidationPenalty:    chop,
-        //         ilkStabilityFee:       duty,
-        //         startingPriceFactor:   buf,
-        //         breakerTolerance:      tolerance,
-        //         auctionDuration:       tail,
-        //         permittedDrop:         cusp,
-        //         liquidationRatio:      mat,
-        //         kprFlatReward:         tip,
-        //         kprPctReward:          chip
-        //     })
-        // );
-
-        // DssExecLib.setStairstepExponentialDecrease(
-        //     CALC_ADDR,
-        //     DURATION,
-        //     PCT_BPS
-        // );
-
-        // DssExecLib.setIlkAutoLineParameters(
-        //     "XXX-A",
-        //     AMOUNT,
-        //     GAP,
-        //     TTL
-        // );
-
-        // ChainLog Updates
-        // DssExecLib.setChangelogAddress("XXX", XXX);
-        // DssExecLib.setChangelogAddress("PIP_XXX", PIP_XXX);
-        // DssExecLib.setChangelogAddress("MCD_JOIN_XXX_A", MCD_JOIN_XXX_A);
-        // DssExecLib.setChangelogAddress("MCD_CLIP_XXX_A", MCD_CLIP_XXX_A);
-        // DssExecLib.setChangelogAddress("MCD_CLIP_CALC_XXX_A", MCD_CLIP_CALC_XXX_A);
     }
 
     function updateCollaterals() internal {
         // ------------------------------- Collateral updates -------------------------------
+        
+        // RWA007-A param changes:
+        // - increase DC to 500m
+        // - increase autoline `gap` to 100m
+        //
+        // https://vote.makerdao.com/polling/QmSfMtTM#poll-detail
+        DssExecLib.setIlkAutoLineParameters(
+            RWA007_A,
+            RWA007_A_AUTOLINE_AMOUNT,
+            RWA007_A_AUTOLINE_GAP,
+            RWA007_A_AUTOLINE_TTL
+        );
 
-        // Enable autoline for XXX-A
-        // Poll Link:
-        // Forum Link:
-        // DssExecLib.setIlkAutoLineParameters(
-        //    XXX-A,
-        //    AMOUNT,
-        //    GAP,
-        //    TTL
-        // );
+        // MANA-A param changes:
+        // - decrease line to 3m
+        // - increase SF to 50%
+        // - increase liquidation penalty to 30% from current 13%
+        //
+        // https://forum.makerdao.com/t/mana-a-intermediate-parameter-change-proposal/18727
+        DssExecLib.setIlkAutoLineDebtCeiling(MANA_A, MANA_A_AUTOLINE_AMOUNT);
+        DssExecLib.setIlkStabilityFee(MANA_A, FIFTY_PCT_RATE, true);
+        DssExecLib.setIlkLiquidationPenalty(MANA_A, MANA_A_CHOP);
     }
 
     function offboardCollaterals() internal {
         // ----------------------------- Collateral offboarding -----------------------------
-        // 1st Stage of Collateral Offboarding Process
-        // Poll Link:
-        // uint256 line;
-        // uint256 lineReduction;
-
-        // Set XXX-A Maximum Debt Ceiling to 0
-        // (,,,line,) = vat.ilks("XXX-A");
-        // lineReduction += line;
-        // DssExecLib.removeIlkFromAutoLine("XXX-A");
-        // DssExecLib.setIlkDebtCeiling("XXX-A", 0);
-
-        // Set XXX-A Maximum Debt Ceiling to 0
-        // (,,,line,) = vat.ilks("XXX-A");
-        // lineReduction += line;
-        // DssExecLib.removeIlkFromAutoLine("XXX-A");
-        // DssExecLib.setIlkDebtCeiling("XXX-A", 0);
-
-        // Decrease Global Debt Ceiling by total amount of offboarded ilks
-        // vat.file("Line", _sub(vat.Line(), lineReduction));
-
-        // 2nd Stage of Collateral Offboarding Process
-        // address spotter = DssExecLib.spotter();
-
-        // Offboard XXX-A
-        // Poll Link:
-        // Forum Link:
-
-        // DssExecLib.setIlkLiquidationPenalty("XXX-A", 0);
-        // DssExecLib.setKeeperIncentiveFlatRate("XXX-A", 0);
-        // DssExecLib.linearInterpolation({
-        //     _name:      "XXX-A Offboarding",
-        //     _target:    spotter,
-        //     _ilk:       "XXX-A",
-        //     _what:      "mat",
-        //     _startTime: block.timestamp,
-        //     _start:     CURRENT_XXX_A_MAT,
-        //     _end:       TARGET_XXX_A_MAT,
-        //     _duration:  30 days
-        // });
-
-        // Offboard XXX-A
-        // Poll Link:
-        // Forum Link:
-
-        // DssExecLib.setIlkLiquidationPenalty("XXX-A", 0);
-        // DssExecLib.setKeeperIncentiveFlatRate("XXX-A", 0);
-        // DssExecLib.linearInterpolation({
-        //     _name:      "XXX-A Offboarding",
-        //     _target:    spotter,
-        //     _ilk:       "XXX-A",
-        //     _what:      "mat",
-        //     _startTime: block.timestamp,
-        //     _start:     CURRENT_XXX_A_MAT,
-        //     _end:       TARGET_XXX_A_MAT,
-        //     _duration:  30 days
-        // });
     }
 }
