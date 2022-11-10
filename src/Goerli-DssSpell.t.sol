@@ -19,8 +19,8 @@ pragma experimental ABIEncoderV2;
 
 import "./Goerli-DssSpell.t.base.sol";
 
-interface DssExecLike {
-    function action() external returns (address);
+interface RwaLiquidationLike {
+    function ilks(bytes32) external returns (string memory, address, uint48, uint48);
 }
 
 contract DssSpellTest is GoerliDssSpellTestBase {
@@ -484,7 +484,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
      // RWA Tests
 
     string RWA007_OLDDOC = "QmRLwB7Ty3ywSzq17GdDdwHvsZGwBg79oUTpSTJGtodToY";
-    string RWA007_NEWDOC = "QmQx3bMtjncka2jUsGwKu7ButuPJFn9yDEEvpg9xZ71ECh";
+    string RWA007_NEWDOC = "TODO";
 
     string RWA008_OLDDOC = "QmdfzY6p5EpkYMN8wcomF2a1GsJbhkPiRQVRYSPfS4NZtB";
     string RWA008_NEWDOC = "QmZ4heYjptvj3ovafADJpXYMFXMyY3yQjkTXpvjFPnAKcy";
@@ -516,7 +516,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(tocOld == tocNew,    "toc is the same");
     }
 
-    function testRWA007DocChange() public {
+    function testRWA008DocChange() public {
         bytes32 ilk = "RWA008-A";
         RwaLiquidationLike oracle = RwaLiquidationLike(
             addr.addr("MIP21_LIQUIDATION_ORACLE")
@@ -562,5 +562,34 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(pipOld, pipNew,        "pip is the same");
         assertTrue(tauOld == tauNew,    "tau is the same");
         assertTrue(tocOld == tocNew,    "toc is the same");
+    }
+
+    // CHANGELOG Houskeeping
+    function testChangelogHousekeeping() public {
+        address rwa007inUrn = chainLog.getAddress("RWA007_A_INPUT_CONDUIT_URN");
+        address rwa007inJar = chainLog.getAddress("RWA007_A_INPUT_CONDUIT_JAR");
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(chainLog.getAddress("RWA007_A_INPUT_CONDUIT"), rwa007inUrn);
+        assertEq(chainLog.getAddress("RWA007_A_JAR_INPUT_CONDUIT"), rwa007inJar);
+    }
+
+    function testFailOldInputConduitUrn() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        chainLog.getAddress("RWA007_A_INPUT_CONDUIT_URN");
+    }
+
+    function testFailOldInputConduitJar() public {
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        chainLog.getAddress("RWA007_A_INPUT_CONDUIT_URN");
     }
 }

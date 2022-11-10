@@ -23,6 +23,15 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
+interface RwaLiquidationLike {
+    function ilks(bytes32) external returns (string memory, address, uint48, uint48);
+    function init(bytes32, uint256, string calldata, uint48) external;
+}
+
+interface ChainlogLike {
+    function removeAddress(bytes32) external;
+}
+
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -46,7 +55,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     uint256 internal constant WAD = 10 ** 18;
 
     // Monetalis (RWA007-A) legal update doc
-    string constant RWA007_DOC = "TBC";
+    string constant RWA007_DOC = "TODO";
 
     // SG Forge OFH (RWA008-A) legal update doc
     string constant RWA008_DOC = "QmZ4heYjptvj3ovafADJpXYMFXMyY3yQjkTXpvjFPnAKcy";
@@ -62,66 +71,55 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // -------------------- Update RWA007 Legal Documents ---------------------
         // https://forum.makerdao.com/t/poll-inclusion-request-hvbank-legal-update/17547
         // https://vote.makerdao.com/polling/QmX81EhP#vote-breakdown
-        bytes32 RWA007_ILK               = "RWA007-A";
-        address MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress(
-            "MIP21_LIQUIDATION_ORACLE"
-        );
+        //
+        bytes32 RWA007_ILK = "RWA007-A";
+        updateDoc(RWA007_ILK, RWA007_DOC);
 
-        ( , address pip, uint48 tau, ) = RwaLiquidationLike(
-            MIP21_LIQUIDATION_ORACLE
-        ).ilks(RWA007_ILK);
-
-        require(pip != address(0), "Abort spell execution: pip must be set");
-
-        // Init the RwaLiquidationOracle to reset the doc
-        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(
-            RWA007_ILK, // ilk to update
-            0,          // price ignored if init() has already been called
-            RWA007_DOC, // new legal document
-            tau         // old tau value
-        );
 
         // -------------------- Update RWA008 Legal Documents ---------------------
         // https://forum.makerdao.com/t/poll-inclusion-request-hvbank-legal-update/17547
         // https://vote.makerdao.com/polling/QmX81EhP#vote-breakdown
-        bytes32 RWA008_ILK               = "RWA008-A";
-        address MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress(
-            "MIP21_LIQUIDATION_ORACLE"
-        );
-
-        ( , address pip, uint48 tau, ) = RwaLiquidationLike(
-            MIP21_LIQUIDATION_ORACLE
-        ).ilks(RWA008_ILK);
-
-        require(pip != address(0), "Abort spell execution: pip must be set");
-
-        // Init the RwaLiquidationOracle to reset the doc
-        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(
-            RWA008_ILK, // ilk to update
-            0,          // price ignored if init() has already been called
-            RWA008_DOC, // new legal document
-            tau         // old tau value
-        );
+        //
+        bytes32 RWA008_ILK = "RWA008-A";
+        updateDoc(RWA008_ILK, RWA008_DOC);
 
         // -------------------- Update RWA009 Legal Documents ---------------------
         // https://forum.makerdao.com/t/poll-inclusion-request-hvbank-legal-update/17547
         // https://vote.makerdao.com/polling/QmX81EhP#vote-breakdown
-        bytes32 RWA009_ILK               = "RWA009-A";
+        //
+        bytes32 RWA009_ILK = "RWA009-A";
+        updateDoc(RWA009_ILK, RWA009_DOC);
+
+        // -------------------- Changelog Housekeeping ---------------------
+        // - Change "RWA007_A_INPUT_CONDUIT_URN" to "RWA007_A_INPUT_CONDUIT"
+        // - Change "RWA007_A_INPUT_CONDUIT_JAR" to "RWA007_A_JAR_INPUT_CONDUIT"
+        //
+        address rwa007inUrn = DssExecLib.getChangelogAddress("RWA007_A_INPUT_CONDUIT_URN");
+        address rwa007inJar = DssExecLib.getChangelogAddress("RWA007_A_INPUT_CONDUIT_JAR");
+
+        DssExecLib.setChangelogAddress("RWA007_A_INPUT_CONDUIT", rwa007inUrn);
+        DssExecLib.setChangelogAddress("RWA007_A_JAR_INPUT_CONDUIT", rwa007inJar);
+        ChainlogLike(DssExecLib.LOG).removeAddress("RWA007_A_INPUT_CONDUIT_URN");
+        ChainlogLike(DssExecLib.LOG).removeAddress("RWA007_A_INPUT_CONDUIT_JAR");
+
+    }
+
+    function updateDoc(bytes32 ilk, string memory doc) private {
         address MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress(
             "MIP21_LIQUIDATION_ORACLE"
         );
 
         ( , address pip, uint48 tau, ) = RwaLiquidationLike(
             MIP21_LIQUIDATION_ORACLE
-        ).ilks(RWA009_ILK);
+        ).ilks(ilk);
 
         require(pip != address(0), "Abort spell execution: pip must be set");
 
         // Init the RwaLiquidationOracle to reset the doc
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(
-            RWA009_ILK, // ilk to update
+            ilk, // ilk to update
             0,          // price ignored if init() has already been called
-            RWA009_DOC, // new legal document
+            doc, // new legal document
             tau         // old tau value
         );
     }
