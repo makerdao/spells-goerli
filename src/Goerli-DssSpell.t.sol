@@ -484,7 +484,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
      // RWA Tests
 
     string RWA007_OLDDOC = "QmRLwB7Ty3ywSzq17GdDdwHvsZGwBg79oUTpSTJGtodToY";
-    string RWA007_NEWDOC = "TODO";
+    string RWA007_NEWDOC = "QmejL1CKKN5vCwp9QD1gebnnAM2MJSt9XbF64uy4ptkJtR";
 
     string RWA008_OLDDOC = "QmdfzY6p5EpkYMN8wcomF2a1GsJbhkPiRQVRYSPfS4NZtB";
     string RWA008_NEWDOC = "QmZ4heYjptvj3ovafADJpXYMFXMyY3yQjkTXpvjFPnAKcy";
