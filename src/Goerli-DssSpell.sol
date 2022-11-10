@@ -55,7 +55,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     uint256 internal constant WAD = 10 ** 18;
 
     // Monetalis (RWA007-A) legal update doc
-    string constant RWA007_DOC = "TODO";
+    string constant RWA007_DOC = "QmejL1CKKN5vCwp9QD1gebnnAM2MJSt9XbF64uy4ptkJtR";
 
     // SG Forge OFH (RWA008-A) legal update doc
     string constant RWA008_DOC = "QmZ4heYjptvj3ovafADJpXYMFXMyY3yQjkTXpvjFPnAKcy";
