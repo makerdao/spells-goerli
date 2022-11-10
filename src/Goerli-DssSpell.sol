@@ -23,35 +23,6 @@ import "dss-exec-lib/DssAction.sol";
 
 import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
-interface TeleportJoinLike {
-    function file(bytes32,bytes32,address) external;
-    function file(bytes32,bytes32,uint256) external;
-}
-
-interface TeleportRouterLike {
-    function file(bytes32,bytes32,address) external;
-}
-
-interface TeleportFeeLike {
-    function fee() external view returns (uint256);
-    function ttl() external view returns (uint256);
-}
-
-interface EscrowLike {
-    function approve(address,address,uint256) external;
-}
-
-interface TeleportBridgeLike {
-    function l1Escrow() external view returns (address);
-    function l1TeleportRouter() external view returns (address);
-    function l1Token() external view returns (address);
-}
-
-interface StarknetTeleportBridgeLike is TeleportBridgeLike {
-    function l2TeleportGateway() external view returns (uint256); // uniquely returning uint256 on starknet
-    function starkNet() external view returns (address);
-}
-
 contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -60,24 +31,6 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     function officeHours() public override returns (bool) {
         return false;
     }
-
-    address internal immutable DAI = DssExecLib.dai();
-
-    address internal immutable TELEPORT_JOIN = DssExecLib.getChangelogAddress("MCD_JOIN_TELEPORT_FW_A");
-    address internal immutable ROUTER        = DssExecLib.getChangelogAddress("MCD_ROUTER_TELEPORT_FW_A");
-
-    bytes32 internal constant ILK        = "TELEPORT-FW-A";
-    bytes32 internal constant DOMAIN_STA = "STA-GOER-A";
-
-    address internal constant TELEPORT_GATEWAY_STA    = 0x6DcC2d81785B82f2d20eA9fD698d5738B5EE3589;
-    uint256 internal constant TELEPORT_L2_GATEWAY_STA = 0x078e1e7cc88114fe71be7433d1323782b4586c532a1868f072fc44ce9abf6714;
-    address internal constant LINEAR_FEE_STA          = 0x95532D5c4e2064e8dC51F4D41C21f24B33c78BBC;
-
-    address internal immutable ESCROW_STA     = DssExecLib.getChangelogAddress("STARKNET_ESCROW");
-    address internal immutable DAI_BRIDGE_STA = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");
-    address internal immutable STARKNET_CORE  = DssExecLib.getChangelogAddress("STARKNET_CORE");
-
-    uint256 internal constant CEILING = 100_000; // Whole Dai units
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -89,58 +42,88 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
 
-    // --- Rates ---
-    uint256 internal constant SEVEN_PT_FIVE_PERCENT_RATE = 1000000002293273137447730714;
-
     // --- Math ---
     uint256 internal constant WAD = 10 ** 18;
-    uint256 internal constant MILLION = 10 ** 6;
+
+    // Monetalis (RWA007-A) legal update doc
+    string constant RWA007_DOC = "TBC";
+
+    // SG Forge OFH (RWA008-A) legal update doc
+    string constant RWA008_DOC = "QmZ4heYjptvj3ovafADJpXYMFXMyY3yQjkTXpvjFPnAKcy";
+
+    // HVB (RWA009-A) legal update doc
+    string constant RWA009_DOC = "QmeRrbDF8MVPQfNe83gWf2qV48jApVigm1WyjEtDXCZ5rT";
 
     function actions() public override {
 
         // Includes changes from the DssSpellCollateralAction
-        // collateralAction();
+        collateralAction();
 
-        // ------------------ Setup Starknet Teleport Fast Withdrawals -----------------
-        // https://vote.makerdao.com/polling/QmZxRgvG
-        // https://forum.makerdao.com/t/request-for-poll-starknet-bridge-deposit-limit-and-starknet-teleport-fees/17187
+        // -------------------- Update RWA007 Legal Documents ---------------------
+        // https://forum.makerdao.com/t/poll-inclusion-request-hvbank-legal-update/17547
+        // https://vote.makerdao.com/polling/QmX81EhP#vote-breakdown
+        bytes32 RWA007_ILK               = "RWA007-A";
+        address MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress(
+            "MIP21_LIQUIDATION_ORACLE"
+        );
 
-        // Run sanity checks
-        require(TeleportFeeLike(LINEAR_FEE_STA).fee() == WAD / 10000);
-        require(TeleportFeeLike(LINEAR_FEE_STA).ttl() == 30 minutes); // finalization time on Goerli
-        require(StarknetTeleportBridgeLike(TELEPORT_GATEWAY_STA).l1Escrow() == ESCROW_STA);
-        require(StarknetTeleportBridgeLike(TELEPORT_GATEWAY_STA).l1TeleportRouter() == ROUTER);
-        require(StarknetTeleportBridgeLike(TELEPORT_GATEWAY_STA).l1Token() == DAI);
-        require(StarknetTeleportBridgeLike(TELEPORT_GATEWAY_STA).l2TeleportGateway() == TELEPORT_L2_GATEWAY_STA);
-        require(StarknetTeleportBridgeLike(TELEPORT_GATEWAY_STA).starkNet() == STARKNET_CORE);
+        ( , address pip, uint48 tau, ) = RwaLiquidationLike(
+            MIP21_LIQUIDATION_ORACLE
+        ).ilks(RWA007_ILK);
 
-        // Increase system debt ceilings
-        DssExecLib.increaseIlkDebtCeiling(ILK, CEILING, true);
+        require(pip != address(0), "Abort spell execution: pip must be set");
 
-        // Configure TeleportJoin
-        TeleportJoinLike(TELEPORT_JOIN).file("fees", DOMAIN_STA, LINEAR_FEE_STA);
-        TeleportJoinLike(TELEPORT_JOIN).file("line", DOMAIN_STA, CEILING * WAD);
+        // Init the RwaLiquidationOracle to reset the doc
+        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(
+            RWA007_ILK, // ilk to update
+            0,          // price ignored if init() has already been called
+            RWA007_DOC, // new legal document
+            tau         // old tau value
+        );
 
-        // Configure TeleportRouter
-        TeleportRouterLike(ROUTER).file("gateway", DOMAIN_STA, TELEPORT_GATEWAY_STA);
+        // -------------------- Update RWA008 Legal Documents ---------------------
+        // https://forum.makerdao.com/t/poll-inclusion-request-hvbank-legal-update/17547
+        // https://vote.makerdao.com/polling/QmX81EhP#vote-breakdown
+        bytes32 RWA008_ILK               = "RWA008-A";
+        address MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress(
+            "MIP21_LIQUIDATION_ORACLE"
+        );
 
-        // Authorize TeleportGateway to use the escrow
-        EscrowLike(ESCROW_STA).approve(DAI, TELEPORT_GATEWAY_STA, type(uint256).max);
+        ( , address pip, uint48 tau, ) = RwaLiquidationLike(
+            MIP21_LIQUIDATION_ORACLE
+        ).ilks(RWA008_ILK);
 
-        // Configure Chainlog
-        DssExecLib.setChangelogAddress("STARKNET_TELEPORT_BRIDGE", TELEPORT_GATEWAY_STA);
-        DssExecLib.setChangelogAddress("STARKNET_TELEPORT_FEE", LINEAR_FEE_STA);
+        require(pip != address(0), "Abort spell execution: pip must be set");
 
-        DssExecLib.setChangelogVersion("1.14.4");
+        // Init the RwaLiquidationOracle to reset the doc
+        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(
+            RWA008_ILK, // ilk to update
+            0,          // price ignored if init() has already been called
+            RWA008_DOC, // new legal document
+            tau         // old tau value
+        );
 
-        // ------------------ MOMC Parameter Changes -----------------
-        // https://vote.makerdao.com/polling/QmahDuNx#poll-detail
+        // -------------------- Update RWA009 Legal Documents ---------------------
+        // https://forum.makerdao.com/t/poll-inclusion-request-hvbank-legal-update/17547
+        // https://vote.makerdao.com/polling/QmX81EhP#vote-breakdown
+        bytes32 RWA009_ILK               = "RWA009-A";
+        address MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress(
+            "MIP21_LIQUIDATION_ORACLE"
+        );
 
-        // Increase the MANA-A Stability Fee from 4.5% to 7.5%
-        DssExecLib.setIlkStabilityFee("MANA-A", SEVEN_PT_FIVE_PERCENT_RATE, true);
+        ( , address pip, uint48 tau, ) = RwaLiquidationLike(
+            MIP21_LIQUIDATION_ORACLE
+        ).ilks(RWA009_ILK);
 
-        // Decrease the MANA-A line from 17 million DAI to 10 million DAI
-        DssExecLib.setIlkAutoLineDebtCeiling("MANA-A", 10 * MILLION);
+        require(pip != address(0), "Abort spell execution: pip must be set");
+
+        // Init the RwaLiquidationOracle to reset the doc
+        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(
+            RWA009_ILK, // ilk to update
+            0,          // price ignored if init() has already been called
+            RWA009_DOC, // new legal document
+            tau         // old tau value
+        );
     }
 }
 

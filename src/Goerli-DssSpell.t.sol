@@ -171,14 +171,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() public { // make public to use
+    function testNewChainlogValues() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
-
-        // Insert new chainlog values tests here
-        checkChainlogKey("STARKNET_TELEPORT_BRIDGE");
-        checkChainlogKey("STARKNET_TELEPORT_FEE");
 
         checkChainlogVersion("1.14.4");
     }
@@ -485,31 +481,86 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // assertEq(vest.rxd(1), WAD);
     }
 
-    function testTeleportFW() public {
+     // RWA Tests
+
+    string RWA007_OLDDOC = "QmRLwB7Ty3ywSzq17GdDdwHvsZGwBg79oUTpSTJGtodToY";
+    string RWA007_NEWDOC = "QmQx3bMtjncka2jUsGwKu7ButuPJFn9yDEEvpg9xZ71ECh";
+
+    string RWA008_OLDDOC = "QmdfzY6p5EpkYMN8wcomF2a1GsJbhkPiRQVRYSPfS4NZtB";
+    string RWA008_NEWDOC = "QmZ4heYjptvj3ovafADJpXYMFXMyY3yQjkTXpvjFPnAKcy";
+
+    string RWA009_OLDDOC = "QmQx3bMtjncka2jUsGwKu7ButuPJFn9yDEEvpg9xZ71ECh";
+    string RWA009_NEWDOC = "QmeRrbDF8MVPQfNe83gWf2qV48jApVigm1WyjEtDXCZ5rT";
+
+    function testRWA007DocChange() public {
+        bytes32 ilk = "RWA007-A";
+        RwaLiquidationLike oracle = RwaLiquidationLike(
+            addr.addr("MIP21_LIQUIDATION_ORACLE")
+        );
+
+        (string memory docOld, address pipOld, uint48 tauOld, uint48 tocOld) =
+            oracle.ilks(ilk);
+
+        assertEq(docOld, RWA007_OLDDOC, "bad old document");
+
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        TeleportRouterLike router = TeleportRouterLike(addr.addr("MCD_ROUTER_TELEPORT_FW_A"));
-        StarknetTeleportBridgeLike bridge = StarknetTeleportBridgeLike(addr.addr("STARKNET_TELEPORT_BRIDGE"));
+        (string memory docNew, address pipNew, uint48 tauNew, uint48 tocNew) =
+            oracle.ilks(ilk);
 
-        // Sanity check
-        assertEq(router.numDomains(), 4);
+        assertEq(docNew, RWA007_NEWDOC, "bad new document");
+        assertEq(pipOld, pipNew,        "pip is the same");
+        assertTrue(tauOld == tauNew,    "tau is the same");
+        assertTrue(tocOld == tocNew,    "toc is the same");
+    }
 
-        checkTeleportFWIntegration(
-            "STA-GOER-A",
-            "ETH-GOER-A",
-            100_000 * WAD,
-            address(bridge),
-            addr.addr("STARKNET_TELEPORT_FEE"),
-            addr.addr("STARKNET_ESCROW"),
-            100 * WAD,
-            WAD / 10000, // 1bps
-            30 minutes
+    function testRWA007DocChange() public {
+        bytes32 ilk = "RWA008-A";
+        RwaLiquidationLike oracle = RwaLiquidationLike(
+            addr.addr("MIP21_LIQUIDATION_ORACLE")
         );
 
-        // Bridge domain specific checks
-        assertEq(bridge.l2TeleportGateway(), 0x078e1e7cc88114fe71be7433d1323782b4586c532a1868f072fc44ce9abf6714);
-        assertEq(bridge.starkNet(), addr.addr("STARKNET_CORE"));
+        (string memory docOld, address pipOld, uint48 tauOld, uint48 tocOld) =
+            oracle.ilks(ilk);
+
+        assertEq(docOld, RWA008_OLDDOC, "bad old document");
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        (string memory docNew, address pipNew, uint48 tauNew, uint48 tocNew) =
+            oracle.ilks(ilk);
+
+        assertEq(docNew, RWA008_NEWDOC, "bad new document");
+        assertEq(pipOld, pipNew,        "pip is the same");
+        assertTrue(tauOld == tauNew,    "tau is the same");
+        assertTrue(tocOld == tocNew,    "toc is the same");
+    }
+
+    function testRWA009DocChange() public {
+        bytes32 ilk = "RWA009-A";
+        RwaLiquidationLike oracle = RwaLiquidationLike(
+            addr.addr("MIP21_LIQUIDATION_ORACLE")
+        );
+
+        (string memory docOld, address pipOld, uint48 tauOld, uint48 tocOld) =
+            oracle.ilks(ilk);
+
+        assertEq(docOld, RWA009_OLDDOC, "bad old document");
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        (string memory docNew, address pipNew, uint48 tauNew, uint48 tocNew) =
+            oracle.ilks(ilk);
+
+        assertEq(docNew, RWA009_NEWDOC, "bad new document");
+        assertEq(pipOld, pipNew,        "pip is the same");
+        assertTrue(tauOld == tauNew,    "tau is the same");
+        assertTrue(tocOld == tocNew,    "toc is the same");
     }
 }
