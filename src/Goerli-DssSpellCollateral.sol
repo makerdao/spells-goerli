@@ -46,6 +46,12 @@ contract DssSpellCollateralAction {
     uint256 constant MANA_A_AUTOLINE_AMOUNT   = 3 * MILLION;
     uint256 constant MANA_A_CHOP              = 3000; // 30%
 
+    // RETH-A
+    bytes32 constant RETH_A                 = "RETH-A";
+    uint256 constant RETH_A_AUTOLINE_AMOUNT = 5 * MILLION;
+    uint256 constant RETH_A_AUTOLINE_GAP    = 3 * MILLION;
+    uint256 constant RETH_A_AUTOLINE_TTL    = 8 hours;
+
     function collateralAction() internal {
         onboardCollaterals();
         updateCollaterals();
@@ -80,6 +86,19 @@ contract DssSpellCollateralAction {
         DssExecLib.setIlkAutoLineDebtCeiling(MANA_A, MANA_A_AUTOLINE_AMOUNT);
         DssExecLib.setIlkStabilityFee(MANA_A, FIFTY_PCT_RATE, true);
         DssExecLib.setIlkLiquidationPenalty(MANA_A, MANA_A_CHOP);
+
+        // set rETH autoline:
+        // - line 5m
+        // - gap 3m
+        // - ttl 8h
+        //
+        //  https://vote.makerdao.com/polling/QmfMswF2#poll-detail
+        DssExecLib.setIlkAutoLineParameters(
+            RETH_A,
+            RETH_A_AUTOLINE_AMOUNT,
+            RETH_A_AUTOLINE_GAP,
+            RETH_A_AUTOLINE_TTL
+        );
     }
 
     function offboardCollaterals() internal {

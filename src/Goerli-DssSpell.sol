@@ -69,23 +69,20 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         collateralAction();
 
         // -------------------- Update RWA007 Legal Documents ---------------------
-        // https://forum.makerdao.com/t/poll-inclusion-request-hvbank-legal-update/17547
-        // https://vote.makerdao.com/polling/QmX81EhP#vote-breakdown
+        // TODO: Add forum post link
         //
         bytes32 RWA007_ILK = "RWA007-A";
         updateDoc(RWA007_ILK, RWA007_DOC);
 
 
         // -------------------- Update RWA008 Legal Documents ---------------------
-        // https://forum.makerdao.com/t/poll-inclusion-request-hvbank-legal-update/17547
-        // https://vote.makerdao.com/polling/QmX81EhP#vote-breakdown
+        // TODO: Add forum post link
         //
         bytes32 RWA008_ILK = "RWA008-A";
         updateDoc(RWA008_ILK, RWA008_DOC);
 
         // -------------------- Update RWA009 Legal Documents ---------------------
-        // https://forum.makerdao.com/t/poll-inclusion-request-hvbank-legal-update/17547
-        // https://vote.makerdao.com/polling/QmX81EhP#vote-breakdown
+        // TODO: Add forum post link
         //
         bytes32 RWA009_ILK = "RWA009-A";
         updateDoc(RWA009_ILK, RWA009_DOC);
