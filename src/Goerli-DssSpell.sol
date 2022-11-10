@@ -65,9 +65,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         // Includes changes from the DssSpellCollateralAction
         // collateralAction();
 
-        // ------------------ Setup Starknet Teleport Fast Withdrawals -----------------
-        // https://vote.makerdao.com/polling/QmZxRgvG
-        // https://forum.makerdao.com/t/request-for-poll-starknet-bridge-deposit-limit-and-starknet-teleport-fees/17187
+        // ------------------ Setup new Starknet Governance Relay -----------------
 
 
         // Relay l2 part of the spell
@@ -77,7 +75,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         DssExecLib.setChangelogAddress("STARKNET_GOV_RELAY_LEGACY", STARKNET_GOV_RELAY);
         DssExecLib.setChangelogAddress("STARKNET_GOV_RELAY", NEW_STARKNET_GOV_RELAY);
 
-        DssExecLib.setChangelogVersion("1.14.6");
+        DssExecLib.setChangelogVersion("1.14.4");
     }
 }
 
