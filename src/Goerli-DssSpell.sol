@@ -102,6 +102,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         ChainlogLike(DssExecLib.LOG).removeAddress("RWA007_A_INPUT_CONDUIT_URN");
         ChainlogLike(DssExecLib.LOG).removeAddress("RWA007_A_INPUT_CONDUIT_JAR");
 
+        DssExecLib.setChangelogVersion("1.14.5");
     }
 
     function updateDoc(bytes32 ilk, string memory doc) private {
