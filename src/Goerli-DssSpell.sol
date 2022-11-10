@@ -47,8 +47,8 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
     }
 
     address internal immutable STARKNET_GOV_RELAY = DssExecLib.getChangelogAddress("STARKNET_GOV_RELAY");
-    address internal immutable NEW_STARKNET_GOV_RELAY = TODO;
-    uint256 internal immutable L2_GOV_RELAY_SPELL = TODO;
+    address internal immutable NEW_STARKNET_GOV_RELAY = 0x8919aefA417745F22c6af5AD6550E83159a373F3;
+    uint256 internal immutable L2_GOV_RELAY_SPELL = 0x04c93f9818a4f81f6f2c6f0f660cb4986b789b6b6fb1b274b879649deed74eb8;
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -77,7 +77,7 @@ contract DssSpellAction is DssAction, DssSpellCollateralAction {
         DssExecLib.setChangelogAddress("STARKNET_GOV_RELAY_LEGACY", STARKNET_GOV_RELAY);
         DssExecLib.setChangelogAddress("STARKNET_GOV_RELAY", NEW_STARKNET_GOV_RELAY);
 
-        DssExecLib.setChangelogVersion("1.14.5");
+        DssExecLib.setChangelogVersion("1.14.6");
     }
 }
 
