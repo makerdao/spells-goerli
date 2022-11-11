@@ -18,6 +18,12 @@ pragma solidity 0.6.12;
 
 import "dss-exec-lib/DssExecLib.sol";
 
+interface VatLike {
+    function Line() external view returns (uint256);
+    function file(bytes32, uint256) external;
+    function ilks(bytes32) external returns (uint256 Art, uint256 rate, uint256 spot, uint256 line, uint256 dust);
+}
+
 contract DssSpellCollateralAction {
 
     // --- Rates ---
@@ -35,6 +41,10 @@ contract DssSpellCollateralAction {
     // --- Math ---
     // uint256 internal constant MILLION  = 10 ** 6;
     // uint256 internal constant THOUSAND = 10 ** 3;
+
+    function _sub(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        require((z = x - y) <= x, "sub-underflow");
+    }
 
     function collateralAction() internal {
         onboardCollaterals();
@@ -96,6 +106,25 @@ contract DssSpellCollateralAction {
 
     function updateCollaterals() internal {
         // ------------------------------- Collateral updates -------------------------------
+        uint256 line;
+        uint256 lineReduction;
+
+        VatLike vat = VatLike(DssExecLib.vat());
+
+        // Set RENBTC-A Maximum Debt Ceiling to 0
+        (,,,line,) = vat.ilks("RENBTC-A");
+        lineReduction += line;
+        DssExecLib.removeIlkFromAutoLine("RENBTC-A");
+        DssExecLib.setIlkDebtCeiling("RENBTC-A", 0);
+
+        // Set MANA-A Maximum Debt Ceiling to 0
+        (,,,line,) = vat.ilks("MANA-A");
+        lineReduction += line;
+        DssExecLib.removeIlkFromAutoLine("MANA-A");
+        DssExecLib.setIlkDebtCeiling("MANA-A", 0);
+
+        // Decrease Global Debt Ceiling by total amount of offboarded ilks
+        vat.file("Line", _sub(vat.Line(), lineReduction));
 
         // Enable autoline for XXX-A
         // Poll Link:
