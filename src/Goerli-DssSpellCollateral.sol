@@ -110,6 +110,21 @@ contract DssSpellCollateralAction {
 
         VatLike vat = VatLike(DssExecLib.vat());
 
+        // Enable autoline DC for MATIC-A
+        // Poll Link:  N/A
+        // Forum Link: https://forum.makerdao.com/t/urgent-signal-request-urgent-recommended-collateral-parameter-changes/18764
+        DssExecLib.setIlkAutoLineDebtCeiling("MATIC-A", 10 * MILLION);
+
+        // Enable autoline DC for LINK-A
+        // Poll Link:  N/A
+        // Forum Link: https://forum.makerdao.com/t/urgent-signal-request-urgent-recommended-collateral-parameter-changes/18764
+        DssExecLib.setIlkAutoLineDebtCeiling("LINK-A", 5 * MILLION);
+
+        // Enable autoline DC for YFI-A
+        // Poll Link:  N/A
+        // Forum Link: https://forum.makerdao.com/t/urgent-signal-request-urgent-recommended-collateral-parameter-changes/18764
+        DssExecLib.setIlkAutoLineDebtCeiling("YFI-A", 3 * MILLION);
+
         // Set RENBTC-A Maximum Debt Ceiling to 0
         // Poll Link:  N/A
         // Forum Link: https://forum.makerdao.com/t/urgent-signal-request-urgent-recommended-collateral-parameter-changes/18764
@@ -127,16 +142,6 @@ contract DssSpellCollateralAction {
         DssExecLib.setIlkAutoLineDebtCeiling("MANA-A", 3 * MILLION);
         DssExecLib.setIlkStabilityFee("MANA-A", FIFTY_PCT_RATE, true);
         DssExecLib.setIlkLiquidationPenalty("MANA-A", 3000); // (30% = 30.00 * 100 = 3000)
-
-        // Enable autoline DC for LINK-A
-        // Poll Link:  N/A
-        // Forum Link: https://forum.makerdao.com/t/urgent-signal-request-urgent-recommended-collateral-parameter-changes/18764
-        DssExecLib.setIlkAutoLineDebtCeiling("LINK-A", 5 * MILLION);
-
-        // Enable autoline DC for YFI-A
-        // Poll Link:  N/A
-        // Forum Link: https://forum.makerdao.com/t/urgent-signal-request-urgent-recommended-collateral-parameter-changes/18764
-        DssExecLib.setIlkAutoLineDebtCeiling("YFI-A", 3 * MILLION);
     }
 
     function offboardCollaterals() internal {

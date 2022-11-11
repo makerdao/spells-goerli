@@ -1459,7 +1459,7 @@ contract Config {
         });
         afterSpell.collaterals["MATIC-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      20 * MILLION,
+            aL_line:      10 * MILLION,
             aL_gap:       5 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
