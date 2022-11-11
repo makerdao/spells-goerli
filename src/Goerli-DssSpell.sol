@@ -31,6 +31,10 @@ interface ChainlogLike {
     function removeAddress(bytes32) external;
 }
 
+interface Pricing {
+    function poke(bytes32) external;
+}
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -72,21 +76,13 @@ contract DssSpellAction is DssAction {
     }
 
     function actions() public override {
-        // -------------------- Update RWA007 Legal Documents ---------------------
+        // -------------------- Update RWA007, RWA008, RWA009 Legal Documents ---------------------
         // https://forum.makerdao.com/t/nov-16-2022-executive-contents/18747
         //
         // Monetalis (RWA007-A) legal update doc
         _updateDoc("RWA007-A", "QmejL1CKKN5vCwp9QD1gebnnAM2MJSt9XbF64uy4ptkJtR");
-
-        // -------------------- Update RWA008 Legal Documents ---------------------
-        // https://forum.makerdao.com/t/nov-16-2022-executive-contents/18747
-        //
         // SG Forge OFH (RWA008-A) legal update doc
         _updateDoc("RWA008-A", "QmZ4heYjptvj3ovafADJpXYMFXMyY3yQjkTXpvjFPnAKcy");
-
-        // -------------------- Update RWA009 Legal Documents ---------------------
-        // https://forum.makerdao.com/t/nov-16-2022-executive-contents/18747
-        //
         // HVB (RWA009-A) legal update doc
         _updateDoc("RWA009-A", "QmeRrbDF8MVPQfNe83gWf2qV48jApVigm1WyjEtDXCZ5rT");
 
@@ -106,6 +102,7 @@ contract DssSpellAction is DssAction {
             "RWA007-A",
              500 * MILLION * WAD
         );
+        Pricing(DssExecLib.spotter()).poke("RWA007-A");
 
         // RETH-A autoline changes:
         // - line 5m
