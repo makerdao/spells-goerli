@@ -24,6 +24,7 @@ import "dss-exec-lib/DssAction.sol";
 interface RwaLiquidationLike {
     function ilks(bytes32) external returns (string memory, address, uint48, uint48);
     function init(bytes32, uint256, string calldata, uint48) external;
+    function bump(bytes32 ilk, uint256 val) external;
 }
 
 interface ChainlogLike {
@@ -64,32 +65,33 @@ contract DssSpellAction is DssAction {
         // Init the RwaLiquidationOracle to reset the doc
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(
             ilk, // ilk to update
-            0,          // price ignored if init() has already been called
+            0,   // price ignored if init() has already been called
             doc, // new legal document
-            tau         // old tau value
+            tau  // old tau value
         );
     }
 
     function actions() public override {
         // -------------------- Update RWA007 Legal Documents ---------------------
-        // TODO: Add forum post link
+        // https://forum.makerdao.com/t/nov-16-2022-executive-contents/18747
         //
         // Monetalis (RWA007-A) legal update doc
         _updateDoc("RWA007-A", "QmejL1CKKN5vCwp9QD1gebnnAM2MJSt9XbF64uy4ptkJtR");
 
         // -------------------- Update RWA008 Legal Documents ---------------------
-        // TODO: Add forum post link
+        // https://forum.makerdao.com/t/nov-16-2022-executive-contents/18747
         //
         // SG Forge OFH (RWA008-A) legal update doc
         _updateDoc("RWA008-A", "QmZ4heYjptvj3ovafADJpXYMFXMyY3yQjkTXpvjFPnAKcy");
 
         // -------------------- Update RWA009 Legal Documents ---------------------
-        // TODO: Add forum post link
+        // https://forum.makerdao.com/t/nov-16-2022-executive-contents/18747
         //
         // HVB (RWA009-A) legal update doc
         _updateDoc("RWA009-A", "QmeRrbDF8MVPQfNe83gWf2qV48jApVigm1WyjEtDXCZ5rT");
 
         // RWA007-A autoline changes:
+        // - bump oralce price to 500m
         // - increase DC to 500m
         // - increase autoline `gap` to 100m
         //
@@ -99,6 +101,10 @@ contract DssSpellAction is DssAction {
             500 * MILLION,
             100 * MILLION,
             1 weeks
+        );
+        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).bump(
+            "RWA007-A",
+             500 * MILLION * WAD
         );
 
         // RETH-A autoline changes:

@@ -19,10 +19,6 @@ pragma experimental ABIEncoderV2;
 
 import "./Goerli-DssSpell.t.base.sol";
 
-interface RwaLiquidationLike {
-    function ilks(bytes32) external returns (string memory, address, uint48, uint48);
-}
-
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -103,18 +99,26 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
-    function testRemoveChainlogValues() private { // make public to use
+    function testRemoveChainlogValues() public { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // try chainLog.getAddress("XXX") {
-        //     assertTrue(false);
-        // } catch Error(string memory errmsg) {
-        //     assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
-        // } catch {
-        //     assertTrue(false);
-        // }
+        try chainLog.getAddress("RWA007_A_INPUT_CONDUIT_URN") {
+            assertTrue(false);
+        } catch Error(string memory errmsg) {
+            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
+        } catch {
+            assertTrue(false);
+        }
+
+        try chainLog.getAddress("RWA007_A_INPUT_CONDUIT_JAR") {
+            assertTrue(false);
+        } catch Error(string memory errmsg) {
+            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
+        } catch {
+            assertTrue(false);
+        }
 
     }
 
@@ -171,12 +175,15 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() private { // make public to use
+    function testNewChainlogValues() public { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        checkChainlogVersion("1.14.4");
+        checkChainlogKey("RWA007_A_INPUT_CONDUIT");
+        checkChainlogKey("RWA007_A_JAR_INPUT_CONDUIT");
+
+        checkChainlogVersion("1.14.5");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
@@ -483,85 +490,37 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
      // RWA Tests
 
-    string RWA007_OLDDOC = "QmRLwB7Ty3ywSzq17GdDdwHvsZGwBg79oUTpSTJGtodToY";
-    string RWA007_NEWDOC = "QmejL1CKKN5vCwp9QD1gebnnAM2MJSt9XbF64uy4ptkJtR";
+    string RWA007_OLDDOC      = "QmRLwB7Ty3ywSzq17GdDdwHvsZGwBg79oUTpSTJGtodToY";
+    string RWA007_NEWDOC      = "QmejL1CKKN5vCwp9QD1gebnnAM2MJSt9XbF64uy4ptkJtR";
 
-    string RWA008_OLDDOC = "QmdfzY6p5EpkYMN8wcomF2a1GsJbhkPiRQVRYSPfS4NZtB";
-    string RWA008_NEWDOC = "QmZ4heYjptvj3ovafADJpXYMFXMyY3yQjkTXpvjFPnAKcy";
+    string RWA008_OLDDOC      = "QmdfzY6p5EpkYMN8wcomF2a1GsJbhkPiRQVRYSPfS4NZtB";
+    string RWA008_NEWDOC      = "QmZ4heYjptvj3ovafADJpXYMFXMyY3yQjkTXpvjFPnAKcy";
 
-    string RWA009_OLDDOC = "QmQx3bMtjncka2jUsGwKu7ButuPJFn9yDEEvpg9xZ71ECh";
-    string RWA009_NEWDOC = "QmeRrbDF8MVPQfNe83gWf2qV48jApVigm1WyjEtDXCZ5rT";
+    string RWA009_OLDDOC      = "QmQx3bMtjncka2jUsGwKu7ButuPJFn9yDEEvpg9xZ71ECh";
+    string RWA009_NEWDOC      = "QmeRrbDF8MVPQfNe83gWf2qV48jApVigm1WyjEtDXCZ5rT";
 
     function testRWA007DocChange() public {
-        bytes32 ilk = "RWA007-A";
-        RwaLiquidationLike oracle = RwaLiquidationLike(
-            addr.addr("MIP21_LIQUIDATION_ORACLE")
-        );
-
-        (string memory docOld, address pipOld, uint48 tauOld, uint48 tocOld) =
-            oracle.ilks(ilk);
-
-        assertEq(docOld, RWA007_OLDDOC, "bad old document");
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        (string memory docNew, address pipNew, uint48 tauNew, uint48 tocNew) =
-            oracle.ilks(ilk);
-
-        assertEq(docNew, RWA007_NEWDOC, "bad new document");
-        assertEq(pipOld, pipNew,        "pip is the same");
-        assertTrue(tauOld == tauNew,    "tau is the same");
-        assertTrue(tocOld == tocNew,    "toc is the same");
+        checkOracleDocUpdate("RWA007-A", RWA007_OLDDOC, RWA007_NEWDOC);
     }
 
     function testRWA008DocChange() public {
-        bytes32 ilk = "RWA008-A";
-        RwaLiquidationLike oracle = RwaLiquidationLike(
-            addr.addr("MIP21_LIQUIDATION_ORACLE")
-        );
-
-        (string memory docOld, address pipOld, uint48 tauOld, uint48 tocOld) =
-            oracle.ilks(ilk);
-
-        assertEq(docOld, RWA008_OLDDOC, "bad old document");
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        (string memory docNew, address pipNew, uint48 tauNew, uint48 tocNew) =
-            oracle.ilks(ilk);
-
-        assertEq(docNew, RWA008_NEWDOC, "bad new document");
-        assertEq(pipOld, pipNew,        "pip is the same");
-        assertTrue(tauOld == tauNew,    "tau is the same");
-        assertTrue(tocOld == tocNew,    "toc is the same");
+        checkOracleDocUpdate("RWA008-A", RWA008_OLDDOC, RWA008_NEWDOC);
     }
 
     function testRWA009DocChange() public {
-        bytes32 ilk = "RWA009-A";
-        RwaLiquidationLike oracle = RwaLiquidationLike(
-            addr.addr("MIP21_LIQUIDATION_ORACLE")
-        );
+        checkOracleDocUpdate("RWA009-A", RWA009_OLDDOC, RWA009_NEWDOC);
+    }
 
-        (string memory docOld, address pipOld, uint48 tauOld, uint48 tocOld) =
-            oracle.ilks(ilk);
+    function testRWA007OralcePriceBump() public {
+        (, address pip, , ) = oracle.ilks("RWA007-A");
 
-        assertEq(docOld, RWA009_OLDDOC, "bad old document");
+        assertEq(DSValueAbstract(pip).read(), bytes32(250 * MILLION * WAD), "RWA007: Bad initial PIP value");
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        (string memory docNew, address pipNew, uint48 tauNew, uint48 tocNew) =
-            oracle.ilks(ilk);
-
-        assertEq(docNew, RWA009_NEWDOC, "bad new document");
-        assertEq(pipOld, pipNew,        "pip is the same");
-        assertTrue(tauOld == tauNew,    "tau is the same");
-        assertTrue(tocOld == tocNew,    "toc is the same");
+        assertEq(DSValueAbstract(pip).read(), bytes32(500 * MILLION * WAD), "RWA007: Bad PIP value after bump()");
     }
 
     // CHANGELOG Houskeeping
@@ -575,21 +534,5 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         assertEq(chainLog.getAddress("RWA007_A_INPUT_CONDUIT"), rwa007inUrn);
         assertEq(chainLog.getAddress("RWA007_A_JAR_INPUT_CONDUIT"), rwa007inJar);
-    }
-
-    function testFailOldInputConduitUrn() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        chainLog.getAddress("RWA007_A_INPUT_CONDUIT_URN");
-    }
-
-    function testFailOldInputConduitJar() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        chainLog.getAddress("RWA007_A_INPUT_CONDUIT_URN");
     }
 }

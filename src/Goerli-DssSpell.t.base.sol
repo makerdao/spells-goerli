@@ -145,6 +145,10 @@ interface StarknetTeleportBridgeLike {
     function starkNet() external view returns (address);
 }
 
+interface RwaLiquidationLike {
+    function ilks(bytes32) external returns (string memory, address, uint48, uint48);
+}
+
 contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     Hevm hevm;
 
@@ -179,6 +183,9 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     DssAutoLineAbstract    autoLine = DssAutoLineAbstract(addr.addr("MCD_IAM_AUTO_LINE"));
     LerpFactoryAbstract lerpFactory = LerpFactoryAbstract(addr.addr("LERP_FAB"));
     VestAbstract            vestDai = VestAbstract(       addr.addr("MCD_VEST_DAI"));
+
+    RwaLiquidationLike       oracle = RwaLiquidationLike( addr.addr("MIP21_LIQUIDATION_ORACLE"));
+
 
     DssSpell spell;
 
@@ -1560,5 +1567,24 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
     function checkChainlogVersion(string memory key) internal {
         assertEq(chainLog.version(), key, concat("TestError/Chainlog-version-mismatch-", key));
+    }
+
+    function checkOracleDocUpdate(bytes32 ilk, string memory currentDoc, string memory newDoc) internal {
+        (string memory doc, address pip, uint48 tau, uint48 toc) =
+            oracle.ilks(ilk);
+
+        assertEq(doc, currentDoc, concat("TestError/bad-old-document-for-", ilk));
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        (string memory docNew, address pipNew, uint48 tauNew, uint48 tocNew) =
+            oracle.ilks(ilk);
+
+        assertEq(docNew, newDoc,  concat("TestError/bad-new-document-for-", ilk));
+        assertEq(pip, pipNew,     concat("TestError/pip-is-not-the-same-for-", ilk));
+        assertTrue(tau == tauNew, concat("TestError/tau-is-not-the-same-for-", ilk));
+        assertTrue(toc == tocNew, concat("TestError/toc-pis-not-the-same-for", ilk));
     }
 }
