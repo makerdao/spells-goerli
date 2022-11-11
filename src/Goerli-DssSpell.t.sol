@@ -19,10 +19,6 @@ pragma experimental ABIEncoderV2;
 
 import "./Goerli-DssSpell.t.base.sol";
 
-interface DssExecLike {
-    function action() external returns (address);
-}
-
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -483,33 +479,5 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // assertEq(dai.balanceOf(address(pauseProxy)), prevBalance + WAD);
 
         // assertEq(vest.rxd(1), WAD);
-    }
-
-    function testTeleportFW() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        TeleportRouterLike router = TeleportRouterLike(addr.addr("MCD_ROUTER_TELEPORT_FW_A"));
-        StarknetTeleportBridgeLike bridge = StarknetTeleportBridgeLike(addr.addr("STARKNET_TELEPORT_BRIDGE"));
-
-        // Sanity check
-        assertEq(router.numDomains(), 4);
-
-        checkTeleportFWIntegration(
-            "STA-GOER-A",
-            "ETH-GOER-A",
-            100_000 * WAD,
-            address(bridge),
-            addr.addr("STARKNET_TELEPORT_FEE"),
-            addr.addr("STARKNET_ESCROW"),
-            100 * WAD,
-            WAD / 10000, // 1bps
-            30 minutes
-        );
-
-        // Bridge domain specific checks
-        assertEq(bridge.l2TeleportGateway(), 0x078e1e7cc88114fe71be7433d1323782b4586c532a1868f072fc44ce9abf6714);
-        assertEq(bridge.starkNet(), addr.addr("STARKNET_CORE"));
     }
 }
