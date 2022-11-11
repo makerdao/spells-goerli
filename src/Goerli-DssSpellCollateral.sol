@@ -110,17 +110,17 @@ contract DssSpellCollateralAction {
 
         VatLike vat = VatLike(DssExecLib.vat());
 
-        // Enable autoline DC for MATIC-A
+        // Adjust autoline DC for MATIC-A
         // Poll Link:  N/A
         // Forum Link: https://forum.makerdao.com/t/urgent-signal-request-urgent-recommended-collateral-parameter-changes/18764
         DssExecLib.setIlkAutoLineDebtCeiling("MATIC-A", 10 * MILLION);
 
-        // Enable autoline DC for LINK-A
+        // Adjust autoline DC for LINK-A
         // Poll Link:  N/A
         // Forum Link: https://forum.makerdao.com/t/urgent-signal-request-urgent-recommended-collateral-parameter-changes/18764
         DssExecLib.setIlkAutoLineDebtCeiling("LINK-A", 5 * MILLION);
 
-        // Enable autoline DC for YFI-A
+        // Adjust autoline DC for YFI-A
         // Poll Link:  N/A
         // Forum Link: https://forum.makerdao.com/t/urgent-signal-request-urgent-recommended-collateral-parameter-changes/18764
         DssExecLib.setIlkAutoLineDebtCeiling("YFI-A", 3 * MILLION);
@@ -133,7 +133,7 @@ contract DssSpellCollateralAction {
         DssExecLib.setIlkDebtCeiling("RENBTC-A", 0);
         vat.file("Line", _sub(vat.Line(), lineReduction));
 
-        // Enable: 
+        // Adjust: 
         //   - autoline DC for MANA-A
         //   - stability fee for MANA-A to 50%
         //   - liquidation penalty for MANA-A to 30%
