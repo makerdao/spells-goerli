@@ -31,10 +31,6 @@ interface ChainlogLike {
     function removeAddress(bytes32) external;
 }
 
-interface Pricing {
-    function poke(bytes32) external;
-}
-
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
