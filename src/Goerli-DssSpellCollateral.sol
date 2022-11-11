@@ -36,10 +36,10 @@ contract DssSpellCollateralAction {
     // A table of rates can be found at
     // https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
-    // uint256 internal constant ONE_FIVE_PCT_RATE = 1000000000472114805215157978;
+    uint256 internal constant FIFTY_PCT_RATE = 1000000012857214317438491659;
 
     // --- Math ---
-    // uint256 internal constant MILLION  = 10 ** 6;
+    uint256 internal constant MILLION  = 10 ** 6;
     // uint256 internal constant THOUSAND = 10 ** 3;
 
     function _sub(uint256 x, uint256 y) internal pure returns (uint256 z) {
@@ -106,35 +106,37 @@ contract DssSpellCollateralAction {
 
     function updateCollaterals() internal {
         // ------------------------------- Collateral updates -------------------------------
-        uint256 line;
         uint256 lineReduction;
 
         VatLike vat = VatLike(DssExecLib.vat());
 
         // Set RENBTC-A Maximum Debt Ceiling to 0
-        (,,,line,) = vat.ilks("RENBTC-A");
-        lineReduction += line;
+        // Poll Link:  N/A
+        // Forum Link: https://forum.makerdao.com/t/urgent-signal-request-urgent-recommended-collateral-parameter-changes/18764
+        (,,,lineReduction,) = vat.ilks("RENBTC-A");
         DssExecLib.removeIlkFromAutoLine("RENBTC-A");
         DssExecLib.setIlkDebtCeiling("RENBTC-A", 0);
-
-        // Set MANA-A Maximum Debt Ceiling to 0
-        (,,,line,) = vat.ilks("MANA-A");
-        lineReduction += line;
-        DssExecLib.removeIlkFromAutoLine("MANA-A");
-        DssExecLib.setIlkDebtCeiling("MANA-A", 0);
-
-        // Decrease Global Debt Ceiling by total amount of offboarded ilks
         vat.file("Line", _sub(vat.Line(), lineReduction));
 
-        // Enable autoline for XXX-A
-        // Poll Link:
-        // Forum Link:
-        // DssExecLib.setIlkAutoLineParameters(
-        //    XXX-A,
-        //    AMOUNT,
-        //    GAP,
-        //    TTL
-        // );
+        // Enable: 
+        //   - autoline DC for MANA-A
+        //   - stability fee for MANA-A to 50%
+        //   - liquidation penalty for MANA-A to 30%
+        // Poll Link:  N/A
+        // Forum Link: https://forum.makerdao.com/t/urgent-signal-request-urgent-recommended-collateral-parameter-changes/18764
+        DssExecLib.setIlkAutoLineDebtCeiling("MANA-A", 3 * MILLION);
+        DssExecLib.setIlkStabilityFee("MANA-A", FIFTY_PCT_RATE, true);
+        DssExecLib.setIlkLiquidationPenalty("MANA-A", 3000); // (30% = 30.00 * 100 = 3000)
+
+        // Enable autoline DC for LINK-A
+        // Poll Link:  N/A
+        // Forum Link: https://forum.makerdao.com/t/urgent-signal-request-urgent-recommended-collateral-parameter-changes/18764
+        DssExecLib.setIlkAutoLineDebtCeiling("LINK-A", 5 * MILLION);
+
+        // Enable autoline DC for YFI-A
+        // Poll Link:  N/A
+        // Forum Link: https://forum.makerdao.com/t/urgent-signal-request-urgent-recommended-collateral-parameter-changes/18764
+        DssExecLib.setIlkAutoLineDebtCeiling("YFI-A", 3 * MILLION);
     }
 
     function offboardCollaterals() internal {
