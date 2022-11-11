@@ -58,8 +58,6 @@ contract DssSpellAction is DssAction {
     uint256 constant WAD            = 10 ** 18;
     uint256 constant MILLION        = 10 ** 6;
 
-    uint256 constant FIFTY_PCT_RATE = 1000000012857214317438491659;
-
     address immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
 
     function _updateDoc(bytes32 ilk, string memory doc) internal {
@@ -116,16 +114,6 @@ contract DssSpellAction is DssAction {
             3 * MILLION,
             8 hours
         );
-
-        // MANA-A param changes:
-        // - decrease line to 3m
-        // - increase SF to 50%
-        // - increase liquidation penalty to 30% from current 13%
-        //
-        // https://forum.makerdao.com/t/mana-a-intermediate-parameter-change-proposal/18727
-        DssExecLib.setIlkAutoLineDebtCeiling("MANA-A", 3 * MILLION);
-        DssExecLib.setIlkStabilityFee("MANA-A", FIFTY_PCT_RATE, true);
-        DssExecLib.setIlkLiquidationPenalty("MANA-A", 3000); // 30%;
 
         // -------------------- Changelog Update & housekeeping ---------------------
 
