@@ -1569,7 +1569,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(chainLog.version(), key, concat("TestError/Chainlog-version-mismatch-", key));
     }
 
-    function checkOracleDocUpdate(bytes32 ilk, string memory currentDoc, string memory newDoc) internal {
+    function checkRWADocUpdate(bytes32 ilk, string memory currentDoc, string memory newDoc) internal {
         (string memory doc, address pip, uint48 tau, uint48 toc) =
             oracle.ilks(ilk);
 

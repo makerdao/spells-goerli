@@ -500,27 +500,32 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     string RWA009_NEWDOC      = "QmeRrbDF8MVPQfNe83gWf2qV48jApVigm1WyjEtDXCZ5rT";
 
     function testRWA007DocChange() public {
-        checkOracleDocUpdate("RWA007-A", RWA007_OLDDOC, RWA007_NEWDOC);
+        checkRWADocUpdate("RWA007-A", RWA007_OLDDOC, RWA007_NEWDOC);
     }
 
     function testRWA008DocChange() public {
-        checkOracleDocUpdate("RWA008-A", RWA008_OLDDOC, RWA008_NEWDOC);
+        checkRWADocUpdate("RWA008-A", RWA008_OLDDOC, RWA008_NEWDOC);
     }
 
     function testRWA009DocChange() public {
-        checkOracleDocUpdate("RWA009-A", RWA009_OLDDOC, RWA009_NEWDOC);
+        checkRWADocUpdate("RWA009-A", RWA009_OLDDOC, RWA009_NEWDOC);
     }
-
+    event Log(uint256 a);
     function testRWA007OralcePriceBump() public {
         (, address pip, , ) = oracle.ilks("RWA007-A");
+        (,,uint256 spot,,) = vat.ilks("RWA007-A");
 
         assertEq(DSValueAbstract(pip).read(), bytes32(250 * MILLION * WAD), "RWA007: Bad initial PIP value");
+        assertEq(spot, 250 * MILLION * RAY, "RWA007: Bad initial spot value");
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
+        (,,uint256 spotAfter,,) = vat.ilks("RWA007-A");
+
         assertEq(DSValueAbstract(pip).read(), bytes32(500 * MILLION * WAD), "RWA007: Bad PIP value after bump()");
+        assertEq(spotAfter, 500 * MILLION * RAY, "RWA007: Bad spot value after bump()");
     }
 
     // CHANGELOG Houskeeping

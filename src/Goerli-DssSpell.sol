@@ -102,7 +102,7 @@ contract DssSpellAction is DssAction {
             "RWA007-A",
              500 * MILLION * WAD
         );
-        Pricing(DssExecLib.spotter()).poke("RWA007-A");
+        DssExecLib.updateCollateralPrice("RWA007-A");
 
         // RETH-A autoline changes:
         // - line 5m
