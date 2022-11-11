@@ -479,4 +479,68 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         // assertEq(vest.rxd(1), WAD);
     }
+
+    function testAutoLineGap() public {
+        bytes32 ilk;
+        uint256 line;
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        ilk = "MATIC-A";
+        (,,,line,) = vat.ilks(ilk);
+        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
+        autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
+        hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
+        autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
+
+        ilk = "LINK-A";
+        (,,,line,) = vat.ilks(ilk); // 7MM
+        assertGe(line, afterSpell.collaterals[ilk].aL_line * RAD); // different
+        autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
+        hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
+        autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
+
+        ilk = "YFI-A";
+        (,,,line,) = vat.ilks(ilk); // 7MM
+        assertGe(line, afterSpell.collaterals[ilk].aL_line * RAD); // different
+        autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
+        hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
+        autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
+
+        ilk = "RENBTC-A";
+        (,,,line,) = vat.ilks(ilk);
+        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
+        autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
+        hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
+        autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
+
+        ilk = "MANA-A";
+        (,,,line,) = vat.ilks(ilk);
+        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
+        autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
+        hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
+        autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
+    }
 }
