@@ -17,6 +17,7 @@
 pragma solidity 0.6.12;
 
 import "./Goerli-DssSpell.t.base.sol";
+import "dss-exec-lib/DssExec.sol";
 
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
@@ -484,44 +485,79 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         bytes32 ilk;
         uint256 line;
 
+        giveAuth(address(autoLine), address(this));
+
+        // Inflate Gaps and Lines - MATIC-A
+        ilk = "MATIC-A";
+        (uint256 alLine, uint256 gap, uint48 ttl,,) = autoLine.ilks(ilk);
+        uint256 highGap = gap * 5;
+        autoLine.setIlk(ilk, highGap, highGap, ttl);
+        hevm.warp(block.timestamp + ttl);
+        uint256 newLine = autoLine.exec(ilk);
+         (uint256 Art, uint256 rate,,,) = vat.ilks(ilk);
+        assertEq(newLine, add(highGap, mul(Art, rate)), "MATIC-gap-boost-failed");
+
+        // Inflate Gaps and Lines - LINK-A
+        ilk = "LINK-A";
+        (alLine, gap, ttl,,) = autoLine.ilks(ilk);
+        highGap = gap * 5;
+        autoLine.setIlk(ilk, highGap, highGap, ttl);
+        hevm.warp(block.timestamp + ttl);
+        newLine = autoLine.exec(ilk);
+        (Art, rate,,,) = vat.ilks(ilk);
+        assertEq(newLine, add(highGap, mul(Art, rate)), "LINK-gap-boost-failed");
+
+        // Inflate Gaps and Lines - YFI-A
+        ilk = "YFI-A";
+        (alLine, gap, ttl,,) = autoLine.ilks(ilk);
+        highGap = gap * 5;
+        // YFI had a lower line, need to inflate that too
+        autoLine.setIlk(ilk, highGap * 2, highGap, ttl);
+        hevm.warp(block.timestamp + ttl);
+        newLine = autoLine.exec(ilk);
+        (Art, rate,,,) = vat.ilks(ilk);
+        assertEq(newLine, add(highGap, mul(Art, rate)), "YFI-gap-boost-failed");
+
+        // Inflate Gaps and Lines - MANA-A
+        ilk = "MANA-A";
+        (alLine, gap, ttl,,) = autoLine.ilks(ilk);
+        highGap = gap * 5;
+        autoLine.setIlk(ilk, highGap, highGap, ttl);
+        hevm.warp(block.timestamp + ttl);
+        newLine = autoLine.exec(ilk);
+        (Art, rate,,,) = vat.ilks(ilk);
+        assertEq(newLine, add(highGap, mul(Art, rate)), "MANA-gap-boost-failed");
+
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         ilk = "MATIC-A";
-        autoLine.exec(ilk);
-        (,,,line,) = vat.ilks(ilk);
-        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
         hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
-        autoLine.exec(ilk);
+        newLine = autoLine.exec(ilk);
         (,,,line,) = vat.ilks(ilk);
-        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
+        assertEq(newLine, line);
+        assertEq(line, afterSpell.collaterals[ilk].aL_line * RAD, "MATIC-line-limit-failed");
 
         ilk = "LINK-A";
-        autoLine.exec(ilk);
-        (,,,line,) = vat.ilks(ilk);
-        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
         hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
-        autoLine.exec(ilk);
+        newLine = autoLine.exec(ilk);
         (,,,line,) = vat.ilks(ilk);
-        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
+        assertEq(newLine, line);
+        assertEq(line, afterSpell.collaterals[ilk].aL_line * RAD, "LINK-line-limit-failed");
 
         ilk = "YFI-A";
-        autoLine.exec(ilk);
-        (,,,line,) = vat.ilks(ilk);
-        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
         hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
-        autoLine.exec(ilk);
+        newLine = autoLine.exec(ilk);
         (,,,line,) = vat.ilks(ilk);
-        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
+        assertEq(newLine, line);
+        assertEq(line, afterSpell.collaterals[ilk].aL_line * RAD, "YFI-line-limit-failed");
 
         ilk = "MANA-A";
-        autoLine.exec(ilk);
-        (,,,line,) = vat.ilks(ilk);
-        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
         hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
-        autoLine.exec(ilk);
+        newLine = autoLine.exec(ilk);
         (,,,line,) = vat.ilks(ilk);
-        assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
+        assertEq(newLine, line);
+        assertEq(line, afterSpell.collaterals[ilk].aL_line * RAD, "MANA-line-limit-failed");
     }
 }
