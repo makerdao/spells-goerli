@@ -483,7 +483,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     function testAutoLineGap() public {
         bytes32 ilk;
         uint256 line;
-        uint256 prevLine;
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
@@ -496,7 +495,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
         autoLine.exec(ilk);
         (,,,line,) = vat.ilks(ilk);
-        assertGe(line, prevLine);
         assertLe(line, afterSpell.collaterals[ilk].aL_line * RAD);
 
         ilk = "LINK-A";
