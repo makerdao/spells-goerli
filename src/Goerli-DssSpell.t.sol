@@ -122,21 +122,21 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     }
 
-    function testCollateralIntegrations() private { // make public to use
+    function testCollateralIntegrations() public { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new collateral tests here
-        // checkIlkIntegration(
-        //     "RETH-A",
-        //     GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
-        //     ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
-        //     addr.addr("PIP_RETH"),
-        //     true, /* _isOSM */
-        //     true, /* _checkLiquidations */
-        //     false /* _transferFee */
-        // );
+        checkIlkIntegration(
+            "RETH-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
+            addr.addr("PIP_RETH"),
+            true, /* _isOSM */
+            true, /* _checkLiquidations */
+            false /* _transferFee */
+        );
     }
 
     function testIlkClipper() private { // make public to use
