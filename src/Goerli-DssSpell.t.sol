@@ -17,7 +17,6 @@
 pragma solidity 0.6.12;
 
 import "./Goerli-DssSpell.t.base.sol";
-import "dss-exec-lib/DssExec.sol";
 
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
@@ -487,7 +486,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         giveAuth(address(autoLine), address(this));
 
-        // Inflate Gaps and Lines - MATIC-A
+        // Inflate Gap and Line - MATIC-A
         ilk = "MATIC-A";
         (uint256 alLine, uint256 gap, uint48 ttl,,) = autoLine.ilks(ilk);
         uint256 highGap = gap * 5;
@@ -497,7 +496,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
          (uint256 Art, uint256 rate,,,) = vat.ilks(ilk);
         assertEq(newLine, add(highGap, mul(Art, rate)), "MATIC-gap-boost-failed");
 
-        // Inflate Gaps and Lines - LINK-A
+        // Inflate Gap and Line - LINK-A
         ilk = "LINK-A";
         (alLine, gap, ttl,,) = autoLine.ilks(ilk);
         highGap = gap * 5;
@@ -507,7 +506,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         (Art, rate,,,) = vat.ilks(ilk);
         assertEq(newLine, add(highGap, mul(Art, rate)), "LINK-gap-boost-failed");
 
-        // Inflate Gaps and Lines - YFI-A
+        // Inflate Gap and Line - YFI-A
         ilk = "YFI-A";
         (alLine, gap, ttl,,) = autoLine.ilks(ilk);
         highGap = gap * 5;
@@ -518,7 +517,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         (Art, rate,,,) = vat.ilks(ilk);
         assertEq(newLine, add(highGap, mul(Art, rate)), "YFI-gap-boost-failed");
 
-        // Inflate Gaps and Lines - MANA-A
+        // Inflate Gap and Line - MANA-A
         ilk = "MANA-A";
         (alLine, gap, ttl,,) = autoLine.ilks(ilk);
         highGap = gap * 5;
