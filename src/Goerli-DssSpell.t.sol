@@ -18,6 +18,11 @@ pragma solidity 0.6.12;
 
 import "./Goerli-DssSpell.t.base.sol";
 
+interface RwaUrnLike {
+    function hope(address) external;
+    function draw(uint256) external;
+}
+
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -173,7 +178,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() private { // make public to use
+    function testNewChainlogValues() public { // make private to disable
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -520,10 +525,23 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        (,,uint256 spotAfter,,) = vat.ilks("RWA007-A");
+        (uint256 Art, uint256 rate,uint256 spotAfter, uint256 line,) = vat.ilks("RWA007-A");
 
         assertEq(uint256(DSValueAbstract(pip).read()), 500 * MILLION * WAD, "RWA007: Bad PIP value after bump()");
         assertEq(spotAfter, 500 * MILLION * RAY, "RWA007: Bad spot value after bump()");
+
+        // Test that a draw can be performed.
+        address urn = addr.addr("RWA007_A_URN");
+        giveAuth(urn, address(this));
+        RwaUrnLike(urn).hope(address(this));  // become operator
+        uint256 room = sub(line, mul(Art, rate));
+        uint256 drawAmt = room / RAY;
+        if (mul(divup(mul(drawAmt, RAY), rate), rate) > room) {
+            drawAmt = sub(room, rate) / RAY;
+        }
+        RwaUrnLike(urn).draw(drawAmt);
+        (Art,,,,) = vat.ilks("RWA007-A");
+        assertTrue(sub(line, mul(Art, rate)) < mul(2, rate));  // got very close to line
     }
 
     // CHANGELOG Houskeeping

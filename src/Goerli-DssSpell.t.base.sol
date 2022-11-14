@@ -146,7 +146,7 @@ interface StarknetTeleportBridgeLike {
 }
 
 interface RwaLiquidationLike {
-    function ilks(bytes32) external returns (string memory, address, uint48, uint48);
+    function ilks(bytes32) external view returns (string memory, address, uint48, uint48);
 }
 
 contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
