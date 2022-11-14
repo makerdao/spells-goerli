@@ -157,34 +157,34 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     Deployers deployers = new Deployers();
 
     // ADDRESSES
-    ChainlogAbstract    chainLog = ChainlogAbstract(   addr.addr("CHANGELOG"));
-    DSPauseAbstract        pause = DSPauseAbstract(    addr.addr("MCD_PAUSE"));
-    address           pauseProxy =                     addr.addr("MCD_PAUSE_PROXY");
-    DSChiefAbstract        chief = DSChiefAbstract(    addr.addr("MCD_ADM"));
-    VatAbstract              vat = VatAbstract(        addr.addr("MCD_VAT"));
-    VowAbstract              vow = VowAbstract(        addr.addr("MCD_VOW"));
-    CatAbstract              cat = CatAbstract(        addr.addr("MCD_CAT"));
-    DogAbstract              dog = DogAbstract(        addr.addr("MCD_DOG"));
-    PotAbstract              pot = PotAbstract(        addr.addr("MCD_POT"));
-    JugAbstract              jug = JugAbstract(        addr.addr("MCD_JUG"));
-    SpotAbstract         spotter = SpotAbstract(       addr.addr("MCD_SPOT"));
-    DaiAbstract              dai = DaiAbstract(        addr.addr("MCD_DAI"));
-    DaiJoinAbstract      daiJoin = DaiJoinAbstract(    addr.addr("MCD_JOIN_DAI"));
-    DSTokenAbstract          gov = DSTokenAbstract(    addr.addr("MCD_GOV"));
-    EndAbstract              end = EndAbstract(        addr.addr("MCD_END"));
-    ESMAbstract              esm = ESMAbstract(        addr.addr("MCD_ESM"));
-    CureLike                cure = CureLike(           addr.addr("MCD_CURE"));
-    IlkRegistryAbstract      reg = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
-    FlapLike                flap = FlapLike(           addr.addr("MCD_FLAP"));
+    ChainlogAbstract            chainLog = ChainlogAbstract(   addr.addr("CHANGELOG"));
+    DSPauseAbstract                pause = DSPauseAbstract(    addr.addr("MCD_PAUSE"));
+    address                   pauseProxy =                     addr.addr("MCD_PAUSE_PROXY");
+    DSChiefAbstract                chief = DSChiefAbstract(    addr.addr("MCD_ADM"));
+    VatAbstract                      vat = VatAbstract(        addr.addr("MCD_VAT"));
+    VowAbstract                      vow = VowAbstract(        addr.addr("MCD_VOW"));
+    CatAbstract                      cat = CatAbstract(        addr.addr("MCD_CAT"));
+    DogAbstract                      dog = DogAbstract(        addr.addr("MCD_DOG"));
+    PotAbstract                      pot = PotAbstract(        addr.addr("MCD_POT"));
+    JugAbstract                      jug = JugAbstract(        addr.addr("MCD_JUG"));
+    SpotAbstract                 spotter = SpotAbstract(       addr.addr("MCD_SPOT"));
+    DaiAbstract                      dai = DaiAbstract(        addr.addr("MCD_DAI"));
+    DaiJoinAbstract              daiJoin = DaiJoinAbstract(    addr.addr("MCD_JOIN_DAI"));
+    DSTokenAbstract                  gov = DSTokenAbstract(    addr.addr("MCD_GOV"));
+    EndAbstract                      end = EndAbstract(        addr.addr("MCD_END"));
+    ESMAbstract                      esm = ESMAbstract(        addr.addr("MCD_ESM"));
+    CureLike                        cure = CureLike(           addr.addr("MCD_CURE"));
+    IlkRegistryAbstract              reg = IlkRegistryAbstract(addr.addr("ILK_REGISTRY"));
+    FlapLike                        flap = FlapLike(           addr.addr("MCD_FLAP"));
 
-    OsmMomAbstract           osmMom = OsmMomAbstract(     addr.addr("OSM_MOM"));
-    FlipperMomAbstract      flipMom = FlipperMomAbstract( addr.addr("FLIPPER_MOM"));
-    ClipperMomAbstract      clipMom = ClipperMomAbstract( addr.addr("CLIPPER_MOM"));
-    DssAutoLineAbstract    autoLine = DssAutoLineAbstract(addr.addr("MCD_IAM_AUTO_LINE"));
-    LerpFactoryAbstract lerpFactory = LerpFactoryAbstract(addr.addr("LERP_FAB"));
-    VestAbstract            vestDai = VestAbstract(       addr.addr("MCD_VEST_DAI"));
+    OsmMomAbstract                osmMom = OsmMomAbstract(     addr.addr("OSM_MOM"));
+    FlipperMomAbstract           flipMom = FlipperMomAbstract( addr.addr("FLIPPER_MOM"));
+    ClipperMomAbstract           clipMom = ClipperMomAbstract( addr.addr("CLIPPER_MOM"));
+    DssAutoLineAbstract         autoLine = DssAutoLineAbstract(addr.addr("MCD_IAM_AUTO_LINE"));
+    LerpFactoryAbstract      lerpFactory = LerpFactoryAbstract(addr.addr("LERP_FAB"));
+    VestAbstract                 vestDai = VestAbstract(       addr.addr("MCD_VEST_DAI"));
 
-    RwaLiquidationLike       oracle = RwaLiquidationLike( addr.addr("MIP21_LIQUIDATION_ORACLE"));
+    RwaLiquidationLike liquidationOracle = RwaLiquidationLike( addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
 
     DssSpell spell;
@@ -1570,8 +1570,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     }
 
     function checkRWADocUpdate(bytes32 ilk, string memory currentDoc, string memory newDoc) internal {
-        (string memory doc, address pip, uint48 tau, uint48 toc) =
-            oracle.ilks(ilk);
+        (string memory doc, address pip, uint48 tau, uint48 toc) = liquidationOracle.ilks(ilk);
 
         assertEq(doc, currentDoc, concat("TestError/bad-old-document-for-", ilk));
 
@@ -1579,12 +1578,11 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        (string memory docNew, address pipNew, uint48 tauNew, uint48 tocNew) =
-            oracle.ilks(ilk);
+        (string memory docNew, address pipNew, uint48 tauNew, uint48 tocNew) = liquidationOracle.ilks(ilk);
 
         assertEq(docNew, newDoc,  concat("TestError/bad-new-document-for-", ilk));
         assertEq(pip, pipNew,     concat("TestError/pip-is-not-the-same-for-", ilk));
         assertTrue(tau == tauNew, concat("TestError/tau-is-not-the-same-for-", ilk));
-        assertTrue(toc == tocNew, concat("TestError/toc-pis-not-the-same-for", ilk));
+        assertTrue(toc == tocNew, concat("TestError/toc-is-not-the-same-for", ilk));
     }
 }

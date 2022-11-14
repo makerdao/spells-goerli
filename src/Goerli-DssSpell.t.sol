@@ -138,20 +138,19 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         );
     }
 
-    function testIlkClipper() private { // make public to use
+    function testIlkClipper() public { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // // Insert new ilk clipper tests here
-        // checkIlkClipper(
-        //     "TOKEN-X",
-        //     GemJoinAbstract(addr.addr("MCD_JOIN_TOKEN_X")),
-        //     ClipAbstract(addr.addr("MCD_CLIP_TOKEN_X")),
-        //     addr.addr("MCD_CLIP_CALC_TOKEN_X"),
-        //     OsmAbstract(addr.addr("PIP_TOKEN")),
-        //     20_000 * WAD
-        // );
+        checkIlkClipper(
+            "RETH-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
+            addr.addr("MCD_CLIP_CALC_RETH_A"),
+            OsmAbstract(addr.addr("PIP_RETH")),
+            20_000 * WAD
+        );
     }
 
     function testLerpSurplusBuffer() private { // make public to use
@@ -511,10 +510,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testRWA007OralcePriceBump() public {
-        (, address pip, , ) = oracle.ilks("RWA007-A");
+        (, address pip, , ) = liquidationOracle.ilks("RWA007-A");
         (,,uint256 spot,,) = vat.ilks("RWA007-A");
 
-        assertEq(DSValueAbstract(pip).read(), bytes32(250 * MILLION * WAD), "RWA007: Bad initial PIP value");
+        assertEq(uint256(DSValueAbstract(pip).read()), 250 * MILLION * WAD, "RWA007: Bad initial PIP value");
         assertEq(spot, 250 * MILLION * RAY, "RWA007: Bad initial spot value");
 
         vote(address(spell));
@@ -523,7 +522,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         (,,uint256 spotAfter,,) = vat.ilks("RWA007-A");
 
-        assertEq(DSValueAbstract(pip).read(), bytes32(500 * MILLION * WAD), "RWA007: Bad PIP value after bump()");
+        assertEq(uint256(DSValueAbstract(pip).read()), 500 * MILLION * WAD, "RWA007: Bad PIP value after bump()");
         assertEq(spotAfter, 500 * MILLION * RAY, "RWA007: Bad spot value after bump()");
     }
 
