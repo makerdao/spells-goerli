@@ -98,44 +98,36 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
-    function testRemoveChainlogValues() public { // make public to use
+    function testRemoveChainlogValues() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        try chainLog.getAddress("RWA007_A_INPUT_CONDUIT_URN") {
-            assertTrue(false);
-        } catch Error(string memory errmsg) {
-            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
-        } catch {
-            assertTrue(false);
-        }
-
-        try chainLog.getAddress("RWA007_A_INPUT_CONDUIT_JAR") {
-            assertTrue(false);
-        } catch Error(string memory errmsg) {
-            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
-        } catch {
-            assertTrue(false);
-        }
+        // try chainLog.getAddress("XXX") {
+        //     assertTrue(false);
+        // } catch Error(string memory errmsg) {
+        //     assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
+        // } catch {
+        //     assertTrue(false);
+        // }
 
     }
 
-    function testCollateralIntegrations() public { // make public to use
+    function testCollateralIntegrations() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new collateral tests here
-        checkIlkIntegration(
-            "RETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
-            addr.addr("PIP_RETH"),
-            true, /* _isOSM */
-            true, /* _checkLiquidations */
-            false /* _transferFee */
-        );
+        // checkIlkIntegration(
+        //     "RETH-A",
+        //     GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
+        //     ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
+        //     addr.addr("PIP_RETH"),
+        //     true, /* _isOSM */
+        //     true, /* _checkLiquidations */
+        //     false /* _transferFee */
+        // );
     }
 
     function testIlkClipper() private { // make public to use
@@ -179,10 +171,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        checkChainlogKey("RWA007_A_INPUT_CONDUIT");
-        checkChainlogKey("RWA007_A_JAR_INPUT_CONDUIT");
+        // Insert new chainlog values tests here
+        // checkChainlogKey("STARKNET_TELEPORT_BRIDGE");
+        // checkChainlogKey("STARKNET_TELEPORT_FEE");
 
-        checkChainlogVersion("1.14.5");
+        // checkChainlogVersion("1.14.4");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
@@ -487,56 +480,83 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // assertEq(vest.rxd(1), WAD);
     }
 
-     // RWA Tests
+    function testAutoLineGap() public {
+        bytes32 ilk;
+        uint256 line;
 
-    string RWA007_OLDDOC      = "QmRLwB7Ty3ywSzq17GdDdwHvsZGwBg79oUTpSTJGtodToY";
-    string RWA007_NEWDOC      = "QmejL1CKKN5vCwp9QD1gebnnAM2MJSt9XbF64uy4ptkJtR";
+        giveAuth(address(autoLine), address(this));
 
-    string RWA008_OLDDOC      = "QmdfzY6p5EpkYMN8wcomF2a1GsJbhkPiRQVRYSPfS4NZtB";
-    string RWA008_NEWDOC      = "QmZ4heYjptvj3ovafADJpXYMFXMyY3yQjkTXpvjFPnAKcy";
+        // Inflate Gap and Line - MATIC-A
+        ilk = "MATIC-A";
+        (uint256 alLine, uint256 gap, uint48 ttl,,) = autoLine.ilks(ilk);
+        uint256 highGap = gap * 5;
+        autoLine.setIlk(ilk, highGap, highGap, ttl);
+        hevm.warp(block.timestamp + ttl);
+        uint256 newLine = autoLine.exec(ilk);
+         (uint256 Art, uint256 rate,,,) = vat.ilks(ilk);
+        assertEq(newLine, add(highGap, mul(Art, rate)), "MATIC-gap-boost-failed");
 
-    string RWA009_OLDDOC      = "QmQx3bMtjncka2jUsGwKu7ButuPJFn9yDEEvpg9xZ71ECh";
-    string RWA009_NEWDOC      = "QmeRrbDF8MVPQfNe83gWf2qV48jApVigm1WyjEtDXCZ5rT";
+        // Inflate Gap and Line - LINK-A
+        ilk = "LINK-A";
+        (alLine, gap, ttl,,) = autoLine.ilks(ilk);
+        highGap = gap * 5;
+        autoLine.setIlk(ilk, highGap, highGap, ttl);
+        hevm.warp(block.timestamp + ttl);
+        newLine = autoLine.exec(ilk);
+        (Art, rate,,,) = vat.ilks(ilk);
+        assertEq(newLine, add(highGap, mul(Art, rate)), "LINK-gap-boost-failed");
 
-    function testRWA007DocChange() public {
-        checkRWADocUpdate("RWA007-A", RWA007_OLDDOC, RWA007_NEWDOC);
-    }
+        // Inflate Gap and Line - YFI-A
+        ilk = "YFI-A";
+        (alLine, gap, ttl,,) = autoLine.ilks(ilk);
+        highGap = gap * 5;
+        // YFI had a lower line, need to inflate that too
+        autoLine.setIlk(ilk, highGap * 2, highGap, ttl);
+        hevm.warp(block.timestamp + ttl);
+        newLine = autoLine.exec(ilk);
+        (Art, rate,,,) = vat.ilks(ilk);
+        assertEq(newLine, add(highGap, mul(Art, rate)), "YFI-gap-boost-failed");
 
-    function testRWA008DocChange() public {
-        checkRWADocUpdate("RWA008-A", RWA008_OLDDOC, RWA008_NEWDOC);
-    }
-
-    function testRWA009DocChange() public {
-        checkRWADocUpdate("RWA009-A", RWA009_OLDDOC, RWA009_NEWDOC);
-    }
-
-    function testRWA007OralcePriceBump() public {
-        (, address pip, , ) = oracle.ilks("RWA007-A");
-        (,,uint256 spot,,) = vat.ilks("RWA007-A");
-
-        assertEq(DSValueAbstract(pip).read(), bytes32(250 * MILLION * WAD), "RWA007: Bad initial PIP value");
-        assertEq(spot, 250 * MILLION * RAY, "RWA007: Bad initial spot value");
+        // Inflate Gap and Line - MANA-A
+        ilk = "MANA-A";
+        (alLine, gap, ttl,,) = autoLine.ilks(ilk);
+        highGap = gap * 5;
+        autoLine.setIlk(ilk, highGap, highGap, ttl);
+        hevm.warp(block.timestamp + ttl);
+        newLine = autoLine.exec(ilk);
+        (Art, rate,,,) = vat.ilks(ilk);
+        assertEq(newLine, add(highGap, mul(Art, rate)), "MANA-gap-boost-failed");
 
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        (,,uint256 spotAfter,,) = vat.ilks("RWA007-A");
+        ilk = "MATIC-A";
+        hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
+        newLine = autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertEq(newLine, line);
+        assertEq(line, afterSpell.collaterals[ilk].aL_line * RAD, "MATIC-line-limit-failed");
 
-        assertEq(DSValueAbstract(pip).read(), bytes32(500 * MILLION * WAD), "RWA007: Bad PIP value after bump()");
-        assertEq(spotAfter, 500 * MILLION * RAY, "RWA007: Bad spot value after bump()");
-    }
+        ilk = "LINK-A";
+        hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
+        newLine = autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertEq(newLine, line);
+        assertEq(line, afterSpell.collaterals[ilk].aL_line * RAD, "LINK-line-limit-failed");
 
-    // CHANGELOG Houskeeping
-    function testChangelogHousekeeping() public {
-        address rwa007inUrn = chainLog.getAddress("RWA007_A_INPUT_CONDUIT_URN");
-        address rwa007inJar = chainLog.getAddress("RWA007_A_INPUT_CONDUIT_JAR");
+        ilk = "YFI-A";
+        hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
+        newLine = autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertEq(newLine, line);
+        assertEq(line, afterSpell.collaterals[ilk].aL_line * RAD, "YFI-line-limit-failed");
 
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        assertEq(chainLog.getAddress("RWA007_A_INPUT_CONDUIT"), rwa007inUrn);
-        assertEq(chainLog.getAddress("RWA007_A_JAR_INPUT_CONDUIT"), rwa007inJar);
+        ilk = "MANA-A";
+        hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
+        newLine = autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertEq(newLine, line);
+        assertEq(line, afterSpell.collaterals[ilk].aL_line * RAD, "MANA-line-limit-failed");
     }
 }
