@@ -149,7 +149,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
             addr.addr("MCD_CLIP_CALC_RETH_A"),
             OsmAbstract(addr.addr("PIP_RETH")),
-            20_000 * WAD
+            2400 * WAD
         );
     }
 
