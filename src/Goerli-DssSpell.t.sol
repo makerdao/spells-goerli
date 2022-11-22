@@ -103,27 +103,18 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
-    function testRemoveChainlogValues() public { // make public to use
+    function testRemoveChainlogValues() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        try chainLog.getAddress("RWA007_A_INPUT_CONDUIT_URN") {
-            assertTrue(false);
-        } catch Error(string memory errmsg) {
-            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
-        } catch {
-            assertTrue(false);
-        }
-
-        try chainLog.getAddress("RWA007_A_INPUT_CONDUIT_JAR") {
-            assertTrue(false);
-        } catch Error(string memory errmsg) {
-            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
-        } catch {
-            assertTrue(false);
-        }
-
+        // try chainLog.getAddress("RWA007_A_INPUT_CONDUIT_URN") {
+        //     assertTrue(false);
+        // } catch Error(string memory errmsg) {
+        //     assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
+        // } catch {
+        //     assertTrue(false);
+        // }
     }
 
     function testCollateralIntegrations() public { // make public to use
@@ -133,10 +124,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         // Insert new collateral tests here
         checkIlkIntegration(
-            "RETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
-            addr.addr("PIP_RETH"),
+            "GNO-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_GNO_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_GNO_A")),
+            addr.addr("PIP_GNO"),
             true, /* _isOSM */
             true, /* _checkLiquidations */
             false /* _transferFee */
@@ -149,12 +140,12 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         checkIlkClipper(
-            "RETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
-            addr.addr("MCD_CLIP_CALC_RETH_A"),
-            OsmAbstract(addr.addr("PIP_RETH")),
-            500 * WAD
+            "GNO-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_GNO_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_GNO_A")),
+            addr.addr("MCD_CLIP_CALC_GNO_A"),
+            OsmAbstract(addr.addr("PIP_GNO")),
+            1 * WAD
         );
     }
 
@@ -183,10 +174,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        checkChainlogKey("RWA007_A_INPUT_CONDUIT");
-        checkChainlogKey("RWA007_A_JAR_INPUT_CONDUIT");
+        checkChainlogKey("GNO");
+        checkChainlogKey("PIP_GNO");
+        checkChainlogKey("MCD_JOIN_GNO_A");
+        checkChainlogKey("MCD_CLIP_GNO_A");
+        checkChainlogKey("MCD_CLIP_CALC_GNO_A");
 
-        checkChainlogVersion("1.14.5");
+        checkChainlogVersion("1.15.0");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
@@ -195,15 +189,15 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        // RETH-A
-        //assertEq(reg.pos("RETH-A"),    54);
-        //assertEq(reg.join("RETH-A"),   addr.addr("MCD_JOIN_RETH_A"));
-        //assertEq(reg.gem("RETH-A"),    addr.addr("RETH"));
-        //assertEq(reg.dec("RETH-A"),    GemAbstract(addr.addr("RETH")).decimals());
-        //assertEq(reg.class("RETH-A"),  1);
-        //assertEq(reg.pip("RETH-A"),    addr.addr("PIP_RETH"));
-        //assertEq(reg.name("RETH-A"),   "Rocket Pool ETH");
-        //assertEq(reg.symbol("RETH-A"), GemAbstract(addr.addr("RETH")).symbol());
+        // GNO-A
+        assertEq(reg.pos("GNO-A"),    55);
+        assertEq(reg.join("GNO-A"),   addr.addr("MCD_JOIN_GNO_A"));
+        assertEq(reg.gem("GNO-A"),    addr.addr("GNO"));
+        assertEq(reg.dec("GNO-A"),    GemAbstract(addr.addr("GNO")).decimals());
+        assertEq(reg.class("GNO-A"),  1);
+        assertEq(reg.pip("GNO-A"),    addr.addr("PIP_GNO"));
+        assertEq(reg.name("GNO-A"),   "Rocket Pool ETH");
+        assertEq(reg.symbol("GNO-A"), GemAbstract(addr.addr("GNO")).symbol());
     }
 
     function testFailWrongDay() public {
@@ -489,71 +483,5 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // assertEq(dai.balanceOf(address(pauseProxy)), prevBalance + WAD);
 
         // assertEq(vest.rxd(1), WAD);
-    }
-
-     // RWA Tests
-
-    string RWA007_OLDDOC      = "QmRLwB7Ty3ywSzq17GdDdwHvsZGwBg79oUTpSTJGtodToY";
-    string RWA007_NEWDOC      = "QmejL1CKKN5vCwp9QD1gebnnAM2MJSt9XbF64uy4ptkJtR";
-
-    string RWA008_OLDDOC      = "QmdfzY6p5EpkYMN8wcomF2a1GsJbhkPiRQVRYSPfS4NZtB";
-    string RWA008_NEWDOC      = "QmZ4heYjptvj3ovafADJpXYMFXMyY3yQjkTXpvjFPnAKcy";
-
-    string RWA009_OLDDOC      = "QmQx3bMtjncka2jUsGwKu7ButuPJFn9yDEEvpg9xZ71ECh";
-    string RWA009_NEWDOC      = "QmeRrbDF8MVPQfNe83gWf2qV48jApVigm1WyjEtDXCZ5rT";
-
-    function testRWA007DocChange() public {
-        checkRWADocUpdate("RWA007-A", RWA007_OLDDOC, RWA007_NEWDOC);
-    }
-
-    function testRWA008DocChange() public {
-        checkRWADocUpdate("RWA008-A", RWA008_OLDDOC, RWA008_NEWDOC);
-    }
-
-    function testRWA009DocChange() public {
-        checkRWADocUpdate("RWA009-A", RWA009_OLDDOC, RWA009_NEWDOC);
-    }
-
-    function testRWA007OralcePriceBump() public {
-        (, address pip, , ) = liquidationOracle.ilks("RWA007-A");
-        (,,uint256 spot,,) = vat.ilks("RWA007-A");
-
-        assertEq(uint256(DSValueAbstract(pip).read()), 250 * MILLION * WAD, "RWA007: Bad initial PIP value");
-        assertEq(spot, 250 * MILLION * RAY, "RWA007: Bad initial spot value");
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        (uint256 Art, uint256 rate,uint256 spotAfter, uint256 line,) = vat.ilks("RWA007-A");
-
-        assertEq(uint256(DSValueAbstract(pip).read()), 500 * MILLION * WAD, "RWA007: Bad PIP value after bump()");
-        assertEq(spotAfter, 500 * MILLION * RAY, "RWA007: Bad spot value after bump()");
-
-        // Test that a draw can be performed.
-        address urn = addr.addr("RWA007_A_URN");
-        giveAuth(urn, address(this));
-        RwaUrnLike(urn).hope(address(this));  // become operator
-        uint256 room = sub(line, mul(Art, rate));
-        uint256 drawAmt = room / RAY;
-        if (mul(divup(mul(drawAmt, RAY), rate), rate) > room) {
-            drawAmt = sub(room, rate) / RAY;
-        }
-        RwaUrnLike(urn).draw(drawAmt);
-        (Art,,,,) = vat.ilks("RWA007-A");
-        assertTrue(sub(line, mul(Art, rate)) < mul(2, rate));  // got very close to line
-    }
-
-    // CHANGELOG Houskeeping
-    function testChangelogHousekeeping() public {
-        address rwa007inUrn = chainLog.getAddress("RWA007_A_INPUT_CONDUIT_URN");
-        address rwa007inJar = chainLog.getAddress("RWA007_A_INPUT_CONDUIT_JAR");
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        assertEq(chainLog.getAddress("RWA007_A_INPUT_CONDUIT"), rwa007inUrn);
-        assertEq(chainLog.getAddress("RWA007_A_JAR_INPUT_CONDUIT"), rwa007inJar);
     }
 }

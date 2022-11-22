@@ -49,80 +49,65 @@ contract DssSpellAction is DssAction {
     // A table of rates can be found at
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
+    uint256 internal constant TWO_FIVE_PCT_RATE   = 1000000000782997609082909351;
 
     // --- Math ---
-    uint256 constant WAD            = 10 ** 18;
-    uint256 constant MILLION        = 10 ** 6;
+    uint256 constant WAD                          = 10 ** 18;
+    uint256 constant MILLION                      = 10 ** 6;
 
-    address immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
-
-    function _updateDoc(bytes32 ilk, string memory doc) internal {
-        ( , address pip, uint48 tau, ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
-        require(pip != address(0), "DssSpell/unexisting-rwa-ilk");
-
-        // Init the RwaLiquidationOracle to reset the doc
-        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(
-            ilk, // ilk to update
-            0,   // price ignored if init() has already been called
-            doc, // new legal document
-            tau  // old tau value
-        );
-    }
+    // --- DEPLOYED COLLATERAL ADDRESSES ---
+    address internal constant GNO                 = 0x62BC478FFC429161115A6E4090f819CE5C50A5d9;
+    address internal constant PIP_GNO             = 0x0cd01b018C355a60B2Cc68A1e3d53853f05A7280;
+    address internal constant MCD_JOIN_GNO_A      = 0xDEF7D394a4eD62273265CE983107B3748F775265;
+    address internal constant MCD_CLIP_GNO_A      = 0xBa496CB9637d56466dc112033BF28CC7EC544E3A;
+    address internal constant MCD_CLIP_CALC_GNO_A = 0xC3A95477616c9Db6C772179e74a9A717E8B148a7;
 
     function actions() public override {
-        // -------------------- Update RWA007, RWA008, RWA009 Legal Documents ---------------------
-        // https://forum.makerdao.com/t/nov-16-2022-executive-contents/18747
-        //
-        // Monetalis (RWA007-A) legal update doc
-        _updateDoc("RWA007-A", "QmejL1CKKN5vCwp9QD1gebnnAM2MJSt9XbF64uy4ptkJtR");
-        // SG Forge OFH (RWA008-A) legal update doc
-        _updateDoc("RWA008-A", "QmZ4heYjptvj3ovafADJpXYMFXMyY3yQjkTXpvjFPnAKcy");
-        // HVB (RWA009-A) legal update doc
-        _updateDoc("RWA009-A", "QmeRrbDF8MVPQfNe83gWf2qV48jApVigm1WyjEtDXCZ5rT");
+        // ----------------------------- Collateral onboarding -----------------------------
+        //  Add GNO-A as a new Vault Type
+        //  Poll Link:   TODO
+        //  Forum Post:  https://forum.makerdao.com/t/gno-collateral-onboarding-risk-evaluation/18820
 
-        // RWA007-A autoline changes:
-        // - bump oralce price to 500m
-        // - increase DC to 500m
-        // - increase autoline `gap` to 100m
-        //
-        // https://vote.makerdao.com/polling/QmSfMtTM#poll-detail
-        DssExecLib.setIlkAutoLineParameters(
-            "RWA007-A",
-            500 * MILLION,
-            100 * MILLION,
-            1 weeks
-        );
-        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).bump(
-            "RWA007-A",
-             500 * MILLION * WAD
-        );
-        DssExecLib.updateCollateralPrice("RWA007-A");
-
-        // RETH-A autoline changes:
-        // - line 5m
-        // - gap 3m
-        // - ttl 8h
-        //
-        //  https://vote.makerdao.com/polling/QmfMswF2#poll-detail
-        DssExecLib.setIlkAutoLineParameters(
-            "RETH-A",
-            5 * MILLION,
-            3 * MILLION,
-            8 hours
+        DssExecLib.addNewCollateral(
+            CollateralOpts({
+                ilk:                  "GNO-A",
+                gem:                  GNO,
+                join:                 MCD_JOIN_GNO_A,
+                clip:                 MCD_CLIP_GNO_A,
+                calc:                 MCD_CLIP_CALC_GNO_A,
+                pip:                  PIP_GNO,
+                isLiquidatable:       true,
+                isOSM:                true,
+                whitelistOSM:         true,
+                ilkDebtCeiling:       5 * MILLION,       // line updated to 5M
+                minVaultAmount:       100_000,           // debt floor - dust in DAI
+                maxLiquidationAmount: 2_000_000,
+                liquidationPenalty:   13_00,             // 13% penalty on liquidation
+                ilkStabilityFee:      TWO_FIVE_PCT_RATE, // 2.50% stability fee
+                startingPriceFactor:  120_00,            // Auction price begins at 120% of oracle price
+                breakerTolerance:     50_00,             // Allows for a 50% hourly price drop before disabling liquidation
+                auctionDuration:      140 minutes,
+                permittedDrop:        25_00,             // 25% price drop before reset
+                liquidationRatio:     350_00,            // 350% collateralization
+                kprFlatReward:        250,               // 250 DAI tip - flat fee per kpr
+                kprPctReward:         10                 // 0.1% chip - per kpr
+            })
         );
 
-        // -------------------- Changelog Update & housekeeping ---------------------
+        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_GNO_A, 60 seconds, 99_00);
+        DssExecLib.setIlkAutoLineParameters("GNO-A", 5 * MILLION, 3 * MILLION, 8 hours);
 
-        // - Change "RWA007_A_INPUT_CONDUIT_URN" to "RWA007_A_INPUT_CONDUIT"
-        // - Change "RWA007_A_INPUT_CONDUIT_JAR" to "RWA007_A_JAR_INPUT_CONDUIT"
-        //
-        DssExecLib.setChangelogAddress("RWA007_A_INPUT_CONDUIT", DssExecLib.getChangelogAddress("RWA007_A_INPUT_CONDUIT_URN"));
-        DssExecLib.setChangelogAddress("RWA007_A_JAR_INPUT_CONDUIT", DssExecLib.getChangelogAddress("RWA007_A_INPUT_CONDUIT_JAR"));
-        ChainlogLike(DssExecLib.LOG).removeAddress("RWA007_A_INPUT_CONDUIT_URN");
-        ChainlogLike(DssExecLib.LOG).removeAddress("RWA007_A_INPUT_CONDUIT_JAR");
+        // ChainLog Updates
+        // Add the new join, clip, and abacus to the Chainlog
+        DssExecLib.setChangelogAddress("GNO",                 GNO);
+        DssExecLib.setChangelogAddress("PIP_GNO",             PIP_GNO);
+        DssExecLib.setChangelogAddress("MCD_JOIN_GNO_A",      MCD_JOIN_GNO_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_GNO_A",      MCD_CLIP_GNO_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_GNO_A", MCD_CLIP_CALC_GNO_A);
+        
 
         // Bump version
-        DssExecLib.setChangelogVersion("1.14.5");
+        DssExecLib.setChangelogVersion("1.15.0");
     }
 }
 
