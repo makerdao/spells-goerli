@@ -56,11 +56,11 @@ contract DssSpellAction is DssAction {
     uint256 constant MILLION                      = 10 ** 6;
 
     // --- DEPLOYED COLLATERAL ADDRESSES ---
-    address internal constant GNO                 = 0x62BC478FFC429161115A6E4090f819CE5C50A5d9;
+    address internal constant GNO                 = TODO;
     address internal constant PIP_GNO             = 0x0cd01b018C355a60B2Cc68A1e3d53853f05A7280;
-    address internal constant MCD_JOIN_GNO_A      = 0xDEF7D394a4eD62273265CE983107B3748F775265;
-    address internal constant MCD_CLIP_GNO_A      = 0xBa496CB9637d56466dc112033BF28CC7EC544E3A;
-    address internal constant MCD_CLIP_CALC_GNO_A = 0xC3A95477616c9Db6C772179e74a9A717E8B148a7;
+    address internal constant MCD_JOIN_GNO_A      = TODO;
+    address internal constant MCD_CLIP_GNO_A      = 0x8274F3badD42C61B8bEa78Df941813D67d1942ED;
+    address internal constant MCD_CLIP_CALC_GNO_A = 0x08Ae3e0C0CAc87E1B4187D53F0231C97B5b4Ab3E;
 
     function actions() public override {
         // ----------------------------- Collateral onboarding -----------------------------
@@ -97,14 +97,13 @@ contract DssSpellAction is DssAction {
         DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_GNO_A, 60 seconds, 99_00);
         DssExecLib.setIlkAutoLineParameters("GNO-A", 5 * MILLION, 3 * MILLION, 8 hours);
 
-        // ChainLog Updates
-        // Add the new join, clip, and abacus to the Chainlog
+        // -------------------- Changelog Update ---------------------
+
         DssExecLib.setChangelogAddress("GNO",                 GNO);
         DssExecLib.setChangelogAddress("PIP_GNO",             PIP_GNO);
         DssExecLib.setChangelogAddress("MCD_JOIN_GNO_A",      MCD_JOIN_GNO_A);
         DssExecLib.setChangelogAddress("MCD_CLIP_GNO_A",      MCD_CLIP_GNO_A);
         DssExecLib.setChangelogAddress("MCD_CLIP_CALC_GNO_A", MCD_CLIP_CALC_GNO_A);
-        
 
         // Bump version
         DssExecLib.setChangelogVersion("1.15.0");
