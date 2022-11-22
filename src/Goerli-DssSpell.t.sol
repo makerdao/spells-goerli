@@ -196,7 +196,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(reg.dec("GNO-A"),    GemAbstract(addr.addr("GNO")).decimals());
         assertEq(reg.class("GNO-A"),  1);
         assertEq(reg.pip("GNO-A"),    addr.addr("PIP_GNO"));
-        assertEq(reg.name("GNO-A"),   "Rocket Pool ETH");
+        assertEq(reg.name("GNO-A"),   "Gnosis Token");
         assertEq(reg.symbol("GNO-A"), GemAbstract(addr.addr("GNO")).symbol());
     }
 

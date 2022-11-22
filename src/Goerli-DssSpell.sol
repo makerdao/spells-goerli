@@ -56,9 +56,9 @@ contract DssSpellAction is DssAction {
     uint256 constant MILLION                      = 10 ** 6;
 
     // --- DEPLOYED COLLATERAL ADDRESSES ---
-    address internal constant GNO                 = TODO;
+    address internal constant GNO                 = 0x86Bc432064d7F933184909975a384C7E4c9d0977;
     address internal constant PIP_GNO             = 0x0cd01b018C355a60B2Cc68A1e3d53853f05A7280;
-    address internal constant MCD_JOIN_GNO_A      = TODO;
+    address internal constant MCD_JOIN_GNO_A      = 0x05a3b9D5F8098e558aF33c6b83557484f840055e;
     address internal constant MCD_CLIP_GNO_A      = 0x8274F3badD42C61B8bEa78Df941813D67d1942ED;
     address internal constant MCD_CLIP_CALC_GNO_A = 0x08Ae3e0C0CAc87E1B4187D53F0231C97B5b4Ab3E;
 
