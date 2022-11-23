@@ -21,18 +21,10 @@ pragma solidity 0.6.12;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-interface StarknetBridgeLike {
-
-}
-
 interface StarknetGovRelayLike {
     function relay(uint256 spell) external;
     function l2GovernanceRelay() external returns (uint256);
     function starkNet() external returns (address);
-}
-
-interface EscrowLike {
-    function approve(address,address,uint256) external;
 }
 
 contract DssSpellAction is DssAction {
