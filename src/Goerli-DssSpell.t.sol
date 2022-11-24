@@ -126,7 +126,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     }
 
-    function testCollateralIntegrations() public { // make public to use
+    function testCollateralIntegrations() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -143,7 +143,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         );
     }
 
-    function testIlkClipper() public { // make public to use
+    function testIlkClipper() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -183,10 +183,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        checkChainlogKey("RWA007_A_INPUT_CONDUIT");
-        checkChainlogKey("RWA007_A_JAR_INPUT_CONDUIT");
+        checkChainlogKey("STARKNET_GOV_RELAY_LEGACY");
+        checkChainlogKey("STARKNET_GOV_RELAY");
 
-        checkChainlogVersion("1.14.5");
+        checkChainlogVersion("1.14.6");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
@@ -489,71 +489,5 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // assertEq(dai.balanceOf(address(pauseProxy)), prevBalance + WAD);
 
         // assertEq(vest.rxd(1), WAD);
-    }
-
-     // RWA Tests
-
-    string RWA007_OLDDOC      = "QmRLwB7Ty3ywSzq17GdDdwHvsZGwBg79oUTpSTJGtodToY";
-    string RWA007_NEWDOC      = "QmejL1CKKN5vCwp9QD1gebnnAM2MJSt9XbF64uy4ptkJtR";
-
-    string RWA008_OLDDOC      = "QmdfzY6p5EpkYMN8wcomF2a1GsJbhkPiRQVRYSPfS4NZtB";
-    string RWA008_NEWDOC      = "QmZ4heYjptvj3ovafADJpXYMFXMyY3yQjkTXpvjFPnAKcy";
-
-    string RWA009_OLDDOC      = "QmQx3bMtjncka2jUsGwKu7ButuPJFn9yDEEvpg9xZ71ECh";
-    string RWA009_NEWDOC      = "QmeRrbDF8MVPQfNe83gWf2qV48jApVigm1WyjEtDXCZ5rT";
-
-    function testRWA007DocChange() public {
-        checkRWADocUpdate("RWA007-A", RWA007_OLDDOC, RWA007_NEWDOC);
-    }
-
-    function testRWA008DocChange() public {
-        checkRWADocUpdate("RWA008-A", RWA008_OLDDOC, RWA008_NEWDOC);
-    }
-
-    function testRWA009DocChange() public {
-        checkRWADocUpdate("RWA009-A", RWA009_OLDDOC, RWA009_NEWDOC);
-    }
-
-    function testRWA007OralcePriceBump() public {
-        (, address pip, , ) = liquidationOracle.ilks("RWA007-A");
-        (,,uint256 spot,,) = vat.ilks("RWA007-A");
-
-        assertEq(uint256(DSValueAbstract(pip).read()), 250 * MILLION * WAD, "RWA007: Bad initial PIP value");
-        assertEq(spot, 250 * MILLION * RAY, "RWA007: Bad initial spot value");
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        (uint256 Art, uint256 rate,uint256 spotAfter, uint256 line,) = vat.ilks("RWA007-A");
-
-        assertEq(uint256(DSValueAbstract(pip).read()), 500 * MILLION * WAD, "RWA007: Bad PIP value after bump()");
-        assertEq(spotAfter, 500 * MILLION * RAY, "RWA007: Bad spot value after bump()");
-
-        // Test that a draw can be performed.
-        address urn = addr.addr("RWA007_A_URN");
-        giveAuth(urn, address(this));
-        RwaUrnLike(urn).hope(address(this));  // become operator
-        uint256 room = sub(line, mul(Art, rate));
-        uint256 drawAmt = room / RAY;
-        if (mul(divup(mul(drawAmt, RAY), rate), rate) > room) {
-            drawAmt = sub(room, rate) / RAY;
-        }
-        RwaUrnLike(urn).draw(drawAmt);
-        (Art,,,,) = vat.ilks("RWA007-A");
-        assertTrue(sub(line, mul(Art, rate)) < mul(2, rate));  // got very close to line
-    }
-
-    // CHANGELOG Houskeeping
-    function testChangelogHousekeeping() public {
-        address rwa007inUrn = chainLog.getAddress("RWA007_A_INPUT_CONDUIT_URN");
-        address rwa007inJar = chainLog.getAddress("RWA007_A_INPUT_CONDUIT_JAR");
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        assertEq(chainLog.getAddress("RWA007_A_INPUT_CONDUIT"), rwa007inUrn);
-        assertEq(chainLog.getAddress("RWA007_A_JAR_INPUT_CONDUIT"), rwa007inJar);
     }
 }

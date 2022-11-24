@@ -23,7 +23,6 @@ import "dss-exec-lib/DssAction.sol";
 
 interface StarknetGovRelayLike {
     function relay(uint256 spell) external;
-    function l2GovernanceRelay() external returns (uint256);
     function starkNet() external returns (address);
 }
 
