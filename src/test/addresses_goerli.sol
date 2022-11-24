@@ -371,7 +371,7 @@ contract Addresses {
         addr["MCD_CLIP_RETH_A"]                 = 0xBa496CB9637d56466dc112033BF28CC7EC544E3A;
         addr["MCD_CLIP_CALC_RETH_A"]            = 0xC3A95477616c9Db6C772179e74a9A717E8B148a7;
         addr["GNO"]                             = 0x86Bc432064d7F933184909975a384C7E4c9d0977;
-        addr["PIP_GNO"]                         = 0x0cd01b018C355a60B2Cc68A1e3d53853f05A7280;
+        addr["PIP_GNO"]                         = 0xf15221A159A4e7ba01E0d6e72111F0Ddff8Fa8Da;
         addr["MCD_JOIN_GNO_A"]                  = 0x05a3b9D5F8098e558aF33c6b83557484f840055e;
         addr["MCD_CLIP_GNO_A"]                  = 0x8274F3badD42C61B8bEa78Df941813D67d1942ED;
         addr["MCD_CLIP_CALC_GNO_A"]             = 0x08Ae3e0C0CAc87E1B4187D53F0231C97B5b4Ab3E;
