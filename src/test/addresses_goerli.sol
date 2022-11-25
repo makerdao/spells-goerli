@@ -93,7 +93,7 @@ contract Addresses {
         addr["PIP_USDC"]                        = 0x838212865E2c2f4F7226fCc0A3EFc3EB139eC661;
         addr["MCD_JOIN_USDC_A"]                 = 0x33E88C8b3530e2f19050b24f44AcB78C7114AF46;
         addr["MCD_CLIP_USDC_A"]                 = 0xA8566b54C3447A741B2aE6bF920859600507AC1A;
-        addr["MCD_CLIP_CALC_USDC_A"]            = 0xe8682977789e2f53f7Dcedfd2c9C79a59f2CAa28;
+        addr["MCD_CLIP_CALC_USDC_A"]            = 0x3a278aA4264AD66c5DEaAfbC1fCf6E43ceD47325;
         addr["MCD_JOIN_USDC_B"]                 = 0x0Dc70CC4505c1952e719C9C740608A75Ca9e299e;
         addr["MCD_CLIP_USDC_B"]                 = 0x71e44e17359fFbC3626893D13A133870FEc9Fee6;
         addr["MCD_CLIP_CALC_USDC_B"]            = 0xae3c77F36436Ac242bf2BC3E1A271058529F207A;
@@ -143,7 +143,7 @@ contract Addresses {
         addr["PIP_PAX"]                         = 0xdF8474337c9D3f66C0b71d31C7D3596E4F517457;
         addr["MCD_JOIN_PAXUSD_A"]               = 0x8Ef390647A74150a79EC73FE120EaaF8bE9eEdf0;
         addr["MCD_CLIP_PAXUSD_A"]               = 0x80cb788cf316361B0998C3a831c9ea82C5274F6D;
-        addr["MCD_CLIP_CALC_PAXUSD_A"]          = 0xE7d46DABC93Dbe1D1032Ff5f1f43d34014003d6e;
+        addr["MCD_CLIP_CALC_PAXUSD_A"]          = 0x8EE38002052CA938646F653831E9a6Af6Cc8BeBf;
         addr["MCD_JOIN_PSM_PAX_A"]              = 0xF27E1F580D5e82510b47C7B2A588A8A533787d38;
         addr["MCD_CLIP_PSM_PAX_A"]              = 0xfe0b736a8bDc01869c94a0799CDD10683404D78f;
         addr["MCD_CLIP_CALC_PSM_PAX_A"]         = 0x1e14F8ED0f1a6A908cACabb290Ef71a69cDe1abf;
@@ -180,7 +180,7 @@ contract Addresses {
         addr["MCD_CLIP_CALC_GUSD_A"]            = 0x9F97F2cd4B79fF6CA34d0B77e5AfeA889a292422;
         addr["MCD_JOIN_PSM_GUSD_A"]             = 0x4115fDa246e2583b91aD602213f2ac4fC6E437Ca;
         addr["MCD_CLIP_PSM_GUSD_A"]             = 0x7A58fF23D5437C99b44BB02D7e24213D6dA20DFa;
-        addr["MCD_CLIP_CALC_PSM_GUSD_A"]        = 0xE99bd8c56d7B9d90A36C8a563a4CA375b144dD94;
+        addr["MCD_CLIP_CALC_PSM_GUSD_A"]        = 0x738EA932C2aFb1D8e47bebB7ed1c604399f2A99e;
         addr["MCD_PSM_GUSD_A"]                  = 0x3B2dBE6767fD8B4f8334cE3E8EC3E2DF8aB3957b;
         addr["UNI"]                             = 0x82D98aA89E391c6759012df39ccDA0d9d6b24143;
         addr["PIP_UNI"]                         = 0xf1a5b808fbA8fF80982dACe88020d4a80c91aFe6;
