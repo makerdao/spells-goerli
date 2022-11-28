@@ -81,7 +81,7 @@ contract DssSpellAction is DssAction {
                 isLiquidatable:       true,
                 isOSM:                true,
                 whitelistOSM:         true,
-                ilkDebtCeiling:       5 * MILLION,       // line updated to 5M
+                ilkDebtCeiling:       5_000_000,         // line updated to 5M
                 minVaultAmount:       100_000,           // debt floor - dust in DAI
                 maxLiquidationAmount: 2_000_000,
                 liquidationPenalty:   13_00,             // 13% penalty on liquidation
