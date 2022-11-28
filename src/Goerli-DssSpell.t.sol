@@ -183,7 +183,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkChainlogVersion("1.15.0");
     }
 
-    function testNewIlkRegistryValues() private { // make public to use
+    function testNewIlkRegistryValues() public { // make private to disable
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
