@@ -145,7 +145,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             ClipAbstract(addr.addr("MCD_CLIP_GNO_A")),
             addr.addr("MCD_CLIP_CALC_GNO_A"),
             OsmAbstract(addr.addr("PIP_GNO")),
-            1 * WAD
+            5000 * WAD
         );
     }
 
@@ -180,7 +180,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkChainlogKey("MCD_CLIP_GNO_A");
         checkChainlogKey("MCD_CLIP_CALC_GNO_A");
 
-        checkChainlogVersion("1.15.0");
+        checkChainlogVersion("1.14.6");
     }
 
     function testNewIlkRegistryValues() public { // make private to disable

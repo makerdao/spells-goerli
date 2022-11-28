@@ -108,7 +108,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.setChangelogAddress("MCD_CLIP_CALC_GNO_A", MCD_CLIP_CALC_GNO_A);
 
         // Bump version
-        DssExecLib.setChangelogVersion("1.15.0");
+        DssExecLib.setChangelogVersion("1.14.6");
     }
 }
 
