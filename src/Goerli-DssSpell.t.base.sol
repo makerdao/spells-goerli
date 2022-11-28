@@ -635,10 +635,10 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
                 assertEq(uint256(clip.buf()), normalizedTestBuf, concat("TestError/clip-buf-", ilk));
                 assertTrue(clip.buf() >= RAY && clip.buf() <= 2 * RAY, concat("TestError/clip-buf-range-", ilk)); // gte 0% and lte 100%
                 assertEq(uint256(clip.tail()), values.collaterals[ilk].clip_tail, concat("TestError/clip-tail-", ilk));
-                if (ilk == "TUSD-A" || ilk == "GUSD-A" || ilk == "USDC-A" || ilk == "PAXUSD-A") { // long tail liquidation
-                    assertTrue(clip.tail() >= 1200 && clip.tail() < 30 days, concat("TestError/TUSD-clip-tail-range-", ilk)); // gt eq 20 minutes and lt 10 hours
+                if (ilk == "TUSD-A") { // long tail liquidation
+                    assertTrue(clip.tail() >= 1200 && clip.tail() <= 30 days, concat("TestError/TUSD-clip-tail-range-", ilk)); // gt eq 20 minutes and lte 30 days
                 } else {
-                    assertTrue(clip.tail() >= 1200 && clip.tail() < 10 hours, concat("TestError/clip-tail-range-", ilk)); // gt eq 20 minutes and lt 10 hours
+                    assertTrue(clip.tail() >= 1200 && clip.tail() <= 12 hours, concat("TestError/clip-tail-range-", ilk)); // gt eq 20 minutes and lte 12 hours
                 }
                 uint256 normalizedTestCusp = (values.collaterals[ilk].clip_cusp)  * 10**23;
                 assertEq(uint256(clip.cusp()), normalizedTestCusp, concat("TestError/clip-cusp-", ilk));

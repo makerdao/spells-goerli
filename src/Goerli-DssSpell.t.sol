@@ -18,11 +18,6 @@ pragma solidity 0.6.12;
 
 import "./Goerli-DssSpell.t.base.sol";
 
-interface RwaUrnLike {
-    function hope(address) external;
-    function draw(uint256) external;
-}
-
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -154,7 +149,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             ClipAbstract(addr.addr("MCD_CLIP_GUSD_A")),
             addr.addr("MCD_CLIP_CALC_GUSD_A"),
             OsmAbstract(addr.addr("PIP_GUSD")),
-            150000 * WAD
+            16000 * WAD
         );
         checkIlkClipper(
             "USDC-A",
@@ -162,7 +157,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             ClipAbstract(addr.addr("MCD_CLIP_USDC_A")),
             addr.addr("MCD_CLIP_CALC_USDC_A"),
             OsmAbstract(addr.addr("PIP_USDC")),
-            150000 * WAD
+            16000 * WAD
         );
         checkIlkClipper(
             "PAXUSD-A",
@@ -170,7 +165,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             ClipAbstract(addr.addr("MCD_CLIP_PAXUSD_A")),
             addr.addr("MCD_CLIP_CALC_PAXUSD_A"),
             OsmAbstract(addr.addr("PIP_PAXUSD")),
-            150000 * WAD
+            16000 * WAD
         );
     }
 
