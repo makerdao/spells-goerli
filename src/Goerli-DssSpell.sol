@@ -147,6 +147,7 @@ contract DssSpellAction is DssAction {
         // ------------------ Setup new Starknet Governance Relay -----------------
 
         // Relay l2 part of the spell
+        // https://goerli.voyager.online/contract/0x04c93f9818a4f81f6f2c6f0f660cb4986b789b6b6fb1b274b879649deed74eb8#code
         StarknetGovRelayLike(STARKNET_GOV_RELAY).relay(L2_GOV_RELAY_SPELL);
 
         // Configure Chainlog
