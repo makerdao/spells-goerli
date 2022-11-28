@@ -98,7 +98,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
-    function testRemoveChainlogValues() public { // make public to use
+    function testRemoveChainlogValues() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
