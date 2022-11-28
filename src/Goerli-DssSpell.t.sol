@@ -18,11 +18,6 @@ pragma solidity 0.6.12;
 
 import "./Goerli-DssSpell.t.base.sol";
 
-interface RwaUrnLike {
-    function hope(address) external;
-    function draw(uint256) external;
-}
-
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -117,7 +112,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // }
     }
 
-    function testCollateralIntegrations() public { // make public to use
+    function testCollateralIntegrations() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -146,6 +141,30 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             addr.addr("MCD_CLIP_CALC_GNO_A"),
             OsmAbstract(addr.addr("PIP_GNO")),
             5000 * WAD
+        );
+        checkIlkClipper(
+            "GUSD-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_GUSD_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_GUSD_A")),
+            addr.addr("MCD_CLIP_CALC_GUSD_A"),
+            OsmAbstract(addr.addr("PIP_GUSD")),
+            16000 * WAD
+        );
+        checkIlkClipper(
+            "USDC-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_USDC_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_USDC_A")),
+            addr.addr("MCD_CLIP_CALC_USDC_A"),
+            OsmAbstract(addr.addr("PIP_USDC")),
+            16000 * WAD
+        );
+        checkIlkClipper(
+            "PAXUSD-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_PAXUSD_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_PAXUSD_A")),
+            addr.addr("MCD_CLIP_CALC_PAXUSD_A"),
+            OsmAbstract(addr.addr("PIP_PAXUSD")),
+            16000 * WAD
         );
     }
 
@@ -179,6 +198,12 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkChainlogKey("MCD_JOIN_GNO_A");
         checkChainlogKey("MCD_CLIP_GNO_A");
         checkChainlogKey("MCD_CLIP_CALC_GNO_A");
+
+        checkChainlogKey("STARKNET_GOV_RELAY_LEGACY");
+        checkChainlogKey("STARKNET_GOV_RELAY");
+        checkChainlogKey("MCD_CLIP_CALC_GUSD_A");
+        checkChainlogKey("MCD_CLIP_CALC_USDC_A");
+        checkChainlogKey("MCD_CLIP_CALC_PAXUSD_A");
 
         checkChainlogVersion("1.14.6");
     }
