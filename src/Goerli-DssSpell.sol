@@ -34,7 +34,7 @@ contract DssSpellAction is DssAction {
         return false;
     }
 
-    address constant internal STARKNET_GOV_RELAY = DssExecLib.getChangelogAddress("STARKNET_GOV_RELAY_LEGACY");
+    address immutable internal STARKNET_GOV_RELAY = DssExecLib.getChangelogAddress("STARKNET_GOV_RELAY_LEGACY");
     uint256 constant internal L2_GOV_RELAY_SPELL = 0x05a958b692c498791a215f0624a105393f5b33cfdc3fb51bdf17e629b766119a;
 
     // Many of the settings that change weekly rely on the rate accumulator
