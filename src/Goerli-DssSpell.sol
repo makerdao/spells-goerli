@@ -89,6 +89,15 @@ contract DssSpellAction is DssAction {
         DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_GNO_A, 60 seconds, 99_00);
         DssExecLib.setIlkAutoLineParameters("GNO-A", 5_000_000, 3_000_000, 8 hours);
 
+        // ----------------------------- Collateral offboarding -----------------------------
+        //  Offboard renBTC-A
+        //  Poll Link:   https://vote.makerdao.com/polling/QmTNMDfb#poll-detail
+        //  Forum Post:  https://forum.makerdao.com/t/gno-collateral-onboarding-risk-evaluation/18820
+        DssExecLib.setIlkLiquidationPenalty("renBTC-A", 0);
+        DssExecLib.setKeeperIncentiveFlatRate("renBTC-A", 0);
+        DssExecLib.setIlkLiquidationRatio("renBTC-A", 500_000);
+        DssExecLib.setIlkMinVaultAmount("renBTC-A", 350_000);
+
         // -------------------- Changelog Update ---------------------
 
         DssExecLib.setChangelogAddress("GNO",                 GNO);
