@@ -34,7 +34,7 @@ contract DssSpellAction is DssAction {
         return false;
     }
 
-    uint256 constant internal L2_GOV_RELAY_SPELL = TODO;
+    uint256 constant internal L2_GOV_RELAY_SPELL = 0x05a958b692c498791a215f0624a105393f5b33cfdc3fb51bdf17e629b766119a;
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -55,11 +55,11 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/starknet-changes-for-executive-spell-on-the-week-of-2022-11-29/18818
         // Relay l2 part of the spell
         // L2 Spell:
-        // TODO
+        // https://goerli.voyager.online/contract/0x05a958b692c498791a215f0624a105393f5b33cfdc3fb51bdf17e629b766119a#code
         // it is a fix of 2022-11-28 l2 spell:
         // https://goerli.voyager.online/contract/0x04c93f9818a4f81f6f2c6f0f660cb4986b789b6b6fb1b274b879649deed74eb8#code
         // that did not executed correctly due to the incorrect bridge_legacy address:
-        // https://testnet.starkscan.co/tx/0x06057a9ac5d03e09da99c9f07f725af5170eec6d4364f3a7f8dbc03362706698
+        // https://goerli.voyager.online/tx/0x6057a9ac5d03e09da99c9f07f725af5170eec6d4364f3a7f8dbc03362706698
 
         StarknetGovRelayLike(STARKNET_GOV_RELAY).relay(L2_GOV_RELAY_SPELL);
 
