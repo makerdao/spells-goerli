@@ -34,6 +34,7 @@ contract DssSpellAction is DssAction {
         return false;
     }
 
+    address constant internal STARKNET_GOV_RELAY = DssExecLib.getChangelogAddress("STARKNET_GOV_RELAY_LEGACY");
     uint256 constant internal L2_GOV_RELAY_SPELL = 0x05a958b692c498791a215f0624a105393f5b33cfdc3fb51bdf17e629b766119a;
 
     // Many of the settings that change weekly rely on the rate accumulator
@@ -62,8 +63,6 @@ contract DssSpellAction is DssAction {
         // https://goerli.voyager.online/tx/0x6057a9ac5d03e09da99c9f07f725af5170eec6d4364f3a7f8dbc03362706698
 
         StarknetGovRelayLike(STARKNET_GOV_RELAY).relay(L2_GOV_RELAY_SPELL);
-
-        DssExecLib.setChangelogVersion("1.14.7");
     }
 }
 
