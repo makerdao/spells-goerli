@@ -142,30 +142,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             OsmAbstract(addr.addr("PIP_GNO")),
             5_000 * WAD
         );
-        checkIlkClipper(
-            "GUSD-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_GUSD_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_GUSD_A")),
-            addr.addr("MCD_CLIP_CALC_GUSD_A"),
-            OsmAbstract(addr.addr("PIP_GUSD")),
-            16000 * WAD
-        );
-        checkIlkClipper(
-            "USDC-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_USDC_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_USDC_A")),
-            addr.addr("MCD_CLIP_CALC_USDC_A"),
-            OsmAbstract(addr.addr("PIP_USDC")),
-            16000 * WAD
-        );
-        checkIlkClipper(
-            "PAXUSD-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_PAXUSD_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_PAXUSD_A")),
-            addr.addr("MCD_CLIP_CALC_PAXUSD_A"),
-            OsmAbstract(addr.addr("PIP_PAXUSD")),
-            16000 * WAD
-        );
     }
 
     function testLerpSurplusBuffer() private { // make public to use
@@ -198,12 +174,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkChainlogKey("MCD_JOIN_GNO_A");
         checkChainlogKey("MCD_CLIP_GNO_A");
         checkChainlogKey("MCD_CLIP_CALC_GNO_A");
-
-        checkChainlogKey("STARKNET_GOV_RELAY_LEGACY");
-        checkChainlogKey("STARKNET_GOV_RELAY");
-        checkChainlogKey("MCD_CLIP_CALC_GUSD_A");
-        checkChainlogKey("MCD_CLIP_CALC_USDC_A");
-        checkChainlogKey("MCD_CLIP_CALC_PAXUSD_A");
 
         checkChainlogVersion("1.14.7");
     }
