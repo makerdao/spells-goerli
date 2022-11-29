@@ -48,10 +48,6 @@ contract DssSpellAction is DssAction {
     //
 
     function actions() public override {
-        // ----------------- Activate Liquidations for GUSD-A, USDC-A and USDP-A -----------------
-        // Poll: https://vote.makerdao.com/polling/QmZbsHqu#poll-detail
-        // Forum: https://forum.makerdao.com/t/usdc-a-usdp-a-gusd-a-liquidation-parameters-auctions-activation/18744
-
         // ------------------ Setup new Starknet Governance Relay -----------------
         // Forum: https://forum.makerdao.com/t/starknet-changes-for-executive-spell-on-the-week-of-2022-11-29/18818
         // Relay l2 part of the spell
