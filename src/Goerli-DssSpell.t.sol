@@ -140,7 +140,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             ClipAbstract(addr.addr("MCD_CLIP_GNO_A")),
             addr.addr("MCD_CLIP_CALC_GNO_A"),
             OsmAbstract(addr.addr("PIP_GNO")),
-            100 * WAD
+            5_000 * WAD
         );
         checkIlkClipper(
             "GUSD-A",
