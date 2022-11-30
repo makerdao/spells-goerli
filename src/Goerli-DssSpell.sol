@@ -90,13 +90,13 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkAutoLineParameters("GNO-A", 5_000_000, 3_000_000, 8 hours);
 
         // ----------------------------- Collateral offboarding -----------------------------
-        //  Offboard renBTC-A
+        //  Offboard RENBTC-A
         //  Poll Link:   https://vote.makerdao.com/polling/QmTNMDfb#poll-detail
-        //  Forum Post:  https://forum.makerdao.com/t/gno-collateral-onboarding-risk-evaluation/18820
-        DssExecLib.setIlkLiquidationPenalty("renBTC-A", 0);
-        DssExecLib.setKeeperIncentiveFlatRate("renBTC-A", 0);
-        DssExecLib.setIlkLiquidationRatio("renBTC-A", 500_000);
-        DssExecLib.setIlkMinVaultAmount("renBTC-A", 350_000);
+        //  Forum Post:  https://forum.makerdao.com/t/renbtc-a-proposed-offboarding-parameters-context/18864
+        DssExecLib.setIlkLiquidationPenalty("RENBTC-A", 0);
+        DssExecLib.setKeeperIncentiveFlatRate("RENBTC-A", 0);
+        DssExecLib.setIlkLiquidationRatio("RENBTC-A", 500_000);
+        DssExecLib.setIlkMinVaultAmount("RENBTC-A", 350_000);
 
         // -------------------- Changelog Update ---------------------
 
