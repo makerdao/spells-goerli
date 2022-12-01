@@ -549,7 +549,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             }
             uint256 normalizedTestDust = values.collaterals[ilk].dust * RAD;
             assertEq(dust, normalizedTestDust, concat("TestError/vat-dust-", ilk));
-            assertTrue((dust >= RAD && dust <= 100 * THOUSAND * RAD) || dust == 0, concat("TestError/vat-dust-range-", ilk)); // eq 0 or gt eq 1 and lte 100k
+            assertTrue((dust >= RAD && dust <= 350 * THOUSAND * RAD) || dust == 0, concat("TestError/vat-dust-range-", ilk)); // eq 0 or gt eq 1 and lte 350k
             }
 
             {
@@ -562,7 +562,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
                     assertTrue(mat >= RAY && mat <= 300 * RAY, concat("TestError/vat-mat-range-", ilk));  // cr gt 100% and lt 30000%
                 } else {
                     assertEq(mat, normalizedTestMat, concat("TestError/vat-mat-", ilk));
-                    assertTrue(mat >= RAY && mat < 10 * RAY, concat("TestError/vat-mat-range-", ilk));    // cr gt 100% and lt 1000%
+                    assertTrue(mat >= RAY && mat <= 50 * RAY, concat("TestError/vat-mat-range-", ilk));    // cr gt 100% and lt 5000%
                 }
             }
             }
