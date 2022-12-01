@@ -107,7 +107,7 @@ contract DssSpellAction is DssAction {
         // We are using low level methods  because DssExecLib allow to set `mat < 1000%`: https://github.com/makerdao/dss-exec-lib/blob/2afff4373e8a827659df28f6d349feb25f073e59/src/DssExecLib.sol#L733
         DssExecLib.setValue(DssExecLib.spotter(), "RENBTC-A", "mat", 50 * RAY); // 5000%
         DssExecLib.setIlkMaxLiquidationAmount("RENBTC-A", 350_000);
-        // PIP_RENBTC `kiss` MCD_CLIP_RENBTC_A
+        // PIP_RENBTC `kiss` MCD_CLIP_RENBTC_A. This should not be included in mainnet spell
         DssExecLib.addReaderToWhitelist(DssExecLib.getChangelogAddress("PIP_RENBTC"), DssExecLib.getChangelogAddress("MCD_CLIP_RENBTC_A"));
 
         // Bump changelog
