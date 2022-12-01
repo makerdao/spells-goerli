@@ -23,10 +23,6 @@ import "dss-exec-lib/DssAction.sol";
 // Enable ABIEncoderV2 when onboarding collateral through `DssExecLib.addNewCollateral()`
 pragma experimental ABIEncoderV2;
 
-interface Fileable {
-    function file(bytes32, bytes32, uint256) external;
-}
-
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -109,8 +105,8 @@ contract DssSpellAction is DssAction {
         DssExecLib.setKeeperIncentiveFlatRate("RENBTC-A", 0);
         // setIlkLiquidationRatio to 5000%
         // We are using low level methods  because DssExecLib allow to set `mat < 1000%`: https://github.com/makerdao/dss-exec-lib/blob/2afff4373e8a827659df28f6d349feb25f073e59/src/DssExecLib.sol#L733
-        Fileable(DssExecLib.spotter()).file("RENBTC-A", "mat", 50 * RAY); // 5000%
-        DssExecLib.setIlkMinVaultAmount("RENBTC-A", 350_000);
+        DssExecLib.setValue(DssExecLib.spotter(), "RENBTC-A", "mat", 50 * RAY); // 5000%
+        DssExecLib.setIlkMaxLiquidationAmount("RENBTC-A", 350_000);
 
         // Bump changelog
         DssExecLib.setChangelogVersion("1.14.7");

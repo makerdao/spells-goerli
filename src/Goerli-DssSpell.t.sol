@@ -134,13 +134,24 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
+        // // GNO
+        // checkIlkClipper(
+        //     "GNO-A",
+        //     GemJoinAbstract(addr.addr("MCD_JOIN_GNO_A")),
+        //     ClipAbstract(addr.addr("MCD_CLIP_GNO_A")),
+        //     addr.addr("MCD_CLIP_CALC_GNO_A"),
+        //     OsmAbstract(addr.addr("PIP_GNO")),
+        //     5_000 * WAD
+        // );
+
+        // renBTC
         checkIlkClipper(
-            "GNO-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_GNO_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_GNO_A")),
-            addr.addr("MCD_CLIP_CALC_GNO_A"),
-            OsmAbstract(addr.addr("PIP_GNO")),
-            5_000 * WAD
+            "RENBTC-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_RENBTC_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_RENBTC_A")),
+            addr.addr("MCD_CLIP_CALC_RENBTC_A"),
+            OsmAbstract(addr.addr("PIP_RENBTC")),
+            5 * WAD
         );
     }
 
