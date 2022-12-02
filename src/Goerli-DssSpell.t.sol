@@ -103,22 +103,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        try chainLog.getAddress("RWA007_A_INPUT_CONDUIT_URN") {
-            assertTrue(false);
-        } catch Error(string memory errmsg) {
-            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
-        } catch {
-            assertTrue(false);
-        }
-
-        try chainLog.getAddress("RWA007_A_INPUT_CONDUIT_JAR") {
-            assertTrue(false);
-        } catch Error(string memory errmsg) {
-            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
-        } catch {
-            assertTrue(false);
-        }
-
+        // try chainLog.getAddress("RWA007_A_INPUT_CONDUIT_URN") {
+        //     assertTrue(false);
+        // } catch Error(string memory errmsg) {
+        //     assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
+        // } catch {
+        //     assertTrue(false);
+        // }
     }
 
     function testCollateralIntegrations() private { // make public to use
@@ -128,10 +119,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         // Insert new collateral tests here
         checkIlkIntegration(
-            "RETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
-            addr.addr("PIP_RETH"),
+            "GNO-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_GNO_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_GNO_A")),
+            addr.addr("PIP_GNO"),
             true, /* _isOSM */
             true, /* _checkLiquidations */
             false /* _transferFee */
@@ -143,29 +134,24 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
+        // GNO
         checkIlkClipper(
-            "GUSD-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_GUSD_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_GUSD_A")),
-            addr.addr("MCD_CLIP_CALC_GUSD_A"),
-            OsmAbstract(addr.addr("PIP_GUSD")),
-            16000 * WAD
+            "GNO-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_GNO_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_GNO_A")),
+            addr.addr("MCD_CLIP_CALC_GNO_A"),
+            OsmAbstract(addr.addr("PIP_GNO")),
+            5_000 * WAD
         );
+
+        // renBTC
         checkIlkClipper(
-            "USDC-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_USDC_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_USDC_A")),
-            addr.addr("MCD_CLIP_CALC_USDC_A"),
-            OsmAbstract(addr.addr("PIP_USDC")),
-            16000 * WAD
-        );
-        checkIlkClipper(
-            "PAXUSD-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_PAXUSD_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_PAXUSD_A")),
-            addr.addr("MCD_CLIP_CALC_PAXUSD_A"),
-            OsmAbstract(addr.addr("PIP_PAXUSD")),
-            16000 * WAD
+            "RENBTC-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_RENBTC_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_RENBTC_A")),
+            addr.addr("MCD_CLIP_CALC_RENBTC_A"),
+            OsmAbstract(addr.addr("PIP_RENBTC")),
+            5 * WAD
         );
     }
 
@@ -189,35 +175,35 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() private { // make private to disable
+    function testNewChainlogValues() public { // make private to disable
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        //checkChainlogKey("STARKNET_GOV_RELAY_LEGACY");
-        //checkChainlogKey("STARKNET_GOV_RELAY");
-        //checkChainlogKey("MCD_CLIP_CALC_GUSD_A");
-        //checkChainlogKey("MCD_CLIP_CALC_USDC_A");
-        //checkChainlogKey("MCD_CLIP_CALC_PAXUSD_A");
+        checkChainlogKey("GNO");
+        checkChainlogKey("PIP_GNO");
+        checkChainlogKey("MCD_JOIN_GNO_A");
+        checkChainlogKey("MCD_CLIP_GNO_A");
+        checkChainlogKey("MCD_CLIP_CALC_GNO_A");
 
-        //checkChainlogVersion("1.14.6");
+        checkChainlogVersion("1.14.7");
     }
 
-    function testNewIlkRegistryValues() private { // make public to use
+    function testNewIlkRegistryValues() public { // make private to disable
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        // RETH-A
-        //assertEq(reg.pos("RETH-A"),    54);
-        //assertEq(reg.join("RETH-A"),   addr.addr("MCD_JOIN_RETH_A"));
-        //assertEq(reg.gem("RETH-A"),    addr.addr("RETH"));
-        //assertEq(reg.dec("RETH-A"),    GemAbstract(addr.addr("RETH")).decimals());
-        //assertEq(reg.class("RETH-A"),  1);
-        //assertEq(reg.pip("RETH-A"),    addr.addr("PIP_RETH"));
-        //assertEq(reg.name("RETH-A"),   "Rocket Pool ETH");
-        //assertEq(reg.symbol("RETH-A"), GemAbstract(addr.addr("RETH")).symbol());
+        // GNO-A
+        assertEq(reg.pos("GNO-A"),    55);
+        assertEq(reg.join("GNO-A"),   addr.addr("MCD_JOIN_GNO_A"));
+        assertEq(reg.gem("GNO-A"),    addr.addr("GNO"));
+        assertEq(reg.dec("GNO-A"),    GemAbstract(addr.addr("GNO")).decimals());
+        assertEq(reg.class("GNO-A"),  1);
+        assertEq(reg.pip("GNO-A"),    addr.addr("PIP_GNO"));
+        assertEq(reg.name("GNO-A"),   "Gnosis Token");
+        assertEq(reg.symbol("GNO-A"), GemAbstract(addr.addr("GNO")).symbol());
     }
 
     function testFailWrongDay() public {

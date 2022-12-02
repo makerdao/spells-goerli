@@ -549,7 +549,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             }
             uint256 normalizedTestDust = values.collaterals[ilk].dust * RAD;
             assertEq(dust, normalizedTestDust, concat("TestError/vat-dust-", ilk));
-            assertTrue((dust >= RAD && dust < 100 * THOUSAND * RAD) || dust == 0, concat("TestError/vat-dust-range-", ilk)); // eq 0 or gt eq 1 and lt 100k
+            assertTrue((dust >= RAD && dust <= 100 * THOUSAND * RAD) || dust == 0, concat("TestError/vat-dust-range-", ilk)); // eq 0 or gt eq 1 and lte 100k
             }
 
             {
@@ -557,7 +557,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             if (pip != address(0)) {
                 // Convert BP to system expected value
                 uint256 normalizedTestMat = (values.collaterals[ilk].mat * 10**23);
-                if ( values.collaterals[ilk].lerp ) {
+                if (values.collaterals[ilk].offboarding) {
                     assertTrue(mat <= normalizedTestMat, concat("TestError/vat-lerping-mat-", ilk));
                     assertTrue(mat >= RAY && mat <= 300 * RAY, concat("TestError/vat-mat-range-", ilk));  // cr gt 100% and lt 30000%
                 } else {
@@ -857,7 +857,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
         (,,,, uint256 dust) = vat.ilks(_ilk);
         dust /= RAY;
-        uint256 amount = 2 * dust * 10 ** uint256(token.decimals()) / (_isOSM ? getOSMPrice(pip) : uint256(DSValueAbstract(pip).read()));
+        uint256 amount = 4 * dust * 10 ** uint256(token.decimals()) / (_isOSM ? getOSMPrice(pip) : uint256(DSValueAbstract(pip).read()));
         uint256 amount18 = token.decimals() == 18 ? amount : amount * 10**(18 - uint256(token.decimals()));
         giveTokens(address(token), amount);
 
