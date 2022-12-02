@@ -53,7 +53,7 @@ contract DssSpellAction is DssAction {
     address internal constant MCD_JOIN_GNO_A      = 0x05a3b9D5F8098e558aF33c6b83557484f840055e;
     address internal constant MCD_CLIP_GNO_A      = 0x8274F3badD42C61B8bEa78Df941813D67d1942ED;
     address internal constant MCD_CLIP_CALC_GNO_A = 0x08Ae3e0C0CAc87E1B4187D53F0231C97B5b4Ab3E;
-    event Log(uint256 d);
+
     function actions() public override {
 
         // ----------------------------- Collateral onboarding -----------------------------
