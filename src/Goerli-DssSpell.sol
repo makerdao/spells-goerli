@@ -56,6 +56,25 @@ contract DssSpellAction is DssAction {
 
     function actions() public override {
 
+        // Delegate Compensation - November 2022
+        // https://forum.makerdao.com/t/recognized-delegate-compensation-november-2022/19012
+        // NOT ON GOERLI
+
+
+        // Tech-Ops MKR Transfer
+        // https://mips.makerdao.com/mips/details/MIP40c3SP54
+        // NOT ON GOERLI
+
+
+        // MOMC Parameter Changes
+        // https://vote.makerdao.com/polling/QmVXj9cW
+        // TODO
+
+
+        // DSR Adjustment
+        // https://vote.makerdao.com/polling/914#vote-breakdown
+        // TODO
+
         // ----------------------------- Collateral onboarding -----------------------------
         //  Add GNO-A as a new Vault Type
         //  Poll Link:   TODO
@@ -97,6 +116,27 @@ contract DssSpellAction is DssAction {
         DssExecLib.setChangelogAddress("MCD_JOIN_GNO_A",      MCD_JOIN_GNO_A);
         DssExecLib.setChangelogAddress("MCD_CLIP_GNO_A",      MCD_CLIP_GNO_A);
         DssExecLib.setChangelogAddress("MCD_CLIP_CALC_GNO_A", MCD_CLIP_CALC_GNO_A);
+
+
+        // RWA-010 Onboarding
+        // https://vote.makerdao.com/polling/QmNucsGt
+        // TODO
+
+
+        // RWA-011 Onboarding
+        // https://vote.makerdao.com/polling/QmNucsGt
+        // TODO
+
+
+        // RWA-012 Onboarding
+        // https://vote.makerdao.com/polling/QmNucsGt
+        // TODO
+
+
+        // RWA-013 Onboarding
+        // https://vote.makerdao.com/polling/QmNucsGt
+        // TODO
+
 
         // ----------------------------- Collateral offboarding -----------------------------
         //  Offboard RENBTC-A
