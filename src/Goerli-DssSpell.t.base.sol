@@ -557,7 +557,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             if (pip != address(0)) {
                 // Convert BP to system expected value
                 uint256 normalizedTestMat = (values.collaterals[ilk].mat * 10**23);
-                if ( values.collaterals[ilk].lerp || ilk == bytes32("RENBTC-A")) {
+                if (values.collaterals[ilk].offboarding) {
                     assertTrue(mat <= normalizedTestMat, concat("TestError/vat-lerping-mat-", ilk));
                     assertTrue(mat >= RAY && mat <= 300 * RAY, concat("TestError/vat-mat-range-", ilk));  // cr gt 100% and lt 30000%
                 } else {

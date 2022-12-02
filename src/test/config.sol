@@ -79,7 +79,7 @@ contract Config {
         uint256 calc_tau;
         uint256 calc_step;
         uint256 calc_cut;
-        bool    lerp;
+        bool    offboarding;
     }
 
     uint256 constant HUNDRED    = 10 ** 2;
@@ -165,7 +165,7 @@ contract Config {
             calc_tau:     0,               // In seconds
             calc_step:    90,              // In seconds
             calc_cut:     9900,            // In basis points
-            lerp:         false            // If mat is being lerped
+            offboarding:  false            // If mat is being offboardinged
         });
         afterSpell.collaterals["ETH-B"] = CollateralValues({
             aL_enabled:   true,
@@ -195,7 +195,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    60,
             calc_cut:     9900,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["ETH-C"] = CollateralValues({
             aL_enabled:   true,
@@ -225,7 +225,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["BAT-A"] = CollateralValues({
             aL_enabled:   false,
@@ -255,7 +255,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         true
+            offboarding:  true
         });
         afterSpell.collaterals["USDC-A"] = CollateralValues({
             aL_enabled:   false,
@@ -285,7 +285,7 @@ contract Config {
             calc_tau:     4_320_000,
             calc_step:    0,
             calc_cut:     0,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["USDC-B"] = CollateralValues({
             aL_enabled:   false,
@@ -315,7 +315,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    120,
             calc_cut:     9990,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["WBTC-A"] = CollateralValues({
             aL_enabled:   true,
@@ -345,7 +345,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["WBTC-B"] = CollateralValues({
             aL_enabled:   true,
@@ -375,7 +375,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    60,
             calc_cut:     9900,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["WBTC-C"] = CollateralValues({
             aL_enabled:   true,
@@ -405,7 +405,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["TUSD-A"] = CollateralValues({
             aL_enabled:   false,
@@ -435,7 +435,7 @@ contract Config {
             calc_tau:     250 days,
             calc_step:    0,
             calc_cut:     0,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["KNC-A"] = CollateralValues({
             aL_enabled:   false,
@@ -465,7 +465,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         true
+            offboarding:    true
         });
         afterSpell.collaterals["ZRX-A"] = CollateralValues({
             aL_enabled:   false,
@@ -495,7 +495,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         true
+            offboarding:  true
         });
         afterSpell.collaterals["MANA-A"] = CollateralValues({
             aL_enabled:   true,
@@ -525,7 +525,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["USDT-A"] = CollateralValues({
             aL_enabled:   false,
@@ -555,7 +555,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    120,
             calc_cut:     9990,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["PAXUSD-A"] = CollateralValues({
             aL_enabled:   false,
@@ -585,7 +585,7 @@ contract Config {
             calc_tau:     4_320_000,
             calc_step:    0,
             calc_cut:     0,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["COMP-A"] = CollateralValues({
             aL_enabled:   false,
@@ -615,7 +615,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         true
+            offboarding:  true
         });
         afterSpell.collaterals["LRC-A"] = CollateralValues({
             aL_enabled:   false,
@@ -645,7 +645,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         true
+            offboarding:  true
         });
         afterSpell.collaterals["LINK-A"] = CollateralValues({
             aL_enabled:   true,
@@ -675,7 +675,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["BAL-A"] = CollateralValues({
             aL_enabled:   false,
@@ -705,7 +705,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         true
+            offboarding:  true
         });
         afterSpell.collaterals["YFI-A"] = CollateralValues({
             aL_enabled:   true,
@@ -735,7 +735,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["GUSD-A"] = CollateralValues({
             aL_enabled:   false,
@@ -765,7 +765,7 @@ contract Config {
             calc_tau:     4_320_000,
             calc_step:    0,
             calc_cut:     0,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["UNI-A"] = CollateralValues({
             aL_enabled:   false,
@@ -795,7 +795,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         true
+            offboarding:  true
         });
         afterSpell.collaterals["RENBTC-A"] = CollateralValues({
             aL_enabled:   false,
@@ -825,7 +825,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         false
+            offboarding:  true
         });
         afterSpell.collaterals["AAVE-A"] = CollateralValues({
             aL_enabled:   false,
@@ -855,7 +855,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         true
+            offboarding:  true
         });
         afterSpell.collaterals["UNIV2DAIETH-A"] = CollateralValues({
             aL_enabled:   false,
@@ -885,7 +885,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    125,
             calc_cut:     9950,
-            lerp:         true
+            offboarding:  true
         });
         afterSpell.collaterals["PSM-USDC-A"] = CollateralValues({
             aL_enabled:   true,
@@ -915,7 +915,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    120,
             calc_cut:     9990,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["UNIV2WBTCETH-A"] = CollateralValues({
             aL_enabled:   false,
@@ -945,7 +945,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    130,
             calc_cut:     9900,
-            lerp:         true
+            offboarding:  true
         });
         afterSpell.collaterals["UNIV2USDCETH-A"] = CollateralValues({
             aL_enabled:   true,
@@ -975,7 +975,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    125,
             calc_cut:     9950,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["UNIV2DAIUSDC-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1005,7 +1005,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    120,
             calc_cut:     9990,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["UNIV2ETHUSDT-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1035,7 +1035,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    125,
             calc_cut:     9950,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["UNIV2LINKETH-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1065,7 +1065,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    130,
             calc_cut:     9900,
-            lerp:         true
+            offboarding:  true
         });
         afterSpell.collaterals["UNIV2UNIETH-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1095,7 +1095,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    130,
             calc_cut:     9900,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["UNIV2WBTCDAI-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1125,7 +1125,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    125,
             calc_cut:     9950,
-            lerp:         true
+            offboarding:  true
         });
         afterSpell.collaterals["UNIV2AAVEETH-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1155,7 +1155,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    130,
             calc_cut:     9900,
-            lerp:         true
+            offboarding:  true
         });
         afterSpell.collaterals["UNIV2DAIUSDT-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1185,7 +1185,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    120,
             calc_cut:     9990,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["RWA001-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1215,7 +1215,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    0,
             calc_cut:     0,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["RWA002-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1245,7 +1245,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    0,
             calc_cut:     0,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["RWA003-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1275,7 +1275,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    0,
             calc_cut:     0,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["RWA004-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1305,7 +1305,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    0,
             calc_cut:     0,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["RWA005-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1335,7 +1335,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    0,
             calc_cut:     0,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["RWA006-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1365,7 +1365,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    0,
             calc_cut:     0,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["RWA007-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1395,7 +1395,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    0,
             calc_cut:     0,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["RWA008-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1425,7 +1425,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    0,
             calc_cut:     0,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["RWA009-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1455,7 +1455,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    0,
             calc_cut:     0,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["MATIC-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1485,7 +1485,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["PSM-PAX-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1515,7 +1515,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    120,
             calc_cut:     9990,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["GUNIV3DAIUSDC1-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1545,7 +1545,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    120,
             calc_cut:     9990,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["WSTETH-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1575,7 +1575,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["WSTETH-B"] = CollateralValues({
             aL_enabled:   true,
@@ -1605,7 +1605,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         false
+            offboarding:  false
         });
 //        afterSpell.collaterals["DIRECT-AAVEV2-DAI"] = CollateralValues({
 //            aL_enabled:   true,
@@ -1664,7 +1664,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    120,
             calc_cut:     9990,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["GUNIV3DAIUSDC2-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1694,7 +1694,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    120,
             calc_cut:     9990,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["INST-ETH-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1724,7 +1724,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["INST-WBTC-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1754,7 +1754,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["TELEPORT-FW-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1784,7 +1784,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    0,
             calc_cut:     0,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["RETH-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1814,7 +1814,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     99_00,
-            lerp:         false
+            offboarding:  false
         });
         afterSpell.collaterals["GNO-A"] = CollateralValues({
             aL_enabled:   true,
@@ -1844,7 +1844,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    60,
             calc_cut:     99_00,
-            lerp:         false
+            offboarding:  false
         });
     }
 }
