@@ -189,18 +189,18 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() public { // make private to disable
+    function testNewChainlogValues() private { // make private to disable
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        checkChainlogKey("STARKNET_GOV_RELAY_LEGACY");
-        checkChainlogKey("STARKNET_GOV_RELAY");
-        checkChainlogKey("MCD_CLIP_CALC_GUSD_A");
-        checkChainlogKey("MCD_CLIP_CALC_USDC_A");
-        checkChainlogKey("MCD_CLIP_CALC_PAXUSD_A");
+        //checkChainlogKey("STARKNET_GOV_RELAY_LEGACY");
+        //checkChainlogKey("STARKNET_GOV_RELAY");
+        //checkChainlogKey("MCD_CLIP_CALC_GUSD_A");
+        //checkChainlogKey("MCD_CLIP_CALC_USDC_A");
+        //checkChainlogKey("MCD_CLIP_CALC_PAXUSD_A");
 
-        checkChainlogVersion("1.14.6");
+        //checkChainlogVersion("1.14.6");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
