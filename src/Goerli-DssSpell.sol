@@ -23,6 +23,7 @@ import "dss-exec-lib/DssAction.sol";
 // Enable ABIEncoderV2 when onboarding collateral through `DssExecLib.addNewCollateral()`
 pragma experimental ABIEncoderV2;
 
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -54,6 +55,7 @@ contract DssSpellAction is DssAction {
     address internal constant MCD_CLIP_CALC_GNO_A = 0x08Ae3e0C0CAc87E1B4187D53F0231C97B5b4Ab3E;
     event Log(uint256 d);
     function actions() public override {
+
         // ----------------------------- Collateral onboarding -----------------------------
         //  Add GNO-A as a new Vault Type
         //  Poll Link:   TODO
@@ -112,6 +114,7 @@ contract DssSpellAction is DssAction {
 
         // Bump changelog
         DssExecLib.setChangelogVersion("1.14.7");
+
     }
 }
 
