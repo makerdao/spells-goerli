@@ -21,8 +21,9 @@ pragma solidity 0.6.12;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
+import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
 
-contract DssSpellAction is DssAction {
+contract DssSpellAction is DssAction, DssSpellCollateralAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
@@ -30,7 +31,6 @@ contract DssSpellAction is DssAction {
     function officeHours() public override returns (bool) {
         return false;
     }
-
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -42,8 +42,13 @@ contract DssSpellAction is DssAction {
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
 
-    function actions() public override {
+    // --- Rates ---
 
+    // --- Math ---
+
+    function actions() public override {
+        // Includes changes from the DssSpellCollateralAction
+        collateralAction();
     }
 }
 

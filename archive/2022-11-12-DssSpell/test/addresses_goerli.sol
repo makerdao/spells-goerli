@@ -93,7 +93,7 @@ contract Addresses {
         addr["PIP_USDC"]                        = 0x838212865E2c2f4F7226fCc0A3EFc3EB139eC661;
         addr["MCD_JOIN_USDC_A"]                 = 0x33E88C8b3530e2f19050b24f44AcB78C7114AF46;
         addr["MCD_CLIP_USDC_A"]                 = 0xA8566b54C3447A741B2aE6bF920859600507AC1A;
-        addr["MCD_CLIP_CALC_USDC_A"]            = 0x3a278aA4264AD66c5DEaAfbC1fCf6E43ceD47325;
+        addr["MCD_CLIP_CALC_USDC_A"]            = 0xe8682977789e2f53f7Dcedfd2c9C79a59f2CAa28;
         addr["MCD_JOIN_USDC_B"]                 = 0x0Dc70CC4505c1952e719C9C740608A75Ca9e299e;
         addr["MCD_CLIP_USDC_B"]                 = 0x71e44e17359fFbC3626893D13A133870FEc9Fee6;
         addr["MCD_CLIP_CALC_USDC_B"]            = 0xae3c77F36436Ac242bf2BC3E1A271058529F207A;
@@ -143,7 +143,7 @@ contract Addresses {
         addr["PIP_PAX"]                         = 0xdF8474337c9D3f66C0b71d31C7D3596E4F517457;
         addr["MCD_JOIN_PAXUSD_A"]               = 0x8Ef390647A74150a79EC73FE120EaaF8bE9eEdf0;
         addr["MCD_CLIP_PAXUSD_A"]               = 0x80cb788cf316361B0998C3a831c9ea82C5274F6D;
-        addr["MCD_CLIP_CALC_PAXUSD_A"]          = 0x8EE38002052CA938646F653831E9a6Af6Cc8BeBf;
+        addr["MCD_CLIP_CALC_PAXUSD_A"]          = 0xE7d46DABC93Dbe1D1032Ff5f1f43d34014003d6e;
         addr["MCD_JOIN_PSM_PAX_A"]              = 0xF27E1F580D5e82510b47C7B2A588A8A533787d38;
         addr["MCD_CLIP_PSM_PAX_A"]              = 0xfe0b736a8bDc01869c94a0799CDD10683404D78f;
         addr["MCD_CLIP_CALC_PSM_PAX_A"]         = 0x1e14F8ED0f1a6A908cACabb290Ef71a69cDe1abf;
@@ -177,7 +177,7 @@ contract Addresses {
         addr["PIP_GUSD"]                        = 0x57A00620Ba1f5f81F20565ce72df4Ad695B389d7;
         addr["MCD_JOIN_GUSD_A"]                 = 0x455451293100C5c5355db10512DEE81F75E45Edf;
         addr["MCD_CLIP_GUSD_A"]                 = 0xF535799F8b4Ac661cd33E37421A571c742ed9B19;
-        addr["MCD_CLIP_CALC_GUSD_A"]            = 0x738EA932C2aFb1D8e47bebB7ed1c604399f2A99e;
+        addr["MCD_CLIP_CALC_GUSD_A"]            = 0x9F97F2cd4B79fF6CA34d0B77e5AfeA889a292422;
         addr["MCD_JOIN_PSM_GUSD_A"]             = 0x4115fDa246e2583b91aD602213f2ac4fC6E437Ca;
         addr["MCD_CLIP_PSM_GUSD_A"]             = 0x7A58fF23D5437C99b44BB02D7e24213D6dA20DFa;
         addr["MCD_CLIP_CALC_PSM_GUSD_A"]        = 0xE99bd8c56d7B9d90A36C8a563a4CA375b144dD94;
@@ -304,8 +304,8 @@ contract Addresses {
         addr["MCD_JOIN_RWA007_A"]               = 0x9C9E33E22b683F789411288497f8DC560f1F0466;
         addr["RWA007_A_URN"]                    = 0xa1b1D392fCB99F8B39c7530a599bCfcd2f1fB22f;
         addr["RWA007_A_JAR"]                    = 0x708bC8bF869c336ab6f04cf6A62a86a8DFc5f7c4;
-        addr["RWA007_A_INPUT_CONDUIT"]          = 0x1C3faBF61B470B0e9aA4Ca5F1A08fcf44ADAb414;
-        addr["RWA007_A_JAR_INPUT_CONDUIT"]      = 0xA7ae4F30f237BB8E8975d22eD777778202F64c91;
+        addr["RWA007_A_INPUT_CONDUIT_URN"]      = 0x1C3faBF61B470B0e9aA4Ca5F1A08fcf44ADAb414;
+        addr["RWA007_A_INPUT_CONDUIT_JAR"]      = 0xA7ae4F30f237BB8E8975d22eD777778202F64c91;
         addr["RWA007_A_OUTPUT_CONDUIT"]         = 0x87EaB54D118529Eb15a4286b8A96455ECBdbFD27;
         addr["RWA007_A_OPERATOR"]               = 0x94cfBF071f8be325A5821bFeAe00eEbE9CE7c279;
         addr["RWA007_A_COINBASE_CUSTODY"]       = 0xC3acf3B96E46Aa35dBD2aA3BD12D23c11295E774;
@@ -353,8 +353,7 @@ contract Addresses {
         addr["STARKNET_DAI_BRIDGE_LEGACY"]      = 0xd8beAa22894Cd33F24075459cFba287a10a104E4;
         addr["STARKNET_ESCROW"]                 = 0x38c3DDF1eF3e045abDDEb94f4e7a1a0d5440EB44;
         addr["STARKNET_ESCROW_MOM"]             = 0x464379BD1aC523DdA45b7B78eCB1F703661cad2a;
-        addr["STARKNET_GOV_RELAY"]              = 0x8919aefA417745F22c6af5AD6550E83159a373F3;
-        addr["STARKNET_GOV_RELAY_LEGACY"]       = 0x73c0049Dd6560E644984Fa3Af30A55a02a7D81fB;
+        addr["STARKNET_GOV_RELAY"]              = 0x73c0049Dd6560E644984Fa3Af30A55a02a7D81fB;
         addr["STARKNET_CORE"]                   = 0xde29d060D45901Fb19ED6C6e959EB22d8626708e;
         addr["OPTIMISM_TELEPORT_BRIDGE"]        = 0x5d49a6BCEc49072D1612cA6d60c8D7985cfc4988;
         addr["OPTIMISM_TELEPORT_FEE"]           = 0x89bcDc64090ddAbB9AFBeeFB7999d564e2875907;

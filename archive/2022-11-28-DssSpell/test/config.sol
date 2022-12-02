@@ -95,8 +95,8 @@ contract Config {
         // Values for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0),     // populate with deployed spell if deployed
-            deployed_spell_created:         0,              // use `./scripts/get-created-timestamp.sh <deployment-tx>`
+            deployed_spell:                 address(0x353094c43B459633Ab42f7Ba42F0E1CEa8b4E91e),     // populate with deployed spell if deployed
+            deployed_spell_created:         1669659564,     // use `./scripts/get-created-timestamp.sh <deployment-tx>`
             previous_spell:                 address(0),     // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           false,          // true if officehours is expected to be enabled in the spell
             expiration_threshold:           30 days         // Amount of time before spell expires
@@ -108,7 +108,7 @@ contract Config {
         afterSpell = SystemValues({
             line_offset:           500 * MILLION,           // Offset between the global line against the sum of local lines
             pot_dsr:               1,                       // In basis points
-            pause_delay:           60,                      // In seconds (60 seconds on Goerli, 48 hours on Mainnet)
+            pause_delay:           60 seconds,              // In seconds
             vow_wait:              156 hours,               // In seconds
             vow_dump:              250,                     // In whole Dai units
             vow_sump:              50 * THOUSAND,           // In whole Dai units
@@ -142,7 +142,7 @@ contract Config {
             aL_line:      15 * BILLION,    // In whole Dai units
             aL_gap:       150 * MILLION,   // In whole Dai units
             aL_ttl:       6 hours,         // In seconds
-            line:         0,               // In whole Dai units
+            line:         0,               // In whole Dai units  // Not checked here as there is auto line
             dust:         15 * THOUSAND,   // In whole Dai units
             pct:          150,             // In basis points
             mat:          14500,           // In basis points
@@ -156,7 +156,7 @@ contract Config {
             flipper_mom:  0,               // 1 if circuit breaker enabled
             dog_hole:     40 * MILLION,    // In whole Dai units
             clip_buf:     110_00,          // In basis points
-            clip_tail:    7_200,           // In seconds
+            clip_tail:    7200 seconds,    // In seconds
             clip_cusp:    45_00,           // In basis points
             clip_chip:    10,              // In basis points
             clip_tip:     250,             // In whole Dai units
@@ -186,7 +186,7 @@ contract Config {
             flipper_mom:  0,
             dog_hole:     15 * MILLION,
             clip_buf:     110_00,
-            clip_tail:    4_800,
+            clip_tail:    4800 seconds,
             clip_cusp:    45_00,
             clip_chip:    10,
             clip_tip:     250,
@@ -216,7 +216,7 @@ contract Config {
             flipper_mom:  0,
             dog_hole:     35 * MILLION,
             clip_buf:     110_00,
-            clip_tail:    7_200,
+            clip_tail:    7200 seconds,
             clip_cusp:    45_00,
             clip_chip:    10,
             clip_tip:     250,
@@ -336,7 +336,7 @@ contract Config {
             flipper_mom:  0,
             dog_hole:     30 * MILLION,
             clip_buf:     110_00,
-            clip_tail:    7_200,
+            clip_tail:    7200 seconds,
             clip_cusp:    45_00,
             clip_chip:    10,
             clip_tip:     250,
@@ -366,7 +366,7 @@ contract Config {
             flipper_mom:  0,
             dog_hole:     10 * MILLION,
             clip_buf:     110_00,
-            clip_tail:    4_800,
+            clip_tail:    4800 seconds,
             clip_cusp:    45_00,
             clip_chip:    10,
             clip_tip:     250,
@@ -396,7 +396,7 @@ contract Config {
             flipper_mom:  0,
             dog_hole:     20 * MILLION,
             clip_buf:     110_00,
-            clip_tail:    7_200,
+            clip_tail:    7200 seconds,
             clip_cusp:    45_00,
             clip_chip:    10,
             clip_tip:     250,
@@ -429,7 +429,7 @@ contract Config {
             clip_tail:    120 hours,
             clip_cusp:    98_00,
             clip_chip:    0,
-            clip_tip:     0,
+            clip_tip:     500,
             clipper_mom:  1,
             cm_tolerance: 9500,
             calc_tau:     250 days,
@@ -1566,7 +1566,7 @@ contract Config {
             flipper_mom:  0,
             dog_hole:     15 * MILLION,
             clip_buf:     110_00,
-            clip_tail:    7_200,
+            clip_tail:    7200 seconds,
             clip_cusp:    45_00,
             clip_chip:    10,
             clip_tip:     250,
@@ -1596,7 +1596,7 @@ contract Config {
             flipper_mom:  0,
             dog_hole:     10 * MILLION,
             clip_buf:     110_00,
-            clip_tail:    7_200,
+            clip_tail:    7200 seconds,
             clip_cusp:    45_00,
             clip_chip:    10,
             clip_tip:     250,
@@ -1607,36 +1607,35 @@ contract Config {
             calc_cut:     9900,
             lerp:         false
         });
-        /* afterSpell.collaterals["DIRECT-AAVEV2-DAI"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      100 * MILLION,
-            aL_gap:       65 * MILLION,
-            aL_ttl:       12 hours,
-            line:         0,
-            dust:         0,
-            pct:          0,
-            mat:          10000,
-            liqType:      "clip",
-            liqOn:        false,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     105_00,
-            clip_tail:    220 minutes,
-            clip_cusp:    90_00,
-            clip_chip:    10,
-            clip_tip:     300,
-            clipper_mom:  0,
-            cm_tolerance: 9500,
-            calc_tau:     0,
-            calc_step:    120,
-            calc_cut:     9990,
-            lerp:         false
-        }); */
+//        afterSpell.collaterals["DIRECT-AAVEV2-DAI"] = CollateralValues({
+//            aL_enabled:   true,
+//            aL_line:      300 * MILLION,
+//            aL_gap:       65 * MILLION,
+//            aL_ttl:       12 hours,
+//            line:         0,
+//            dust:         0,
+//            pct:          0,
+//            mat:          10000,
+//            liqType:      "clip",
+//            liqOn:        false,
+//            chop:         1300,
+//            cat_dunk:     0,
+//            flip_beg:     0,
+//            flip_ttl:     0,
+//            flip_tau:     0,
+//            flipper_mom:  0,
+//            dog_hole:     0,
+//            clip_buf:     105_00,
+//            clip_tail:    220 minutes,
+//            clip_cusp:    90_00,
+//            clip_chip:    10,
+//            clip_tip:     300,
+//            clipper_mom:  0,
+//            cm_tolerance: 9500,
+//            calc_tau:     0,
+//            calc_step:    120,
+//            calc_cut:     9990
+//        });
         afterSpell.collaterals["PSM-GUSD-A"] = CollateralValues({
             aL_enabled:   true,
             aL_line:      500 * MILLION,
@@ -1697,36 +1696,6 @@ contract Config {
             calc_cut:     9990,
             lerp:         false
         });
-        /* afterSpell.collaterals["CRVV1ETHSTETH-A"] = CollateralValues({
-            aL_enabled:   true,
-            aL_line:      20 * MILLION,
-            aL_gap:       10 * MILLION,
-            aL_ttl:       8 hours,
-            line:         0,
-            dust:         25 * THOUSAND,
-            pct:          1_50,
-            mat:          15500,
-            liqType:      "clip",
-            liqOn:        true,
-            chop:         1300,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     3 * MILLION,
-            clip_buf:     120_00,
-            clip_tail:    140 minutes,
-            clip_cusp:    40_00,
-            clip_chip:    10,
-            clip_tip:     250,
-            clipper_mom:  1,
-            cm_tolerance: 5000,
-            calc_tau:     0,
-            calc_step:    90,
-            calc_cut:     9900,
-            lerp:         false
-        }); */
         afterSpell.collaterals["INST-ETH-A"] = CollateralValues({
             aL_enabled:   true,
             aL_line:      900 * MILLION,

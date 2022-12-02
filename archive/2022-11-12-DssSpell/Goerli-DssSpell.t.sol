@@ -103,21 +103,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        try chainLog.getAddress("RWA007_A_INPUT_CONDUIT_URN") {
-            assertTrue(false);
-        } catch Error(string memory errmsg) {
-            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
-        } catch {
-            assertTrue(false);
-        }
-
-        try chainLog.getAddress("RWA007_A_INPUT_CONDUIT_JAR") {
-            assertTrue(false);
-        } catch Error(string memory errmsg) {
-            assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
-        } catch {
-            assertTrue(false);
-        }
+        // try chainLog.getAddress("XXX") {
+        //     assertTrue(false);
+        // } catch Error(string memory errmsg) {
+        //     assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
+        // } catch {
+        //     assertTrue(false);
+        // }
 
     }
 
@@ -127,46 +119,31 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new collateral tests here
-        checkIlkIntegration(
-            "RETH-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
-            addr.addr("PIP_RETH"),
-            true, /* _isOSM */
-            true, /* _checkLiquidations */
-            false /* _transferFee */
-        );
+        // checkIlkIntegration(
+        //     "RETH-A",
+        //     GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
+        //     ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
+        //     addr.addr("PIP_RETH"),
+        //     true, /* _isOSM */
+        //     true, /* _checkLiquidations */
+        //     false /* _transferFee */
+        // );
     }
 
-    function testIlkClipper() public { // make public to use
+    function testIlkClipper() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        checkIlkClipper(
-            "GUSD-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_GUSD_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_GUSD_A")),
-            addr.addr("MCD_CLIP_CALC_GUSD_A"),
-            OsmAbstract(addr.addr("PIP_GUSD")),
-            16000 * WAD
-        );
-        checkIlkClipper(
-            "USDC-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_USDC_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_USDC_A")),
-            addr.addr("MCD_CLIP_CALC_USDC_A"),
-            OsmAbstract(addr.addr("PIP_USDC")),
-            16000 * WAD
-        );
-        checkIlkClipper(
-            "PAXUSD-A",
-            GemJoinAbstract(addr.addr("MCD_JOIN_PAXUSD_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_PAXUSD_A")),
-            addr.addr("MCD_CLIP_CALC_PAXUSD_A"),
-            OsmAbstract(addr.addr("PIP_PAXUSD")),
-            16000 * WAD
-        );
+        // // Insert new ilk clipper tests here
+        // checkIlkClipper(
+        //     "TOKEN-X",
+        //     GemJoinAbstract(addr.addr("MCD_JOIN_TOKEN_X")),
+        //     ClipAbstract(addr.addr("MCD_CLIP_TOKEN_X")),
+        //     addr.addr("MCD_CLIP_CALC_TOKEN_X"),
+        //     OsmAbstract(addr.addr("PIP_TOKEN")),
+        //     20_000 * WAD
+        // );
     }
 
     function testLerpSurplusBuffer() private { // make public to use
@@ -189,18 +166,16 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() private { // make private to disable
+    function testNewChainlogValues() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        //checkChainlogKey("STARKNET_GOV_RELAY_LEGACY");
-        //checkChainlogKey("STARKNET_GOV_RELAY");
-        //checkChainlogKey("MCD_CLIP_CALC_GUSD_A");
-        //checkChainlogKey("MCD_CLIP_CALC_USDC_A");
-        //checkChainlogKey("MCD_CLIP_CALC_PAXUSD_A");
+        // Insert new chainlog values tests here
+        // checkChainlogKey("STARKNET_TELEPORT_BRIDGE");
+        // checkChainlogKey("STARKNET_TELEPORT_FEE");
 
-        //checkChainlogVersion("1.14.6");
+        // checkChainlogVersion("1.14.4");
     }
 
     function testNewIlkRegistryValues() private { // make public to use
@@ -503,5 +478,85 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // assertEq(dai.balanceOf(address(pauseProxy)), prevBalance + WAD);
 
         // assertEq(vest.rxd(1), WAD);
+    }
+
+    function testAutoLineGap() public {
+        bytes32 ilk;
+        uint256 line;
+
+        giveAuth(address(autoLine), address(this));
+
+        // Inflate Gap and Line - MATIC-A
+        ilk = "MATIC-A";
+        (uint256 alLine, uint256 gap, uint48 ttl,,) = autoLine.ilks(ilk);
+        uint256 highGap = gap * 5;
+        autoLine.setIlk(ilk, highGap, highGap, ttl);
+        hevm.warp(block.timestamp + ttl);
+        uint256 newLine = autoLine.exec(ilk);
+         (uint256 Art, uint256 rate,,,) = vat.ilks(ilk);
+        assertEq(newLine, add(highGap, mul(Art, rate)), "MATIC-gap-boost-failed");
+
+        // Inflate Gap and Line - LINK-A
+        ilk = "LINK-A";
+        (alLine, gap, ttl,,) = autoLine.ilks(ilk);
+        highGap = gap * 5;
+        autoLine.setIlk(ilk, highGap, highGap, ttl);
+        hevm.warp(block.timestamp + ttl);
+        newLine = autoLine.exec(ilk);
+        (Art, rate,,,) = vat.ilks(ilk);
+        assertEq(newLine, add(highGap, mul(Art, rate)), "LINK-gap-boost-failed");
+
+        // Inflate Gap and Line - YFI-A
+        ilk = "YFI-A";
+        (alLine, gap, ttl,,) = autoLine.ilks(ilk);
+        highGap = gap * 5;
+        // YFI had a lower line, need to inflate that too
+        autoLine.setIlk(ilk, highGap * 2, highGap, ttl);
+        hevm.warp(block.timestamp + ttl);
+        newLine = autoLine.exec(ilk);
+        (Art, rate,,,) = vat.ilks(ilk);
+        assertEq(newLine, add(highGap, mul(Art, rate)), "YFI-gap-boost-failed");
+
+        // Inflate Gap and Line - MANA-A
+        ilk = "MANA-A";
+        (alLine, gap, ttl,,) = autoLine.ilks(ilk);
+        highGap = gap * 5;
+        autoLine.setIlk(ilk, highGap, highGap, ttl);
+        hevm.warp(block.timestamp + ttl);
+        newLine = autoLine.exec(ilk);
+        (Art, rate,,,) = vat.ilks(ilk);
+        assertEq(newLine, add(highGap, mul(Art, rate)), "MANA-gap-boost-failed");
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        ilk = "MATIC-A";
+        hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
+        newLine = autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertEq(newLine, line);
+        assertEq(line, afterSpell.collaterals[ilk].aL_line * RAD, "MATIC-line-limit-failed");
+
+        ilk = "LINK-A";
+        hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
+        newLine = autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertEq(newLine, line);
+        assertEq(line, afterSpell.collaterals[ilk].aL_line * RAD, "LINK-line-limit-failed");
+
+        ilk = "YFI-A";
+        hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
+        newLine = autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertEq(newLine, line);
+        assertEq(line, afterSpell.collaterals[ilk].aL_line * RAD, "YFI-line-limit-failed");
+
+        ilk = "MANA-A";
+        hevm.warp(block.timestamp + afterSpell.collaterals[ilk].aL_ttl);
+        newLine = autoLine.exec(ilk);
+        (,,,line,) = vat.ilks(ilk);
+        assertEq(newLine, line);
+        assertEq(line, afterSpell.collaterals[ilk].aL_line * RAD, "MANA-line-limit-failed");
     }
 }
