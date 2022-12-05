@@ -680,6 +680,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function test_INTEGRATION_SETUP() public {
+        _setupCentrifugeCollaterals();
+
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -708,6 +710,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function test_INTEGRATION_BUMP() public {
+        _setupCentrifugeCollaterals();
+
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -739,6 +743,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function test_INTEGRATION_TELL() public {
+        _setupCentrifugeCollaterals();
+
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -775,6 +781,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function test_INTEGRATION_TELL_CURE_GOOD() public {
+        _setupCentrifugeCollaterals();
+
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -811,6 +819,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function test_INTEGRATION_TELL_CULL() public {
+        _setupCentrifugeCollaterals();
+
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -861,6 +871,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function test_TINLAKE_MGR_JOIN_DRAW_WIPE_EXIT_FREE() public {
+        _setupCentrifugeCollaterals();
+
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -945,6 +957,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testFail_DRAW_ABOVE_LINE() public {
+        _setupCentrifugeCollaterals();
+
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -985,6 +999,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function test_TINLAKE_MGR_LOCK_DRAW_CAGE() public {
+        _setupCentrifugeCollaterals();
+
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
