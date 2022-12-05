@@ -943,8 +943,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     function test_TINLAKE_MGR_LOCK_DRAW_CAGE() public {
         _setupCentrifugeCollaterals();
 
-        // ----
-
         for (uint256 i = 0; i < collaterals.length; i++) {
             _testTinlakeMgrJoinDraw(collaterals[i]);
         }
