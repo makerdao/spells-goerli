@@ -668,7 +668,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         FileLike(collateral.MGR).file("liq", collateral.LIQ);
         FileLike(collateral.MGR).file("urn", collateral.URN);
 
-        // Give the this contract 1000 drop
+        // Give some DROP tokens to the test contract
         hevm.store(collateral.DROP, keccak256(abi.encode(address(this), uint256(0))), bytes32(uint256(1)));
         assertEq(mgr.wards(address(this)), 1);
 
@@ -819,7 +819,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         for (uint256 i = 0; i < collaterals.length; i++) {
             _testPauseProxyOwnsRwaTokenBeforeSpell(collaterals[i]);
         }
-
     }
 
     function _testPauseProxyOwnsRwaTokenBeforeSpell(CentrifugeCollateralTestValues memory collateral) internal {
