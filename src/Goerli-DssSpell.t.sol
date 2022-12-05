@@ -872,9 +872,21 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         mgr.join(DROP_JOIN_AMOUNT);
         mgr.draw(DAI_DRAW_AMOUNT);
 
-        assertEq(dai.balanceOf(address(this)), preThisDaiBalance + DAI_DRAW_AMOUNT, "Post-condition: invalid Dai balance on address(this)");
-        assertEq(drop.balanceOf(address(this)), INITIAL_THIS_DROP_BALANCE - DROP_JOIN_AMOUNT, "Post-condition: invalid Drop balance on address(this)");
-        assertEq(drop.balanceOf(address(mgr)), preMgrDropBalance + DROP_JOIN_AMOUNT, "Post-condition: invalid Drop balance on mgr");
+        assertEq(
+            dai.balanceOf(address(this)),
+            preThisDaiBalance + DAI_DRAW_AMOUNT,
+            "Post-condition: invalid Dai balance on address(this)"
+        );
+        assertEq(
+            drop.balanceOf(address(this)),
+            INITIAL_THIS_DROP_BALANCE - DROP_JOIN_AMOUNT,
+            "Post-condition: invalid Drop balance on address(this)"
+        );
+        assertEq(
+            drop.balanceOf(address(mgr)),
+            preMgrDropBalance + DROP_JOIN_AMOUNT,
+            "Post-condition: invalid Drop balance on mgr"
+        );
 
         (uint256 ink, uint256 art) = vat.urns(collateral.ilk, collateral.URN);
         assertEq(art, DAI_DRAW_AMOUNT, "Post-condition: bad art on vat"); // DAI drawn == art as rate should always be 1 RAY
@@ -901,9 +913,21 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         mgr.exit(dropToExit);
         mgr.free(gemToFree);
 
-        assertEq(dai.balanceOf(address(this)), preThisDaiBalance - daiToPay, "Post-condition: invalid Dai balance on address(this)");
-        assertEq(drop.balanceOf(address(this)), preThisDropBalance + dropToExit, "Post-condition: invalid DROP balance on address(this)");
-        assertEq(gem.balanceOf(address(mgr)), preThisGemBalance + gemToFree, "Post-condition: invalid Gem balance on mgr");
+        assertEq(
+            dai.balanceOf(address(this)),
+            preThisDaiBalance - daiToPay,
+            "Post-condition: invalid Dai balance on address(this)"
+        );
+        assertEq(
+            drop.balanceOf(address(this)),
+            preThisDropBalance + dropToExit,
+            "Post-condition: invalid DROP balance on address(this)"
+        );
+        assertEq(
+            gem.balanceOf(address(mgr)),
+            preThisGemBalance + gemToFree,
+            "Post-condition: invalid Gem balance on mgr"
+        );
     }
 
     function testFail_DRAW_ABOVE_LINE() public {
