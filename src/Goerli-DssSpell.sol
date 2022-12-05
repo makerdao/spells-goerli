@@ -62,11 +62,15 @@ interface RwaUrnLike {
 }
 
 interface TinlakeManagerLike {
+    function file(bytes32 what, address data) external;
     function dai() external view returns (address);
     function daiJoin() external view returns (address);
     function end() external view returns (address);
     function gem() external view returns (address);
     function liq() external view returns (address);
+    function owner() external view returns (address);
+    function pool() external view returns (address);
+    function tranche() external view returns (address);
     function urn() external view returns (address);
     function vat() external view returns (address);
     function vow() external view returns (address);
@@ -80,6 +84,12 @@ struct CentrifugeCollateralValues {
     address INPUT_CONDUIT;  // MGR
     address OUTPUT_CONDUIT; // MGR
     address URN;
+
+    // Centrifuge addresses
+    address DROP;
+    address OWNER;
+    address POOL;
+    address TRANCHE;
 
     // Changelog keys
     bytes32 gemID;
@@ -305,6 +315,10 @@ contract DssSpellAction is DssAction {
             OPERATOR:        RWA010_A_OPERATOR,
             INPUT_CONDUIT:   RWA010_A_INPUT_CONDUIT,
             OUTPUT_CONDUIT:  RWA010_A_OUTPUT_CONDUIT,
+            DROP:            0xd7943e68bD284dAd75A59d07Fab7708a21B8a95E,
+            OWNER:           0xa78F096D4cfc32637513e02Ddf020EFb3fFf4df1, // Tinlake Clerk
+            POOL:            0xd7BD4F27302aBDB8292F534BF52e7d10dDf6A112, // Tinlake Operator
+            TRANCHE:         0xe12c278c7e6c8B64E322d9cce66E2C9177051FeD, // Tinlake Tranche
             gemID:           "RWA010",
             joinID:          "MCD_JOIN_RWA010_A",
             urnID:           "RWA010_A_URN",
@@ -332,6 +346,10 @@ contract DssSpellAction is DssAction {
             OPERATOR:        RWA011_A_OPERATOR,
             INPUT_CONDUIT:   RWA011_A_INPUT_CONDUIT,
             OUTPUT_CONDUIT:  RWA011_A_OUTPUT_CONDUIT,
+            DROP:            0xA586bB77069739Bb9Cb8608c51a21C18AF87Fb2E,
+            OWNER:           0xd08822CBEfd0DD61fEc36E252311c8e08c418109, // Tinlake Clerk
+            POOL:            0x747a07346f97D14A1B97f9Fee739EF99A875e716, // Tinlake Operator
+            TRANCHE:         0xB4FFc4f9e70f783346eE0Bb247a2a966DA430A2F, // Tinlake Tranche
             gemID:           "RWA011",
             joinID:          "MCD_JOIN_RWA011_A",
             urnID:           "RWA011_A_URN",
@@ -359,6 +377,10 @@ contract DssSpellAction is DssAction {
             OPERATOR:        RWA012_A_OPERATOR,
             INPUT_CONDUIT:   RWA012_A_INPUT_CONDUIT,
             OUTPUT_CONDUIT:  RWA012_A_OUTPUT_CONDUIT,
+            DROP:            0x82b84166f7CB140A6a66308da10728a3DB3A73A4,
+            OWNER:           0xEcefa3ABe2c68952627EB138dcD5F7b7b29dF999, // Tinlake Clerk
+            POOL:            0x3354493615a21D544974e6665dc1851c6A117F9D, // Tinlake Operator
+            TRANCHE:         0x47335Eb13a12C126272a04E48eb09FC989135de3, // Tinlake Tranche
             gemID:           "RWA012",
             joinID:          "MCD_JOIN_RWA012_A",
             urnID:           "RWA012_A_URN",
@@ -386,6 +408,10 @@ contract DssSpellAction is DssAction {
             OPERATOR:        RWA013_A_OPERATOR,
             INPUT_CONDUIT:   RWA013_A_INPUT_CONDUIT,
             OUTPUT_CONDUIT:  RWA013_A_OUTPUT_CONDUIT,
+            DROP:            0x0691FAEa2Eb8eBB2C36Fc24d577cA73AfbDB7Bdd,
+            OWNER:           0x116b030167Cc8A82C158f0598f4C4677f575Cc50, // Tinlake Clerk
+            POOL:            0x3C05eFC8D0fC042c5686b3989bbDb1E1D29dAec7, // Tinlake Operator
+            TRANCHE:         0x6A635Ada2eC663B9b38ca7a3E5c918D5D0B0E99D, // Tinlake Tranche
             gemID:           "RWA013",
             joinID:          "MCD_JOIN_RWA013_A",
             urnID:           "RWA013_A_URN",
@@ -443,7 +469,7 @@ contract DssSpellAction is DssAction {
 
             require(urn.vat()           == VAT,                       "urn-vat-not-match");
             require(urn.jug()           == JUG,                       "urn-jug-not-match");
-            require(urn.daiJoin()       == DAI_JOIN,                   "urn-daijoin-not-match");
+            require(urn.daiJoin()       == DAI_JOIN,                  "urn-daijoin-not-match");
             require(urn.gemJoin()       == collateral.GEM_JOIN,       "urn-gemjoin-not-match");
             require(urn.outputConduit() == collateral.OUTPUT_CONDUIT, "urn-outputconduit-not-match");
 
@@ -454,13 +480,21 @@ contract DssSpellAction is DssAction {
         {
             TinlakeManagerLike mgr = TinlakeManagerLike(collateral.OPERATOR);
 
-            require(mgr.vat()     == VAT,            "mgr-vat-not-match");
-            require(mgr.dai()     == DAI,            "mgr-dai-not-match");
-            require(mgr.end()     == END,            "mgr-end-not-match");
-            require(mgr.vow()     == VOW,            "mgr-vow-not-match");
-            require(mgr.daiJoin() == DAI_JOIN,        "mgr-daijoin-not-match");
-            require(mgr.liq()     == ORACLE,         "mgr-liq-not-match");
-            require(mgr.urn()     == collateral.URN, "mgr-urn-not-match");
+            // Constructor params
+            require(mgr.dai()     == DAI,                "mgr-dai-not-match");
+            require(mgr.daiJoin() == DAI_JOIN,           "mgr-daijoin-not-match");
+            require(mgr.gem()    == collateral.DROP,    "mgr-drop-not-match");
+            require(mgr.vat()     == VAT,                "mgr-vat-not-match");
+            // Fileable constructor params
+            require(mgr.owner()   == collateral.OWNER,   "mgr-owner-not-match");
+            require(mgr.vow()     == VOW,                "mgr-vow-not-match");
+            require(mgr.end()     == END,                "mgr-end-not-match");
+            require(mgr.pool()    == collateral.POOL,    "mgr-pool-not-match");
+            require(mgr.tranche() == collateral.TRANCHE, "mgr-tranche-not-match");
+
+            // Set TinlakeManager MIP21 components
+            mgr.file("liq", address(ORACLE));
+            mgr.file("urn", collateral.URN);
         }
 
         // Initialize the liquidation oracle for RWA0XY
