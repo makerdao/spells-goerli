@@ -636,6 +636,14 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         for (uint256 i = 0; i < collaterals.length; i++) {
             _setupCentrifugeCollateral(collaterals[i]);
         }
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        for (uint256 i = 0; i < collaterals.length; i++) {
+            _tinlakeMgrLock(collaterals[i]);
+        }
     }
 
     function _setupCentrifugeCollateral(CentrifugeCollateralTestValues memory collateral) internal {
@@ -682,16 +690,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     function test_INTEGRATION_SETUP() public {
         _setupCentrifugeCollaterals();
 
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        for (uint256 i = 0; i < collaterals.length; i++) {
-            _tinlakeMgrLock(collaterals[i]);
-        }
-
-        // ----
-
         for (uint256 i = 0; i < collaterals.length; i++) {
             _testIntegrationSetup(collaterals[i]);
         }
@@ -711,16 +709,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     function test_INTEGRATION_BUMP() public {
         _setupCentrifugeCollaterals();
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        for (uint256 i = 0; i < collaterals.length; i++) {
-            _tinlakeMgrLock(collaterals[i]);
-        }
-
-        // ----
 
         for (uint256 i = 0; i < collaterals.length; i++) {
             _testIntegrationBump(collaterals[i]);
@@ -744,16 +732,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     function test_INTEGRATION_TELL() public {
         _setupCentrifugeCollaterals();
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        for (uint256 i = 0; i < collaterals.length; i++) {
-            _tinlakeMgrLock(collaterals[i]);
-        }
-
-        // ----
 
         for (uint256 i = 0; i < collaterals.length; i++) {
             _testIntegrationTell(collaterals[i]);
@@ -783,16 +761,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     function test_INTEGRATION_TELL_CURE_GOOD() public {
         _setupCentrifugeCollaterals();
 
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        for (uint256 i = 0; i < collaterals.length; i++) {
-            _tinlakeMgrLock(collaterals[i]);
-        }
-
-        // ----
-
         for (uint256 i = 0; i < collaterals.length; i++) {
             _testIntegrationTellCureGood(collaterals[i]);
         }
@@ -820,12 +788,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     function test_INTEGRATION_TELL_CULL() public {
         _setupCentrifugeCollaterals();
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        // ----
 
         for (uint256 i = 0; i < collaterals.length; i++) {
             _testIntegrationTellCull(collaterals[i]);
@@ -872,16 +834,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     function test_TINLAKE_MGR_JOIN_DRAW_WIPE_EXIT_FREE() public {
         _setupCentrifugeCollaterals();
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        for (uint256 i = 0; i < collaterals.length; i++) {
-            _tinlakeMgrLock(collaterals[i]);
-        }
-
-        // ----
 
         for (uint256 i = 0; i < collaterals.length; i++) {
             _testTinlakeMgrJoinDraw(collaterals[i]);
@@ -959,16 +911,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     function testFail_DRAW_ABOVE_LINE() public {
         _setupCentrifugeCollaterals();
 
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        for (uint256 i = 0; i < collaterals.length; i++) {
-            _tinlakeMgrLock(collaterals[i]);
-        }
-
-        // ----
-
         // A better way to write this would be to leverage Foundry vm.expectRevert,
         // however since we are still using DappTools compatibility mode, we need a way
         // to assert agains multiple reversions.
@@ -1000,14 +942,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
     function test_TINLAKE_MGR_LOCK_DRAW_CAGE() public {
         _setupCentrifugeCollaterals();
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        for (uint256 i = 0; i < collaterals.length; i++) {
-            _tinlakeMgrLock(collaterals[i]);
-        }
 
         // ----
 
