@@ -20,10 +20,27 @@ pragma experimental ABIEncoderV2;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
-import {Initializable} from "dss-exec-lib/DssExecLib.sol";
-import {GemAbstract} from "dss-interfaces/ERC/GemAbstract.sol";
-import {GemJoinAbstract} from "dss-interfaces/dss/GemJoinAbstract.sol";
-import {IlkRegistryAbstract} from "dss-interfaces/dss/IlkRegistryAbstract.sol";
+
+interface Initializable {
+    function init(bytes32) external;
+}
+
+interface GemLike {
+    function transfer(address, uint256) external returns (bool);
+    function decimals() external view returns (uint8);
+}
+
+interface GemJoinLike {
+    function rely(address) external;
+    function vat() external view returns (address);
+    function ilk() external view returns (bytes32);
+    function gem() external view returns (address);
+    function dec() external view returns (uint256);
+}
+
+interface IlkRegistryLike {
+    function put(bytes32, address, address, uint256, uint256, address, address, string calldata, string calldata) external;
+}
 
 interface VatLike {
     function ilks(bytes32) external view returns (uint256, uint256, uint256, uint256, uint256);
@@ -406,11 +423,11 @@ contract DssSpellAction is DssAction {
     }
 
     function _addCentrifugeCollateral(CentrifugeCollateralValues memory collateral) internal {
-        uint256 gemDecimals = GemAbstract(collateral.GEM).decimals();
+        uint256 gemDecimals = GemLike(collateral.GEM).decimals();
 
         // Sanity checks
         {
-            GemJoinAbstract gemJoin = GemJoinAbstract(collateral.GEM_JOIN);
+            GemJoinLike gemJoin = GemJoinLike(collateral.GEM_JOIN);
 
             require(gemJoin.vat() == VAT,            "join-vat-not-match");
             require(gemJoin.ilk() == collateral.ilk, "join-ilk-not-match");
@@ -475,7 +492,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.updateCollateralPrice(collateral.ilk);
 
         // Transfer the RwaToken from DSPauseProxy to the operator
-        GemAbstract(collateral.GEM).transfer(collateral.OPERATOR, 1 * WAD);
+        GemLike(collateral.GEM).transfer(collateral.OPERATOR, 1 * WAD);
 
         // Add RWA-00x contracts to the changelog
         DssExecLib.setChangelogAddress(collateral.gemID, collateral.GEM);
@@ -486,7 +503,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.setChangelogAddress(collateral.outputConduitID, collateral.OUTPUT_CONDUIT);
 
         // Add RWA0XY to the ilk registry
-        IlkRegistryAbstract(ILK_REG).put(
+        IlkRegistryLike(ILK_REG).put(
             collateral.ilk,
             collateral.GEM_JOIN,
             collateral.GEM,
