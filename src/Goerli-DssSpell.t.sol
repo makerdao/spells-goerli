@@ -28,8 +28,7 @@ interface RwaUrnLike {
     function free(uint256) external;
 }
 
-interface FullRwaLiquidationLike {
-    function ilks(bytes32) external returns (string memory, address, uint48 toc, uint48 tau);
+interface WriteableRwaLiquidationLike is RwaLiquidationLike {
     function bump(bytes32 ilk, uint256 val) external;
     function tell(bytes32) external;
     function cure(bytes32) external;
@@ -718,7 +717,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     function _testIntegrationBump(CentrifugeCollateralTestValues memory collateral) internal {
         emit log_named_string("Test integration liquidation oracle bump", collateral.ilkString);
 
-        FullRwaLiquidationLike oracle = FullRwaLiquidationLike(collateral.LIQ);
+        WriteableRwaLiquidationLike oracle = WriteableRwaLiquidationLike(collateral.LIQ);
         giveAuth(address(oracle), address(this));
 
         (, address pip, , ) = oracle.ilks(collateral.ilk);
@@ -741,7 +740,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     function _testIntegrationTell(CentrifugeCollateralTestValues memory collateral) internal {
         emit log_named_string("Test integration liquidation oracle tell", collateral.ilkString);
 
-        FullRwaLiquidationLike oracle = FullRwaLiquidationLike(collateral.LIQ);
+        WriteableRwaLiquidationLike oracle = WriteableRwaLiquidationLike(collateral.LIQ);
 
         giveAuth(address(vat), address(this));
         giveAuth(address(oracle), address(this));
@@ -769,7 +768,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     function _testIntegrationTellCureGood(CentrifugeCollateralTestValues memory collateral) internal {
         emit log_named_string("Test integration liquidation oracle is good after tell followed by cure", collateral.ilkString);
 
-        FullRwaLiquidationLike oracle = FullRwaLiquidationLike(collateral.LIQ);
+        WriteableRwaLiquidationLike oracle = WriteableRwaLiquidationLike(collateral.LIQ);
 
         giveAuth(address(vat), address(this));
         giveAuth(address(oracle), address(this));
@@ -797,7 +796,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     function _testIntegrationTellCull(CentrifugeCollateralTestValues memory collateral) internal {
         emit log_named_string("Test integration liquidation tell followed by cull", collateral.ilkString);
 
-        FullRwaLiquidationLike oracle = FullRwaLiquidationLike(collateral.LIQ);
+        WriteableRwaLiquidationLike oracle = WriteableRwaLiquidationLike(collateral.LIQ);
 
         giveAuth(address(vat), address(this));
         giveAuth(address(oracle), address(this));
