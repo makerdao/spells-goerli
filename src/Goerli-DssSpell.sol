@@ -76,6 +76,11 @@ interface TinlakeManagerLike {
     function vow() external view returns (address);
 }
 
+interface StarknetLike {
+    function setCeiling(uint256) external;
+    function setMaxDeposit(uint256) external;
+}
+
 struct CentrifugeCollateralValues {
     // MIP21 addresses
     address GEM_JOIN;
@@ -153,6 +158,7 @@ contract DssSpellAction is DssAction {
     address internal immutable MCD_PSM_GUSD_A = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
     address internal immutable MCD_PSM_PAX_A  = DssExecLib.getChangelogAddress("MCD_PSM_PAX_A");
     address internal immutable ORACLE         = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
+    address internal immutable STARKNET_DAI_BRIDGE = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");
 
     // --- Ilk Registry ---
     uint256 internal constant REG_RWA_CLASS = 3;
@@ -443,6 +449,11 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkMaxLiquidationAmount("RENBTC-A", 350_000);
         // PIP_RENBTC `kiss` MCD_CLIP_RENBTC_A. This should not be included in mainnet spell
         DssExecLib.addReaderToWhitelist(DssExecLib.getChangelogAddress("PIP_RENBTC"), DssExecLib.getChangelogAddress("MCD_CLIP_RENBTC_A"));
+
+        // Increase Starknet Bridge Limit from 200,000 DAI to 1,000,000 DAI
+        StarknetLike(STARKNET_DAI_BRIDGE).setCeiling(1_000_000 * WAD);
+        // Remove Starknet Bridge Deposit Limit
+        StarknetLike(STARKNET_DAI_BRIDGE).setMaxDeposit(type(uint256).max);
 
         // Bump changelog
         DssExecLib.setChangelogVersion("1.14.7");
