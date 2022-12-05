@@ -15,8 +15,74 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 pragma solidity 0.6.12;
+pragma experimental ABIEncoderV2;
 
 import "./Goerli-DssSpell.t.base.sol";
+
+interface RwaUrnLike {
+    function can(address) external view returns (uint256);
+    function gemJoin() external view returns (GemAbstract);
+    function lock(uint256) external;
+    function draw(uint256) external;
+    function wipe(uint256) external;
+    function free(uint256) external;
+}
+
+interface WriteableRwaLiquidationLike is RwaLiquidationLike {
+    function bump(bytes32 ilk, uint256 val) external;
+    function tell(bytes32) external;
+    function cure(bytes32) external;
+    function cull(bytes32, address) external;
+    function good(bytes32) external view returns (bool);
+}
+
+interface Root {
+    function wards(address) external view returns (uint256);
+    function relyContract(address, address) external;
+}
+
+interface MemberList {
+    function updateMember(address, uint256) external;
+}
+
+interface AssessorLike {
+    function calcSeniorTokenPrice() external returns (uint256);
+}
+
+interface FileLike {
+    function file(bytes32 what, address data) external;
+}
+
+interface ERC20Like {
+    function mint(address, uint256) external;
+}
+
+interface TinlakeManagerLike {
+    function gem() external view returns (address);
+    function wards(address) external view returns (uint256);
+    function lock(uint256 wad) external;
+    function join(uint256 wad) external;
+    function draw(uint256 wad) external;
+    function wipe(uint256 wad) external;
+    function exit(uint256 wad) external;
+    function free(uint256 wad) external;
+}
+
+struct CentrifugeCollateralTestValues {
+    bytes32 ilk;
+    string ilkString;
+    address LIQ;
+    address DROP;
+    address URN;
+    address GEM_JOIN;
+    uint256 CEIL;
+    uint256 PRICE;
+
+    address MGR;
+    address ROOT;
+    address COORDINATOR;
+    address MEMBERLIST;
+}
 
 contract DssSpellTest is GoerliDssSpellTestBase {
     function test_OSM_auth() private {  // make public to use
@@ -489,5 +555,463 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // assertEq(dai.balanceOf(address(pauseProxy)), prevBalance + WAD);
 
         // assertEq(vest.rxd(1), WAD);
+    }
+
+    // ---------------------- Centrifuge-Blocktower Vaults ----------------------
+
+    uint256 constant INITIAL_THIS_DAI_BALANCE  =   1_000_000 * WAD;
+    uint256 constant INITIAL_THIS_DROP_BALANCE = 100_000_000 * WAD;
+    uint256 constant DAI_DRAW_AMOUNT           =  10_000_000 * WAD;
+    uint256 constant DROP_JOIN_AMOUNT          =  20_000_000 * WAD;
+
+    CentrifugeCollateralTestValues[] collaterals;
+
+    function _setupCentrifugeCollaterals() internal {
+
+        // Give 10000 Dai to this contract
+        hevm.store(address(dai), keccak256(abi.encode(address(this), uint256(2))), bytes32(uint256(INITIAL_THIS_DAI_BALANCE)));
+        assertEq(dai.balanceOf(address(this)), INITIAL_THIS_DAI_BALANCE);
+
+        collaterals.push(CentrifugeCollateralTestValues({
+            ilk:         "RWA010-A",
+            ilkString:   "RWA010-A",
+            LIQ:         addr.addr("MIP21_LIQUIDATION_ORACLE"),
+            GEM_JOIN:    addr.addr("MCD_JOIN_RWA010_A"),
+            URN:         addr.addr("RWA010_A_URN"),
+            CEIL:        20_000_000 * WAD,
+            PRICE:       24_333_058 * WAD,
+            ROOT:        0xD128CB475D0716044A35866a6779CCc14E91b7b6,
+            COORDINATOR: 0x9102D043Cee43484dd9CE7310847ef12C95ac55A,
+            DROP:        0xd7943e68bD284dAd75A59d07Fab7708a21B8a95E,
+            MEMBERLIST:  0x7442D0bf37bD2598dfBA92023E060862E128ccc0,
+            MGR:         0x8828D2B96fa09864851244a8a2434C5A9a7B7AbD
+        }));
+
+        collaterals.push(CentrifugeCollateralTestValues({
+            ilk:         "RWA011-A",
+            ilkString:   "RWA011-A",
+            LIQ:         addr.addr("MIP21_LIQUIDATION_ORACLE"),
+            GEM_JOIN:    addr.addr("MCD_JOIN_RWA011_A"),
+            URN:         addr.addr("RWA011_A_URN"),
+            CEIL:        30_000_000 * WAD,
+            PRICE:       36_499_587 * WAD,
+            ROOT:        0x0b55da7112dD417Fe7a900ee8e346F17E504292c,
+            COORDINATOR: 0xB03a063FcBde0d8aE591A12276A26c4BADEc7a40,
+            DROP:        0xA586bB77069739Bb9Cb8608c51a21C18AF87Fb2E,
+            MEMBERLIST:  0x9b401d3714f41457755a6A0587215E8757Ca4aE0,
+            MGR:         0xcBd44c9Ec0D2b9c466887e700eD88D302281E098
+        }));
+
+        collaterals.push(CentrifugeCollateralTestValues({
+            ilk:         "RWA012-A",
+            ilkString:   "RWA012-A",
+            LIQ:         addr.addr("MIP21_LIQUIDATION_ORACLE"),
+            GEM_JOIN:    addr.addr("MCD_JOIN_RWA012_A"),
+            URN:         addr.addr("RWA012_A_URN"),
+            CEIL:        30_000_000 * WAD,
+            PRICE:       36_499_587 * WAD,
+            ROOT:        0x60b71e9DCEeDAAC275c377630E054bc60a21A02B,
+            COORDINATOR: 0x3f82851463C172DBDc1229cA06170fF89f5638dC,
+            DROP:        0x82b84166f7CB140A6a66308da10728a3DB3A73A4,
+            MEMBERLIST:  0xAe9f348Dd245BCdD7D3D6Bbb20346059B2259b71,
+            MGR:         0xaef64c80712d5959f240BE1339aa639CDFA858Ff
+        }));
+
+        collaterals.push(CentrifugeCollateralTestValues({
+            ilk:         "RWA013-A",
+            ilkString:   "RWA013-A",
+            LIQ:         addr.addr("MIP21_LIQUIDATION_ORACLE"),
+            GEM_JOIN:    addr.addr("MCD_JOIN_RWA013_A"),
+            URN:         addr.addr("RWA013_A_URN"),
+            CEIL:        70_000_000 * WAD,
+            PRICE:       85_165_703 * WAD,
+            ROOT:        0xCd5Cb76a0208eAbdFFC2074f32591878a10686ae,
+            COORDINATOR: 0x3C896EF5d7648Dd11CBDE5EDd6470063a0e780cA,
+            DROP:        0x0691FAEa2Eb8eBB2C36Fc24d577cA73AfbDB7Bdd,
+            MEMBERLIST:  0xbf78fff127d58f177531045d1E3588a03847Ac4C,
+            MGR:         0xc5A1418aC32B5f978460f1211B76B5D44e69B530
+        }));
+
+        for (uint256 i = 0; i < collaterals.length; i++) {
+            _setupCentrifugeCollateral(collaterals[i]);
+        }
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        for (uint256 i = 0; i < collaterals.length; i++) {
+            _tinlakeMgrLock(collaterals[i]);
+        }
+    }
+
+    function _setupCentrifugeCollateral(CentrifugeCollateralTestValues memory collateral) internal {
+        Root root = Root(collateral.ROOT);
+        TinlakeManagerLike mgr = TinlakeManagerLike(collateral.MGR);
+        DSTokenAbstract drop = DSTokenAbstract(collateral.DROP);
+        MemberList memberlist = MemberList(collateral.MEMBERLIST);
+
+        // Welcome to hevm KYC
+        hevm.store(collateral.ROOT, keccak256(abi.encode(address(this), uint256(0))), bytes32(uint256(1)));
+        assertEq(root.wards(address(this)), 1);
+
+        root.relyContract(collateral.MEMBERLIST, address(this));
+
+        memberlist.updateMember(address(this), type(uint256).max);
+        memberlist.updateMember(collateral.MGR, type(uint256).max);
+
+        // Set this contract as `ward` on `mgr`
+        hevm.store(collateral.MGR, keccak256(abi.encode(address(this), uint256(0))), bytes32(uint256(1)));
+        assertEq(mgr.wards(address(this)), 1);
+
+        // File MIP21 contracts
+        FileLike(collateral.MGR).file("liq", collateral.LIQ);
+        FileLike(collateral.MGR).file("urn", collateral.URN);
+
+        // Give the this contract 1000 drop
+        hevm.store(collateral.DROP, keccak256(abi.encode(address(this), uint256(0))), bytes32(uint256(1)));
+        assertEq(mgr.wards(address(this)), 1);
+
+        ERC20Like(collateral.DROP).mint(address(this), INITIAL_THIS_DROP_BALANCE);
+        assertEq(drop.balanceOf(address(this)), INITIAL_THIS_DROP_BALANCE);
+
+        // Approve the managers
+        drop.approve(collateral.MGR, type(uint256).max);
+        dai.approve(collateral.MGR, type(uint256).max);
+    }
+
+    function _tinlakeMgrLock(CentrifugeCollateralTestValues memory collateral) internal {
+        TinlakeManagerLike mgr = TinlakeManagerLike(collateral.MGR);
+        uint256 rwaTokenAmount = 1 * WAD;
+        mgr.lock(rwaTokenAmount);
+    }
+
+    function test_INTEGRATION_SETUP() public {
+        _setupCentrifugeCollaterals();
+
+        for (uint256 i = 0; i < collaterals.length; i++) {
+            _testIntegrationSetup(collaterals[i]);
+        }
+    }
+
+    function _testIntegrationSetup(CentrifugeCollateralTestValues memory collateral) internal {
+        emit log_named_string("Test integration tinlake mgr setup", collateral.ilkString);
+
+        TinlakeManagerLike mgr = TinlakeManagerLike(collateral.MGR);
+        GemJoinAbstract rwaJoin = GemJoinAbstract(collateral.GEM_JOIN);
+        RwaUrnLike urn = RwaUrnLike(collateral.URN);
+
+        assertEq(mgr.wards(pauseProxy), 1, "TinlakeManager/pause-proxy-not-ward");
+        assertEq(rwaJoin.wards(address(urn)), 1, "Join/ward-urn-not-set");
+        assertEq(urn.can(address(mgr)), 1, "Urn/operator-not-hoped");
+    }
+
+    function test_INTEGRATION_BUMP() public {
+        _setupCentrifugeCollaterals();
+
+        for (uint256 i = 0; i < collaterals.length; i++) {
+            _testIntegrationBump(collaterals[i]);
+        }
+    }
+
+    function _testIntegrationBump(CentrifugeCollateralTestValues memory collateral) internal {
+        emit log_named_string("Test integration liquidation oracle bump", collateral.ilkString);
+
+        WriteableRwaLiquidationLike oracle = WriteableRwaLiquidationLike(collateral.LIQ);
+        giveAuth(address(oracle), address(this));
+
+        (, address pip, , ) = oracle.ilks(collateral.ilk);
+
+        assertEq(DSValueAbstract(pip).read(), bytes32(collateral.PRICE), "Bad initial PIP value");
+
+        oracle.bump(collateral.ilk, collateral.PRICE + 10_000_000 * WAD);
+
+        assertEq(DSValueAbstract(pip).read(), bytes32(collateral.PRICE + 10_000_000 * WAD), "Bad PIP value after bump()");
+    }
+
+    function test_INTEGRATION_TELL() public {
+        _setupCentrifugeCollaterals();
+
+        for (uint256 i = 0; i < collaterals.length; i++) {
+            _testIntegrationTell(collaterals[i]);
+        }
+    }
+
+    function _testIntegrationTell(CentrifugeCollateralTestValues memory collateral) internal {
+        emit log_named_string("Test integration liquidation oracle tell", collateral.ilkString);
+
+        WriteableRwaLiquidationLike oracle = WriteableRwaLiquidationLike(collateral.LIQ);
+
+        giveAuth(address(vat), address(this));
+        giveAuth(address(oracle), address(this));
+
+        (, , , uint48 tocPre) = oracle.ilks(collateral.ilk);
+        assertEq(uint256(tocPre), 0, "`toc` is not 0 before tell()");
+        assertTrue(oracle.good(collateral.ilk), "Oracle not good before tell()");
+
+        vat.file(collateral.ilk, "line", 0);
+        oracle.tell(collateral.ilk);
+
+        (, , , uint48 tocPost) = oracle.ilks(collateral.ilk);
+        assertGt(uint256(tocPost), 0, "`toc` is not set after tell()");
+        assertTrue(!oracle.good(collateral.ilk), "Oracle still good after tell()");
+    }
+
+    function test_INTEGRATION_TELL_CURE_GOOD() public {
+        _setupCentrifugeCollaterals();
+
+        for (uint256 i = 0; i < collaterals.length; i++) {
+            _testIntegrationTellCureGood(collaterals[i]);
+        }
+    }
+
+    function _testIntegrationTellCureGood(CentrifugeCollateralTestValues memory collateral) internal {
+        emit log_named_string("Test integration liquidation oracle is good after tell followed by cure", collateral.ilkString);
+
+        WriteableRwaLiquidationLike oracle = WriteableRwaLiquidationLike(collateral.LIQ);
+
+        giveAuth(address(vat), address(this));
+        giveAuth(address(oracle), address(this));
+
+        vat.file(collateral.ilk, "line", 0);
+        oracle.tell(collateral.ilk);
+
+        assertTrue(!oracle.good(collateral.ilk), "Oracle still good after tell()");
+
+        oracle.cure(collateral.ilk);
+
+        assertTrue(oracle.good(collateral.ilk), "Oracle not good after cure()");
+        (, , , uint48 toc) = oracle.ilks(collateral.ilk);
+        assertEq(uint256(toc), 0, "`toc` not zero after cure()");
+    }
+
+    function test_INTEGRATION_TELL_CULL() public {
+        _setupCentrifugeCollaterals();
+
+        for (uint256 i = 0; i < collaterals.length; i++) {
+            _testIntegrationTellCull(collaterals[i]);
+        }
+    }
+
+    function _testIntegrationTellCull(CentrifugeCollateralTestValues memory collateral) internal {
+        emit log_named_string("Test integration liquidation tell followed by cull", collateral.ilkString);
+
+        WriteableRwaLiquidationLike oracle = WriteableRwaLiquidationLike(collateral.LIQ);
+
+        giveAuth(address(vat), address(this));
+        giveAuth(address(oracle), address(this));
+
+        assertTrue(oracle.good(collateral.ilk));
+
+        vat.file(collateral.ilk, "line", 0);
+        oracle.tell(collateral.ilk);
+
+        assertTrue(!oracle.good(collateral.ilk), "Oracle still good after tell()");
+
+        oracle.cull(collateral.ilk, collateral.URN);
+
+        assertTrue(!oracle.good(collateral.ilk), "Oracle still good after cull()");
+        (, address pip, , ) = oracle.ilks(collateral.ilk);
+        assertEq(DSValueAbstract(pip).read(), bytes32(0), "Oracle PIP value not set to zero after cull()");
+    }
+
+    function test_PAUSE_PROXY_OWNS_RWA_TOKEN_BEFORE_SPELL() public {
+        for (uint256 i = 0; i < collaterals.length; i++) {
+            _testPauseProxyOwnsRwaTokenBeforeSpell(collaterals[i]);
+        }
+
+    }
+
+    function _testPauseProxyOwnsRwaTokenBeforeSpell(CentrifugeCollateralTestValues memory collateral) internal {
+        emit log_named_string("Test MCD_PAUSE_PROXY owns the RWA token before the spell", collateral.ilkString);
+
+        GemJoinAbstract gemJoin = GemJoinAbstract(collateral.GEM_JOIN);
+        GemAbstract gem = GemAbstract(gemJoin.gem());
+
+        assertEq(gem.balanceOf(pauseProxy), 1 * WAD);
+    }
+
+    function test_TINLAKE_MGR_JOIN_DRAW_WIPE_EXIT_FREE() public {
+        _setupCentrifugeCollaterals();
+
+        for (uint256 i = 0; i < collaterals.length; i++) {
+            _testTinlakeMgrJoinDraw(collaterals[i]);
+        }
+
+        // Accrue some stability fees
+        hevm.warp(block.timestamp + 10 days);
+        for (uint256 i = 0; i < collaterals.length; i++) {
+            jug.drip(collaterals[i].ilk);
+        }
+
+        for (uint256 i = 0; i < collaterals.length; i++) {
+            _testTinlakeMgrWipeExitFree(collaterals[i]);
+        }
+    }
+
+    function _testTinlakeMgrJoinDraw(CentrifugeCollateralTestValues memory collateral) internal {
+        emit log_named_string("Test tinlake mgr join and draw", collateral.ilkString);
+
+        TinlakeManagerLike mgr = TinlakeManagerLike(collateral.MGR);
+        DSTokenAbstract drop = DSTokenAbstract(collateral.DROP);
+        GemJoinAbstract gemJoin = GemJoinAbstract(collateral.GEM_JOIN);
+        GemAbstract gem = GemAbstract(gemJoin.gem());
+
+        uint256 preThisDaiBalance = dai.balanceOf(address(this));
+        uint256 preMgrDropBalance = drop.balanceOf(collateral.MGR);
+        assertEq(
+            drop.balanceOf(address(this)),
+            INITIAL_THIS_DROP_BALANCE,
+            "Pre-condition: initial address(this) drop balance mismatch"
+        );
+
+        // Check if the RWA token is locked into the Urn
+        assertEq(gem.balanceOf(address(gemJoin)), 1 * WAD, "Pre-condition: gem not locked into the urn");
+        // 0 DAI in mgr
+        assertEq(dai.balanceOf(address(mgr)), 0, "Dangling Dai in mgr before draw()");
+
+        mgr.join(DROP_JOIN_AMOUNT);
+        mgr.draw(DAI_DRAW_AMOUNT);
+
+        assertEq(dai.balanceOf(address(this)), preThisDaiBalance + DAI_DRAW_AMOUNT, "Post-condition: invalid Dai balance on address(this)");
+        assertEq(drop.balanceOf(address(this)), INITIAL_THIS_DROP_BALANCE - DROP_JOIN_AMOUNT, "Post-condition: invalid Drop balance on address(this)");
+        assertEq(drop.balanceOf(address(mgr)), preMgrDropBalance + DROP_JOIN_AMOUNT, "Post-condition: invalid Drop balance on mgr");
+
+        (uint256 ink, uint256 art) = vat.urns(collateral.ilk, collateral.URN);
+        assertEq(art, DAI_DRAW_AMOUNT, "Post-condition: bad art on vat"); // DAI drawn == art as rate should always be 1 RAY
+        assertEq(ink, 1 * WAD, "Post-condition: bad ink on vat"); // Whole unit of collateral is locked
+    }
+
+    function _testTinlakeMgrWipeExitFree(CentrifugeCollateralTestValues memory collateral) internal {
+        emit log_named_string("Test tinlake mgr wipe and exit", collateral.ilkString);
+
+        TinlakeManagerLike mgr = TinlakeManagerLike(collateral.MGR);
+        DSTokenAbstract drop = DSTokenAbstract(collateral.DROP);
+        GemJoinAbstract gemJoin = GemJoinAbstract(collateral.GEM_JOIN);
+        GemAbstract gem = GemAbstract(gemJoin.gem());
+
+        uint256 preThisDaiBalance = dai.balanceOf(address(this));
+        uint256 preThisDropBalance = drop.balanceOf(address(this));
+        uint256 preThisGemBalance = gem.balanceOf(address(this));
+
+        uint256 daiToPay = 100 * WAD;
+        uint256 dropToExit = 100 * WAD;
+        uint256 gemToFree = 1 * WAD / 10**3; // 0.001 RWA
+
+        mgr.wipe(daiToPay);
+        mgr.exit(dropToExit);
+        mgr.free(gemToFree);
+
+        assertEq(dai.balanceOf(address(this)), preThisDaiBalance - daiToPay, "Post-condition: invalid Dai balance on address(this)");
+        assertEq(drop.balanceOf(address(this)), preThisDropBalance + dropToExit, "Post-condition: invalid DROP balance on address(this)");
+        assertEq(gem.balanceOf(address(mgr)), preThisGemBalance + gemToFree, "Post-condition: invalid Gem balance on mgr");
+    }
+
+    function testFail_DRAW_ABOVE_LINE() public {
+        _setupCentrifugeCollaterals();
+
+        // A better way to write this would be to leverage Foundry vm.expectRevert,
+        // however since we are still using DappTools compatibility mode, we need a way
+        // to assert agains multiple reversions.
+        uint256 failCount = 0;
+        for (uint256 i = 0; i < collaterals.length; i++) {
+            try this._testFailDrawAboveLine(collaterals[i]) {
+                emit log_named_string("Able to draw above line", collaterals[i].ilkString);
+            } catch {
+                failCount++;
+            }
+        }
+
+        if (failCount == collaterals.length) {
+            revert("Draw above line");
+        }
+    }
+
+    // Needs to be external to be able to use try...catch above.
+    function _testFailDrawAboveLine(CentrifugeCollateralTestValues memory collateral) external {
+        emit log_named_string("Test tinlake draw above line", collateral.ilkString);
+
+        TinlakeManagerLike mgr = TinlakeManagerLike(collateral.MGR);
+
+        uint256 drawAmount = collateral.CEIL + 100_000_000;
+
+        mgr.join(DROP_JOIN_AMOUNT);
+        mgr.draw(drawAmount);
+    }
+
+    function test_TINLAKE_MGR_LOCK_DRAW_CAGE() public {
+        _setupCentrifugeCollaterals();
+
+        for (uint256 i = 0; i < collaterals.length; i++) {
+            _testTinlakeMgrJoinDraw(collaterals[i]);
+        }
+
+        // Accrue some stability fees
+        hevm.warp(block.timestamp + 10 days);
+        for (uint256 i = 0; i < collaterals.length; i++) {
+            jug.drip(collaterals[i].ilk);
+        }
+
+        // END
+        giveAuth(address(end), address(this));
+        end.cage();
+        hevm.warp(block.timestamp + end.wait());
+
+        for (uint256 i = 0; i < collaterals.length; i++) {
+            _testTinlakeMgrCageSkim(collaterals[i]);
+        }
+
+        vow.heal(min(vat.dai(address(vow)), sub(sub(vat.sin(address(vow)), vow.Sin()), vow.Ash())));
+
+        // Removing the surplus to allow continuing the execution.
+        hevm.store(
+            address(vat),
+            keccak256(abi.encode(address(vow), uint256(5))),
+            bytes32(uint256(0))
+        );
+
+        end.thaw();
+
+        for (uint256 i = 0; i < collaterals.length; i++) {
+            _testTinlakeMgrPostCageFlow(collaterals[i]);
+        }
+    }
+
+    function _testTinlakeMgrCageSkim(CentrifugeCollateralTestValues memory collateral) internal {
+        emit log_named_string("Test tinlake post-cage skim", collateral.ilkString);
+
+        end.cage(collateral.ilk);
+        end.skim(collateral.ilk, collateral.URN);
+
+        (uint256 ink, uint256 art) = vat.urns(collateral.ilk, collateral.URN);
+        uint256 skimmedInk = DAI_DRAW_AMOUNT * WAD / collateral.PRICE;
+        uint256 remainingInk = 1 * WAD - skimmedInk;
+        // Cope with rounding errors
+        assertLt(remainingInk - ink, 10**16, "wrong ink in urn after skim");
+        assertEq(art, 0, "wrong art in urn after skim");
+    }
+
+    function _testTinlakeMgrPostCageFlow(CentrifugeCollateralTestValues memory collateral) internal {
+        GemJoinAbstract gemJoin = GemJoinAbstract(collateral.GEM_JOIN);
+        GemAbstract gem = GemAbstract(gemJoin.gem());
+
+        end.flow(collateral.ilk);
+
+        giveTokens(address(dai), 1_000_000 * WAD);
+        dai.approve(address(daiJoin), 1_000_000 * WAD);
+        daiJoin.join(address(this), 1_000_000 * WAD);
+
+        vat.hope(address(end));
+        end.pack(1_000_000 * WAD);
+
+        // Check DAI redemption after "cage()"
+        assertEq(vat.gem(collateral.ilk, address(this)), 0, "wrong vat gem");
+        assertEq(gem.balanceOf(address(this)), 0, "wrong gem balance");
+        end.cash(collateral.ilk, 1_000_000 * WAD);
+        assertGt(vat.gem(collateral.ilk, address(this)), 0, "wrong vat gem after cash");
+        assertEq(gem.balanceOf(address(this)), 0, "wrong gem balance after cash");
+        gemJoin.exit(address(this), vat.gem(collateral.ilk, address(this)));
+        assertEq(vat.gem(collateral.ilk, address(this)), 0, "wrong vat gem after exit");
+        assertGt(gem.balanceOf(address(this)), 0, "wrong gem balance after exit");
     }
 }
