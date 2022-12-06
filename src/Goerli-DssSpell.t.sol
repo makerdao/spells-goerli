@@ -55,6 +55,8 @@ interface FileLike {
 
 interface TinlakeManagerLike {
     function gem() external view returns (address);
+    function liq() external view returns (address);
+    function urn() external view returns (address);
     function wards(address) external view returns (uint256);
     function lock(uint256 wad) external;
     function join(uint256 wad) external;
@@ -82,6 +84,8 @@ struct CentrifugeCollateralTestValues {
     address ROOT;
     address COORDINATOR;
     address MEMBERLIST;
+
+    bytes32 pipID;
 }
 
 contract DssSpellTest is GoerliDssSpellTestBase {
@@ -641,6 +645,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(dai.balanceOf(address(this)), INITIAL_THIS_DAI_BALANCE);
 
         collaterals.push(CentrifugeCollateralTestValues({
+            pipID:       "PIP_RWA010",
             ilk:         "RWA010-A",
             ilkString:   "RWA010",
             LIQ:         addr.addr("MIP21_LIQUIDATION_ORACLE"),
@@ -656,6 +661,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         }));
 
         collaterals.push(CentrifugeCollateralTestValues({
+            pipID:       "PIP_RWA011",
             ilk:         "RWA011-A",
             ilkString:   "RWA011",
             LIQ:         addr.addr("MIP21_LIQUIDATION_ORACLE"),
@@ -671,6 +677,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         }));
 
         collaterals.push(CentrifugeCollateralTestValues({
+            pipID:       "PIP_RWA012",
             ilk:         "RWA012-A",
             ilkString:   "RWA012",
             LIQ:         addr.addr("MIP21_LIQUIDATION_ORACLE"),
@@ -686,6 +693,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         }));
 
         collaterals.push(CentrifugeCollateralTestValues({
+            pipID:       "PIP_RWA013",
             ilk:         "RWA013-A",
             ilkString:   "RWA013",
             LIQ:         addr.addr("MIP21_LIQUIDATION_ORACLE"),
@@ -768,6 +776,18 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(mgr.wards(pauseProxy), 1, "TinlakeManager/pause-proxy-not-ward");
         assertEq(rwaJoin.wards(address(urn)), 1, "Join/ward-urn-not-set");
         assertEq(urn.can(address(mgr)), 1, "Urn/operator-not-hoped");
+
+        assertEq(mgr.liq(), collateral.LIQ, "TinlakeManager/liq-not-match");
+        assertEq(mgr.urn(), collateral.URN, "TinlakeManager/urn-not-match");
+
+        RwaLiquidationLike oracle = RwaLiquidationLike(collateral.LIQ);
+        (, address pip, ,) = oracle.ilks(collateral.ilk);
+
+        assertTrue(pip != address(0), "RwaLiquidationOracle/ilk-not-init");
+        assertEq(pip, addr.addr(collateral.pipID), "RwaLiquidationOracle/pip-not-match");
+
+        (pip, ) = SpotAbstract(addr.addr('MCD_SPOT')).ilks(collateral.ilk);
+        assertEq(pip, addr.addr(collateral.pipID), "Spotter/pip-not-match");
     }
 
     function test_INTEGRATION_BUMP() public {
