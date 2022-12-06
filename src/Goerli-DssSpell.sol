@@ -533,7 +533,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.increaseIlkDebtCeiling(collateral.ilk, collateral.CEIL, /* global = */ true);
 
         // Set stability fee
-        DssExecLib.setIlkStabilityFee(collateral.ilk, collateral.RATE, /* doDrip = */ true);
+        DssExecLib.setIlkStabilityFee(collateral.ilk, collateral.RATE, /* doDrip = */ false);
 
         // Set liquidation ratio
         DssExecLib.setIlkLiquidationRatio(collateral.ilk, collateral.MAT);
