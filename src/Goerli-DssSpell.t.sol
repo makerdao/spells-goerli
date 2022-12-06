@@ -642,7 +642,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         collaterals.push(CentrifugeCollateralTestValues({
             ilk:         "RWA010-A",
-            ilkString:   "RWA010-A",
+            ilkString:   "RWA010",
             LIQ:         addr.addr("MIP21_LIQUIDATION_ORACLE"),
             GEM_JOIN:    addr.addr("MCD_JOIN_RWA010_A"),
             URN:         addr.addr("RWA010_A_URN"),
@@ -657,7 +657,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         collaterals.push(CentrifugeCollateralTestValues({
             ilk:         "RWA011-A",
-            ilkString:   "RWA011-A",
+            ilkString:   "RWA011",
             LIQ:         addr.addr("MIP21_LIQUIDATION_ORACLE"),
             GEM_JOIN:    addr.addr("MCD_JOIN_RWA011_A"),
             URN:         addr.addr("RWA011_A_URN"),
@@ -672,7 +672,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         collaterals.push(CentrifugeCollateralTestValues({
             ilk:         "RWA012-A",
-            ilkString:   "RWA012-A",
+            ilkString:   "RWA012",
             LIQ:         addr.addr("MIP21_LIQUIDATION_ORACLE"),
             GEM_JOIN:    addr.addr("MCD_JOIN_RWA012_A"),
             URN:         addr.addr("RWA012_A_URN"),
@@ -687,7 +687,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         collaterals.push(CentrifugeCollateralTestValues({
             ilk:         "RWA013-A",
-            ilkString:   "RWA013-A",
+            ilkString:   "RWA013",
             LIQ:         addr.addr("MIP21_LIQUIDATION_ORACLE"),
             GEM_JOIN:    addr.addr("MCD_JOIN_RWA013_A"),
             URN:         addr.addr("RWA013_A_URN"),
