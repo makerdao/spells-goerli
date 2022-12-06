@@ -66,7 +66,6 @@ interface TinlakeManagerLike {
     function dai() external view returns (address);
     function daiJoin() external view returns (address);
     function end() external view returns (address);
-    function gem() external view returns (address);
     function liq() external view returns (address);
     function owner() external view returns (address);
     function pool() external view returns (address);
