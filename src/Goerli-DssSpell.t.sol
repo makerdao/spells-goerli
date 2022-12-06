@@ -252,6 +252,34 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkChainlogKey("MCD_CLIP_GNO_A");
         checkChainlogKey("MCD_CLIP_CALC_GNO_A");
 
+        checkChainlogKey("RWA010");
+        checkChainlogKey("PIP_RWA010");
+        checkChainlogKey("MCD_JOIN_RWA010_A");
+        checkChainlogKey("RWA010_A_URN");
+        checkChainlogKey("RWA010_A_INPUT_CONDUIT");
+        checkChainlogKey("RWA010_A_OUTPUT_CONDUIT");
+
+        checkChainlogKey("RWA011");
+        checkChainlogKey("PIP_RWA011");
+        checkChainlogKey("MCD_JOIN_RWA011_A");
+        checkChainlogKey("RWA011_A_URN");
+        checkChainlogKey("RWA011_A_INPUT_CONDUIT");
+        checkChainlogKey("RWA011_A_OUTPUT_CONDUIT");
+
+        checkChainlogKey("RWA012");
+        checkChainlogKey("PIP_RWA012");
+        checkChainlogKey("MCD_JOIN_RWA012_A");
+        checkChainlogKey("RWA012_A_URN");
+        checkChainlogKey("RWA012_A_INPUT_CONDUIT");
+        checkChainlogKey("RWA012_A_OUTPUT_CONDUIT");
+
+        checkChainlogKey("RWA013");
+        checkChainlogKey("PIP_RWA013");
+        checkChainlogKey("MCD_JOIN_RWA013_A");
+        checkChainlogKey("RWA013_A_URN");
+        checkChainlogKey("RWA013_A_INPUT_CONDUIT");
+        checkChainlogKey("RWA013_A_OUTPUT_CONDUIT");
+
         checkChainlogVersion("1.14.7");
     }
 
@@ -270,6 +298,46 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(reg.pip("GNO-A"),    addr.addr("PIP_GNO"));
         assertEq(reg.name("GNO-A"),   "Gnosis Token");
         assertEq(reg.symbol("GNO-A"), GemAbstract(addr.addr("GNO")).symbol());
+
+        // RWA010-A
+        assertEq(reg.pos("RWA010-A"),    56);
+        assertEq(reg.join("RWA010-A"),   addr.addr("MCD_JOIN_RWA010_A"));
+        assertEq(reg.gem("RWA010-A"),    addr.addr("RWA010"));
+        assertEq(reg.dec("RWA010-A"),    GemAbstract(addr.addr("RWA010")).decimals());
+        assertEq(reg.class("RWA010-A"),  3);
+        assertEq(reg.pip("RWA010-A"),    addr.addr("PIP_RWA010"));
+        assertEq(reg.name("RWA010-A"),   "RWA010-A: Centrifuge: BlockTower Credit (I)");
+        assertEq(reg.symbol("RWA010-A"), GemAbstract(addr.addr("RWA010")).symbol());
+
+        // RWA011-A
+        assertEq(reg.pos("RWA011-A"),    57);
+        assertEq(reg.join("RWA011-A"),   addr.addr("MCD_JOIN_RWA011_A"));
+        assertEq(reg.gem("RWA011-A"),    addr.addr("RWA011"));
+        assertEq(reg.dec("RWA011-A"),    GemAbstract(addr.addr("RWA011")).decimals());
+        assertEq(reg.class("RWA011-A"),  3);
+        assertEq(reg.pip("RWA011-A"),    addr.addr("PIP_RWA011"));
+        assertEq(reg.name("RWA011-A"),   "RWA011-A: Centrifuge: BlockTower Credit (II)");
+        assertEq(reg.symbol("RWA011-A"), GemAbstract(addr.addr("RWA011")).symbol());
+
+        // RWA012-A
+        assertEq(reg.pos("RWA012-A"),    58);
+        assertEq(reg.join("RWA012-A"),   addr.addr("MCD_JOIN_RWA012_A"));
+        assertEq(reg.gem("RWA012-A"),    addr.addr("RWA012"));
+        assertEq(reg.dec("RWA012-A"),    GemAbstract(addr.addr("RWA012")).decimals());
+        assertEq(reg.class("RWA012-A"),  3);
+        assertEq(reg.pip("RWA012-A"),    addr.addr("PIP_RWA012"));
+        assertEq(reg.name("RWA012-A"),   "RWA012-A: Centrifuge: BlockTower Credit (III)");
+        assertEq(reg.symbol("RWA012-A"), GemAbstract(addr.addr("RWA012")).symbol());
+
+        // RWA012-A
+        assertEq(reg.pos("RWA013-A"),    59);
+        assertEq(reg.join("RWA013-A"),   addr.addr("MCD_JOIN_RWA013_A"));
+        assertEq(reg.gem("RWA013-A"),    addr.addr("RWA013"));
+        assertEq(reg.dec("RWA013-A"),    GemAbstract(addr.addr("RWA013")).decimals());
+        assertEq(reg.class("RWA013-A"),  3);
+        assertEq(reg.pip("RWA013-A"),    addr.addr("PIP_RWA013"));
+        assertEq(reg.name("RWA013-A"),   "RWA013-A: Centrifuge: BlockTower Credit (IV)");
+        assertEq(reg.symbol("RWA013-A"), GemAbstract(addr.addr("RWA013")).symbol());
     }
 
     function testFailWrongDay() public {
