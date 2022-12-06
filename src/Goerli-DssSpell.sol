@@ -73,6 +73,7 @@ interface TinlakeManagerLike {
     function urn() external view returns (address);
     function vat() external view returns (address);
     function vow() external view returns (address);
+    function gem() external view returns (address);
 }
 
 interface StarknetLike {
@@ -142,7 +143,7 @@ contract DssSpellAction is DssAction {
     uint256 internal constant WAD     = 10 ** 18;
     uint256 internal constant RAY     = 10 ** 27;
 
-    function sub(uint x, uint y) internal pure returns (uint z) {
+    function _sub(uint x, uint y) internal pure returns (uint z) {
         require((z = x - y) <= x, "ds-math-sub-underflow");
     }
 
@@ -237,7 +238,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.removeIlkFromAutoLine(_ilk);
         (,,, uint256 _line,) = VatLike(VAT).ilks(_ilk);
         DssExecLib.setValue(VAT, _ilk, "line", 0);
-        DssExecLib.setValue(VAT, "Line", sub(VatLike(VAT).Line(), _line));
+        DssExecLib.setValue(VAT, "Line", _sub(VatLike(VAT).Line(), _line));
         // Reduce GUNIV3DAIUSDC1-A line from 1 billion DAI to 100 million DAI
         DssExecLib.setIlkAutoLineDebtCeiling("GUNIV3DAIUSDC1-A", 100 * MILLION);
         // Reduce GUNIV3DAIUSDC2-A line from 1.25 billion DAI to 100 million DAI
@@ -493,7 +494,7 @@ contract DssSpellAction is DssAction {
             // Constructor params
             require(mgr.dai()     == DAI,                "mgr-dai-not-match");
             require(mgr.daiJoin() == DAI_JOIN,           "mgr-daijoin-not-match");
-            require(mgr.gem()    == collateral.DROP,    "mgr-drop-not-match");
+            require(mgr.gem()     == collateral.DROP,    "mgr-drop-not-match");
             require(mgr.vat()     == VAT,                "mgr-vat-not-match");
             // Fileable constructor params
             require(mgr.owner()   == collateral.OWNER,   "mgr-owner-not-match");
