@@ -501,13 +501,13 @@ contract DssSpellAction is DssAction {
             require(mgr.gem()     == collateral.DROP,    "mgr-drop-not-match");
             require(mgr.vat()     == VAT,                "mgr-vat-not-match");
             // Fileable constructor params
+            require(mgr.owner()   == collateral.OWNER,   "mgr-owner-not-match");
             require(mgr.vow()     == VOW,                "mgr-vow-not-match");
             require(mgr.end()     == END,                "mgr-end-not-match");
             require(mgr.pool()    == collateral.POOL,    "mgr-pool-not-match");
             require(mgr.tranche() == collateral.TRANCHE, "mgr-tranche-not-match");
 
             // Set TinlakeManager MIP21 components
-            mgr.file("owner", address(collateral.OWNER));
             mgr.file("liq", address(ORACLE));
             mgr.file("urn", collateral.URN);
         }
