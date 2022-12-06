@@ -1162,8 +1162,8 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(clip.wards(address(end)), 1);
 
         // Check toll in/out
-        assertEq(psm.tin(), tin);
-        assertEq(psm.tout(), tout);
+        assertEq(psm.tin(), tin, concat("Incorrect-tin-", _ilk));
+        assertEq(psm.tout(), tout, concat("Incorrect-tout-", _ilk));
 
         uint256 amount = 1000 * (10 ** uint256(token.decimals()));
         giveTokens(address(token), amount);
@@ -1175,14 +1175,14 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         // Convert all TOKEN to DAI
         psm.sellGem(address(this), amount);
         amount -= amount * tin / WAD;
-        assertEq(token.balanceOf(address(this)), 0);
-        assertEq(dai.balanceOf(address(this)), amount * (10 ** (18 - uint256(token.decimals()))));
+        assertEq(token.balanceOf(address(this)), 0, concat("PSM.sellGem-token-balance-", _ilk));
+        assertEq(dai.balanceOf(address(this)), amount * (10 ** (18 - uint256(token.decimals()))), concat("PSM.sellGem-dai-balance-", _ilk));
 
         // Convert all DAI to TOKEN
-        amount -= amount * tout / WAD;
+        amount -= divup(amount * tout, WAD);
         psm.buyGem(address(this), amount);
-        assertEq(dai.balanceOf(address(this)), 0);
-        assertEq(token.balanceOf(address(this)), amount);
+        assertEq(dai.balanceOf(address(this)), 0, concat("PSM.buyGem-dai-balance-", _ilk));
+        assertEq(token.balanceOf(address(this)), amount, concat("PSM.buyGem-token-balance-", _ilk));
 
         // Dump all dai for next run
         vat.move(address(this), address(0x0), vat.dai(address(this)));

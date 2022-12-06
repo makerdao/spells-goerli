@@ -476,6 +476,40 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(OsmAbstract(addr.addr("PIP_TOKEN")).bud(READER), 1);
     }
 
+    function testPSMs() public {
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        bytes32 _ilk = "PSM-PAX-A";
+        checkPsmIlkIntegration(
+            _ilk,
+            GemJoinAbstract(reg.join(_ilk)),
+            ClipAbstract(reg.xlip(_ilk)),
+            reg.pip(_ilk),
+            PsmAbstract(chainLog.getAddress("MCD_PSM_PAX_A")),
+            calcPSMRateFromBPS(10),
+            calcPSMRateFromBPS(0)
+        );
+
+        _ilk = "PSM-GUSD-A";
+        checkPsmIlkIntegration(
+            _ilk,
+            GemJoinAbstract(reg.join(_ilk)),
+            ClipAbstract(reg.xlip(_ilk)),
+            reg.pip(_ilk),
+            PsmAbstract(chainLog.getAddress("MCD_PSM_GUSD_A")),
+            calcPSMRateFromBPS(10),
+            calcPSMRateFromBPS(10)
+        );
+    }
+
+    // Use for PSM tin/tout. Calculations are slightly different from elsewhere in MCD
+    function calcPSMRateFromBPS(uint256 _bps) internal returns (uint256 _amt) {
+        return _bps * WAD / 10000;
+    }
+
     function testMedianizers() private { // make public to use
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
