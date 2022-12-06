@@ -176,6 +176,7 @@ contract DssSpellAction is DssAction {
     address internal constant RWA010_A_OPERATOR       = 0x8828D2B96fa09864851244a8a2434C5A9a7B7AbD; // Tinlake Manager
     address internal constant RWA010_A_INPUT_CONDUIT  = 0x8828D2B96fa09864851244a8a2434C5A9a7B7AbD; // Tinlake Manager
     address internal constant RWA010_A_OUTPUT_CONDUIT = 0x8828D2B96fa09864851244a8a2434C5A9a7B7AbD; // Tinlake Manager
+    string internal constant RWA010_A_DOC             = "QmRqsQRnLfaRuhFr5wCfDQZKzNo7FRVUyTJPhS76nfz6nX";
 
     address internal constant MCD_JOIN_RWA011_A       = 0xfc1b3879B259C3561F4E654759D2Fd6Ba3C995de;
     address internal constant RWA011                  = 0x480e01A3621f557D99c75C4394Ac17238304e88C;
@@ -183,6 +184,7 @@ contract DssSpellAction is DssAction {
     address internal constant RWA011_A_OPERATOR       = 0xcBd44c9Ec0D2b9c466887e700eD88D302281E098; // Tinlake Manager
     address internal constant RWA011_A_INPUT_CONDUIT  = 0xcBd44c9Ec0D2b9c466887e700eD88D302281E098; // Tinlake Manager
     address internal constant RWA011_A_OUTPUT_CONDUIT = 0xcBd44c9Ec0D2b9c466887e700eD88D302281E098; // Tinlake Manager
+    string internal constant RWA011_A_DOC             = "QmRqsQRnLfaRuhFr5wCfDQZKzNo7FRVUyTJPhS76nfz6nX";
 
     address internal constant MCD_JOIN_RWA012_A       = 0x0D9a5a31f16164e256E4f8b616c9C57F9d5C12d7;
     address internal constant RWA012                  = 0x2E4378eF2A6822cfB0d154BA497B351e31C3B89b;
@@ -190,6 +192,7 @@ contract DssSpellAction is DssAction {
     address internal constant RWA012_A_OPERATOR       = 0xaef64c80712d5959f240BE1339aa639CDFA858Ff; // Tinlake Manager
     address internal constant RWA012_A_INPUT_CONDUIT  = 0xaef64c80712d5959f240BE1339aa639CDFA858Ff; // Tinlake Manager
     address internal constant RWA012_A_OUTPUT_CONDUIT = 0xaef64c80712d5959f240BE1339aa639CDFA858Ff; // Tinlake Manager
+    string internal constant RWA012_A_DOC             = "QmRqsQRnLfaRuhFr5wCfDQZKzNo7FRVUyTJPhS76nfz6nX";
 
     address internal constant MCD_JOIN_RWA013_A       = 0xD67131c06e93eDF3839C3ec5Bd92FF5D93A1e3df;
     address internal constant RWA013                  = 0xc5Ac8B809a8De11D94b7Aa63b28b8fbBDF86Ea86;
@@ -197,6 +200,7 @@ contract DssSpellAction is DssAction {
     address internal constant RWA013_A_OPERATOR       = 0xc5A1418aC32B5f978460f1211B76B5D44e69B530; // Tinlake Manager
     address internal constant RWA013_A_INPUT_CONDUIT  = 0xc5A1418aC32B5f978460f1211B76B5D44e69B530; // Tinlake Manager
     address internal constant RWA013_A_OUTPUT_CONDUIT = 0xc5A1418aC32B5f978460f1211B76B5D44e69B530; // Tinlake Manager
+    string internal constant RWA013_A_DOC             = "QmRqsQRnLfaRuhFr5wCfDQZKzNo7FRVUyTJPhS76nfz6nX";
 
     function actions() public override {
 
@@ -333,13 +337,13 @@ contract DssSpellAction is DssAction {
             pipID:           "PIP_RWA010",
             ilk:             "RWA010-A",
             ilkString:       "RWA010-A",
-            ilkRegistryName: "RWA010-A: Centrifuge: BlockTower Credit 1",
+            ilkRegistryName: "RWA010-A: Centrifuge: BlockTower Credit (I)",
             RATE:            FOUR_PCT_RATE,
             CEIL:            20_000_000,
             PRICE:           24_333_058 * WAD,
             MAT:             100_00, // Liquidation ratio
             TAU:             0,      // Remediation period
-            DOC:             ""      // TODO
+            DOC:             RWA010_A_DOC
         }));
 
 
@@ -364,13 +368,13 @@ contract DssSpellAction is DssAction {
             pipID:           "PIP_RWA011",
             ilk:             "RWA011-A",
             ilkString:       "RWA011-A",
-            ilkRegistryName: "RWA011-A: Centrifuge: BlockTower Credit 2",
+            ilkRegistryName: "RWA011-A: Centrifuge: BlockTower Credit (II)",
             RATE:            FOUR_PCT_RATE,
             CEIL:            30_000_000,
             PRICE:           36_499_587 * WAD,
             MAT:             100_00, // Liquidation ratio
             TAU:             0,      // Remediation period
-            DOC:             ""      // TODO
+            DOC:             RWA011_A_DOC
         }));
 
 
@@ -395,13 +399,13 @@ contract DssSpellAction is DssAction {
             pipID:           "PIP_RWA012",
             ilk:             "RWA012-A",
             ilkString:       "RWA012-A",
-            ilkRegistryName: "RWA012-A: Centrifuge: BlockTower Credit 3",
+            ilkRegistryName: "RWA012-A: Centrifuge: BlockTower Credit (III)",
             RATE:            FOUR_PCT_RATE,
             CEIL:            30_000_000,
             PRICE:           36_499_587 * WAD,
             MAT:             100_00, // Liquidation ratio
             TAU:             0,      // Remediation period
-            DOC:             ""      // TODO
+            DOC:             RWA010_A_DOC
         }));
 
 
@@ -426,13 +430,13 @@ contract DssSpellAction is DssAction {
             pipID:           "PIP_RWA013",
             ilk:             "RWA013-A",
             ilkString:       "RWA013-A",
-            ilkRegistryName: "RWA013-A: Centrifuge: BlockTower Credit 4",
+            ilkRegistryName: "RWA013-A: Centrifuge: BlockTower Credit (IV)",
             RATE:            FOUR_PCT_RATE,
             CEIL:            70_000_000,
             PRICE:           85_165_703 * WAD,
             MAT:             100_00, // Liquidation ratio
             TAU:             0,      // Remediation period
-            DOC:             ""      // TODO
+            DOC:             RWA013_A_DOC
         }));
 
 
