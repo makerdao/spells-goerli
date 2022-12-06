@@ -498,14 +498,15 @@ contract DssSpellAction is DssAction {
             // Constructor params
             require(mgr.dai()     == DAI,                "mgr-dai-not-match");
             require(mgr.daiJoin() == DAI_JOIN,           "mgr-daijoin-not-match");
-            require(mgr.gem()     == collateral.DROP,    "mgr-drop-not-match");
             require(mgr.vat()     == VAT,                "mgr-vat-not-match");
+            require(mgr.gem()     == collateral.DROP,    "mgr-drop-not-match");
             // Fileable constructor params
-            require(mgr.owner()   == collateral.OWNER,   "mgr-owner-not-match");
             require(mgr.vow()     == VOW,                "mgr-vow-not-match");
             require(mgr.end()     == END,                "mgr-end-not-match");
+            // Fileable centrifuge-only params
             require(mgr.pool()    == collateral.POOL,    "mgr-pool-not-match");
             require(mgr.tranche() == collateral.TRANCHE, "mgr-tranche-not-match");
+            require(mgr.owner()   == collateral.OWNER,   "mgr-owner-not-match");
 
             // Set TinlakeManager MIP21 components
             mgr.file("liq", address(ORACLE));
