@@ -773,6 +773,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         GemJoinAbstract rwaJoin = GemJoinAbstract(collateral.GEM_JOIN);
         RwaUrnLike urn = RwaUrnLike(collateral.URN);
 
+        assertEq(vat.wards(collateral.GEM_JOIN), 1, "Vat/gemjoin-not-ward");
+
         assertEq(mgr.wards(pauseProxy), 1, "TinlakeManager/pause-proxy-not-ward");
         assertEq(rwaJoin.wards(address(urn)), 1, "Join/ward-urn-not-set");
         assertEq(urn.can(address(mgr)), 1, "Urn/operator-not-hoped");
@@ -786,7 +788,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(pip != address(0), "RwaLiquidationOracle/ilk-not-init");
         assertEq(pip, addr.addr(collateral.pipID), "RwaLiquidationOracle/pip-not-match");
 
-        (pip, ) = SpotAbstract(addr.addr('MCD_SPOT')).ilks(collateral.ilk);
+        (pip, ) = spotter.ilks(collateral.ilk);
         assertEq(pip, addr.addr(collateral.pipID), "Spotter/pip-not-match");
     }
 
