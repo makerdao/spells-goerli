@@ -53,10 +53,6 @@ interface FileLike {
     function file(bytes32 what, address data) external;
 }
 
-interface ERC20Like {
-    function mint(address, uint256) external;
-}
-
 interface TinlakeManagerLike {
     function gem() external view returns (address);
     function wards(address) external view returns (uint256);
@@ -66,6 +62,10 @@ interface TinlakeManagerLike {
     function wipe(uint256 wad) external;
     function exit(uint256 wad) external;
     function free(uint256 wad) external;
+}
+
+interface DropTokenAbstract is DSTokenAbstract {
+    function wards(address) external view returns (uint256);
 }
 
 struct CentrifugeCollateralTestValues {
@@ -732,15 +732,11 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         hevm.store(collateral.MGR, keccak256(abi.encode(address(this), uint256(0))), bytes32(uint256(1)));
         assertEq(mgr.wards(address(this)), 1);
 
-        // File MIP21 contracts
-        FileLike(collateral.MGR).file("liq", collateral.LIQ);
-        FileLike(collateral.MGR).file("urn", collateral.URN);
-
         // Give some DROP tokens to the test contract
         hevm.store(collateral.DROP, keccak256(abi.encode(address(this), uint256(0))), bytes32(uint256(1)));
-        assertEq(mgr.wards(address(this)), 1);
+        assertEq(DropTokenAbstract(collateral.DROP).wards(address(this)), 1);
 
-        ERC20Like(collateral.DROP).mint(address(this), INITIAL_THIS_DROP_BALANCE);
+        DropTokenAbstract(collateral.DROP).mint(address(this), INITIAL_THIS_DROP_BALANCE);
         assertEq(drop.balanceOf(address(this)), INITIAL_THIS_DROP_BALANCE);
 
         // Approve the managers
