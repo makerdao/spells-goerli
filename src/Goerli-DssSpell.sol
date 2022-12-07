@@ -545,7 +545,7 @@ contract DssSpellAction is DssAction {
         // Poke the spotter to pull in a price
         DssExecLib.updateCollateralPrice(collateral.ilk);
 
-        // Transfer the RwaToken from DSPauseProxy to the operator
+        // Transfer the RwaToken from DSPauseProxy to the operator and lock it into the urn
         GemLike(collateral.GEM).transfer(collateral.OPERATOR, 1 * WAD);
         TinlakeManagerLike(collateral.OPERATOR).lock(1 * WAD);
 
