@@ -396,6 +396,17 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertLe(totalGas, 15 * MILLION);
     }
 
+    function testDeployCost() public {
+
+        uint256 startGas = gasleft();
+        new DssSpell();
+        uint256 endGas = gasleft();
+        uint256 totalGas = startGas - endGas;
+
+        // Fail if deploy is too expensive
+        assertLe(totalGas, 15 * MILLION);
+    }
+
     // The specific date doesn't matter that much since function is checking for difference between warps
     function test_nextCastTime() public {
         hevm.warp(1606161600); // Nov 23, 20 UTC (could be cast Nov 26)
@@ -484,22 +495,30 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         bytes32 _ilk = "PSM-PAX-A";
+        assertEq(addr.addr("MCD_JOIN_PSM_PAX_A"), reg.join(_ilk));
+        assertEq(addr.addr("MCD_CLIP_PSM_PAX_A"), reg.xlip(_ilk));
+        assertEq(addr.addr("PIP_PAX"), reg.pip(_ilk));
+        assertEq(addr.addr("MCD_PSM_PAX_A"), chainLog.getAddress("MCD_PSM_PAX_A"));
         checkPsmIlkIntegration(
             _ilk,
-            GemJoinAbstract(reg.join(_ilk)),
+            GemJoinAbstract(addr.addr("MCD_JOIN_PSM_PAX_A")),
             ClipAbstract(reg.xlip(_ilk)),
             reg.pip(_ilk),
-            PsmAbstract(addr.addr("MCD_PSM_PAX_A")),
+            PsmAbstract(chainLog.getAddress("MCD_PSM_PAX_A")),
             calcPSMRateFromBPS(10),
             calcPSMRateFromBPS(0)
         );
 
         _ilk = "PSM-GUSD-A";
+        assertEq(addr.addr("MCD_JOIN_PSM_GUSD_A"), reg.join(_ilk));
+        assertEq(addr.addr("MCD_CLIP_PSM_GUSD_A"), reg.xlip(_ilk));
+        assertEq(addr.addr("PIP_GUSD"), reg.pip(_ilk));
+        assertEq(addr.addr("MCD_PSM_GUSD_A"), chainLog.getAddress("MCD_PSM_GUSD_A"));
         checkPsmIlkIntegration(
             _ilk,
-            GemJoinAbstract(reg.join(_ilk)),
-            ClipAbstract(reg.xlip(_ilk)),
-            reg.pip(_ilk),
+            GemJoinAbstract(addr.addr("MCD_JOIN_PSM_GUSD_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_PSM_GUSD_A")),
+            addr.addr("PIP_GUSD"),
             PsmAbstract(addr.addr("MCD_PSM_GUSD_A")),
             calcPSMRateFromBPS(10),
             calcPSMRateFromBPS(10)
