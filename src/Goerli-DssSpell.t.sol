@@ -826,12 +826,13 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         assertEq(rwa.balanceOf(collateral.GEM_JOIN), 1 * WAD, "RwaToken/not-locked");
 
-        assertEq(mgr.wards(pauseProxy), 1, "TinlakeManager/pause-proxy-not-ward");
         assertEq(rwaJoin.wards(address(urn)), 1, "Join/ward-urn-not-set");
         assertEq(urn.can(address(mgr)), 1, "Urn/operator-not-hoped");
 
         assertEq(mgr.liq(), collateral.LIQ, "TinlakeManager/liq-not-match");
         assertEq(mgr.urn(), collateral.URN, "TinlakeManager/urn-not-match");
+        assertEq(mgr.wards(collateral.ROOT), 1, "TinlakeManager/root-not-ward");
+        assertEq(mgr.wards(pauseProxy), 0, "TinlakeManager/pause-proxy-still-ward");
 
         RwaLiquidationLike oracle = RwaLiquidationLike(collateral.LIQ);
         (string memory doc, address pip, uint256 tau, uint256 toc) = oracle.ilks(collateral.ilk);
