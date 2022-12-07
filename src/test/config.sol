@@ -1955,7 +1955,7 @@ contract Config {
             flipper_mom:  0,
             dog_hole:     2 * MILLION,
             clip_buf:     120_00,
-            clip_tail:    140 minutes,
+            clip_tail:    8_400,
             clip_cusp:    25_00,
             clip_chip:    10,
             clip_tip:     250,
