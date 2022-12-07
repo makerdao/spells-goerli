@@ -393,7 +393,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         assertTrue(spell.done());
         // Fail if cast is too expensive
-        assertLe(totalGas, 10 * MILLION);
+        assertLe(totalGas, 15 * MILLION);
     }
 
     // The specific date doesn't matter that much since function is checking for difference between warps
