@@ -693,7 +693,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             ROOT:       0xD128CB475D0716044A35866a6779CCc14E91b7b6,
             DROP:       0xd7943e68bD284dAd75A59d07Fab7708a21B8a95E,
             MEMBERLIST: 0x7442D0bf37bD2598dfBA92023E060862E128ccc0,
-            MGR:        0x8828D2B96fa09864851244a8a2434C5A9a7B7AbD,
+            MGR:        0x8828D2B96fa09864851244a8a2434C5A9a7B7AbD
         }));
 
         collaterals.push(CentrifugeCollateralTestValues({
@@ -822,7 +822,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(mgr.urn(), collateral.URN, "TinlakeManager/urn-not-match");
 
         RwaLiquidationLike oracle = RwaLiquidationLike(collateral.LIQ);
-        (string doc, address pip, uint256 tau, uint256 toc) = oracle.ilks(collateral.ilk);
+        (string memory doc, address pip, uint256 tau, uint256 toc) = oracle.ilks(collateral.ilk);
 
         assertEq(doc, collateral.DOC, "RwaLiquidationOracle/doc-not-init");
         assertTrue(pip != address(0), "RwaLiquidationOracle/ilk-not-init");

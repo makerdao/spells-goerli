@@ -818,7 +818,7 @@ contract Config {
             clip_buf:     120_00,
             clip_tail:    140 minutes,
             clip_cusp:    40_00,
-            clip_chip:    10,
+            clip_chip:    0,
             clip_tip:     0,
             clipper_mom:  1,
             cm_tolerance: 5000,
