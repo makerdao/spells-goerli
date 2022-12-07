@@ -96,6 +96,7 @@ struct CentrifugeCollateralValues {
     address OWNER;
     address POOL;
     address TRANCHE;
+    address ROOT;
 
     // Changelog keys
     bytes32 gemID;
@@ -332,6 +333,7 @@ contract DssSpellAction is DssAction {
             OWNER:           0xa78F096D4cfc32637513e02Ddf020EFb3fFf4df1, // Tinlake Clerk
             POOL:            0xd7BD4F27302aBDB8292F534BF52e7d10dDf6A112, // Tinlake Operator
             TRANCHE:         0xe12c278c7e6c8B64E322d9cce66E2C9177051FeD, // Tinlake Tranche
+            ROOT:            0xD128CB475D0716044A35866a6779CCc14E91b7b6, // Tinlake Root
             gemID:           "RWA010",
             joinID:          "MCD_JOIN_RWA010_A",
             urnID:           "RWA010_A_URN",
@@ -363,6 +365,7 @@ contract DssSpellAction is DssAction {
             OWNER:           0xd08822CBEfd0DD61fEc36E252311c8e08c418109, // Tinlake Clerk
             POOL:            0x747a07346f97D14A1B97f9Fee739EF99A875e716, // Tinlake Operator
             TRANCHE:         0xB4FFc4f9e70f783346eE0Bb247a2a966DA430A2F, // Tinlake Tranche
+            ROOT:            0x0b55da7112dD417Fe7a900ee8e346F17E504292c, // Tinlake Root
             gemID:           "RWA011",
             joinID:          "MCD_JOIN_RWA011_A",
             urnID:           "RWA011_A_URN",
@@ -394,6 +397,7 @@ contract DssSpellAction is DssAction {
             OWNER:           0xEcefa3ABe2c68952627EB138dcD5F7b7b29dF999, // Tinlake Clerk
             POOL:            0x3354493615a21D544974e6665dc1851c6A117F9D, // Tinlake Operator
             TRANCHE:         0x47335Eb13a12C126272a04E48eb09FC989135de3, // Tinlake Tranche
+            ROOT:            0x60b71e9DCEeDAAC275c377630E054bc60a21A02B, // Tinlake Root
             gemID:           "RWA012",
             joinID:          "MCD_JOIN_RWA012_A",
             urnID:           "RWA012_A_URN",
@@ -425,6 +429,7 @@ contract DssSpellAction is DssAction {
             OWNER:           0x116b030167Cc8A82C158f0598f4C4677f575Cc50, // Tinlake Clerk
             POOL:            0x3C05eFC8D0fC042c5686b3989bbDb1E1D29dAec7, // Tinlake Operator
             TRANCHE:         0x6A635Ada2eC663B9b38ca7a3E5c918D5D0B0E99D, // Tinlake Tranche
+            ROOT:            0xCd5Cb76a0208eAbdFFC2074f32591878a10686ae, // Tinlake Root
             gemID:           "RWA013",
             joinID:          "MCD_JOIN_RWA013_A",
             urnID:           "RWA013_A_URN",
@@ -510,10 +515,6 @@ contract DssSpellAction is DssAction {
             require(mgr.pool()    == collateral.POOL,    "mgr-pool-not-match");
             require(mgr.tranche() == collateral.TRANCHE, "mgr-tranche-not-match");
             require(mgr.owner()   == collateral.OWNER,   "mgr-owner-not-match");
-
-            // Set TinlakeManager MIP21 components
-            mgr.file("liq", address(ORACLE));
-            mgr.file("urn", collateral.URN);
         }
 
         // Initialize the liquidation oracle for RWA0XY
@@ -547,6 +548,13 @@ contract DssSpellAction is DssAction {
         // Transfer the RwaToken from DSPauseProxy to the operator and lock it into the urn
         GemLike(collateral.GEM).transfer(collateral.OPERATOR, 1 * WAD);
         TinlakeManagerLike(collateral.OPERATOR).lock(1 * WAD);
+        // Set TinlakeManager MIP21 components
+        TinlakeManagerLike(collateral.OPERATOR).file("liq", address(ORACLE));
+        TinlakeManagerLike(collateral.OPERATOR).file("urn", collateral.URN);
+        // Rely Tinlake Root
+        DssExecLib.authorize(collateral.OPERATOR, collateral.ROOT);
+        // Deny DSPauseProxy
+        DssExecLib.deauthorize(collateral.OPERATOR, address(this));
 
         // Add RWA-00x contracts to the changelog
         DssExecLib.setChangelogAddress(collateral.gemID, collateral.GEM);
