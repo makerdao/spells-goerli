@@ -298,7 +298,7 @@ contract DssSpellAction is DssAction {
                 ilkStabilityFee:      TWO_FIVE_PCT_RATE, // 2.50% stability fee
                 startingPriceFactor:  120_00,            // Auction price begins at 120% of oracle price
                 breakerTolerance:     50_00,             // Allows for a 50% hourly price drop before disabling liquidation
-                auctionDuration:      140 minutes,
+                auctionDuration:     8400,
                 permittedDrop:        25_00,             // 25% price drop before reset
                 liquidationRatio:     350_00,            // 350% collateralization
                 kprFlatReward:        250,               // 250 DAI tip - flat fee per kpr
@@ -449,6 +449,7 @@ contract DssSpellAction is DssAction {
 
         DssExecLib.setIlkLiquidationPenalty("RENBTC-A", 0);
         DssExecLib.setKeeperIncentiveFlatRate("RENBTC-A", 0);
+        DssExecLib.setKeeperIncentivePercent("RENBTC-A", 0);
         // setIlkLiquidationRatio to 5000%
         // We are using low level methods because DssExecLib only allows setting `mat < 1000%`: https://github.com/makerdao/dss-exec-lib/blob/2afff4373e8a827659df28f6d349feb25f073e59/src/DssExecLib.sol#L733
         DssExecLib.setValue(DssExecLib.spotter(), "RENBTC-A", "mat", 50 * RAY); // 5000%
