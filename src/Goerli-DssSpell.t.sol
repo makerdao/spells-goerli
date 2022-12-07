@@ -489,7 +489,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             GemJoinAbstract(reg.join(_ilk)),
             ClipAbstract(reg.xlip(_ilk)),
             reg.pip(_ilk),
-            PsmAbstract(chainLog.getAddress("MCD_PSM_PAX_A")),
+            PsmAbstract(addr.addr("MCD_PSM_PAX_A")),
             calcPSMRateFromBPS(10),
             calcPSMRateFromBPS(0)
         );
@@ -500,7 +500,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             GemJoinAbstract(reg.join(_ilk)),
             ClipAbstract(reg.xlip(_ilk)),
             reg.pip(_ilk),
-            PsmAbstract(chainLog.getAddress("MCD_PSM_GUSD_A")),
+            PsmAbstract(addr.addr("MCD_PSM_GUSD_A")),
             calcPSMRateFromBPS(10),
             calcPSMRateFromBPS(10)
         );
