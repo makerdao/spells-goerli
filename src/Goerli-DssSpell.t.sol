@@ -506,7 +506,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     // Use for PSM tin/tout. Calculations are slightly different from elsewhere in MCD
-    function calcPSMRateFromBPS(uint256 _bps) internal returns (uint256 _amt) {
+    function calcPSMRateFromBPS(uint256 _bps) internal pure returns (uint256 _amt) {
         return _bps * WAD / 10000;
     }
 
