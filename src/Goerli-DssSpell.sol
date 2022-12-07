@@ -62,11 +62,12 @@ interface RwaUrnLike {
 }
 
 interface TinlakeManagerLike {
-    function file(bytes32 what, address data) external;
+    function file(bytes32, address) external;
     function dai() external view returns (address);
     function daiJoin() external view returns (address);
     function end() external view returns (address);
     function liq() external view returns (address);
+    function lock(uint256) external;
     function owner() external view returns (address);
     function pool() external view returns (address);
     function tranche() external view returns (address);
@@ -546,6 +547,7 @@ contract DssSpellAction is DssAction {
 
         // Transfer the RwaToken from DSPauseProxy to the operator
         GemLike(collateral.GEM).transfer(collateral.OPERATOR, 1 * WAD);
+        TinlakeManagerLike(collateral.OPERATOR).lock(1 * WAD);
 
         // Add RWA-00x contracts to the changelog
         DssExecLib.setChangelogAddress(collateral.gemID, collateral.GEM);

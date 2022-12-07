@@ -393,7 +393,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         assertTrue(spell.done());
         // Fail if cast is too expensive
-        assertTrue(totalGas <= 10 * MILLION);
+        assertLe(totalGas, 10 * MILLION);
     }
 
     // The specific date doesn't matter that much since function is checking for difference between warps
@@ -754,10 +754,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
-
-        for (uint256 i = 0; i < collaterals.length; i++) {
-            _tinlakeMgrLock(collaterals[i]);
-        }
     }
 
     function _setupCentrifugeCollateral(CentrifugeCollateralTestValues memory collateral) internal {
@@ -791,12 +787,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         dai.approve(collateral.MGR, type(uint256).max);
     }
 
-    function _tinlakeMgrLock(CentrifugeCollateralTestValues memory collateral) internal {
-        TinlakeManagerLike mgr = TinlakeManagerLike(collateral.MGR);
-        uint256 rwaTokenAmount = 1 * WAD;
-        mgr.lock(rwaTokenAmount);
-    }
-
     function test_INTEGRATION_SETUP() public {
         _setupCentrifugeCollaterals();
 
@@ -810,9 +800,12 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         TinlakeManagerLike mgr = TinlakeManagerLike(collateral.MGR);
         GemJoinAbstract rwaJoin = GemJoinAbstract(collateral.GEM_JOIN);
+        GemAbstract rwa = GemAbstract(rwaJoin.gem());
         RwaUrnLike urn = RwaUrnLike(collateral.URN);
 
         assertEq(vat.wards(collateral.GEM_JOIN), 1, "Vat/gemjoin-not-ward");
+
+        assertEq(rwa.balanceOf(collateral.GEM_JOIN), 1 * WAD, "RwaToken/not-locked");
 
         assertEq(mgr.wards(pauseProxy), 1, "TinlakeManager/pause-proxy-not-ward");
         assertEq(rwaJoin.wards(address(urn)), 1, "Join/ward-urn-not-set");
