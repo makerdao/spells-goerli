@@ -82,7 +82,6 @@ struct CentrifugeCollateralTestValues {
 
     address MGR;
     address ROOT;
-    address COORDINATOR;
     address MEMBERLIST;
 
     bytes32 pipID;
@@ -688,7 +687,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             CEIL:        20_000_000 * WAD,
             PRICE:       24_333_058 * WAD,
             ROOT:        0xD128CB475D0716044A35866a6779CCc14E91b7b6,
-            COORDINATOR: 0x9102D043Cee43484dd9CE7310847ef12C95ac55A,
             DROP:        0xd7943e68bD284dAd75A59d07Fab7708a21B8a95E,
             MEMBERLIST:  0x7442D0bf37bD2598dfBA92023E060862E128ccc0,
             MGR:         0x8828D2B96fa09864851244a8a2434C5A9a7B7AbD
@@ -704,7 +702,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             CEIL:        30_000_000 * WAD,
             PRICE:       36_499_587 * WAD,
             ROOT:        0x0b55da7112dD417Fe7a900ee8e346F17E504292c,
-            COORDINATOR: 0xB03a063FcBde0d8aE591A12276A26c4BADEc7a40,
             DROP:        0xA586bB77069739Bb9Cb8608c51a21C18AF87Fb2E,
             MEMBERLIST:  0x9b401d3714f41457755a6A0587215E8757Ca4aE0,
             MGR:         0xcBd44c9Ec0D2b9c466887e700eD88D302281E098
@@ -720,7 +717,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             CEIL:        30_000_000 * WAD,
             PRICE:       36_499_587 * WAD,
             ROOT:        0x60b71e9DCEeDAAC275c377630E054bc60a21A02B,
-            COORDINATOR: 0x3f82851463C172DBDc1229cA06170fF89f5638dC,
             DROP:        0x82b84166f7CB140A6a66308da10728a3DB3A73A4,
             MEMBERLIST:  0xAe9f348Dd245BCdD7D3D6Bbb20346059B2259b71,
             MGR:         0xaef64c80712d5959f240BE1339aa639CDFA858Ff
@@ -736,7 +732,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
             CEIL:        70_000_000 * WAD,
             PRICE:       85_165_703 * WAD,
             ROOT:        0xCd5Cb76a0208eAbdFFC2074f32591878a10686ae,
-            COORDINATOR: 0x3C896EF5d7648Dd11CBDE5EDd6470063a0e780cA,
             DROP:        0x0691FAEa2Eb8eBB2C36Fc24d577cA73AfbDB7Bdd,
             MEMBERLIST:  0xbf78fff127d58f177531045d1E3588a03847Ac4C,
             MGR:         0xc5A1418aC32B5f978460f1211B76B5D44e69B530
