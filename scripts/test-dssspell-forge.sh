@@ -18,8 +18,8 @@ done
 DSS_EXEC_LIB=$(< DssExecLib.address)
 echo "Using DssExecLib at: $DSS_EXEC_LIB"
 export DAPP_LIBRARIES="src/DssSpell.sol:DssExecLib:$DSS_EXEC_LIB"
-export DAPP_BUILD_OPTIMIZE=1   # forge turns on optimizer by default
-export DAPP_BUILD_OPTIMIZE_RUNS=200
+export FOUNDRY_OPTIMIZER=false
+export FOUNDRY_OPTIMIZER_RUNS=200
 
 if [[ -z "$MATCH" && -z "$BLOCK" ]]; then
     forge test --fork-url "$ETH_RPC_URL" --force
