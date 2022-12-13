@@ -777,7 +777,7 @@ contract GoerliDssSpellTestBase is Config, Test {
         // Edge case - ward is already set
         if (base.wards(target) == 1) return;
 
-        for (int i = 0; i < 100; i++) {
+        for (int256 i = 0; i < 100; i++) {
             // Scan the storage for the ward storage slot
             bytes32 prevValue = vm.load(
                 address(base),
@@ -1093,12 +1093,12 @@ contract GoerliDssSpellTestBase is Config, Test {
         // Deposit collateral, generate DAI
         (,uint256 rate,,,) = vat.ilks(_ilk);
         assertEq(vat.dai(address(this)), 0);
-        vat.frob(_ilk, address(this), address(this), address(this), int(amount), int(divup(RAY * dust, rate)));
+        vat.frob(_ilk, address(this), address(this), address(this), int256(amount), int256(divup(RAY * dust, rate)));
         assertEq(vat.gem(_ilk, address(this)), 0);
         assertTrue(vat.dai(address(this)) >= dust * RAY && vat.dai(address(this)) <= (dust + 1) * RAY);
 
         // Payback DAI, withdraw collateral
-        vat.frob(_ilk, address(this), address(this), address(this), -int(amount), -int(divup(RAY * dust, rate)));
+        vat.frob(_ilk, address(this), address(this), address(this), -int256(amount), -int256(divup(RAY * dust, rate)));
         assertEq(vat.gem(_ilk, address(this)), amount);
         assertEq(vat.dai(address(this)), 0);
 
@@ -1112,7 +1112,7 @@ contract GoerliDssSpellTestBase is Config, Test {
         join.join(address(this), amount);
         // dart max amount of DAI
         (,,uint256 spot,,) = vat.ilks(_ilk);
-        vat.frob(_ilk, address(this), address(this), address(this), int(amount), int(amount * spot / rate));
+        vat.frob(_ilk, address(this), address(this), address(this), int256(amount), int256(amount * spot / rate));
         vm.warp(block.timestamp + 1);
         jug.drip(_ilk);
         assertEq(clip.kicks(), 0);
