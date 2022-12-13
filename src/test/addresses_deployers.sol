@@ -44,7 +44,7 @@ contract Deployers {
     address public constant CENTRIFUGE_01 = 0x9956fca5a8994737f124c481cEDC6BB3dc5BF010;
     address public constant CENTRIFUGE_02 = 0x0A735602a357802f553113F5831FE2fbf2F0E2e0;
 
-    constructor() public {
+    constructor() {
         addr = [
             PE_CURRENT,
             ORACLES_1,

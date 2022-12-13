@@ -16,7 +16,6 @@
 
 pragma solidity 0.8.16;
 
-import "ds-math/math.sol";
 import "ds-test/test.sol";
 import "dss-interfaces/Interfaces.sol";
 
@@ -148,7 +147,7 @@ interface RwaLiquidationLike {
     function ilks(bytes32) external view returns (string memory, address, uint48, uint48);
 }
 
-contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
+contract GoerliDssSpellTestBase is Config, DSTest {
     Hevm hevm;
 
     Rates         rates = new Rates();
@@ -195,13 +194,17 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     // uint256 constant THOUSAND   = 10 ** 3;  // provided by collaterals
     // uint256 constant MILLION    = 10 ** 6;  // provided by collaterals
     // uint256 constant BILLION    = 10 ** 9;  // provided by collaterals
-    // uint256 constant WAD        = 10 ** 18; // provided by ds-math
-    // uint256 constant RAY        = 10 ** 27; // provided by ds-math
+    uint256 constant WAD        = 10 ** 18;
+    uint256 constant RAY        = 10 ** 27;
     uint256 constant RAD        = 10 ** 45;
 
     event Debug(uint256 index, uint256 val);
     event Debug(uint256 index, address addr);
     event Debug(uint256 index, bytes32 what);
+
+    function rmul(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        z = (x * y + RAY / 2) / RAY;
+    }
 
     // not provided in DSMath
     function rpow(uint256 x, uint256 n, uint256 b) internal pure returns (uint256 z) {
@@ -229,7 +232,9 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     }
 
     function divup(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        z = add(x, sub(y, 1)) / y;
+        unchecked {
+            z = x != 0 ? ((x - 1) / y) + 1 : 0;
+        }
     }
 
     // not provided in DSTest
@@ -291,7 +296,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     function castPreviousSpell() internal {
         DssExecSpellLike prevSpell = DssExecSpellLike(spellValues.previous_spell);
         // warp and cast previous spell so values are up-to-date to test against
-        if (prevSpell != DssExecSpellLike(0) && !prevSpell.done()) {
+        if (prevSpell != DssExecSpellLike(address(0)) && !prevSpell.done()) {
             if (prevSpell.eta() == 0) {
                 vote(address(prevSpell));
                 scheduleWaitAndCast(address(prevSpell));
@@ -357,7 +362,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     function vote(address spell_) internal {
         if (chief.hat() != spell_) {
             giveTokens(address(gov), 999999999999 ether);
-            gov.approve(address(chief), uint256(-1));
+            gov.approve(address(chief), type(uint256).max);
             chief.lock(999999999999 ether);
 
             address[] memory slate = new address[](1);
@@ -696,7 +701,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         uint256 price = uint256(hevm.load(
             pip,
             bytes32(uint256(3))
-        )) & uint128(-1);   // Price is in the second half of the 32-byte storage slot
+        )) & type(uint128).max;   // Price is in the second half of the 32-byte storage slot
 
         // Price is bounded in the spot by around 10^23
         // Give a 10^9 buffer for price appreciation over time
@@ -712,7 +717,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         uint256 price = uint256(hevm.load(
             pip,
             bytes32(uint256(3))
-        )) & uint128(-1);   // Price is in the second half of the 32-byte storage slot
+        )) & type(uint128).max;   // Price is in the second half of the 32-byte storage slot
 
         // Price is bounded in the spot by around 10^23
         // Give a 10^9 buffer for price appreciation over time
@@ -880,8 +885,8 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
         assertEq(vat.dai(address(this)), 0);
         // Set max line to ensure we can create a new position
-        setIlkLine(_ilk, uint256(-1));
-        vat.frob(_ilk, address(this), address(this), address(this), int256(amount18), int256(divup(mul(RAY, dust), rate)));
+        setIlkLine(_ilk, type(uint256).max);
+        vat.frob(_ilk, address(this), address(this), address(this), int256(amount18), int256(divup(RAY * dust, rate)));
         // Revert ilk line to proceed with testing
         setIlkLine(_ilk, line);
         assertEq(vat.gem(_ilk, address(this)), 0);
@@ -889,7 +894,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertTrue(vat.dai(address(this)) <= (dust + 1) * RAY);
 
         // Payback DAI, withdraw collateral
-        vat.frob(_ilk, address(this), address(this), address(this), -int256(amount18), -int256(divup(mul(RAY, dust), rate)));
+        vat.frob(_ilk, address(this), address(this), address(this), -int256(amount18), -int256(divup(RAY * dust, rate)));
         assertEq(vat.gem(_ilk, address(this)), amount18);
         assertEq(vat.dai(address(this)), 0);
 
@@ -911,8 +916,8 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         (,,uint256 spot,,) = vat.ilks(_ilk);
 
         // Set max line to ensure we can draw dai
-        setIlkLine(_ilk, uint256(-1));
-        vat.frob(_ilk, address(this), address(this), address(this), int256(amount18), int256(mul(amount18, spot) / rate));
+        setIlkLine(_ilk, type(uint256).max);
+        vat.frob(_ilk, address(this), address(this), address(this), int256(amount18), int256(amount18 * spot / rate));
         // Revert ilk line to proceed with testing
         setIlkLine(_ilk, line);
 
@@ -982,7 +987,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         hevm.store(
             address(dog),
             bytes32(uint256(4)),
-            bytes32(uint256(-1))
+            bytes32(type(uint256).max)
         );
 
         // ----------------------- Check Clipper works and bids can be made -----------------------
@@ -1009,10 +1014,10 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         uint256 spot;
         uint256 line;
         (,rate, spot, line,) = vat.ilks(ilk);
-        art = int256(mul(ilkAmt, spot) / rate);
+        art = int256(ilkAmt * spot / rate);
 
         // dart max amount of DAI
-        setIlkLine(ilk, uint256(-1));
+        setIlkLine(ilk, type(uint256).max);
         vat.frob(ilk, address(this), address(this), address(this), int256(ilkAmt), art);
         setIlkLine(ilk, line);
         setIlkMat(ilk, 100000 * RAY);
@@ -1023,7 +1028,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(clipper.kicks(), 1);
 
         (, rate,,,) = vat.ilks(ilk);
-        uint256 debt = mul(mul(rate, uint256(art)), dog.chop(ilk)) / WAD;
+        uint256 debt = rate * uint256(art) * dog.chop(ilk) / WAD;
         hevm.store(
             address(vat),
             keccak256(abi.encode(address(this), uint256(5))),
@@ -1038,7 +1043,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(usr, address(this));
         assertEq(tab, debt);
         assertEq(lot, ilkAmt);
-        assertTrue(mul(lot, top) > tab); // There is enough collateral to cover the debt at current price
+        assertTrue(lot * top > tab); // There is enough collateral to cover the debt at current price
 
         vat.hope(address(clipper));
         clipper.take(1, lot, top, address(this), bytes(""));
@@ -1106,12 +1111,12 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         // Deposit collateral, generate DAI
         (,uint256 rate,,,) = vat.ilks(_ilk);
         assertEq(vat.dai(address(this)), 0);
-        vat.frob(_ilk, address(this), address(this), address(this), int(amount), int(divup(mul(RAY, dust), rate)));
+        vat.frob(_ilk, address(this), address(this), address(this), int(amount), int(divup(RAY * dust, rate)));
         assertEq(vat.gem(_ilk, address(this)), 0);
         assertTrue(vat.dai(address(this)) >= dust * RAY && vat.dai(address(this)) <= (dust + 1) * RAY);
 
         // Payback DAI, withdraw collateral
-        vat.frob(_ilk, address(this), address(this), address(this), -int(amount), -int(divup(mul(RAY, dust), rate)));
+        vat.frob(_ilk, address(this), address(this), address(this), -int(amount), -int(divup(RAY * dust, rate)));
         assertEq(vat.gem(_ilk, address(this)), amount);
         assertEq(vat.dai(address(this)), 0);
 
@@ -1125,7 +1130,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         join.join(address(this), amount);
         // dart max amount of DAI
         (,,uint256 spot,,) = vat.ilks(_ilk);
-        vat.frob(_ilk, address(this), address(this), address(this), int(amount), int(mul(amount, spot) / rate));
+        vat.frob(_ilk, address(this), address(this), address(this), int(amount), int(amount * spot / rate));
         hevm.warp(block.timestamp + 1);
         jug.drip(_ilk);
         assertEq(clip.kicks(), 0);
@@ -1169,7 +1174,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
         // Approvals
         token.approve(address(join), amount);
-        dai.approve(address(psm), uint256(-1));
+        dai.approve(address(psm), type(uint256).max);
 
         // Convert all TOKEN to DAI
         psm.sellGem(address(this), amount);

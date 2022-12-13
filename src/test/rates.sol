@@ -20,7 +20,7 @@ contract Rates {
 
     mapping (uint256 => uint256) public rates;
 
-    constructor() public {
+    constructor() {
         rates[    0] = 1000000000000000000000000000;
         rates[    1] = 1000000000003170820659990704;
         rates[    2] = 1000000000006341324285480111;

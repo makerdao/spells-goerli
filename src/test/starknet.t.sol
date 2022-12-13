@@ -113,7 +113,7 @@ contract StarknetTests is GoerliDssSpellTestBase, ConfigStarknet {
 
         DaiLike dai = DaiLike(addr.addr("MCD_DAI"));
 
-        assertEq(dai.allowance(addr.addr("STARKNET_ESCROW"), addr.addr("STARKNET_DAI_BRIDGE")), uint256(-1), "StarknetTest/unexpected-escrow-allowance");
+        assertEq(dai.allowance(addr.addr("STARKNET_ESCROW"), addr.addr("STARKNET_DAI_BRIDGE")), type(uint256).max, "StarknetTest/unexpected-escrow-allowance");
     }
 
     function checkStarknetDaiBridge() public {
