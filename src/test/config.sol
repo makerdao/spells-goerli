@@ -95,8 +95,8 @@ contract Config {
         // Values for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0x79bCfde936198407b026f432714b03a0DC12368a),     // populate with deployed spell if deployed
-            deployed_spell_created:         1670953596,              // use `./scripts/get-created-timestamp.sh <deployment-tx>`
+            deployed_spell:                 address(0xa8C4C020A86EA07b022a9a76E1959bbd12F126D5),     // populate with deployed spell if deployed
+            deployed_spell_created:         1671019944,              // use `./scripts/get-created-timestamp.sh <deployment-tx>`
             previous_spell:                 address(0),     // supply if there is a need to test prior to its cast() function being called on-chain.
             office_hours_enabled:           false,          // true if officehours is expected to be enabled in the spell
             expiration_threshold:           30 days         // Amount of time before spell expires
