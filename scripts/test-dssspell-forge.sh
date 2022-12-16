@@ -22,11 +22,11 @@ export FOUNDRY_OPTIMIZER=false
 export FOUNDRY_OPTIMIZER_RUNS=200
 
 if [[ -z "$MATCH" && -z "$BLOCK" ]]; then
-    forge test --fork-url "$ETH_RPC_URL" --force
+    forge test --fork-url "$ETH_RPC_URL"
 elif [[ -z "$BLOCK" ]]; then
-    forge test --fork-url "$ETH_RPC_URL" --match "$MATCH" -vvv --force
+    forge test --fork-url "$ETH_RPC_URL" --match "$MATCH" -vvv
 elif [[ -z "$MATCH" ]]; then
-    forge test --fork-url "$ETH_RPC_URL" --fork-block-number "$BLOCK" --force
+    forge test --fork-url "$ETH_RPC_URL" --fork-block-number "$BLOCK"
 else
-    forge test --fork-url "$ETH_RPC_URL" --match "$MATCH" --fork-block-number "$BLOCK" -vvv --force
+    forge test --fork-url "$ETH_RPC_URL" --match "$MATCH" --fork-block-number "$BLOCK" -vvv
 fi

@@ -171,7 +171,6 @@ contract GoerliDssSpellTestBase is Config, Test {
     VestAbstract                 vestDai = VestAbstract(       addr.addr("MCD_VEST_DAI"));
     RwaLiquidationLike liquidationOracle = RwaLiquidationLike( addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
-
     DssSpell spell;
 
     // uint256 constant HUNDRED    = 10 ** 2;  // provided by collaterals
@@ -673,7 +672,6 @@ contract GoerliDssSpellTestBase is Config, Test {
                 }
             }
         }
-
         //       actual                               expected
         assertEq(sumlines + values.line_offset * RAD, vat.Line(), "TestError/vat-Line");
     }
@@ -1505,15 +1503,16 @@ contract GoerliDssSpellTestBase is Config, Test {
 
     function checkWards(address _addr, string memory contractName) internal {
         for (uint256 i = 0; i < deployers.count(); i ++) {
+            address deployer = deployers.addr(i);
             (bool ok, bytes memory data) = _addr.call(
-                abi.encodeWithSignature("wards(address)", deployers.addr(i))
+                abi.encodeWithSignature("wards(address)", deployer)
             );
             if (!ok || data.length != 32) return;
             uint256 ward = abi.decode(data, (uint256));
             if (ward > 0) {
-                if (skipWards(_addr, deployers.addr(i))) continue; // ONLY ON GOERLI
+                if (skipWards(_addr, deployer)) continue; // ONLY ON GOERLI
                 emit log("Error: Bad Auth");
-                emit log_named_address("   Deployer Address", deployers.addr(i));
+                emit log_named_address("   Deployer Address", deployer);
                 emit log_named_string("  Affected Contract", contractName);
                 fail();
             }

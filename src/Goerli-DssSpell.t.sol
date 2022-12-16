@@ -89,7 +89,7 @@ struct CentrifugeCollateralTestValues {
 }
 
 contract DssSpellTest is GoerliDssSpellTestBase {
-    function test_OSM_auth() private {  // make public to use
+    function test_OSM_auth() private {  // make private to disable
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
 
         // validate the spell does what we told it to
@@ -132,7 +132,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         //}
     }
 
-    function test_oracle_list() private {  // make public to use
+    function test_oracle_list() private {  // make private to disable
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
 
         //assertEq(OsmAbstract(0xF15993A5C5BE496b8e1c9657Fd2233b579Cd3Bc6).wards(ORACLE_WALLET01), 0);
@@ -168,7 +168,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkCollateralValues(afterSpell);
     }
 
-    function testRemoveChainlogValues() private { // make public to use
+    function testRemoveChainlogValues() private { // make private to disable
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -182,7 +182,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // }
     }
 
-    function testCollateralIntegrations() public { // make public to use
+    function testCollateralIntegrations() public { // make private to disable
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -199,7 +199,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         );
     }
 
-    function testIlkClipper() private { // make public to use
+    function testIlkClipper() private { // make private to disable
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -215,7 +215,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         );
     }
 
-    function testLerpSurplusBuffer() private { // make public to use
+    function testLerpSurplusBuffer() private { // make private to disable
         vote(address(spell));
         scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -314,12 +314,10 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testDeployCost() public {
-
         uint256 startGas = gasleft();
         new DssSpell();
         uint256 endGas = gasleft();
         uint256 totalGas = startGas - endGas;
-
         // Fail if deploy is too expensive
         assertLe(totalGas, 15 * MILLION);
     }
@@ -392,7 +390,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(castTime, spell.eta());
     }
 
-    function testOSMs() private { // make public to use
+    function testOSMs() private { // make private to disable
         address READER = address(0);
 
         // Track OSM authorizations here
@@ -403,6 +401,17 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertTrue(spell.done());
 
         assertEq(OsmAbstract(addr.addr("PIP_TOKEN")).bud(READER), 1);
+    }
+
+    function testMedianizers() private { // make private to disable
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // Track Median authorizations here
+        address SET_TOKEN    = address(0);
+        address TOKENUSD_MED = OsmAbstract(addr.addr("PIP_TOKEN")).src();
+        assertEq(MedianAbstract(TOKENUSD_MED).bud(SET_TOKEN), 1);
     }
 
     function testPSMs() public {
@@ -419,9 +428,9 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         checkPsmIlkIntegration(
             _ilk,
             GemJoinAbstract(addr.addr("MCD_JOIN_PSM_PAX_A")),
-            ClipAbstract(reg.xlip(_ilk)),
-            reg.pip(_ilk),
-            PsmAbstract(chainLog.getAddress("MCD_PSM_PAX_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_PSM_PAX_A")),
+            addr.addr("PIP_PAX"),
+            PsmAbstract(addr.addr("MCD_PSM_PAX_A")),
             calcPSMRateFromBPS(10),
             calcPSMRateFromBPS(0)
         );
@@ -445,17 +454,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     // Use for PSM tin/tout. Calculations are slightly different from elsewhere in MCD
     function calcPSMRateFromBPS(uint256 _bps) internal pure returns (uint256 _amt) {
         return _bps * WAD / 10000;
-    }
-
-    function testMedianizers() private { // make public to use
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        // Track Median authorizations here
-        address SET_TOKEN    = address(0);
-        address TOKENUSD_MED = OsmAbstract(addr.addr("PIP_TOKEN")).src();
-        assertEq(MedianAbstract(TOKENUSD_MED).bud(SET_TOKEN), 1);
     }
 
     function test_auth() public {
@@ -553,8 +551,6 @@ contract DssSpellTest is GoerliDssSpellTestBase {
                 fail();
                 return;
             }
-            // We are skipping this part of the test because we need to update the chainlog without bumping the version.
-
             // Fail if the chainlog is the same size but local keys don't match the chainlog.
             for(uint256 i = 0; i < _count; i++) {
                 (, address _val) = chainLog.get(i);
@@ -571,32 +567,47 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         (ok,) = vest.call(abi.encodeWithSignature("vest(uint256)", id));
     }
 
-    function testVestDAI() private { // make public to use
+    // @dev when testing new vest contracts, use the explicit id when testing to assist in
+    //      identifying streams later for modification or removal
+    function testVestDAI() private { // make private to disable
         // VestAbstract vest = VestAbstract(addr.addr("MCD_VEST_DAI"));
 
-        // assertEq(vest.ids(), 0);
+        // All times in GMT
+        // uint256 OCT_01_2022 = 1664582400; // Saturday, October   1, 2022 12:00:00 AM
+        // uint256 OCT_31_2022 = 1667260799; // Monday,   October  31, 2022 11:59:59 PM
 
-        // vote(address(spell));
-        // scheduleWaitAndCast(address(spell));
-        // assertTrue(spell.done());
+        // assertEq(vest.ids(), 9);
 
-        // assertEq(vest.ids(), 1);
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // assertEq(vest.ids(), 9 + 1);
 
         // assertEq(vest.cap(), 1 * MILLION * WAD / 30 days);
 
-        // assertEq(vest.usr(1), address(pauseProxy));
-        // assertEq(vest.bgn(1), block.timestamp - 1 days);
-        // assertEq(vest.clf(1), block.timestamp - 1 days);
-        // assertEq(vest.fin(1), block.timestamp);
-        // assertEq(vest.mgr(1), address(0));
-        // assertEq(vest.res(1), 0);
-        // assertEq(vest.tot(1), WAD);
-        // assertEq(vest.rxd(1), 0);
+        // assertTrue(vest.valid(10)); // check for valid contract
+        // checkDaiVest({
+        //     _index:      10,                                             // id
+        //     _wallet:     wallets.addr("DAIF_WALLET"),                    // usr
+        //     _start:      OCT_01_2022,                                    // bgn
+        //     _cliff:      OCT_01_2022,                                    // clf
+        //     _end:        OCT_31_2022,                                    // fin
+        //     _days:       31 days,                                        // fin
+        //     _manager:    address(0),                                     // mgr
+        //     _restricted: 1,                                              // res
+        //     _reward:     67_863 * WAD,                                   // tot
+        //     _claimed:    0                                               // rxd
+        // });
 
-        // uint256 prevBalance = dai.balanceOf(address(pauseProxy));
-        // assertTrue(tryVest(address(vest), 1));
-        // assertEq(dai.balanceOf(address(pauseProxy)), prevBalance + WAD);
+        // // Give admin powers to Test contract address and make the vesting unrestricted for testing
+        // giveAuth(address(vest), address(this));
+        // uint256 prevBalance;
 
-        // assertEq(vest.rxd(1), WAD);
+        // vest.unrestrict(10);
+        // prevBalance = dai.balanceOf(wallets.addr("DAIF_WALLET"));
+        // vm.warp(OCT_01_2022 + 31 days);
+        // assertTrue(tryVest(address(vest), 10));
+        // assertEq(dai.balanceOf(wallets.addr("DAIF_WALLET")), prevBalance + 67_863 * WAD);
     }
 }
