@@ -24,7 +24,7 @@ import "./test/addresses_goerli.sol";
 import "./test/addresses_deployers.sol";
 import "./test/config.sol";
 
-import {DssSpell} from "./Goerli-DssSpell.sol";
+import {DssSpell} from "./DssSpell.sol";
 
 struct TeleportGUID {
     bytes32 sourceDomain;

@@ -20,7 +20,7 @@ contract Deployers {
 
     address[] public addr;
 
-    // Skip Ward Deployers see Goerli-DssSpell.t.base.sol#skipWards(address,address)
+    // Skip Ward Deployers see DssSpell.t.base.sol#skipWards(address,address)
     address public constant PE_CURRENT  = 0xC1E6d8136441FC66612Df3584007f7CB68765e5D;
     address public constant ORACLES_1   = 0x1f42e41A34B71606FcC60b4e624243b365D99745;
     address public constant ORACLES_2   = 0x39aBD7819E5632Fa06D2ECBba45Dca5c90687EE3;

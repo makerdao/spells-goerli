@@ -16,7 +16,7 @@
 
 pragma solidity 0.8.16;
 
-import "./Goerli-DssSpell.t.base.sol";
+import "./DssSpell.t.base.sol";
 
 interface RwaUrnLike {
     function can(address) external view returns (uint256);
