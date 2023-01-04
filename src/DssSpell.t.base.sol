@@ -14,11 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-pragma solidity 0.6.12;
-pragma experimental ABIEncoderV2;
+pragma solidity 0.8.16;
 
-import "ds-math/math.sol";
-import "ds-test/test.sol";
+import "forge-std/Test.sol";
 import "dss-interfaces/Interfaces.sol";
 
 import "./test/rates.sol";
@@ -26,7 +24,7 @@ import "./test/addresses_goerli.sol";
 import "./test/addresses_deployers.sol";
 import "./test/config.sol";
 
-import {DssSpell} from "./Goerli-DssSpell.sol";
+import {DssSpell} from "./DssSpell.sol";
 
 struct TeleportGUID {
     bytes32 sourceDomain;
@@ -36,16 +34,6 @@ struct TeleportGUID {
     uint128 amount;
     uint80 nonce;
     uint48 timestamp;
-}
-
-interface Hevm {
-    function warp(uint256) external;
-    function store(address,bytes32,bytes32) external;
-    function load(address,bytes32) external view returns (bytes32);
-    function addr(uint) external returns (address);
-    function sign(uint, bytes32) external returns (uint8, bytes32, bytes32);
-    function startPrank(address) external;
-    function stopPrank() external;
 }
 
 interface DssExecSpellLike {
@@ -149,9 +137,7 @@ interface RwaLiquidationLike {
     function ilks(bytes32) external view returns (string memory, address, uint48, uint48);
 }
 
-contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
-    Hevm hevm;
-
+contract GoerliDssSpellTestBase is Config, Test {
     Rates         rates = new Rates();
     Addresses      addr = new Addresses();
     Deployers deployers = new Deployers();
@@ -185,24 +171,23 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     VestAbstract                 vestDai = VestAbstract(       addr.addr("MCD_VEST_DAI"));
     RwaLiquidationLike liquidationOracle = RwaLiquidationLike( addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
-
     DssSpell spell;
-
-    // CHEAT_CODE = 0x7109709ECfa91a80626fF3989D68f67F5b1DD12D
-    bytes20 constant CHEAT_CODE =
-        bytes20(uint160(uint256(keccak256('hevm cheat code'))));
 
     // uint256 constant HUNDRED    = 10 ** 2;  // provided by collaterals
     // uint256 constant THOUSAND   = 10 ** 3;  // provided by collaterals
     // uint256 constant MILLION    = 10 ** 6;  // provided by collaterals
     // uint256 constant BILLION    = 10 ** 9;  // provided by collaterals
-    // uint256 constant WAD        = 10 ** 18; // provided by ds-math
-    // uint256 constant RAY        = 10 ** 27; // provided by ds-math
+    uint256 constant WAD        = 10 ** 18;
+    uint256 constant RAY        = 10 ** 27;
     uint256 constant RAD        = 10 ** 45;
 
     event Debug(uint256 index, uint256 val);
     event Debug(uint256 index, address addr);
     event Debug(uint256 index, bytes32 what);
+
+    function rmul(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        z = (x * y + RAY / 2) / RAY;
+    }
 
     // not provided in DSMath
     function rpow(uint256 x, uint256 n, uint256 b) internal pure returns (uint256 z) {
@@ -230,7 +215,9 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     }
 
     function divup(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        z = add(x, sub(y, 1)) / y;
+        unchecked {
+            z = x != 0 ? ((x - 1) / y) + 1 : 0;
+        }
     }
 
     // not provided in DSTest
@@ -292,22 +279,20 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     function castPreviousSpell() internal {
         DssExecSpellLike prevSpell = DssExecSpellLike(spellValues.previous_spell);
         // warp and cast previous spell so values are up-to-date to test against
-        if (prevSpell != DssExecSpellLike(0) && !prevSpell.done()) {
+        if (prevSpell != DssExecSpellLike(address(0)) && !prevSpell.done()) {
             if (prevSpell.eta() == 0) {
                 vote(address(prevSpell));
                 scheduleWaitAndCast(address(prevSpell));
             }
             else {
                 // jump to nextCastTime to be a little more forgiving on the spell execution time
-                hevm.warp(prevSpell.nextCastTime());
+                vm.warp(prevSpell.nextCastTime());
                 prevSpell.cast();
             }
         }
     }
 
     function setUp() public {
-        hevm = Hevm(address(CHEAT_CODE));
-
         setValues(address(chief));
 
         spellValues.deployed_spell_created = spellValues.deployed_spell != address(0) ? spellValues.deployed_spell_created : block.timestamp;
@@ -325,7 +310,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             castTime += 5 days - day * 86400;
         }
 
-        hevm.warp(castTime);
+        vm.warp(castTime);
         spell.cast();
     }
 
@@ -338,7 +323,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             castTime -= hour * 3600 - 13 hours;
         }
 
-        hevm.warp(castTime);
+        vm.warp(castTime);
         spell.cast();
     }
 
@@ -351,14 +336,14 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
             castTime += 21 hours - hour * 3600;
         }
 
-        hevm.warp(castTime);
+        vm.warp(castTime);
         spell.cast();
     }
 
     function vote(address spell_) internal {
         if (chief.hat() != spell_) {
             giveTokens(address(gov), 999999999999 ether);
-            gov.approve(address(chief), uint256(-1));
+            gov.approve(address(chief), type(uint256).max);
             chief.lock(999999999999 ether);
 
             address[] memory slate = new address[](1);
@@ -376,7 +361,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     function scheduleWaitAndCast(address spell_) public {
         DssSpell(spell_).schedule();
 
-        hevm.warp(DssSpell(spell_).nextCastTime());
+        vm.warp(DssSpell(spell_).nextCastTime());
 
         DssSpell(spell_).cast();
     }
@@ -687,17 +672,16 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
                 }
             }
         }
-
         //       actual                               expected
         assertEq(sumlines + values.line_offset * RAD, vat.Line(), "TestError/vat-Line");
     }
 
     function getOSMPrice(address pip) internal returns (uint256) {
-        // hevm.load is to pull the price from the LP Oracle storage bypassing the whitelist
-        uint256 price = uint256(hevm.load(
+        // vm.load is to pull the price from the LP Oracle storage bypassing the whitelist
+        uint256 price = uint256(vm.load(
             pip,
             bytes32(uint256(3))
-        )) & uint128(-1);   // Price is in the second half of the 32-byte storage slot
+        )) & type(uint128).max;   // Price is in the second half of the 32-byte storage slot
 
         // Price is bounded in the spot by around 10^23
         // Give a 10^9 buffer for price appreciation over time
@@ -709,11 +693,11 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     }
 
     function getUNIV2LPPrice(address pip) internal returns (uint256) {
-        // hevm.load is to pull the price from the LP Oracle storage bypassing the whitelist
-        uint256 price = uint256(hevm.load(
+        // vm.load is to pull the price from the LP Oracle storage bypassing the whitelist
+        uint256 price = uint256(vm.load(
             pip,
             bytes32(uint256(3))
-        )) & uint128(-1);   // Price is in the second half of the 32-byte storage slot
+        )) & type(uint128).max;   // Price is in the second half of the 32-byte storage slot
 
         // Price is bounded in the spot by around 10^23
         // Give a 10^9 buffer for price appreciation over time
@@ -732,12 +716,12 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         for (uint256 i = 0; i < 200; i++) {
             // Solidity-style storage layout for maps
             {
-                bytes32 prevValue = hevm.load(
+                bytes32 prevValue = vm.load(
                     address(token),
                     keccak256(abi.encode(address(this), uint256(i)))
                 );
 
-                hevm.store(
+                vm.store(
                     address(token),
                     keccak256(abi.encode(address(this), uint256(i))),
                     bytes32(amount)
@@ -747,7 +731,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
                     return;
                 } else {
                     // Keep going after restoring the original value
-                    hevm.store(
+                    vm.store(
                         address(token),
                         keccak256(abi.encode(address(this), uint256(i))),
                         prevValue
@@ -757,12 +741,12 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
             // Vyper-style storage layout for maps
             {
-                bytes32 prevValue = hevm.load(
+                bytes32 prevValue = vm.load(
                     address(token),
                     keccak256(abi.encode(uint256(i), address(this)))
                 );
 
-                hevm.store(
+                vm.store(
                     address(token),
                     keccak256(abi.encode(uint256(i), address(this))),
                     bytes32(amount)
@@ -772,7 +756,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
                     return;
                 } else {
                     // Keep going after restoring the original value
-                    hevm.store(
+                    vm.store(
                         address(token),
                         keccak256(abi.encode(uint256(i), address(this))),
                         prevValue
@@ -791,13 +775,13 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         // Edge case - ward is already set
         if (base.wards(target) == 1) return;
 
-        for (int i = 0; i < 100; i++) {
+        for (int256 i = 0; i < 100; i++) {
             // Scan the storage for the ward storage slot
-            bytes32 prevValue = hevm.load(
+            bytes32 prevValue = vm.load(
                 address(base),
                 keccak256(abi.encode(target, uint256(i)))
             );
-            hevm.store(
+            vm.store(
                 address(base),
                 keccak256(abi.encode(target, uint256(i))),
                 bytes32(uint256(1))
@@ -807,7 +791,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
                 return;
             } else {
                 // Keep going after restoring the original value
-                hevm.store(
+                vm.store(
                     address(base),
                     keccak256(abi.encode(target, uint256(i))),
                     prevValue
@@ -830,9 +814,9 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     ) public {
         GemAbstract token = GemAbstract(join.gem());
 
-        hevm.warp(block.timestamp + 3601); // Avoid OSM delay errors on Görli
+        vm.warp(block.timestamp + 3601); // Avoid OSM delay errors on Görli
         if (_isOSM) OsmAbstract(pip).poke();
-        hevm.warp(block.timestamp + 3601);
+        vm.warp(block.timestamp + 3601);
         if (_isOSM) OsmAbstract(pip).poke();
         spotter.poke(_ilk);
 
@@ -873,7 +857,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(vat.gem(_ilk, address(this)), amount18);
 
         // Tick the fees forward so that art != dai in wad units
-        hevm.warp(block.timestamp + 1);
+        vm.warp(block.timestamp + 1);
         jug.drip(_ilk);
 
         // Deposit collateral, generate DAI
@@ -881,8 +865,8 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
         assertEq(vat.dai(address(this)), 0);
         // Set max line to ensure we can create a new position
-        setIlkLine(_ilk, uint256(-1));
-        vat.frob(_ilk, address(this), address(this), address(this), int256(amount18), int256(divup(mul(RAY, dust), rate)));
+        setIlkLine(_ilk, type(uint256).max);
+        vat.frob(_ilk, address(this), address(this), address(this), int256(amount18), int256(divup(RAY * dust, rate)));
         // Revert ilk line to proceed with testing
         setIlkLine(_ilk, line);
         assertEq(vat.gem(_ilk, address(this)), 0);
@@ -890,7 +874,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertTrue(vat.dai(address(this)) <= (dust + 1) * RAY);
 
         // Payback DAI, withdraw collateral
-        vat.frob(_ilk, address(this), address(this), address(this), -int256(amount18), -int256(divup(mul(RAY, dust), rate)));
+        vat.frob(_ilk, address(this), address(this), address(this), -int256(amount18), -int256(divup(RAY * dust, rate)));
         assertEq(vat.gem(_ilk, address(this)), amount18);
         assertEq(vat.dai(address(this)), 0);
 
@@ -912,19 +896,19 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         (,,uint256 spot,,) = vat.ilks(_ilk);
 
         // Set max line to ensure we can draw dai
-        setIlkLine(_ilk, uint256(-1));
-        vat.frob(_ilk, address(this), address(this), address(this), int256(amount18), int256(mul(amount18, spot) / rate));
+        setIlkLine(_ilk, type(uint256).max);
+        vat.frob(_ilk, address(this), address(this), address(this), int256(amount18), int256(amount18 * spot / rate));
         // Revert ilk line to proceed with testing
         setIlkLine(_ilk, line);
 
-        hevm.warp(block.timestamp + 1);
+        vm.warp(block.timestamp + 1);
         jug.drip(_ilk);
         assertEq(clip.kicks(), 0);
         if (_checkLiquidations) {
             if (getIlkDuty(_ilk) == rates.rates(0)) {
                 // Rates wont accrue if 0, raise the mat to make the vault unsafe
                 setIlkMat(_ilk, 100000 * RAY);
-                hevm.warp(block.timestamp + 10 days);
+                vm.warp(block.timestamp + 10 days);
                 spotter.poke(_ilk);
             }
             dog.bark(_ilk, address(this), address(this));
@@ -980,10 +964,10 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         } catch {}
 
         // Force max Hole
-        hevm.store(
+        vm.store(
             address(dog),
             bytes32(uint256(4)),
-            bytes32(uint256(-1))
+            bytes32(type(uint256).max)
         );
 
         // ----------------------- Check Clipper works and bids can be made -----------------------
@@ -1010,22 +994,22 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         uint256 spot;
         uint256 line;
         (,rate, spot, line,) = vat.ilks(ilk);
-        art = int256(mul(ilkAmt, spot) / rate);
+        art = int256(ilkAmt * spot / rate);
 
         // dart max amount of DAI
-        setIlkLine(ilk, uint256(-1));
+        setIlkLine(ilk, type(uint256).max);
         vat.frob(ilk, address(this), address(this), address(this), int256(ilkAmt), art);
         setIlkLine(ilk, line);
         setIlkMat(ilk, 100000 * RAY);
-        hevm.warp(block.timestamp + 10 days);
+        vm.warp(block.timestamp + 10 days);
         spotter.poke(ilk);
         assertEq(clipper.kicks(), 0);
         dog.bark(ilk, address(this), address(this));
         assertEq(clipper.kicks(), 1);
 
         (, rate,,,) = vat.ilks(ilk);
-        uint256 debt = mul(mul(rate, uint256(art)), dog.chop(ilk)) / WAD;
-        hevm.store(
+        uint256 debt = rate * uint256(art) * dog.chop(ilk) / WAD;
+        vm.store(
             address(vat),
             keccak256(abi.encode(address(this), uint256(5))),
             bytes32(debt)
@@ -1033,13 +1017,13 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(vat.dai(address(this)), debt);
         assertEq(vat.gem(ilk, address(this)), 0);
 
-        hevm.warp(block.timestamp + 20 minutes);
+        vm.warp(block.timestamp + 20 minutes);
         (, uint256 tab, uint256 lot, address usr,, uint256 top) = clipper.sales(1);
 
         assertEq(usr, address(this));
         assertEq(tab, debt);
         assertEq(lot, ilkAmt);
-        assertTrue(mul(lot, top) > tab); // There is enough collateral to cover the debt at current price
+        assertTrue(lot * top > tab); // There is enough collateral to cover the debt at current price
 
         vat.hope(address(clipper));
         clipper.take(1, lot, top, address(this), bytes(""));
@@ -1069,7 +1053,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         GemAbstract token = GemAbstract(join.gem());
 
         pip.poke();
-        hevm.warp(block.timestamp + 3601);
+        vm.warp(block.timestamp + 3601);
         pip.poke();
         spotter.poke(_ilk);
 
@@ -1101,18 +1085,18 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         assertEq(vat.gem(_ilk, address(this)), amount);
 
         // Tick the fees forward so that art != dai in wad units
-        hevm.warp(block.timestamp + 1);
+        vm.warp(block.timestamp + 1);
         jug.drip(_ilk);
 
         // Deposit collateral, generate DAI
         (,uint256 rate,,,) = vat.ilks(_ilk);
         assertEq(vat.dai(address(this)), 0);
-        vat.frob(_ilk, address(this), address(this), address(this), int(amount), int(divup(mul(RAY, dust), rate)));
+        vat.frob(_ilk, address(this), address(this), address(this), int256(amount), int256(divup(RAY * dust, rate)));
         assertEq(vat.gem(_ilk, address(this)), 0);
         assertTrue(vat.dai(address(this)) >= dust * RAY && vat.dai(address(this)) <= (dust + 1) * RAY);
 
         // Payback DAI, withdraw collateral
-        vat.frob(_ilk, address(this), address(this), address(this), -int(amount), -int(divup(mul(RAY, dust), rate)));
+        vat.frob(_ilk, address(this), address(this), address(this), -int256(amount), -int256(divup(RAY * dust, rate)));
         assertEq(vat.gem(_ilk, address(this)), amount);
         assertEq(vat.dai(address(this)), 0);
 
@@ -1126,8 +1110,8 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         join.join(address(this), amount);
         // dart max amount of DAI
         (,,uint256 spot,,) = vat.ilks(_ilk);
-        vat.frob(_ilk, address(this), address(this), address(this), int(amount), int(mul(amount, spot) / rate));
-        hevm.warp(block.timestamp + 1);
+        vat.frob(_ilk, address(this), address(this), address(this), int256(amount), int256(amount * spot / rate));
+        vm.warp(block.timestamp + 1);
         jug.drip(_ilk);
         assertEq(clip.kicks(), 0);
         if (_checkLiquidations) {
@@ -1170,7 +1154,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
         // Approvals
         token.approve(address(join), amount);
-        dai.approve(address(psm), uint256(-1));
+        dai.approve(address(psm), type(uint256).max);
 
         // Convert all TOKEN to DAI
         psm.sellGem(address(this), amount);
@@ -1247,8 +1231,8 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         signers = new address[](numSigners);
         for(uint256 i; i < numSigners; i++) {
             uint256 sk = uint256(keccak256(abi.encode(seeds[i])));
-            signers[i] = hevm.addr(sk);
-            (uint8 v, bytes32 r, bytes32 s) = hevm.sign(sk, signHash);
+            signers[i] = vm.addr(sk);
+            (uint8 v, bytes32 r, bytes32 s) = vm.sign(sk, signHash);
             signatures = abi.encodePacked(signatures, r, s, v);
         }
         assertEq(signatures.length, numSigners * 65);
@@ -1314,7 +1298,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         {
             // NOTE: We are calling the router directly because the bridge code is minimal and unique to each domain
             // This tests the slow path via the router
-            hevm.startPrank(gateway);
+            vm.startPrank(gateway);
             router.requestMint(TeleportGUID({
                 sourceDomain: sourceDomain,
                 targetDomain: targetDomain,
@@ -1324,7 +1308,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
                 nonce: 0,
                 timestamp: uint48(block.timestamp - TeleportFeeLike(fee).ttl())
             }), 0, 0);
-            hevm.stopPrank();
+            vm.stopPrank();
             assertEq(dai.balanceOf(address(this)), toMint);
             assertEq(join.debt(sourceDomain), int256(toMint));
         }
@@ -1341,9 +1325,9 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
         // Check settle
         dai.transfer(gateway, toMint * 2 - _fee);
-        hevm.startPrank(gateway);
+        vm.startPrank(gateway);
         router.settle(targetDomain, toMint * 2 - _fee);
-        hevm.stopPrank();
+        vm.stopPrank();
         assertEq(dai.balanceOf(gateway), 0);
         assertEq(join.debt(sourceDomain), int256(_fee));
     }
@@ -1365,7 +1349,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
         // Emulate Global Settlement
         if (cage) {
             assertEq(cure.live(), 1);
-            hevm.store(
+            vm.store(
                 address(cure),
                 keccak256(abi.encode(address(this), uint256(0))),
                 bytes32(uint256(1))
@@ -1412,7 +1396,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     }
 
     function setIlkMat(bytes32 ilk, uint256 amount) internal {
-        hevm.store(
+        vm.store(
             address(spotter),
             bytes32(uint256(keccak256(abi.encode(ilk, uint256(1)))) + 1),
             bytes32(amount)
@@ -1421,7 +1405,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     }
 
     function setIlkRate(bytes32 ilk, uint256 amount) internal {
-        hevm.store(
+        vm.store(
             address(vat),
             bytes32(uint256(keccak256(abi.encode(ilk, uint256(2)))) + 1),
             bytes32(amount)
@@ -1431,7 +1415,7 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
     }
 
     function setIlkLine(bytes32 ilk, uint256 amount) internal {
-        hevm.store(
+        vm.store(
             address(vat),
             bytes32(uint256(keccak256(abi.encode(ilk, uint256(2)))) + 3),
             bytes32(amount)
@@ -1447,12 +1431,12 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
         LerpAbstract lerp = LerpAbstract(lerpFactory.lerps(_lerp));
 
-        hevm.warp(block.timestamp + lerp.duration() / 2);
+        vm.warp(block.timestamp + lerp.duration() / 2);
         assertEq(getIlkMat(_ilk), _startMat * RAY / 100);
         lerp.tick();
         assertEqApprox(getIlkMat(_ilk), ((_startMat + _endMat) / 2) * RAY / 100, RAY / 100);
 
-        hevm.warp(block.timestamp + lerp.duration());
+        vm.warp(block.timestamp + lerp.duration());
         lerp.tick();
         assertEq(getIlkMat(_ilk), _endMat * RAY / 100);
     }
@@ -1472,12 +1456,12 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
         LerpAbstract newLerp = LerpAbstract(lerpFactory.lerps(_newLerp));
 
-        hevm.warp(block.timestamp + newLerp.duration() / 2);
+        vm.warp(block.timestamp + newLerp.duration() / 2);
         assertEq(getIlkMat(_ilk), tickMat);
         newLerp.tick();
         assertEqApprox(getIlkMat(_ilk), (tickMat + _newEndMat * RAY / 100) / 2, RAY / 100);
 
-        hevm.warp(block.timestamp + newLerp.duration());
+        vm.warp(block.timestamp + newLerp.duration());
         newLerp.tick();
         assertEq(getIlkMat(_ilk), _newEndMat * RAY / 100);
     }
@@ -1519,15 +1503,16 @@ contract GoerliDssSpellTestBase is Config, DSTest, DSMath {
 
     function checkWards(address _addr, string memory contractName) internal {
         for (uint256 i = 0; i < deployers.count(); i ++) {
+            address deployer = deployers.addr(i);
             (bool ok, bytes memory data) = _addr.call(
-                abi.encodeWithSignature("wards(address)", deployers.addr(i))
+                abi.encodeWithSignature("wards(address)", deployer)
             );
             if (!ok || data.length != 32) return;
             uint256 ward = abi.decode(data, (uint256));
             if (ward > 0) {
-                if (skipWards(_addr, deployers.addr(i))) continue; // ONLY ON GOERLI
+                if (skipWards(_addr, deployer)) continue; // ONLY ON GOERLI
                 emit log("Error: Bad Auth");
-                emit log_named_address("   Deployer Address", deployers.addr(i));
+                emit log_named_address("   Deployer Address", deployer);
                 emit log_named_string("  Affected Contract", contractName);
                 fail();
             }

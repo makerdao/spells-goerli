@@ -19,5 +19,5 @@
 - [ ] Ensure contract is verified on `Goerli` etherscan
 - [ ] Change test to use Goerli spell address and deploy timestamp
 - [ ] Cast spell on Goerli `make spell="0x-deployed-spell-address" cast-spell`
-- [ ] Run `make archive-spell` or `make date="YYYY-MM-DD" archive-spell` to make an archive directory and copy `Goerli-DssSpell.sol`, `Goerli-DssSpell.t.sol`, `Goerli-DssSpell.t.base.sol`, and `Goerli-DssSpellCollateralOnboarding.sol`
+- [ ] Run `make archive-spell` or `make date="YYYY-MM-DD" archive-spell` to make an archive directory and copy `DssSpell.sol`, `DssSpell.t.sol` and `DssSpell.t.base.sol`
 - [ ] `squash and merge` this PR

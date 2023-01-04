@@ -14,16 +14,12 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-pragma solidity 0.6.12;
-// Enable ABIEncoderV2 when onboarding collateral through `DssExecLib.addNewCollateral()`
-// pragma experimental ABIEncoderV2;
+pragma solidity 0.8.16;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-import { DssSpellCollateralAction } from "./Goerli-DssSpellCollateral.sol";
-
-contract DssSpellAction is DssAction, DssSpellCollateralAction {
+contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
