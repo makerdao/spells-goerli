@@ -18,78 +18,72 @@ pragma solidity 0.8.16;
 
 import "./DssSpell.t.base.sol";
 
-interface RwaUrnLike {
-    function can(address) external view returns (uint256);
-    function gemJoin() external view returns (GemAbstract);
-    function lock(uint256) external;
-    function draw(uint256) external;
-    function wipe(uint256) external;
-    function free(uint256) external;
-}
+contract DssSpellTest is DssSpellTestBase {
+    function testGeneral() public {
+        _testGeneral();
+    }
 
-interface WriteableRwaLiquidationLike is RwaLiquidationLike {
-    function bump(bytes32 ilk, uint256 val) external;
-    function tell(bytes32) external;
-    function cure(bytes32) external;
-    function cull(bytes32, address) external;
-    function good(bytes32) external view returns (bool);
-}
+    function testFailWrongDay() public {
+        _testFailWrongDay();
+    }
 
-interface Root {
-    function wards(address) external view returns (uint256);
-    function relyContract(address, address) external;
-}
+    function testFailTooEarly() public {
+        _testFailTooEarly();
+    }
 
-interface MemberList {
-    function updateMember(address, uint256) external;
-}
+    function testFailTooLate() public {
+        _testFailTooLate();
+    }
 
-interface AssessorLike {
-    function calcSeniorTokenPrice() external returns (uint256);
-}
+    function testOnTime() public {
+        _testOnTime();
+    }
 
-interface FileLike {
-    function file(bytes32 what, address data) external;
-}
+    function testCastCost() public {
+        _testCastCost();
+    }
 
-interface TinlakeManagerLike {
-    function gem() external view returns (address);
-    function liq() external view returns (address);
-    function urn() external view returns (address);
-    function wards(address) external view returns (uint256);
-    function lock(uint256 wad) external;
-    function join(uint256 wad) external;
-    function draw(uint256 wad) external;
-    function wipe(uint256 wad) external;
-    function exit(uint256 wad) external;
-    function free(uint256 wad) external;
-}
+    function testDeployCost() public {
+        _testDeployCost();
+    }
 
-interface DropTokenAbstract is DSTokenAbstract {
-    function wards(address) external view returns (uint256);
-}
+    function testContractSize() public {
+        _testContractSize();
+    }
 
-struct CentrifugeCollateralTestValues {
-    bytes32 ilk;
-    string ilkString;
-    address LIQ;
-    address DROP;
-    address URN;
-    address GEM_JOIN;
-    uint256 CEIL;
-    uint256 PRICE;
-    string  DOC;
-    uint256 TAU;
+    function testNextCastTime() public {
+        _testNextCastTime();
+    }
 
-    address MGR;
-    address ROOT;
-    address MEMBERLIST;
+    function testFailNotScheduled() public view {
+        _testFailNotScheduled();
+    }
 
-    bytes32 pipID;
-}
+    function testUseEta() public {
+        _testUseEta();
+    }
 
-contract DssSpellTest is GoerliDssSpellTestBase {
-    function test_OSM_auth() private {  // make private to disable
+    function testAuth() public {
+        _checkAuth(false);
+    }
+
+    function testAuthInSources() public {
+        _checkAuth(true);
+    }
+
+    function testBytecodeMatches() public {
+        _testBytecodeMatches();
+    }
+
+    function testChainlogValues() public {
+        _testChainlogValues();
+    }
+
+    function testChainlogVersionBump() public {
+        _testChainlogVersionBump();
+    }
+
+    function testOsmAuth() private {  // make private to disable
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
 
         // validate the spell does what we told it to
@@ -111,8 +105,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         //    assertEq(OsmAbstract(pip).wards(ORACLE_WALLET01), 0);
         //}
 
-        //vote(address(spell));
-        //scheduleWaitAndCast(address(spell));
+        //_vote(address(spell));
+        //_scheduleWaitAndCast(address(spell));
         //assertTrue(spell.done());
 
         //for(uint256 i = 0; i < ilks.length; i++) {
@@ -132,45 +126,21 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         //}
     }
 
-    function test_oracle_list() private {  // make private to disable
+    function testOracleList() private {  // make private to disable
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
 
         //assertEq(OsmAbstract(0xF15993A5C5BE496b8e1c9657Fd2233b579Cd3Bc6).wards(ORACLE_WALLET01), 0);
 
-        //vote(address(spell));
-        //scheduleWaitAndCast(address(spell));
+        //_vote(address(spell));
+        //_scheduleWaitAndCast(address(spell));
         //assertTrue(spell.done());
 
         //assertEq(OsmAbstract(0xF15993A5C5BE496b8e1c9657Fd2233b579Cd3Bc6).wards(ORACLE_WALLET01), 1);
     }
 
-    function testSpellIsCast_GENERAL() public {
-        string memory description = new DssSpell().description();
-        assertTrue(bytes(description).length > 0, "TestError/spell-description-length");
-        // DS-Test can't handle strings directly, so cast to a bytes32.
-        assertEq(stringToBytes32(spell.description()),
-                stringToBytes32(description), "TestError/spell-description");
-
-        if(address(spell) != address(spellValues.deployed_spell)) {
-            assertEq(spell.expiration(), block.timestamp + spellValues.expiration_threshold, "TestError/spell-expiration");
-        } else {
-            assertEq(spell.expiration(), spellValues.deployed_spell_created + spellValues.expiration_threshold, "TestError/spell-expiration");
-        }
-
-        assertTrue(spell.officeHours() == spellValues.office_hours_enabled, "TestError/spell-office-hours");
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done(), "TestError/spell-not-done");
-
-        checkSystemValues(afterSpell);
-
-        checkCollateralValues(afterSpell);
-    }
-
     function testRemoveChainlogValues() private { // make private to disable
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // try chainLog.getAddress("RWA007_A_INPUT_CONDUIT_URN") {
@@ -183,12 +153,12 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testCollateralIntegrations() public { // make private to disable
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new collateral tests here
-        checkIlkIntegration(
+        _checkIlkIntegration(
             "GNO-A",
             GemJoinAbstract(addr.addr("MCD_JOIN_GNO_A")),
             ClipAbstract(addr.addr("MCD_CLIP_GNO_A")),
@@ -200,12 +170,12 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testIlkClipper() private { // make private to disable
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // XXX
-        checkIlkClipper(
+        _checkIlkClipper(
             "XXX-A",
             GemJoinAbstract(addr.addr("MCD_JOIN_XXX_A")),
             ClipAbstract(addr.addr("MCD_CLIP_XXX_A")),
@@ -216,8 +186,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testLerpSurplusBuffer() private { // make private to disable
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new SB lerp tests here
@@ -236,18 +206,18 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testNewChainlogValues() public { // make private to disable
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // checkChainlogKey("XXX");
+        // _checkChainlogKey("XXX");
 
-        checkChainlogVersion("1.14.7");
+        _checkChainlogVersion("1.14.7");
     }
 
     function testNewIlkRegistryValues() public { // make private to disable
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
@@ -262,180 +232,22 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(reg.symbol("GNO-A"), GemAbstract(addr.addr("GNO")).symbol());
     }
 
-    function testFailWrongDay() public {
-        require(spell.officeHours() == spellValues.office_hours_enabled);
-        if (spell.officeHours()) {
-            vote(address(spell));
-            scheduleWaitAndCastFailDay();
-        } else {
-            revert("Office Hours Disabled");
-        }
-    }
-
-    function testFailTooEarly() public {
-        require(spell.officeHours() == spellValues.office_hours_enabled);
-        if (spell.officeHours()) {
-            vote(address(spell));
-            scheduleWaitAndCastFailEarly();
-        } else {
-            revert("Office Hours Disabled");
-        }
-    }
-
-    function testFailTooLate() public {
-        require(spell.officeHours() == spellValues.office_hours_enabled);
-        if (spell.officeHours()) {
-            vote(address(spell));
-            scheduleWaitAndCastFailLate();
-        } else {
-            revert("Office Hours Disabled");
-        }
-    }
-
-    function testOnTime() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-    }
-
-    function testCastCost() public {
-        vote(address(spell));
-        spell.schedule();
-
-        castPreviousSpell();
-        vm.warp(spell.nextCastTime());
-        uint256 startGas = gasleft();
-        spell.cast();
-        uint256 endGas = gasleft();
-        uint256 totalGas = startGas - endGas;
-
-        assertTrue(spell.done());
-        // Fail if cast is too expensive
-        assertLe(totalGas, 15 * MILLION);
-    }
-
-    function testDeployCost() public {
-        uint256 startGas = gasleft();
-        new DssSpell();
-        uint256 endGas = gasleft();
-        uint256 totalGas = startGas - endGas;
-
-        // Warn if deploy exceeds block target size
-        if (totalGas > 15 * MILLION) {
-            emit log("Warn: deploy gas exceeds average block target");
-            emit log_named_uint("    deploy gas", totalGas);
-            emit log_named_uint("  block target", 15 * MILLION);
-        }
-
-        // Fail if deploy is too expensive
-        assertLe(totalGas, 30 * MILLION, "testDeployCost/DssSpell-exceeds-max-block-size");
-    }
-
-
-    // Fail when contract code size exceeds 24576 bytes (a limit introduced in Spurious Dragon).
-    // This contract may not be deployable.
-    // Consider enabling the optimizer (with a low "runs" value!),
-    //   turning off revert strings, or using libraries.
-    function testContractSize() public {
-        uint256 _sizeSpell;
-        address _spellAddr  = address(spell);
-        assembly {
-            _sizeSpell := extcodesize(_spellAddr)
-        }
-        assertLe(_sizeSpell, 24576, "testContractSize/DssSpell-exceeds-max-contract-size");
-
-        uint256 _sizeAction;
-        address _actionAddr = spell.action();
-        assembly {
-            _sizeAction := extcodesize(_actionAddr)
-        }
-        assertLe(_sizeAction, 24576, "testContractSize/DssSpellAction-exceeds-max-contract-size");
-
-    }
-
-    // The specific date doesn't matter that much since function is checking for difference between warps
-    function test_nextCastTime() public {
-        vm.warp(1606161600); // Nov 23, 20 UTC (could be cast Nov 26)
-
-        vote(address(spell));
-        spell.schedule();
-
-        uint256 monday_1400_UTC = 1606744800; // Nov 30, 2020
-        uint256 monday_2100_UTC = 1606770000; // Nov 30, 2020
-
-        // Day tests
-        vm.warp(monday_1400_UTC);                                      // Monday,   14:00 UTC
-        assertEq(spell.nextCastTime(), monday_1400_UTC);               // Monday,   14:00 UTC
-
-        if (spell.officeHours()) {
-            vm.warp(monday_1400_UTC - 1 days);                         // Sunday,   14:00 UTC
-            assertEq(spell.nextCastTime(), monday_1400_UTC);           // Monday,   14:00 UTC
-
-            vm.warp(monday_1400_UTC - 2 days);                         // Saturday, 14:00 UTC
-            assertEq(spell.nextCastTime(), monday_1400_UTC);           // Monday,   14:00 UTC
-
-            vm.warp(monday_1400_UTC - 3 days);                         // Friday,   14:00 UTC
-            assertEq(spell.nextCastTime(), monday_1400_UTC - 3 days);  // Able to cast
-
-            vm.warp(monday_2100_UTC);                                  // Monday,   21:00 UTC
-            assertEq(spell.nextCastTime(), monday_1400_UTC + 1 days);  // Tuesday,  14:00 UTC
-
-            vm.warp(monday_2100_UTC - 1 days);                         // Sunday,   21:00 UTC
-            assertEq(spell.nextCastTime(), monday_1400_UTC);           // Monday,   14:00 UTC
-
-            vm.warp(monday_2100_UTC - 2 days);                         // Saturday, 21:00 UTC
-            assertEq(spell.nextCastTime(), monday_1400_UTC);           // Monday,   14:00 UTC
-
-            vm.warp(monday_2100_UTC - 3 days);                         // Friday,   21:00 UTC
-            assertEq(spell.nextCastTime(), monday_1400_UTC);           // Monday,   14:00 UTC
-
-            // Time tests
-            uint256 castTime;
-
-            for(uint256 i = 0; i < 5; i++) {
-                castTime = monday_1400_UTC + i * 1 days; // Next day at 14:00 UTC
-                vm.warp(castTime - 1 seconds); // 13:59:59 UTC
-                assertEq(spell.nextCastTime(), castTime);
-
-                vm.warp(castTime + 7 hours + 1 seconds); // 21:00:01 UTC
-                if (i < 4) {
-                    assertEq(spell.nextCastTime(), monday_1400_UTC + (i + 1) * 1 days); // Next day at 14:00 UTC
-                } else {
-                    assertEq(spell.nextCastTime(), monday_1400_UTC + 7 days); // Next monday at 14:00 UTC (friday case)
-                }
-            }
-        }
-    }
-
-    function testFail_notScheduled() public view {
-        spell.nextCastTime();
-    }
-
-    function test_use_eta() public {
-        vm.warp(1606161600); // Nov 23, 20 UTC (could be cast Nov 26)
-
-        vote(address(spell));
-        spell.schedule();
-
-        uint256 castTime = spell.nextCastTime();
-        assertEq(castTime, spell.eta());
-    }
-
     function testOSMs() private { // make private to disable
         address READER = address(0);
 
         // Track OSM authorizations here
         assertEq(OsmAbstract(addr.addr("PIP_TOKEN")).bud(READER), 0);
 
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         assertEq(OsmAbstract(addr.addr("PIP_TOKEN")).bud(READER), 1);
     }
 
     function testMedianizers() private { // make private to disable
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Track Median authorizations here
@@ -445,9 +257,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
     }
 
     function testPSMs() public {
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         bytes32 _ilk = "PSM-PAX-A";
@@ -455,14 +266,14 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(addr.addr("MCD_CLIP_PSM_PAX_A"), reg.xlip(_ilk));
         assertEq(addr.addr("PIP_PAX"), reg.pip(_ilk));
         assertEq(addr.addr("MCD_PSM_PAX_A"), chainLog.getAddress("MCD_PSM_PAX_A"));
-        checkPsmIlkIntegration(
+        _checkPsmIlkIntegration(
             _ilk,
             GemJoinAbstract(addr.addr("MCD_JOIN_PSM_PAX_A")),
             ClipAbstract(addr.addr("MCD_CLIP_PSM_PAX_A")),
             addr.addr("PIP_PAX"),
             PsmAbstract(addr.addr("MCD_PSM_PAX_A")),
-            calcPSMRateFromBPS(10),
-            calcPSMRateFromBPS(0)
+            10,
+            0
         );
 
         _ilk = "PSM-GUSD-A";
@@ -470,131 +281,15 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         assertEq(addr.addr("MCD_CLIP_PSM_GUSD_A"), reg.xlip(_ilk));
         assertEq(addr.addr("PIP_GUSD"), reg.pip(_ilk));
         assertEq(addr.addr("MCD_PSM_GUSD_A"), chainLog.getAddress("MCD_PSM_GUSD_A"));
-        checkPsmIlkIntegration(
+        _checkPsmIlkIntegration(
             _ilk,
             GemJoinAbstract(addr.addr("MCD_JOIN_PSM_GUSD_A")),
             ClipAbstract(addr.addr("MCD_CLIP_PSM_GUSD_A")),
             addr.addr("PIP_GUSD"),
             PsmAbstract(addr.addr("MCD_PSM_GUSD_A")),
-            calcPSMRateFromBPS(10),
-            calcPSMRateFromBPS(10)
+            10,
+            10
         );
-    }
-
-    // Use for PSM tin/tout. Calculations are slightly different from elsewhere in MCD
-    function calcPSMRateFromBPS(uint256 _bps) internal pure returns (uint256 _amt) {
-        return _bps * WAD / 10000;
-    }
-
-    function test_auth() public {
-        checkAuth(false);
-    }
-
-    function test_auth_in_sources() public {
-        checkAuth(true);
-    }
-
-    // Verifies that the bytecode of the action of the spell used for testing
-    // matches what we'd expect.
-    //
-    // Not a complete replacement for Etherscan verification, unfortunately.
-    // This is because the DssSpell bytecode is non-deterministic because it
-    // deploys the action in its constructor and incorporates the action
-    // address as an immutable variable--but the action address depends on the
-    // address of the DssSpell which depends on the address+nonce of the
-    // deploying address. If we had a way to simulate a contract creation by
-    // an arbitrary address+nonce, we could verify the bytecode of the DssSpell
-    // instead.
-    //
-    // Vacuous until the deployed_spell value is non-zero.
-    function test_bytecode_matches() public {
-        // The DssSpell bytecode is non-deterministic, compare only code size
-        DssSpell expectedSpell = new DssSpell();
-        assertEq(getExtcodesize(address(spell)), getExtcodesize(address(expectedSpell)), "TestError/spell-codesize");
-
-        // The SpellAction bytecode can be compared after chopping off the metada
-        address expectedAction = expectedSpell.action();
-        address actualAction   = spell.action();
-        uint256 expectedBytecodeSize;
-        uint256 actualBytecodeSize;
-        assembly {
-            expectedBytecodeSize := extcodesize(expectedAction)
-            actualBytecodeSize   := extcodesize(actualAction)
-        }
-
-        uint256 metadataLength = getBytecodeMetadataLength(expectedAction);
-        assertTrue(metadataLength <= expectedBytecodeSize);
-        expectedBytecodeSize -= metadataLength;
-
-        metadataLength = getBytecodeMetadataLength(actualAction);
-        assertTrue(metadataLength <= actualBytecodeSize);
-        actualBytecodeSize -= metadataLength;
-
-        assertEq(actualBytecodeSize, expectedBytecodeSize);
-        uint256 size = actualBytecodeSize;
-        uint256 expectedHash;
-        uint256 actualHash;
-        assembly {
-            let ptr := mload(0x40)
-
-            extcodecopy(expectedAction, ptr, 0, size)
-            expectedHash := keccak256(ptr, size)
-
-            extcodecopy(actualAction, ptr, 0, size)
-            actualHash := keccak256(ptr, size)
-        }
-        assertEq(actualHash, expectedHash);
-    }
-
-    // Validate addresses in test harness match chainlog
-    function test_chainlog_values() public {
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        for(uint256 i = 0; i < chainLog.count(); i++) {
-            (bytes32 _key, address _val) = chainLog.get(i);
-            assertEq(_val, addr.addr(_key), concat("TestError/chainlog-addr-mismatch-", _key));
-        }
-    }
-
-    // Ensure version is updated if chainlog changes
-    function test_chainlog_version_bump() public {
-
-        uint256                   _count = chainLog.count();
-        string    memory        _version = chainLog.version();
-        address[] memory _chainlog_addrs = new address[](_count);
-
-        for(uint256 i = 0; i < _count; i++) {
-            (, address _val) = chainLog.get(i);
-            _chainlog_addrs[i] = _val;
-        }
-
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        if (keccak256(abi.encodePacked(_version)) == keccak256(abi.encodePacked(chainLog.version()))) {
-            // Fail if the version is not updated and the chainlog count has changed
-            if (_count != chainLog.count()) {
-                emit log_named_string("Error", concat("TestError/chainlog-version-not-updated-count-change-", _version));
-                fail();
-                return;
-            }
-            // Fail if the chainlog is the same size but local keys don't match the chainlog.
-            for(uint256 i = 0; i < _count; i++) {
-                (, address _val) = chainLog.get(i);
-                if (_chainlog_addrs[i] != _val) {
-                    emit log_named_string("Error", concat("TestError/chainlog-version-not-updated-address-change-", _version));
-                    fail();
-                    return;
-                }
-            }
-        }
-    }
-
-    function tryVest(address vest, uint256 id) internal returns (bool ok) {
-        (ok,) = vest.call(abi.encodeWithSignature("vest(uint256)", id));
     }
 
     // @dev when testing new vest contracts, use the explicit id when testing to assist in
@@ -608,8 +303,8 @@ contract DssSpellTest is GoerliDssSpellTestBase {
 
         // assertEq(vest.ids(), 9);
 
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // assertEq(vest.ids(), 9 + 1);
@@ -617,7 +312,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // assertEq(vest.cap(), 1 * MILLION * WAD / 30 days);
 
         // assertTrue(vest.valid(10)); // check for valid contract
-        // checkDaiVest({
+        // _checkDaiVest({
         //     _index:      10,                                             // id
         //     _wallet:     wallets.addr("DAIF_WALLET"),                    // usr
         //     _start:      OCT_01_2022,                                    // bgn
@@ -637,7 +332,7 @@ contract DssSpellTest is GoerliDssSpellTestBase {
         // vest.unrestrict(10);
         // prevBalance = dai.balanceOf(wallets.addr("DAIF_WALLET"));
         // vm.warp(OCT_01_2022 + 31 days);
-        // assertTrue(tryVest(address(vest), 10));
+        // vest.vest(10);
         // assertEq(dai.balanceOf(wallets.addr("DAIF_WALLET")), prevBalance + 67_863 * WAD);
     }
 }
