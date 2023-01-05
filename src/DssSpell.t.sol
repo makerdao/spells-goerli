@@ -19,6 +19,7 @@ pragma solidity 0.8.16;
 import "./DssSpell.t.base.sol";
 
 contract DssSpellTest is DssSpellTestBase {
+    // DO NOT TOUCH THE FOLLOWING TESTS, THEY SHOULD BE RUN ON EVERY SPELL
     function testGeneral() public {
         _testGeneral();
     }
@@ -82,6 +83,7 @@ contract DssSpellTest is DssSpellTestBase {
     function testChainlogVersionBump() public {
         _testChainlogVersionBump();
     }
+    // END OF TESTS THAT SHOULD BE RUN ON EVERY SPELL
 
     function testOsmAuth() private {  // make private to disable
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -152,7 +154,7 @@ contract DssSpellTest is DssSpellTestBase {
         // }
     }
 
-    function testCollateralIntegrations() public { // make private to disable
+    function testCollateralIntegrations() private { // make private to disable
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -205,7 +207,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() public { // make private to disable
+    function testNewChainlogValues() private { // make private to disable
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -215,7 +217,7 @@ contract DssSpellTest is DssSpellTestBase {
         _checkChainlogVersion("1.14.7");
     }
 
-    function testNewIlkRegistryValues() public { // make private to disable
+    function testNewIlkRegistryValues() private { // make private to disable
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -256,7 +258,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(MedianAbstract(TOKENUSD_MED).bud(SET_TOKEN), 1);
     }
 
-    function testPSMs() public {
+    function testPSMs() private { // make private to disable
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
