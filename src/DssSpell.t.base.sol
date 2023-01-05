@@ -977,7 +977,7 @@ contract DssSpellTestBase is Config, Test {
         assertEq(vat.dai(address(this)), 0);
         assertEq(vat.gem(ilk, address(this)), ilkAmt); // What was purchased + returned back as it is the owner of the vault
         }
-     }
+    }
 
     function _checkUNILPIntegration(
         bytes32 _ilk,
