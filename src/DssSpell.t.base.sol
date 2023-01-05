@@ -1070,10 +1070,10 @@ contract DssSpellTestBase is Config, Test {
         address pip,
         PsmAbstract psm,
         uint256 tinBps,
-        uint256 toutBpfs
+        uint256 toutBps
     ) internal {
         uint256 tin = tinBps * WAD / 10000;
-        uint256 tout = toutBpfs * WAD / 10000;
+        uint256 tout = toutBps * WAD / 10000;
         GemAbstract token = GemAbstract(join.gem());
 
         assertTrue(pip != address(0));
