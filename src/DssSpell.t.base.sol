@@ -1450,7 +1450,7 @@ contract DssSpellTestBase is Config, Test {
             if (!ok || data.length != 32) return;
             uint256 ward = abi.decode(data, (uint256));
             if (ward > 0) {
-                if (_skipWards(_addr, deployer)) continue; // ONLY ON GOERLI
+                if (_skipWards(_addr, deployer)) continue;
                 emit log("Error: Bad Auth");
                 emit log_named_address("   Deployer Address", deployer);
                 emit log_named_string("  Affected Contract", contractName);
