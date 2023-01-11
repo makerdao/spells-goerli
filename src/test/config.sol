@@ -16,7 +16,7 @@
 
 pragma solidity 0.8.16;
 
-import {DSSTest} from "dss-test/DSSTest.sol";
+import {DSSTest, GodMode} from "dss-test/DSSTest.sol";
 
 contract Config is DSSTest {
 
