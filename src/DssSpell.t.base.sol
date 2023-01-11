@@ -700,40 +700,6 @@ contract DssSpellTestBase is Config {
         assertTrue(false, "TestError/GiveTokens-slot-not-found");
     }
 
-    function _giveAuth(address _base, address target) internal {
-        WardsAbstract base = WardsAbstract(_base);
-
-        // Edge case - ward is already set
-        if (base.wards(target) == 1) return;
-
-        for (int256 i = 0; i < 100; i++) {
-            // Scan the storage for the ward storage slot
-            bytes32 prevValue = vm.load(
-                address(base),
-                keccak256(abi.encode(target, uint256(i)))
-            );
-            vm.store(
-                address(base),
-                keccak256(abi.encode(target, uint256(i))),
-                bytes32(uint256(1))
-            );
-            if (base.wards(target) == 1) {
-                // Found it
-                return;
-            } else {
-                // Keep going after restoring the original value
-                vm.store(
-                    address(base),
-                    keccak256(abi.encode(target, uint256(i))),
-                    prevValue
-                );
-            }
-        }
-
-        // We have failed if we reach here
-        assertTrue(false);
-    }
-
     function _checkIlkIntegration(
         bytes32 _ilk,
         GemJoinAbstract join,
@@ -1132,7 +1098,7 @@ contract DssSpellTestBase is Config {
         assertEq(join.king(), pauseProxy);
 
         // Set the target bar to be super low to max out the debt ceiling
-        _giveAuth(address(join), address(this));
+        GodMode.setWard(address(join), address(this), 1);
         join.file("bar", 1 * RAY / 10000);     // 0.01%
         join.deny(address(this));
         join.exec();
@@ -1145,7 +1111,7 @@ contract DssSpellTestBase is Config {
         assertGe(token.balanceOf(address(join)), ink - 1);         // Allow for small rounding error
 
         // Disable the module
-        _giveAuth(address(join), address(this));
+        GodMode.setWard(address(join), address(this), 1);
         join.file("bar", 0);
         join.deny(address(this));
         join.exec();
@@ -1178,7 +1144,7 @@ contract DssSpellTestBase is Config {
         uint256 expectedFee
     ) internal {
         TeleportOracleAuthLike oracleAuth = TeleportOracleAuthLike(addr.addr("MCD_ORACLE_AUTH_TELEPORT_FW_A"));
-        _giveAuth(address(oracleAuth), address(this));
+        GodMode.setWard(address(oracleAuth), address(this), 1);
         (bytes memory signatures, address[] memory signers) = _getSignatures(oracleAuth.getSignHash(TeleportGUID({
             sourceDomain: sourceDomain,
             targetDomain: targetDomain,
