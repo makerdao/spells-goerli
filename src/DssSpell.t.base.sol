@@ -16,7 +16,6 @@
 
 pragma solidity 0.8.16;
 
-import {DSSTest} from "dss-test/DSSTest.sol";
 import "dss-interfaces/Interfaces.sol";
 
 import "./test/rates.sol";
@@ -116,7 +115,7 @@ interface RwaLiquidationLike {
     function ilks(bytes32) external view returns (string memory, address, uint48, uint48);
 }
 
-contract DssSpellTestBase is Config, DSSTest {
+contract DssSpellTestBase is Config {
     Rates         rates = new Rates();
     Addresses      addr = new Addresses();
     Deployers deployers = new Deployers();
@@ -151,14 +150,6 @@ contract DssSpellTestBase is Config, DSSTest {
     RwaLiquidationLike liquidationOracle = RwaLiquidationLike( addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
     DssSpell spell;
-
-    // uint256 constant HUNDRED    = 10 ** 2;  // provided by collaterals
-    // uint256 constant THOUSAND   = 10 ** 3;  // provided by collaterals
-    // uint256 constant MILLION    = 10 ** 6;  // provided by collaterals
-    // uint256 constant BILLION    = 10 ** 9;  // provided by collaterals
-    uint256 constant WAD        = 10 ** 18;
-    uint256 constant RAY        = 10 ** 27;
-    uint256 constant RAD        = 10 ** 45;
 
     event Debug(uint256 index, uint256 val);
     event Debug(uint256 index, address addr);
