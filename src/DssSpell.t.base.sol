@@ -212,11 +212,11 @@ contract DssSpellTestBase is Config {
     }
 
     function _concat(string memory a, string memory b) internal pure returns (string memory) {
-        return string(abi.encodePacked(a, b));
+        return string.concat(a, b);
     }
 
     function _concat(string memory a, bytes32 b) internal pure returns (string memory) {
-        return string(abi.encodePacked(a, _bytes32ToStr(b)));
+        return string.concat(a, _bytes32ToStr(b));
     }
 
     function _bytes32ToStr(bytes32 _bytes32) internal pure returns (string memory) {
