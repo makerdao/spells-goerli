@@ -16,9 +16,7 @@
 
 pragma solidity 0.8.16;
 
-import {DSSTest, GodMode} from "dss-test/DSSTest.sol";
-
-contract Config is DSSTest {
+contract Config {
 
     struct SpellValues {
         address deployed_spell;
@@ -84,7 +82,10 @@ contract Config is DSSTest {
         bool    offboarding;
     }
 
-    uint256 constant HUNDRED = 10 ** 2;
+    uint256 constant         HUNDRED  = 10 ** 2;
+    uint256 constant private THOUSAND = 10 ** 3;
+    uint256 constant private MILLION  = 10 ** 6;
+    uint256 constant private BILLION  = 10 ** 9;
 
     SpellValues  spellValues;
     SystemValues afterSpell;
