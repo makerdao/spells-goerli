@@ -641,64 +641,9 @@ contract DssSpellTestBase is Config, DSSTest {
     }
 
     function _giveTokens(address token, uint256 amount) internal {
-        // Edge case - balance is already set for some reason
-        if (GemAbstract(token).balanceOf(address(this)) == amount) return;
-
-        // Scan the storage for the balance storage slot
-        for (uint256 i = 0; i < 200; i++) {
-            // Solidity-style storage layout for maps
-            {
-                bytes32 prevValue = vm.load(
-                    address(token),
-                    keccak256(abi.encode(address(this), uint256(i)))
-                );
-
-                vm.store(
-                    address(token),
-                    keccak256(abi.encode(address(this), uint256(i))),
-                    bytes32(amount)
-                );
-                if (GemAbstract(token).balanceOf(address(this)) == amount) {
-                    // Found it
-                    return;
-                } else {
-                    // Keep going after restoring the original value
-                    vm.store(
-                        address(token),
-                        keccak256(abi.encode(address(this), uint256(i))),
-                        prevValue
-                    );
-                }
-            }
-
-            // Vyper-style storage layout for maps
-            {
-                bytes32 prevValue = vm.load(
-                    address(token),
-                    keccak256(abi.encode(uint256(i), address(this)))
-                );
-
-                vm.store(
-                    address(token),
-                    keccak256(abi.encode(uint256(i), address(this))),
-                    bytes32(amount)
-                );
-                if (GemAbstract(token).balanceOf(address(this)) == amount) {
-                    // Found it
-                    return;
-                } else {
-                    // Keep going after restoring the original value
-                    vm.store(
-                        address(token),
-                        keccak256(abi.encode(uint256(i), address(this))),
-                        prevValue
-                    );
-                }
-            }
-        }
-
-        // We have failed if we reach here
-        assertTrue(false, "TestError/GiveTokens-slot-not-found");
+        // This passes through to the GodMode function. Because we have another logic branch
+        // in spells-mainnet, we're keeping this wrapper here for consistency
+        GodMode.setBalance(token, address(this), amount);
     }
 
     function _checkIlkIntegration(
