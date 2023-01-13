@@ -359,7 +359,7 @@ contract DssSpellTestBase is Config, DSSTest {
         uint256 normalizedBump = values.vow_bump * RAD;
         assertEq(vow.bump(), normalizedBump, "TestError/vow-bump");
         assertTrue(
-            (vow.bump() >= RAD && vow.bump() < HUNDRED * THOUSAND * RAD) ||
+            (vow.bump() >= RAD && vow.bump() < 100 * THOUSAND * RAD) ||
             vow.bump() == 0,
             "TestError/vow-bump-range"
         );
