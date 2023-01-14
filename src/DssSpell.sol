@@ -43,7 +43,18 @@ contract DssSpellAction is DssAction {
     uint256 internal constant WAD     = 10 ** 18;
     uint256 internal constant RAY     = 10 ** 27;
 
+    uint256 internal constant PSM_ZERO_BASIS_POINTS = 0;
+
+    address internal immutable MCD_PSM_GUSD_A = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
+
     function actions() public override {
+
+        // PSM tout decrease
+        // Reduce PSM-GUSD-A tout from 0.1% to 0%
+        DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", PSM_ZERO_BASIS_POINTS);
+
+        // Reduce the PSM-GUSD-A line from 500 million DAI to 0 DAI
+        DssExecLib.setIlkAutoLineDebtCeiling("PSM-GUSD-A", 0);
 
     }
 }

@@ -1756,7 +1756,7 @@ contract Config {
 //        });
         afterSpell.collaterals["PSM-GUSD-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      500 * MILLION,
+            aL_line:      0,
             aL_gap:       50 * MILLION,
             aL_ttl:       24 hours,
             line:         0,

@@ -290,7 +290,7 @@ contract DssSpellTest is DssSpellTestBase {
             addr.addr("PIP_GUSD"),
             PsmAbstract(addr.addr("MCD_PSM_GUSD_A")),
             10,
-            10
+            0
         );
     }
 
