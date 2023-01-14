@@ -54,10 +54,8 @@ contract DssSpellAction is DssAction {
     }
 
     uint256 internal constant PSM_ZERO_BASIS_POINTS = 0;
-
+    
     address internal immutable MCD_PSM_GUSD_A = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
-
-    //TODO or not TODO - Disable aL for GUSD PSM
 
     function actions() public override {
         
