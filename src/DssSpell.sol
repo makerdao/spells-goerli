@@ -19,6 +19,12 @@ pragma solidity 0.8.16;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
+interface VatLike {
+    function Line() external view returns (uint256);
+    function file(bytes32, uint256) external;
+    function ilks(bytes32) external returns (uint256 Art, uint256 rate, uint256 spot, uint256 line, uint256 dust);
+}
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -43,6 +49,10 @@ contract DssSpellAction is DssAction {
     uint256 internal constant WAD     = 10 ** 18;
     uint256 internal constant RAY     = 10 ** 27;
 
+    function _sub(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        require((z = x - y) <= x, "sub-underflow");
+    }
+
     uint256 internal constant PSM_ZERO_BASIS_POINTS = 0;
 
     address internal immutable MCD_PSM_GUSD_A = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
@@ -50,18 +60,24 @@ contract DssSpellAction is DssAction {
     //TODO or not TODO - Disable aL for GUSD PSM
 
     function actions() public override {
-
+        
         // PSM_GUSD_A changes
         // Poll Link:   
         // Forum Post:  
 
+        uint256 lineReduction;
+        VatLike vat = VatLike(DssExecLib.vat());
+
+        // Reduce the PSM-GUSD-A line from 500 million DAI to 0 DAI
+        // This requires removal from dss-autoline and a global line reduction
+        (,,,lineReduction,) = vat.ilks("PSM-GUSD-A");
+        DssExecLib.removeIlkFromAutoLine("PSM-GUSD-A");
+        DssExecLib.setIlkDebtCeiling("PSM-GUSD-A", 0);
+        vat.file("Line", _sub(vat.Line(), lineReduction));
+
         // PSM tout decrease
         // Reduce PSM-GUSD-A tout from 0.1% to 0%
         DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", PSM_ZERO_BASIS_POINTS);
-
-        // Reduce the PSM-GUSD-A line from 500 million DAI to 0 DAI
-        DssExecLib.setIlkAutoLineDebtCeiling("PSM-GUSD-A", 0);
-
     }
 }
 
