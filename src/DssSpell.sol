@@ -47,7 +47,13 @@ contract DssSpellAction is DssAction {
 
     address internal immutable MCD_PSM_GUSD_A = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
 
+    //TODO or not TODO - Disable aL for GUSD PSM
+
     function actions() public override {
+
+        // PSM_GUSD_A changes
+        // Poll Link:   
+        // Forum Post:  
 
         // PSM tout decrease
         // Reduce PSM-GUSD-A tout from 0.1% to 0%

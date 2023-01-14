@@ -258,7 +258,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(MedianAbstract(TOKENUSD_MED).bud(SET_TOKEN), 1);
     }
 
-    function testPSMs() private { // make private to disable
+    function testPSMs() public { // make private to disable
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
