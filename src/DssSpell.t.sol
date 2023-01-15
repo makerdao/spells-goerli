@@ -275,9 +275,38 @@ contract DssSpellTest is DssSpellTestBase {
             addr.addr("PIP_GUSD"),
             PsmAbstract(addr.addr("MCD_PSM_GUSD_A")),
             10,
+            0
+        );
+
+        // PE-1172 NOTE: Since we are editing the base test, we also need to confim that the other PSM tests still pass
+        _ilk = "PSM-PAX-A";
+        assertEq(addr.addr("MCD_JOIN_PSM_PAX_A"), reg.join(_ilk));
+        assertEq(addr.addr("MCD_CLIP_PSM_PAX_A"), reg.xlip(_ilk));
+        assertEq(addr.addr("PIP_PAX"), reg.pip(_ilk));
+        assertEq(addr.addr("MCD_PSM_PAX_A"), chainLog.getAddress("MCD_PSM_PAX_A"));
+        _checkPsmIlkIntegration(
+            _ilk,
+            GemJoinAbstract(addr.addr("MCD_JOIN_PSM_PAX_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_PSM_PAX_A")),
+            addr.addr("PIP_PAX"),
+            PsmAbstract(addr.addr("MCD_PSM_PAX_A")),
+            10,
+            0
+        );
+
+        _ilk = "PSM-USDC-A";
+        assertEq(addr.addr("MCD_JOIN_PSM_USDC_A"), reg.join(_ilk));
+        assertEq(addr.addr("MCD_CLIP_PSM_USDC_A"), reg.xlip(_ilk));
+        assertEq(addr.addr("PIP_USDC"), reg.pip(_ilk));
+        assertEq(addr.addr("MCD_PSM_USDC_A"), chainLog.getAddress("MCD_PSM_USDC_A"));
+        _checkPsmIlkIntegration(
+            _ilk,
+            GemJoinAbstract(addr.addr("MCD_JOIN_PSM_USDC_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_PSM_USDC_A")),
+            addr.addr("PIP_USDC"),
+            PsmAbstract(addr.addr("MCD_PSM_USDC_A")),
             0,
-            true,
-            true
+            0
         );
         
     }

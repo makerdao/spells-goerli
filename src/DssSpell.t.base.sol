@@ -1070,9 +1070,7 @@ contract DssSpellTestBase is Config, Test {
         address pip,
         PsmAbstract psm,
         uint256 tinBps,
-        uint256 toutBps,
-        bool testBuy,
-        bool testSell
+        uint256 toutBps
     ) internal {
         uint256 tin = tinBps * WAD / 10000;
         uint256 tout = toutBps * WAD / 10000;
@@ -1100,16 +1098,16 @@ contract DssSpellTestBase is Config, Test {
         token.approve(address(join), amount);
         dai.approve(address(psm), type(uint256).max);
 
-        // Convert all TOKEN to DAI if testSell is true
-        if(testSell){
+        // Convert all TOKEN to DAI
+        if(true){
             psm.sellGem(address(this), amount);
             amount -= amount * tin / WAD;
             assertEq(token.balanceOf(address(this)), 0, _concat("PSM.sellGem-token-balance-", _ilk));
             assertEq(dai.balanceOf(address(this)), amount * (10 ** (18 - uint256(token.decimals()))), _concat("PSM.sellGem-dai-balance-", _ilk));
         }
 
-        // Convert all DAI to TOKEN if testBuy is true
-        if(testBuy){
+        // Convert all DAI to TOKEN
+        if(true){
             amount -= _divup(amount * tout, WAD);
             psm.buyGem(address(this), amount);
             // There may be some Dai dust left over depending on tout and decimals
