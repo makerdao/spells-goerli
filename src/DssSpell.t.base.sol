@@ -1103,7 +1103,7 @@ contract DssSpellTestBase is Config, Test {
         token.approve(address(join), amount);
         dai.approve(address(psm), type(uint256).max);
 
-        // Convert all TOKEN to DAI (Always do this)
+        // Convert all TOKEN to DAI
         psm.sellGem(address(this), amount);
         amount -= amount * tinBps / 10000;
         assertEq(token.balanceOf(address(this)), 0, _concat("PSM.sellGem-token-balance-", _ilk));

@@ -278,7 +278,6 @@ contract DssSpellTest is DssSpellTestBase {
             0
         );
 
-        // PE-1172 NOTE: Since we are editing the base test, we also need to confim that the other PSM tests still pass
         _ilk = "PSM-PAX-A";
         assertEq(addr.addr("MCD_JOIN_PSM_PAX_A"), reg.join(_ilk));
         assertEq(addr.addr("MCD_CLIP_PSM_PAX_A"), reg.xlip(_ilk));
