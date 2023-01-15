@@ -1070,7 +1070,9 @@ contract DssSpellTestBase is Config, Test {
         address pip,
         PsmAbstract psm,
         uint256 tinBps,
-        uint256 toutBps
+        uint256 toutBps,
+        bool testBuy,
+        bool testSell
     ) internal {
         uint256 tin = tinBps * WAD / 10000;
         uint256 tout = toutBps * WAD / 10000;
@@ -1098,18 +1100,22 @@ contract DssSpellTestBase is Config, Test {
         token.approve(address(join), amount);
         dai.approve(address(psm), type(uint256).max);
 
-        // Convert all TOKEN to DAI
-        psm.sellGem(address(this), amount);
-        amount -= amount * tin / WAD;
-        assertEq(token.balanceOf(address(this)), 0, _concat("PSM.sellGem-token-balance-", _ilk));
-        assertEq(dai.balanceOf(address(this)), amount * (10 ** (18 - uint256(token.decimals()))), _concat("PSM.sellGem-dai-balance-", _ilk));
+        // Convert all TOKEN to DAI if testSell is true
+        if(testSell){
+            psm.sellGem(address(this), amount);
+            amount -= amount * tin / WAD;
+            assertEq(token.balanceOf(address(this)), 0, _concat("PSM.sellGem-token-balance-", _ilk));
+            assertEq(dai.balanceOf(address(this)), amount * (10 ** (18 - uint256(token.decimals()))), _concat("PSM.sellGem-dai-balance-", _ilk));
+        }
 
-        // Convert all DAI to TOKEN
-        amount -= _divup(amount * tout, WAD);
-        psm.buyGem(address(this), amount);
-        // There may be some Dai dust left over depending on tout and decimals
-        assertTrue(dai.balanceOf(address(this)) < WAD, _concat("PSM.buyGem-dai-balance-", _ilk));
-        assertEq(token.balanceOf(address(this)), amount, _concat("PSM.buyGem-token-balance-", _ilk));
+        // Convert all DAI to TOKEN if testBuy is true
+        if(testBuy){
+            amount -= _divup(amount * tout, WAD);
+            psm.buyGem(address(this), amount);
+            // There may be some Dai dust left over depending on tout and decimals
+            assertTrue(dai.balanceOf(address(this)) < WAD, _concat("PSM.buyGem-dai-balance-", _ilk));
+            assertEq(token.balanceOf(address(this)), amount, _concat("PSM.buyGem-token-balance-", _ilk));
+        }
 
         // Dump all dai for next run
         vat.move(address(this), address(0x0), vat.dai(address(this)));

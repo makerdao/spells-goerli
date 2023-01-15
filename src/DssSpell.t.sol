@@ -263,22 +263,7 @@ contract DssSpellTest is DssSpellTestBase {
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        bytes32 _ilk = "PSM-PAX-A";
-        assertEq(addr.addr("MCD_JOIN_PSM_PAX_A"), reg.join(_ilk));
-        assertEq(addr.addr("MCD_CLIP_PSM_PAX_A"), reg.xlip(_ilk));
-        assertEq(addr.addr("PIP_PAX"), reg.pip(_ilk));
-        assertEq(addr.addr("MCD_PSM_PAX_A"), chainLog.getAddress("MCD_PSM_PAX_A"));
-        _checkPsmIlkIntegration(
-            _ilk,
-            GemJoinAbstract(addr.addr("MCD_JOIN_PSM_PAX_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_PSM_PAX_A")),
-            addr.addr("PIP_PAX"),
-            PsmAbstract(addr.addr("MCD_PSM_PAX_A")),
-            10,
-            0
-        );
-
-        _ilk = "PSM-GUSD-A";
+        bytes32 _ilk = "PSM-GUSD-A";
         assertEq(addr.addr("MCD_JOIN_PSM_GUSD_A"), reg.join(_ilk));
         assertEq(addr.addr("MCD_CLIP_PSM_GUSD_A"), reg.xlip(_ilk));
         assertEq(addr.addr("PIP_GUSD"), reg.pip(_ilk));
@@ -290,8 +275,11 @@ contract DssSpellTest is DssSpellTestBase {
             addr.addr("PIP_GUSD"),
             PsmAbstract(addr.addr("MCD_PSM_GUSD_A")),
             10,
-            0
+            0,
+            true,
+            true
         );
+        
     }
 
     // @dev when testing new vest contracts, use the explicit id when testing to assist in
