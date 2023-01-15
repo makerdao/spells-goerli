@@ -1074,6 +1074,9 @@ contract DssSpellTestBase is Config, Test {
     ) internal {
 
         GemAbstract token = GemAbstract(join.gem());
+
+        // Get the line of the ilk
+        (,,, uint256 line,) = vat.ilks(_ilk);
         
         assertTrue(pip != address(0));
 
@@ -1091,6 +1094,9 @@ contract DssSpellTestBase is Config, Test {
         assertEq(psm.tout(), toutBps * WAD / 10000, _concat("Incorrect-tout-", _ilk));
 
         uint256 amount = 1000 * (10 ** uint256(token.decimals()));
+        if(amount > line){
+            amount = line;
+        }
         _giveTokens(address(token), amount);
 
         // Approvals
@@ -1103,8 +1109,6 @@ contract DssSpellTestBase is Config, Test {
         assertEq(token.balanceOf(address(this)), 0, _concat("PSM.sellGem-token-balance-", _ilk));
         assertEq(dai.balanceOf(address(this)), amount * (10 ** (18 - uint256(token.decimals()))), _concat("PSM.sellGem-dai-balance-", _ilk));
         
-        // Get the line of the ilk
-        (,,, uint256 line,) = vat.ilks(_ilk);
         // Convert all DAI to TOKEN (Do not do this if the ilk's DC is 0)
         if(line>0){
             amount -= _divup(amount * toutBps / 10000, 1); // Keep the rounding up division
