@@ -54,7 +54,7 @@ contract DssSpellAction is DssAction {
     }
 
     uint256 internal constant PSM_ZERO_BASIS_POINTS = 0;
-    
+
     address internal immutable MCD_PSM_GUSD_A = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
 
     function actions() public override {
@@ -72,6 +72,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.removeIlkFromAutoLine("PSM-GUSD-A");
         DssExecLib.setIlkDebtCeiling("PSM-GUSD-A", 0);
         vat.file("Line", _sub(vat.Line(), lineReduction));
+
 
         // PSM tout decrease
         // Reduce PSM-GUSD-A tout from 0.1% to 0%
