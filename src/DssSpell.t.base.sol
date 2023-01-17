@@ -1107,7 +1107,6 @@ contract DssSpellTestBase is Config, Test {
         amount -= amount * tin / WAD;
         assertEq(token.balanceOf(address(this)), 0, _concat("PSM.sellGem-token-balance-", _ilk));
         assertEq(dai.balanceOf(address(this)), amount * (10 ** (18 - uint256(token.decimals()))), _concat("PSM.sellGem-dai-balance-", _ilk));
-        
         // Convert all DAI to TOKEN (Do not do this if the ilk's DC is 0)
         if (amount > 0) {
             amount -= _divup(amount * tout, WAD);
