@@ -1076,9 +1076,6 @@ contract DssSpellTestBase is Config, Test {
         uint256 tin = tinBps * WAD / 10000;
         uint256 tout = toutBps * WAD / 10000;
         GemAbstract token = GemAbstract(join.gem());
-
-        // Get the line of the ilk
-        (,,, uint256 line,) = vat.ilks(_ilk);
         
         assertTrue(pip != address(0));
 
