@@ -328,7 +328,7 @@ contract DssSpellTest is DssSpellTestBase {
         // });
 
         // // Give admin powers to Test contract address and make the vesting unrestricted for testing
-        // giveAuth(address(vest), address(this));
+        // GodMode.setWard(address(vest), address(this), 1);
         // uint256 prevBalance;
 
         // vest.unrestrict(10);
