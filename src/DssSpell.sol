@@ -52,6 +52,7 @@ contract DssSpellAction is DssAction {
     address internal immutable MCD_PSM_GUSD_A = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
 
     function actions() public override {
+<<<<<<< HEAD
         // PSM_GUSD_A changes
         // Forum: https://forum.makerdao.com/t/request-to-poll-psm-gusd-a-parameters/19416
 
@@ -69,6 +70,11 @@ contract DssSpellAction is DssAction {
 
         // PSM tout decrease
         // Poll: https://vote.makerdao.com/polling/QmRRceEo#poll-detail
+=======
+        // PSM_GUSD_A tout decrease
+        // Poll: https://vote.makerdao.com/polling/QmRRceEo#poll-detail
+        // Forum: https://forum.makerdao.com/t/request-to-poll-psm-gusd-a-parameters/19416
+>>>>>>> 9bb49d3 (Update src/DssSpell.sol)
         // Reduce PSM-GUSD-A tout from 0.1% to 0%
         DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 0);
     }
