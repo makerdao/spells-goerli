@@ -66,7 +66,6 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkDebtCeiling("PSM-GUSD-A", 0);
         vat.file("Line", vat.Line() - lineReduction);
 
-
         // PSM tout decrease
         // Reduce PSM-GUSD-A tout from 0.1% to 0%
         DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 0);
