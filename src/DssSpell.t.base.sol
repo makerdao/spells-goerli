@@ -17,7 +17,7 @@
 pragma solidity 0.8.16;
 
 import "dss-interfaces/Interfaces.sol";
-import {DSSTest, GodMode} from "dss-test/DSSTest.sol";
+import {DssTest, GodMode} from "dss-test/DssTest.sol";
 
 import "./test/rates.sol";
 import "./test/addresses_goerli.sol";
@@ -116,7 +116,7 @@ interface RwaLiquidationLike {
     function ilks(bytes32) external view returns (string memory, address, uint48, uint48);
 }
 
-contract DssSpellTestBase is Config, DSSTest {
+contract DssSpellTestBase is Config, DssTest {
     Rates         rates = new Rates();
     Addresses      addr = new Addresses();
     Deployers deployers = new Deployers();
