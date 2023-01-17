@@ -52,7 +52,6 @@ contract DssSpellAction is DssAction {
     address internal immutable MCD_PSM_GUSD_A = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
 
     function actions() public override {
-        
         // PSM_GUSD_A changes
         // Poll: https://vote.makerdao.com/polling/QmZs1EMK#poll-detail
         // Forum: 
