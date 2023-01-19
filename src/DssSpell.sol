@@ -52,29 +52,9 @@ contract DssSpellAction is DssAction {
     address internal immutable MCD_PSM_GUSD_A = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
 
     function actions() public override {
-<<<<<<< HEAD
-        // PSM_GUSD_A changes
-        // Forum: https://forum.makerdao.com/t/request-to-poll-psm-gusd-a-parameters/19416
-
-        // Set Debt Ceiling to 0
-        // Poll: https://vote.makerdao.com/polling/QmZs1EMK#poll-detail
-        uint256 lineReduction;
-        VatLike vat = VatLike(DssExecLib.vat());
-
-        // Reduce the PSM-GUSD-A line from 500 million DAI to 0 DAI
-        // This requires removal from dss-autoline and a global line reduction
-        (,,,lineReduction,) = vat.ilks("PSM-GUSD-A");
-        DssExecLib.removeIlkFromAutoLine("PSM-GUSD-A");
-        DssExecLib.setIlkDebtCeiling("PSM-GUSD-A", 0);
-        vat.file("Line", vat.Line() - lineReduction);
-
-        // PSM tout decrease
-        // Poll: https://vote.makerdao.com/polling/QmRRceEo#poll-detail
-=======
         // PSM_GUSD_A tout decrease
         // Poll: https://vote.makerdao.com/polling/QmRRceEo#poll-detail
         // Forum: https://forum.makerdao.com/t/request-to-poll-psm-gusd-a-parameters/19416
->>>>>>> 9bb49d3 (Update src/DssSpell.sol)
         // Reduce PSM-GUSD-A tout from 0.1% to 0%
         DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 0);
     }
