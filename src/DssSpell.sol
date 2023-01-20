@@ -119,7 +119,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 0);
 
 
-        DssExecLib.setChainlogVersion("1.14.8");
+        DssExecLib.setChangelogVersion("1.14.8");
     }
 }
 
