@@ -274,8 +274,8 @@ contract DssSpellTest is DssSpellTestBase {
             ClipAbstract(addr.addr("MCD_CLIP_PSM_GUSD_A")),
             addr.addr("PIP_GUSD"),
             PsmAbstract(addr.addr("MCD_PSM_GUSD_A")),
-            10,
-            0
+            10,  // tin
+            0    // tout
         );
 
         _ilk = "PSM-PAX-A";
@@ -289,8 +289,8 @@ contract DssSpellTest is DssSpellTestBase {
             ClipAbstract(addr.addr("MCD_CLIP_PSM_PAX_A")),
             addr.addr("PIP_PAX"),
             PsmAbstract(addr.addr("MCD_PSM_PAX_A")),
-            20,
-            0
+            20,  // tin
+            0    // tout
         );
 
         _ilk = "PSM-USDC-A";
@@ -304,8 +304,8 @@ contract DssSpellTest is DssSpellTestBase {
             ClipAbstract(addr.addr("MCD_CLIP_PSM_USDC_A")),
             addr.addr("PIP_USDC"),
             PsmAbstract(addr.addr("MCD_PSM_USDC_A")),
-            0,
-            0
+            0,   // tin
+            0    // tout
         );
 
     }
