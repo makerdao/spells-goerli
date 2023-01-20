@@ -289,7 +289,7 @@ contract DssSpellTest is DssSpellTestBase {
             ClipAbstract(addr.addr("MCD_CLIP_PSM_PAX_A")),
             addr.addr("PIP_PAX"),
             PsmAbstract(addr.addr("MCD_PSM_PAX_A")),
-            10,
+            20,
             0
         );
 
@@ -307,7 +307,7 @@ contract DssSpellTest is DssSpellTestBase {
             0,
             0
         );
-        
+
     }
 
     // @dev when testing new vest contracts, use the explicit id when testing to assist in
