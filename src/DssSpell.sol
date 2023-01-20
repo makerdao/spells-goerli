@@ -48,6 +48,7 @@ contract DssSpellAction is DssAction {
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
     // uint256 internal constant X_PCT_RATE      = ;
+    uint256 internal constant PT_TWO_FIVE_PCT_RATE = 1000000000079175551708715274;
 
     uint256 internal constant MILLION = 10 ** 6;
     // uint256 internal constant RAY     = 10 ** 27;
@@ -59,6 +60,7 @@ contract DssSpellAction is DssAction {
     address internal immutable MCD_FLASH        = DssExecLib.getChangelogAddress("MCD_FLASH");
     address internal immutable MCD_FLASH_LEGACY = DssExecLib.getChangelogAddress("MCD_FLASH_LEGACY");
 
+    address internal immutable MCD_PSM_PAX_A    = DssExecLib.getChangelogAddress("MCD_PSM_PAX_A");
     address internal immutable MCD_PSM_GUSD_A   = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
 
     function actions() public override {
@@ -68,9 +70,12 @@ contract DssSpellAction is DssAction {
 
 
         // Increase WSTETH-B Stability Fee to 0.25%
+        DssExecLib.setIlkStabilityFee("WSTETH-B", PT_TWO_FIVE_PCT_RATE, true);
         // Increase Compound v2 D3M Maximum Debt Ceiling to 20 million
         // Set Compound v2 D3M Target Available Debt to 5 million DAI (this might already be the case)
+        DssExecLib.setIlkAutoLineParameters("DIRECT-COMPV2-DAI", 20 * MILLION, 5 * MILLION, 12 hours);
         // Increase the USDP PSM tin to 0.2%
+        DssExecLib.setValue(MCD_PSM_PAX_A, "tin", 2 * WAD / 1000);
 
 
         // MKR Transfer for CES
