@@ -54,7 +54,7 @@ contract DssSpellAction is DssAction {
     // uint256 internal constant RAY     = 10 ** 27;
     uint256 internal constant WAD     = 10 ** 18;
 
-    ChainLogLike internal immutable CHAINLOG    = ChainLogLike(DssExecLib.LOG);
+    ChainLogLike internal immutable CHAINLOG    = ChainLogLike(DssExecLib.getChangelogAddress("CHANGELOG"));
 
     address internal immutable FLASH_KILLER     = DssExecLib.getChangelogAddress("FLASH_KILLER");
     address internal immutable MCD_FLASH        = DssExecLib.getChangelogAddress("MCD_FLASH");
@@ -68,12 +68,14 @@ contract DssSpellAction is DssAction {
         // MOMC Parameter Changes
         // https://vote.makerdao.com/polling/QmYUi9Tk
 
-
         // Increase WSTETH-B Stability Fee to 0.25%
         DssExecLib.setIlkStabilityFee("WSTETH-B", PT_TWO_FIVE_PCT_RATE, true);
+
         // Increase Compound v2 D3M Maximum Debt Ceiling to 20 million
         // Set Compound v2 D3M Target Available Debt to 5 million DAI (this might already be the case)
-        DssExecLib.setIlkAutoLineParameters("DIRECT-COMPV2-DAI", 20 * MILLION, 5 * MILLION, 12 hours);
+        // TODO: Not on Goerli
+        // DssExecLib.setIlkAutoLineParameters("DIRECT-COMPV2-DAI", 20 * MILLION, 5 * MILLION, 12 hours);
+
         // Increase the USDP PSM tin to 0.2%
         DssExecLib.setValue(MCD_PSM_PAX_A, "tin", 2 * WAD / 1000);
 
