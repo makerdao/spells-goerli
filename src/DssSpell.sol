@@ -78,6 +78,7 @@ contract DssSpellAction is DssAction {
 
         // CES-001 - 96.15 MKR - 0x25307aB59Cd5d8b4E2C01218262Ddf6a89Ff86da
         // TODO: Not on Goerli
+        // mkr.transfer(CES_WALLET, 96.15 * WAD);
 
 
         // Cage DIRECT-AAVEV2-DAI
@@ -116,6 +117,9 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/request-to-poll-psm-gusd-a-parameters/19416
         // Reduce PSM-GUSD-A tout from 0.1% to 0%
         DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 0);
+
+
+        DssExecLib.setChainlogVersion("1.14.8");
     }
 }
 
