@@ -25,6 +25,10 @@ interface VatLike {
     function ilks(bytes32) external returns (uint256 Art, uint256 rate, uint256 spot, uint256 line, uint256 dust);
 }
 
+interface ChainLogLike {
+    function removeAddress(bytes32) external;
+}
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -45,13 +49,68 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
-    // uint256 internal constant MILLION = 10 ** 6;
+    uint256 internal constant MILLION = 10 ** 6;
     // uint256 internal constant RAY     = 10 ** 27;
-    // uint256 internal constant WAD     = 10 ** 18;
+    uint256 internal constant WAD     = 10 ** 18;
 
-    address internal immutable MCD_PSM_GUSD_A = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
+    ChainLogLike internal immutable CHAINLOG    = ChainLogLike(DssExecLib.LOG);
+
+    address internal immutable FLASH_KILLER     = DssExecLib.getChangelogAddress("FLASH_KILLER");
+    address internal immutable MCD_FLASH        = DssExecLib.getChangelogAddress("MCD_FLASH");
+    address internal immutable MCD_FLASH_LEGACY = DssExecLib.getChangelogAddress("MCD_FLASH_LEGACY");
+
+    address internal immutable MCD_PSM_GUSD_A   = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
 
     function actions() public override {
+
+        // MOMC Parameter Changes
+        // https://vote.makerdao.com/polling/QmYUi9Tk
+
+
+        // Increase WSTETH-B Stability Fee to 0.25%
+        // Increase Compound v2 D3M Maximum Debt Ceiling to 20 million
+        // Set Compound v2 D3M Target Available Debt to 5 million DAI (this might already be the case)
+        // Increase the USDP PSM tin to 0.2%
+
+
+        // MKR Transfer for CES
+        // https://vote.makerdao.com/polling/QmbNVQ1E#poll-detail
+
+        // CES-001 - 96.15 MKR - 0x25307aB59Cd5d8b4E2C01218262Ddf6a89Ff86da
+        // TODO: Not on Goerli
+
+
+        // Cage DIRECT-AAVEV2-DAI
+        // https://forum.makerdao.com/t/housekeeping-tasks-for-next-executive/19472
+
+        // Cage DIRECT-AAVEV2-DAI to prepare for new deployment
+        // TODO: Not on Goerli
+        //
+        // CageLike(MCD_JOIN_DIRECT_AAVEV2_DAI).cage();
+        // DssExecLib.setValue(MCD_CLIP_DIRECT_AAVEV2_DAI, "stopped", 3);
+        // DssExecLib.deauthorize(MCD_JOIN_DIRECT_AAVEV2_DAI, address(this));
+        // DssExecLib.deauthorize(MCD_CLIP_DIRECT_AAVEV2_DAI, address(this));
+        // CHAINLOG.removeAddress("MCD_JOIN_DIRECT_AAVEV2_DAI");
+        // CHAINLOG.removeAddress("MCD_CLIP_DIRECT_AAVEV2_DAI");
+        // CHAINLOG.removeAddress("MCD_CLIP_CALC_DIRECT_AAVEV2_DAI");
+
+
+        // Flash Mint Module Upgrade Completion
+        // https://forum.makerdao.com/t/flashmint-module-housekeeping-task-for-next-executive/19472
+
+        // Sunset MCD_FLASH_LEGACY and reduce DC to 0
+        DssExecLib.setValue(MCD_FLASH_LEGACY, "max", 0);
+        DssExecLib.deauthorize(MCD_FLASH_LEGACY, address(this));
+        CHAINLOG.removeAddress("MCD_FLASH_LEGACY");
+
+        // Increase DC of MCD_FLASH to 500 million DAI
+        DssExecLib.setValue(MCD_FLASH, "max", 500 * MILLION * WAD);
+
+        // Deauth FLASH_KILLER and remove from Chainlog
+        // NOTE: Flash Killer's only ward is MCD_FLASH_LEGACY, Pause Proxy cannot deauth
+        CHAINLOG.removeAddress("FLASH_KILLER");
+
+
         // PSM_GUSD_A tout decrease
         // Poll: https://vote.makerdao.com/polling/QmRRceEo#poll-detail
         // Forum: https://forum.makerdao.com/t/request-to-poll-psm-gusd-a-parameters/19416
