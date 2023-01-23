@@ -41,5 +41,5 @@ do
     [[ $(cast call "$target" 'wards(address)(uint256)' "$contract" 2>/dev/null) == "1" ]] && echo "$1 -> $contractName"
     [[ $(cast call "$contract" 'wards(address)(uint256)' "$target" 2>/dev/null) == "1" ]] && echo "$contractName -> $1"
     src=$(cast call "$contract" 'src()(address)' 2>/dev/null) || continue
-    [[ $(cast call "$src" 'wards(address)(uint256)' "$target" 2>/dev/null) == "1" ]] && $(echo "$src (source of $contractName) -> $1")
+    [[ $(cast call "$src" 'wards(address)(uint256)' "$target" 2>/dev/null) == "1" ]] && echo "$src (source of $contractName) -> $1"
 done
