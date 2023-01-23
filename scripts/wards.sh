@@ -32,7 +32,7 @@ fi
 
 echo -e "Network: $(cast chain)"
 list=$(cast call "$CHANGELOG" 'list()(bytes32[])')   # Get the list from the chainlog
-list=$(echo $list | sed 's/[][]//g')                 # Strip array brackets
+list=$(echo "$list" | sed 's/[][]//g')                 # Strip array brackets
 IFS=","
 for key in $list
 do
