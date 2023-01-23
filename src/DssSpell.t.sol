@@ -359,6 +359,9 @@ contract DssSpellTest is DssSpellTestBase {
         FlashAbstract flashLegacy = FlashAbstract(addr.addr("MCD_FLASH_LEGACY"));
         FlashAbstract flashCurrent = FlashAbstract(addr.addr("MCD_FLASH"));
 
+        assertEq(vat.wards(address(flashLegacy)), 1);
+        assertEq(vat.wards(address(flashLegacy)), 1);
+
         assertEq(flashLegacy.max(), 250 * MILLION * WAD);
         assertEq(flashCurrent.max(), 250 * MILLION * WAD);
         assertEq(flashLegacy.wards(pauseProxy), 1);
@@ -366,6 +369,9 @@ contract DssSpellTest is DssSpellTestBase {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
+
+        assertEq(vat.wards(address(flashLegacy)), 0);
+        assertEq(vat.wards(address(flashLegacy)), 1);
 
         assertEq(flashLegacy.max(), 0);
         assertEq(flashCurrent.max(), 500 * MILLION * WAD);
