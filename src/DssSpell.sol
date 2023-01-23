@@ -103,6 +103,7 @@ contract DssSpellAction is DssAction {
         // Sunset MCD_FLASH_LEGACY and reduce DC to 0
         DssExecLib.setValue(MCD_FLASH_LEGACY, "max", 0);
         DssExecLib.deauthorize(MCD_FLASH_LEGACY, address(this));
+        DssExecLib.deauthorize(DssExecLib.vat(), MCD_FLASH_LEGACY);
         CHAINLOG.removeAddress("MCD_FLASH_LEGACY");
 
         // Increase DC of MCD_FLASH to 500 million DAI
