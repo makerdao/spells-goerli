@@ -45,7 +45,7 @@ contract DssSpellAction is DssAction {
     uint256 internal constant PT_TWO_FIVE_PCT_RATE = 1000000000079175551708715274;
 
     uint256 internal constant MILLION = 10 ** 6;
-    // uint256 internal constant RAY     = 10 ** 27;
+    // uint256 internal constant RAY   = 10 ** 27;
     uint256 internal constant WAD     = 10 ** 18;
 
     ChainLogLike internal immutable CHAINLOG    = ChainLogLike(DssExecLib.getChangelogAddress("CHANGELOG"));
