@@ -429,7 +429,7 @@ contract DssSpellTestBase is Config, DssTest {
         assertEq(flap.lid(), normalizedLid, "TestError/flap-lid");
         assertTrue(flap.lid() > 0 && flap.lid() <= MILLION * RAD, "TestError/flap-lid-range");
 
-        assertTrue(vat.wards(pauseProxy), 1, "TestError/pause-proxy-deauthed-on-vat");
+        assertEq(vat.wards(pauseProxy), uint256(1), "TestError/pause-proxy-deauthed-on-vat");
     }
 
     function _checkCollateralValues(SystemValues storage values) internal {

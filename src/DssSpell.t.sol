@@ -353,4 +353,28 @@ contract DssSpellTest is DssSpellTestBase {
         // vest.vest(10);
         // assertEq(dai.balanceOf(wallets.addr("DAIF_WALLET")), prevBalance + 67_863 * WAD);
     }
+
+    function testFlash() public {
+
+        FlashAbstract flashLegacy = FlashAbstract(addr.addr("MCD_FLASH_LEGACY"));
+        FlashAbstract flashCurrent = FlashAbstract(addr.addr("MCD_FLASH"));
+
+        assertEq(flashLegacy.max(), 250 * MILLION * WAD);
+        assertEq(flashCurrent.max(), 250 * MILLION * WAD);
+        assertEq(flashLegacy.wards(pauseProxy), 1);
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(flashLegacy.max(), 0);
+        assertEq(flashCurrent.max(), 500 * MILLION * WAD);
+        assertEq(flashLegacy.wards(pauseProxy), 0);
+
+        vm.expectRevert(abi.encodePacked("dss-chain-log/invalid-key"));
+        chainLog.getAddress("MCD_FLASH_LEGACY");
+
+        vm.expectRevert(abi.encodePacked("dss-chain-log/invalid-key"));
+        chainLog.getAddress("FLASH_KILLER");
+    }
 }
