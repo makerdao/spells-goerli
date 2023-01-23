@@ -18,6 +18,9 @@ pragma solidity 0.8.16;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
+import { MCD, DssInstance } from "dss-test/MCD.sol";
+
+import { D3MInit, D3MCoreInstance } from "./dependencies/dss-direct-deposit/D3MInit.sol";
 
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
@@ -43,8 +46,20 @@ contract DssSpellAction is DssAction {
     uint256 internal constant WAD     = 10 ** 18;
     uint256 internal constant RAY     = 10 ** 27;
 
-    function actions() public override {
+    address internal constant D3M_HUB = 0xe5526ab936aDEbeB7162127F38E4aa304F3835a6;
+    address internal constant D3M_MOM = 0xBEaFC8D3E586DBfFD7bc79B59fd4a4C5e71D1Cee;
 
+    function actions() public override {
+        DssInstance memory dss = MCD.loadFromChainlog(DssExecLib.getChangelogAddress("CHANGELOG"));
+
+        // dss-direct-deposit @ f2b240d469e6af64118062fa59dfab91833d5449
+        D3MInit.initCore(
+            dss,
+            D3MCoreInstance({
+                hub: D3M_HUB,
+                mom: D3M_MOM
+            })
+        );
     }
 }
 
