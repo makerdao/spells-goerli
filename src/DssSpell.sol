@@ -63,7 +63,7 @@ contract DssSpellAction is DssAction {
         // https://vote.makerdao.com/polling/QmYUi9Tk
 
         // Increase WSTETH-B Stability Fee to 0.25%
-        DssExecLib.setIlkStabilityFee("WSTETH-B", PT_TWO_FIVE_PCT_RATE, true);
+        DssExecLib.setIlkStabilityFee("WSTETH-B", ZERO_PT_TWO_FIVE_PCT_RATE, true);
 
         // Increase Compound v2 D3M Maximum Debt Ceiling to 20 million
         // Set Compound v2 D3M Target Available Debt to 5 million DAI (this might already be the case)
