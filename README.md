@@ -44,11 +44,11 @@ $ make test-forge
 
 ### Deploy
 
-Set `ETH_RPC_URL` to a Goerli node and ensure `ETH_GAS` is set to a high enough number to deploy the contract.
+Set `ETH_RPC_URL` to a Goerli node and ensure `ETH_GAS_LIMIT` is set to a high enough number to deploy the contract.
 
 ```bash
 $ export ETH_RPC_URL=<Goerli URL>
-$ export ETH_GAS=8000000
+$ export ETH_GAS_LIMIT=8000000
 $ export ETH_GAS_PRICE=$(seth --to-wei 3 "gwei")
 $ make deploy
 ```
