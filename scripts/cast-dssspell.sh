@@ -24,6 +24,7 @@ castSend() {
     ETH_GAS=$((ETH_GAS * 2))
     ETH_NONCE="$ETH_NONCE" ETH_GAS="$ETH_GAS" cast send "$@"
     ETH_NONCE=$((ETH_NONCE + 1))
+    echo "Sending with $ETH_GAS gas."
     echo ""
 }
 
