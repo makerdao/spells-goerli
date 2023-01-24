@@ -71,7 +71,7 @@ contract DssSpellAction is DssAction {
         // DssExecLib.setIlkAutoLineParameters("DIRECT-COMPV2-DAI", 20 * MILLION, 5 * MILLION, 12 hours);
 
         // Increase the USDP PSM tin to 0.2%
-        DssExecLib.setValue(MCD_PSM_PAX_A, "tin", 2 * WAD / 1000);
+        DssExecLib.setValue(MCD_PSM_PAX_A, "tin", 20 * WAD / 10000);   // 20 BPS
 
 
         // MKR Transfer for CES
