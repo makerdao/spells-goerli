@@ -20,9 +20,10 @@ ETH_NONCE=$(cast nonce "$ETH_FROM")
 castSend() {
     set -e
     echo "cast send $*"
-    ETH_GAS=$(cast estimate "$@")
-    ETH_GAS=$((ETH_GAS * 2))
-    ETH_NONCE="$ETH_NONCE" ETH_GAS="$ETH_GAS" cast send "$@"
+    ETH_GAS_LIMIT=$(cast estimate "$@")
+    ETH_GAS_LIMIT=$((ETH_GAS_LIMIT * 2))
+    echo "Sending with $ETH_GAS_LIMIT gas."
+    ETH_NONCE="$ETH_NONCE" ETH_GAS_LIMIT="$ETH_GAS_LIMIT" cast send "$@"
     ETH_NONCE=$((ETH_NONCE + 1))
     echo ""
 }
