@@ -19,8 +19,23 @@ pragma solidity 0.8.16;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-interface ChainLogLike {
-    function removeAddress(bytes32) external;
+interface OptimismGovRelayLike {
+    function relay(address target, bytes calldata targetData, uint32 l2gas) external;
+}
+
+interface ArbitrumGovRelayLike {
+    function relay(
+        address target,
+        bytes calldata targetData,
+        uint256 l1CallValue,
+        uint256 maxGas,
+        uint256 gasPriceBid,
+        uint256 maxSubmissionCost
+    ) external payable;
+}
+
+interface StarknetGovRelayLike {
+    function relay(uint256 spell) external payable;
 }
 
 contract DssSpellAction is DssAction {
@@ -31,6 +46,22 @@ contract DssSpellAction is DssAction {
     function officeHours() public pure override returns (bool) {
         return false;
     }
+
+    address immutable internal OPTIMISM_GOV_RELAY = DssExecLib.getChangelogAddress("OPTIMISM_GOV_RELAY");
+    address immutable internal ARBITRUM_GOV_RELAY = DssExecLib.getChangelogAddress("ARBITRUM_GOV_RELAY");
+    address immutable internal STARKNET_GOV_RELAY = DssExecLib.getChangelogAddress("STARKNET_GOV_RELAY");
+
+    address constant internal OPTIMISM_L2_SPELL = 0xC077Eb64285b40C86B40769e99Eb1E61d682a6B4;
+    address constant internal ARBITRUM_L2_SPELL = 0x11dc6ed4c08da38b36709a6c8dbaac0eaedd48ca;
+    // address constant internal STARKNET_L2_SPELL =
+
+    uint256 public constant OPT_MAX_GAS = 100_000;
+
+    // run ./scripts/get-arb-relay-cost to generate the following 3 constants
+    uint256 public constant ARB_MAX_GAS = 38_920;
+    uint256 public constant ARB_GAS_PRICE_BID = 100_000_000;
+    uint256 public constant ARB_MAX_SUBMISSION_COST = 1e14;
+    uint256 public constant ARB_L1_CALL_VALUE = ARB_MAX_SUBMISSION_COST + ARB_MAX_GAS * ARB_GAS_PRICE_BID;
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -58,70 +89,29 @@ contract DssSpellAction is DssAction {
     address internal immutable MCD_PSM_GUSD_A   = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
 
     function actions() public override {
+        // ------------------ Pause Optimism Goerli L2DaiTeleportGateway -----------------
+        // Forum: https://forum.makerdao.com/t/community-notice-pecu-to-redeploy-teleport-l2-gateways/19550
+        // L2 Spell to execute via OPTIMISM_GOV_RELAY:
+        // https://goerli-optimism.etherscan.io/address/0xC077Eb64285b40C86B40769e99Eb1E61d682a6B4#code
+        OptimismGovRelayLike(OPTIMISM_GOV_RELAY).relay(
+            OPTIMISM_L2_SPELL,
+            abi.encodeWithSignature("execute()"),
+            OPT_MAX_GAS
+        );
 
-        // MOMC Parameter Changes
-        // https://vote.makerdao.com/polling/QmYUi9Tk
-
-        // Increase WSTETH-B Stability Fee to 0.25%
-        DssExecLib.setIlkStabilityFee("WSTETH-B", ZERO_PT_TWO_FIVE_PCT_RATE, true);
-
-        // Increase Compound v2 D3M Maximum Debt Ceiling to 20 million
-        // Set Compound v2 D3M Target Available Debt to 5 million DAI (this might already be the case)
-        // TODO: Not on Goerli
-        // DssExecLib.setIlkAutoLineParameters("DIRECT-COMPV2-DAI", 20 * MILLION, 5 * MILLION, 12 hours);
-
-        // Increase the USDP PSM tin to 0.2%
-        DssExecLib.setValue(MCD_PSM_PAX_A, "tin", 20 * WAD / 10000);   // 20 BPS
-
-
-        // MKR Transfer for CES
-        // https://vote.makerdao.com/polling/QmbNVQ1E#poll-detail
-
-        // CES-001 - 96.15 MKR - 0x25307aB59Cd5d8b4E2C01218262Ddf6a89Ff86da
-        // TODO: Not on Goerli
-        // mkr.transfer(CES_WALLET, 96.15 * WAD);
-
-
-        // Cage DIRECT-AAVEV2-DAI
-        // https://forum.makerdao.com/t/housekeeping-tasks-for-next-executive/19472
-
-        // Cage DIRECT-AAVEV2-DAI to prepare for new deployment
-        // TODO: Not on Goerli
-        //
-        // CageLike(MCD_JOIN_DIRECT_AAVEV2_DAI).cage();
-        // DssExecLib.setValue(MCD_CLIP_DIRECT_AAVEV2_DAI, "stopped", 3);
-        // DssExecLib.deauthorize(MCD_JOIN_DIRECT_AAVEV2_DAI, address(this));
-        // DssExecLib.deauthorize(MCD_CLIP_DIRECT_AAVEV2_DAI, address(this));
-        // CHAINLOG.removeAddress("MCD_JOIN_DIRECT_AAVEV2_DAI");
-        // CHAINLOG.removeAddress("MCD_CLIP_DIRECT_AAVEV2_DAI");
-        // CHAINLOG.removeAddress("MCD_CLIP_CALC_DIRECT_AAVEV2_DAI");
-
-
-        // Flash Mint Module Upgrade Completion
-        // https://forum.makerdao.com/t/flashmint-module-housekeeping-task-for-next-executive/19472
-
-        // Sunset MCD_FLASH_LEGACY and reduce DC to 0
-        DssExecLib.setValue(MCD_FLASH_LEGACY, "max", 0);
-        DssExecLib.deauthorize(MCD_FLASH_LEGACY, address(this));
-        DssExecLib.deauthorize(DssExecLib.vat(), MCD_FLASH_LEGACY);
-        CHAINLOG.removeAddress("MCD_FLASH_LEGACY");
-
-        // Increase DC of MCD_FLASH to 500 million DAI
-        DssExecLib.setValue(MCD_FLASH, "max", 500 * MILLION * WAD);
-
-        // Deauth FLASH_KILLER and remove from Chainlog
-        // NOTE: Flash Killer's only ward is MCD_FLASH_LEGACY, Pause Proxy cannot deauth
-        CHAINLOG.removeAddress("FLASH_KILLER");
-
-
-        // PSM_GUSD_A tout decrease
-        // Poll: https://vote.makerdao.com/polling/QmRRceEo#poll-detail
-        // Forum: https://forum.makerdao.com/t/request-to-poll-psm-gusd-a-parameters/19416
-        // Reduce PSM-GUSD-A tout from 0.1% to 0%
-        DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 0);
-
-
-        DssExecLib.setChangelogVersion("1.14.8");
+        // ------------------ Pause Arbitrum Goerli L2DaiTeleportGateway -----------------
+        // Forum: https://forum.makerdao.com/t/community-notice-pecu-to-redeploy-teleport-l2-gateways/19550
+        // L2 Spell to execute via ARBITRUM_GOV_RELAY:
+        // https://goerli.arbiscan.io/address/0x11dc6ed4c08da38b36709a6c8dbaac0eaedd48ca#code
+        // Note: ARBITRUM_GOV_RELAY must have been pre-funded with at least ARB_L1_CALL_VALUE worth of Ether
+        ArbitrumGovRelayLike(ARBITRUM_GOV_RELAY).relay(
+            ARBITRUM_L2_SPELL,
+            abi.encodeWithSignature("execute()"),
+            ARB_L1_CALL_VALUE,
+            ARB_MAX_GAS,
+            ARB_GAS_PRICE_BID,
+            ARB_MAX_SUBMISSION_COST
+        );
     }
 }
 
