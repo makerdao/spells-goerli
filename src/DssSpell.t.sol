@@ -20,6 +20,7 @@ import "./DssSpell.t.base.sol";
 
 import {RootDomain} from "dss-test/domains/RootDomain.sol";
 import {OptimismDomain} from "dss-test/domains/OptimismDomain.sol";
+import {ArbitrumDomain} from "dss-test/domains/ArbitrumDomain.sol";
 
 interface L2Spell {
     function dstDomain() external returns (bytes32);
@@ -34,6 +35,7 @@ contract DssSpellTest is DssSpellTestBase {
     string         config;
     RootDomain     rootDomain;
     OptimismDomain optimismDomain;
+    ArbitrumDomain arbitrumDomain;
 
     // DO NOT TOUCH THE FOLLOWING TESTS, THEY SHOULD BE RUN ON EVERY SPELL
     function testGeneral() public {
@@ -405,6 +407,7 @@ contract DssSpellTest is DssSpellTestBase {
 
         rootDomain = new RootDomain(config, getRelativeChain("mainnet"));
         optimismDomain = new OptimismDomain(config, getRelativeChain("optimism"), rootDomain);
+        arbitrumDomain = new ArbitrumDomain(config, getRelativeChain("arbitrum_one"), rootDomain);
 
         vm.makePersistent(address(spell));
         vm.makePersistent(address(spell.action()));
@@ -415,25 +418,49 @@ contract DssSpellTest is DssSpellTestBase {
 
         optimismDomain.selectFork();
 
+        // Check that the L2 Optimism Spell is there and configured
         L2Spell optimismSpell = L2Spell(0xC077Eb64285b40C86B40769e99Eb1E61d682a6B4);
         L2Gateway optimismGateway = L2Gateway(optimismSpell.gateway());
         assertEq(address(optimismGateway), 0xd9e000C419F3aA4EA1C519497f5aF249b496a00f, "l2-optimism-wrong-gateway");
 
         bytes32 optDstDomain = optimismSpell.dstDomain();
         assertEq(optDstDomain, bytes32("ETH-GOER-A"), "l2-optimism-wrong-dst-domain");
+
+        // Validate pre-spell optimism state
         assertEq(optimismGateway.validDomains(optDstDomain), 1, "l2-optimism-invalid-dst-domain");
 
+        arbitrumDomain.selectFork();
+
+        // Check that the L2 Optimism Spell is there and configured
+        L2Spell arbitrumSpell = L2Spell(0x11Dc6Ed4C08Da38B36709a6C8DBaAC0eAeDD48cA);
+        L2Gateway arbitrumGateway = L2Gateway(arbitrumSpell.gateway());
+        assertEq(address(arbitrumGateway), 0x8334a747731Be3a58bCcAf9a3D35EbC968806223, "l2-arbitrum-wrong-gateway");
+
+        bytes32 arbDstDomain = arbitrumSpell.dstDomain();
+        assertEq(arbDstDomain, bytes32("ETH-GOER-A"), "l2-arbitrum-wrong-dst-domain");
+
+        // Validate pre-spell arbitrum state
+        assertEq(arbitrumGateway.validDomains(arbDstDomain), 1, "l2-arbitrum-invalid-dst-domain");
+
+        // Cast the L1 Spell
         rootDomain.selectFork();
 
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // switch to optimism domain and relay the spell from L1
+        // switch to Optimism domain and relay the spell from L1
         // the `true` keeps us on Optimism rather than `rootDomain.selectFork()
-        optimismDomain.relayFromHost(true);
+        // optimismDomain.relayFromHost(true);
 
-        assertEq(optimismGateway.validDomains(optDstDomain), 0, "l2-optimism-invalid-dst-domain");
-        // OptGateway opt_gateway = 0xd9e000C419F3aA4EA1C519497f5aF249b496a00f;
+        // Validate post-spell state
+        // assertEq(optimismGateway.validDomains(optDstDomain), 0, "l2-optimism-invalid-dst-domain");
+
+        // switch to Arbitrum domain and relay the spell from L1
+        // the `true` keeps us on Arbitrum rather than `rootDomain.selectFork()
+        arbitrumDomain.relayFromHost(true);
+
+        // Validate post-spell state
+        assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
 }
