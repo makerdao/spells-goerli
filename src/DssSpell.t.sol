@@ -431,7 +431,7 @@ contract DssSpellTest is DssSpellTestBase {
 
         arbitrumDomain.selectFork();
 
-        // Check that the L2 Optimism Spell is there and configured
+        // Check that the L2 Arbitrum Spell is there and configured
         L2Spell arbitrumSpell = L2Spell(0x11Dc6Ed4C08Da38B36709a6C8DBaAC0eAeDD48cA);
         L2Gateway arbitrumGateway = L2Gateway(arbitrumSpell.gateway());
         assertEq(address(arbitrumGateway), 0x8334a747731Be3a58bCcAf9a3D35EbC968806223, "l2-arbitrum-wrong-gateway");
@@ -451,10 +451,10 @@ contract DssSpellTest is DssSpellTestBase {
 
         // switch to Optimism domain and relay the spell from L1
         // the `true` keeps us on Optimism rather than `rootDomain.selectFork()
-        // optimismDomain.relayFromHost(true);
+        optimismDomain.relayFromHost(true);
 
         // Validate post-spell state
-        // assertEq(optimismGateway.validDomains(optDstDomain), 0, "l2-optimism-invalid-dst-domain");
+        assertEq(optimismGateway.validDomains(optDstDomain), 0, "l2-optimism-invalid-dst-domain");
 
         // switch to Arbitrum domain and relay the spell from L1
         // the `true` keeps us on Arbitrum rather than `rootDomain.selectFork()
