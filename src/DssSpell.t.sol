@@ -21,6 +21,15 @@ import "./DssSpell.t.base.sol";
 import {RootDomain} from "dss-test/domains/RootDomain.sol";
 import {OptimismDomain} from "dss-test/domains/OptimismDomain.sol";
 
+interface L2Spell {
+    function dstDomain() external returns (bytes32);
+    function gateway() external returns (address);
+}
+
+interface L2Gateway {
+    function validDomains(bytes32) external returns (uint256);
+}
+
 contract DssSpellTest is DssSpellTestBase {
     string         config;
     RootDomain     rootDomain;
@@ -395,12 +404,36 @@ contract DssSpellTest is DssSpellTestBase {
         config = ScriptTools.readInput("integration");
 
         rootDomain = new RootDomain(config, getRelativeChain("mainnet"));
-        rootDomain.selectFork();
-        
         optimismDomain = new OptimismDomain(config, getRelativeChain("optimism"), rootDomain);
+
+        vm.makePersistent(address(spell));
+        vm.makePersistent(address(spell.action()));
     }
 
     function testL2Spells() public {
         _setupL2s();
+
+        optimismDomain.selectFork();
+
+        L2Spell optimismSpell = L2Spell(0xC077Eb64285b40C86B40769e99Eb1E61d682a6B4);
+        L2Gateway optimismGateway = L2Gateway(optimismSpell.gateway());
+        assertEq(address(optimismGateway), 0xd9e000C419F3aA4EA1C519497f5aF249b496a00f, "l2-optimism-wrong-gateway");
+
+        bytes32 optDstDomain = optimismSpell.dstDomain();
+        assertEq(optDstDomain, bytes32("ETH-GOER-A"), "l2-optimism-wrong-dst-domain");
+        assertEq(optimismGateway.validDomains(optDstDomain), 1, "l2-optimism-invalid-dst-domain");
+
+        rootDomain.selectFork();
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // switch to optimism domain and relay the spell from L1
+        // the `true` keeps us on Optimism rather than `rootDomain.selectFork()
+        optimismDomain.relayFromHost(true);
+
+        assertEq(optimismGateway.validDomains(optDstDomain), 0, "l2-optimism-invalid-dst-domain");
+        // OptGateway opt_gateway = 0xd9e000C419F3aA4EA1C519497f5aF249b496a00f;
     }
 }
