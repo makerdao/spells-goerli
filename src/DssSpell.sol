@@ -55,7 +55,7 @@ contract DssSpellAction is DssAction {
     address constant internal ARBITRUM_L2_SPELL = 0x11Dc6Ed4C08Da38B36709a6C8DBaAC0eAeDD48cA;
     // address constant internal STARKNET_L2_SPELL =
 
-    uint32 public constant OPT_MAX_GAS = 100_000;
+    uint32 public constant OPT_MAX_GAS = 1_000_000; // large value that is under the 1.92m subsidy threshold
 
     // run ./scripts/get-arb-relay-cost to generate the following 3 constants
     uint256 public constant ARB_MAX_GAS = 38_920;
