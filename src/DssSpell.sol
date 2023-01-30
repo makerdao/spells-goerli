@@ -68,9 +68,9 @@ contract DssSpellAction is DssAction {
     uint256 public constant ARB_L1_CALL_VALUE = ARB_MAX_SUBMISSION_COST + ARB_MAX_GAS * ARB_GAS_PRICE_BID;
 
     // see: https://github.com/makerdao/starknet-spells-goerli/tree/teleport-spell#estimate-l1-l2-fee
-    uint256 public constant STA_FEE_ESTIMATION = 104825981483660;
-    uint256 public constant STA_FEE_BUFFER = 1;
-    uint256 public constant STA_L1_CALL_VALUE = STA_FEE_ESTIMATION * STA_FEE_BUFFER;
+    uint256 public constant STA_GAS_USAGE_ESTIMATION = 28460;
+    uint256 public constant STA_GAS_PRICE = 40000000000; // 40gwei
+    uint256 public constant STA_L1_CALL_VALUE = STA_GAS_USAGE_ESTIMATION * STA_GAS_PRICE;
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
