@@ -52,10 +52,10 @@ contract DssSpellAction is DssAction {
     address immutable internal STARKNET_GOV_RELAY = DssExecLib.getChangelogAddress("STARKNET_GOV_RELAY");
 
     address constant internal OPTIMISM_L2_SPELL = 0xC077Eb64285b40C86B40769e99Eb1E61d682a6B4;
-    address constant internal ARBITRUM_L2_SPELL = 0x11dc6ed4c08da38b36709a6c8dbaac0eaedd48ca;
+    address constant internal ARBITRUM_L2_SPELL = 0x11Dc6Ed4C08Da38B36709a6C8DBaAC0eAeDD48cA;
     // address constant internal STARKNET_L2_SPELL =
 
-    uint256 public constant OPT_MAX_GAS = 100_000;
+    uint32 public constant OPT_MAX_GAS = 100_000;
 
     // run ./scripts/get-arb-relay-cost to generate the following 3 constants
     uint256 public constant ARB_MAX_GAS = 38_920;
@@ -79,7 +79,7 @@ contract DssSpellAction is DssAction {
     // uint256 internal constant RAY  = 10 ** 27;
     uint256 internal constant WAD     = 10 ** 18;
 
-    ChainLogLike internal immutable CHAINLOG    = ChainLogLike(DssExecLib.getChangelogAddress("CHANGELOG"));
+    // ChainLogLike internal immutable CHAINLOG    = ChainLogLike(DssExecLib.getChangelogAddress("CHANGELOG"));
 
     address internal immutable FLASH_KILLER     = DssExecLib.getChangelogAddress("FLASH_KILLER");
     address internal immutable MCD_FLASH        = DssExecLib.getChangelogAddress("MCD_FLASH");
