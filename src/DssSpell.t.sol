@@ -18,7 +18,14 @@ pragma solidity 0.8.16;
 
 import "./DssSpell.t.base.sol";
 
+import {RootDomain} from "dss-test/domains/RootDomain.sol";
+import {OptimismDomain} from "dss-test/domains/OptimismDomain.sol";
+
 contract DssSpellTest is DssSpellTestBase {
+    string         config;
+    RootDomain     rootDomain;
+    OptimismDomain optimismDomain;
+
     // DO NOT TOUCH THE FOLLOWING TESTS, THEY SHOULD BE RUN ON EVERY SPELL
     function testGeneral() public {
         _testGeneral();
@@ -382,5 +389,18 @@ contract DssSpellTest is DssSpellTestBase {
 
         vm.expectRevert(abi.encodePacked("dss-chain-log/invalid-key"));
         chainLog.getAddress("FLASH_KILLER");
+    }
+
+    function _setupL2s() internal {
+        config = ScriptTools.readInput("integration");
+
+        rootDomain = new RootDomain(config, getRelativeChain("mainnet"));
+        rootDomain.selectFork();
+        
+        optimismDomain = new OptimismDomain(config, getRelativeChain("optimism"), rootDomain);
+    }
+
+    function testL2Spells() public {
+        _setupL2s();
     }
 }
