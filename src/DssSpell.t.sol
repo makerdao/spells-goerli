@@ -383,8 +383,9 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     function testL2OptimismSpell() public {
-        _setupL2s();
-
+        _setupRootDomain();
+        
+        optimismDomain = new OptimismDomain(config, getRelativeChain("optimism"), rootDomain);
         optimismDomain.selectFork();
 
         // Check that the L2 Optimism Spell is there and configured
