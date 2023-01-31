@@ -419,6 +419,7 @@ contract DssSpellTest is DssSpellTestBase {
 
         // Check that the L2 Optimism Spell is there and configured
         L2Spell optimismSpell = L2Spell(0xC077Eb64285b40C86B40769e99Eb1E61d682a6B4);
+
         L2Gateway optimismGateway = L2Gateway(optimismSpell.gateway());
         assertEq(address(optimismGateway), 0xd9e000C419F3aA4EA1C519497f5aF249b496a00f, "l2-optimism-wrong-gateway");
 
@@ -449,6 +450,7 @@ contract DssSpellTest is DssSpellTestBase {
 
         // Check that the L2 Arbitrum Spell is there and configured
         L2Spell arbitrumSpell = L2Spell(0x11Dc6Ed4C08Da38B36709a6C8DBaAC0eAeDD48cA);
+
         L2Gateway arbitrumGateway = L2Gateway(arbitrumSpell.gateway());
         assertEq(address(arbitrumGateway), 0x8334a747731Be3a58bCcAf9a3D35EbC968806223, "l2-arbitrum-wrong-gateway");
 
