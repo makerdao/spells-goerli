@@ -22,4 +22,5 @@ BOMBSHELL=$(forge create \
   --constructor-args "${MCD_PAUSE_PROXY}" | \
   jq -r '.deployedTo')
 
+echo "Bombshell located at: ${BOMBSHELL}"
 echo "Pause Proxy ETH balance (wei) after Bombshell: $(cast balance "${MCD_PAUSE_PROXY}")"
