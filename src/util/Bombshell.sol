@@ -16,9 +16,8 @@
 
 pragma solidity 0.8.16;
 
-// This contract takes an address in the constructor and will send any ETH
-// balance sent during construction to that address once the caller calls
-// boom().
+// This contract takes an address in the constructor and will automatically self-destruct,
+// sending any ETH balance sent during construction to that address.
 //
 // https://www.youtube.com/watch?v=llbW8VogyVE
 contract Bombshell {
