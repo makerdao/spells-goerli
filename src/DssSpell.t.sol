@@ -276,7 +276,8 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(MedianAbstract(TOKENUSD_MED).bud(SET_TOKEN), 1);
     }
 
-    function testPSMs() public { // make private to disable
+    // leave puclic for now as this is acting like a config tests
+    function testPSMs() public {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -370,36 +371,6 @@ contract DssSpellTest is DssSpellTestBase {
         // vm.warp(OCT_01_2022 + 31 days);
         // vest.vest(10);
         // assertEq(dai.balanceOf(wallets.addr("DAIF_WALLET")), prevBalance + 67_863 * WAD);
-    }
-
-    function testFlash() public {
-
-        FlashAbstract flashLegacy = FlashAbstract(addr.addr("MCD_FLASH_LEGACY"));
-        FlashAbstract flashCurrent = FlashAbstract(addr.addr("MCD_FLASH"));
-
-        assertEq(vat.wards(address(flashCurrent)), 1);
-        assertEq(vat.wards(address(flashLegacy)), 1);
-
-        assertEq(flashLegacy.max(), 250 * MILLION * WAD);
-        assertEq(flashCurrent.max(), 250 * MILLION * WAD);
-        assertEq(flashLegacy.wards(pauseProxy), 1);
-
-        _vote(address(spell));
-        _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        assertEq(vat.wards(address(flashCurrent)), 1);
-        assertEq(vat.wards(address(flashLegacy)), 0);
-
-        assertEq(flashLegacy.max(), 0);
-        assertEq(flashCurrent.max(), 500 * MILLION * WAD);
-        assertEq(flashLegacy.wards(pauseProxy), 0);
-
-        vm.expectRevert(abi.encodePacked("dss-chain-log/invalid-key"));
-        chainLog.getAddress("MCD_FLASH_LEGACY");
-
-        vm.expectRevert(abi.encodePacked("dss-chain-log/invalid-key"));
-        chainLog.getAddress("FLASH_KILLER");
     }
 
     function _setupL2s() internal {

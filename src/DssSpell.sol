@@ -73,11 +73,10 @@ contract DssSpellAction is DssAction {
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
     // uint256 internal constant X_PCT_RATE      = ;
-    uint256 internal constant ZERO_PT_TWO_FIVE_PCT_RATE = 1000000000079175551708715274;
 
-    uint256 internal constant MILLION = 10 ** 6;
-    // uint256 internal constant RAY  = 10 ** 27;
-    uint256 internal constant WAD     = 10 ** 18;
+    // uint256 internal constant MILLION = 10 ** 6;
+    // uint256 internal constant RAY     = 10 ** 27;
+    // uint256 internal constant WAD     = 10 ** 18;
 
     function actions() public override {
         // ------------------ Pause Optimism Goerli L2DaiTeleportGateway -----------------
