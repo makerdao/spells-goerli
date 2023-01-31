@@ -12,7 +12,7 @@ X_DOMAIN_MSG_SENDER_SLOT=204
 
 L1_GOV_RELAY=$(
     cast call $CHANGELOG "getAddress(bytes32)(address)" \
-    $(cast --to-bytes32 $(cast --from-ascii "OPTIMISM_GOV_RELAY"))
+    $(cast --format-bytes32-string "OPTIMISM_GOV_RELAY")
 )
 L2_GOV_RELAY=$(cast call $L1_GOV_RELAY "l2GovernanceRelay()(address)")
 L2_MESSENGER=$(cast call --rpc-url=$OPTIMISM_GOERLI_RPC_URL $L2_GOV_RELAY "messenger()(address)")
