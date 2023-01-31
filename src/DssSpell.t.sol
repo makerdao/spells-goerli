@@ -413,7 +413,7 @@ contract DssSpellTest is DssSpellTestBase {
         vm.makePersistent(address(spell.action()));
     }
 
-    function testL2Spells() public {
+    function testL2OptimismSpell() public {
         _setupL2s();
 
         optimismDomain.selectFork();
@@ -428,6 +428,23 @@ contract DssSpellTest is DssSpellTestBase {
 
         // Validate pre-spell optimism state
         assertEq(optimismGateway.validDomains(optDstDomain), 1, "l2-optimism-invalid-dst-domain");
+        // Cast the L1 Spell
+        rootDomain.selectFork();
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // switch to Optimism domain and relay the spell from L1
+        // the `true` keeps us on Optimism rather than `rootDomain.selectFork()
+        optimismDomain.relayFromHost(true);
+
+        // Validate post-spell state
+        assertEq(optimismGateway.validDomains(optDstDomain), 0, "l2-optimism-invalid-dst-domain");
+    }
+
+    function testL2ArbitrumSpell() public {
+        _setupL2s();
 
         arbitrumDomain.selectFork();
 
@@ -448,13 +465,6 @@ contract DssSpellTest is DssSpellTestBase {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
-
-        // switch to Optimism domain and relay the spell from L1
-        // the `true` keeps us on Optimism rather than `rootDomain.selectFork()
-        optimismDomain.relayFromHost(true);
-
-        // Validate post-spell state
-        assertEq(optimismGateway.validDomains(optDstDomain), 0, "l2-optimism-invalid-dst-domain");
 
         // switch to Arbitrum domain and relay the spell from L1
         // the `true` keeps us on Arbitrum rather than `rootDomain.selectFork()
