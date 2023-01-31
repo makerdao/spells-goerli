@@ -6,12 +6,15 @@ set -e
 ARBITRUM_GOERLI_RPC_URL='https://goerli-rollup.arbitrum.io/rpc'
 
 L2_SPELL='0x11dc6ed4c08da38b36709a6c8dbaac0eaedd48ca'
-
-INBOX='0x6BEbC4925716945D46F0Ec336D5C2564F419682C'
-L1_GOV_RELAY='0x10E6593CDda8c58a1d0f14C5164B376352a55f2F'
-L2_GOV_RELAY='0x10E6593CDda8c58a1d0f14C5164B376352a55f2F'
-
+CHANGELOG='0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F'
 NODE_INTERFACE='0x00000000000000000000000000000000000000C8'
+
+L1_GOV_RELAY=$(
+    cast call $CHANGELOG "getAddress(bytes32)(address)" \
+    $(cast --to-bytes32 $(cast --from-ascii "ARBITRUM_GOV_RELAY"))
+)
+L2_GOV_RELAY=$(cast call $L1_GOV_RELAY "l2GovernanceRelay()(address)")
+INBOX=$(cast call $L1_GOV_RELAY "inbox()(address)")
 
 BASE_FEE_SAFETY_FACTOR=20 # Factor by which L1 block.basefee could grow between now and the spell cast time
 
