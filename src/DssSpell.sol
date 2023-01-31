@@ -79,15 +79,6 @@ contract DssSpellAction is DssAction {
     // uint256 internal constant RAY  = 10 ** 27;
     uint256 internal constant WAD     = 10 ** 18;
 
-    // ChainLogLike internal immutable CHAINLOG    = ChainLogLike(DssExecLib.getChangelogAddress("CHANGELOG"));
-
-    address internal immutable FLASH_KILLER     = DssExecLib.getChangelogAddress("FLASH_KILLER");
-    address internal immutable MCD_FLASH        = DssExecLib.getChangelogAddress("MCD_FLASH");
-    address internal immutable MCD_FLASH_LEGACY = DssExecLib.getChangelogAddress("MCD_FLASH_LEGACY");
-
-    address internal immutable MCD_PSM_PAX_A    = DssExecLib.getChangelogAddress("MCD_PSM_PAX_A");
-    address internal immutable MCD_PSM_GUSD_A   = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
-
     function actions() public override {
         // ------------------ Pause Optimism Goerli L2DaiTeleportGateway -----------------
         // Forum: https://forum.makerdao.com/t/community-notice-pecu-to-redeploy-teleport-l2-gateways/19550
