@@ -69,7 +69,11 @@ contract DssSpellAction is DssAction {
 
     // see: https://github.com/makerdao/starknet-spells-goerli/tree/teleport-spell#estimate-l1-l2-fee
     uint256 public constant STA_GAS_USAGE_ESTIMATION = 28460;
-    uint256 public constant STA_GAS_PRICE = 40000000000; // 40gwei
+
+    // 500gwei, ~upper bound of monthly avg gas price in `21-`22,
+    // ~100x max monthly median gas price in `21-`22
+    // https://explorer.bitquery.io/ethereum/gas?from=2021-01-01&till=2023-01-31
+    uint256 public constant STA_GAS_PRICE = 500000000000;
     uint256 public constant STA_L1_CALL_VALUE = STA_GAS_USAGE_ESTIMATION * STA_GAS_PRICE;
 
     // Many of the settings that change weekly rely on the rate accumulator
