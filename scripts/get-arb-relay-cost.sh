@@ -11,7 +11,7 @@ NODE_INTERFACE='0x00000000000000000000000000000000000000C8'
 
 L1_GOV_RELAY=$(
     cast call $CHANGELOG "getAddress(bytes32)(address)" \
-    $(cast --to-bytes32 $(cast --from-ascii "ARBITRUM_GOV_RELAY"))
+    $(cast --format-bytes32-string "ARBITRUM_GOV_RELAY")
 )
 L2_GOV_RELAY=$(cast call $L1_GOV_RELAY "l2GovernanceRelay()(address)")
 INBOX=$(cast call $L1_GOV_RELAY "inbox()(address)")
