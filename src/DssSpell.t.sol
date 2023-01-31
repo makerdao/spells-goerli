@@ -403,14 +403,13 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     function _setupL2s() internal {
+        vm.makePersistent(address(spell), address(spell.action()));
+
         config = ScriptTools.readInput("integration");
 
         rootDomain = new RootDomain(config, getRelativeChain("mainnet"));
         optimismDomain = new OptimismDomain(config, getRelativeChain("optimism"), rootDomain);
         arbitrumDomain = new ArbitrumDomain(config, getRelativeChain("arbitrum_one"), rootDomain);
-
-        vm.makePersistent(address(spell));
-        vm.makePersistent(address(spell.action()));
     }
 
     function testL2OptimismSpell() public {
