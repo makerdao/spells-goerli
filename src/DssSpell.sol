@@ -38,6 +38,10 @@ interface StarknetGovRelayLike {
     function relay(uint256 spell) external payable;
 }
 
+interface StarknetEscrowLike {
+    function approve(address token, address spender, uint256 value) external;
+}
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -51,9 +55,13 @@ contract DssSpellAction is DssAction {
     address immutable internal ARBITRUM_GOV_RELAY = DssExecLib.getChangelogAddress("ARBITRUM_GOV_RELAY");
     address immutable internal STARKNET_GOV_RELAY = DssExecLib.getChangelogAddress("STARKNET_GOV_RELAY");
 
+    address immutable internal DAI = DssExecLib.getChangelogAddress("MCD_DAI");
+    address immutable internal STARKNET_ESCROW = DssExecLib.getChangelogAddress("STARKNET_ESCROW");
+    address immutable internal STARKNET_DAI_BRIDGE_LEGACY = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE_LEGACY");
+
     address constant internal OPTIMISM_L2_SPELL = 0xC077Eb64285b40C86B40769e99Eb1E61d682a6B4;
     address constant internal ARBITRUM_L2_SPELL = 0x11Dc6Ed4C08Da38B36709a6C8DBaAC0eAeDD48cA;
-    // address constant internal STARKNET_L2_SPELL =
+    uint256 constant internal STARKNET_L2_SPELL = 0x00a052591661d7e249b46a1084c63b14dae6aa8b1a56ab3f7df8c8add1c374b1;
 
     uint32 public constant OPT_MAX_GAS = 100_000; // = 52_587 gas (estimated L2 execution cost) + margin
 
@@ -62,6 +70,15 @@ contract DssSpellAction is DssAction {
     uint256 public constant ARB_GAS_PRICE_BID = 100_000_000;
     uint256 public constant ARB_MAX_SUBMISSION_COST = 1e14;
     uint256 public constant ARB_L1_CALL_VALUE = ARB_MAX_SUBMISSION_COST + ARB_MAX_GAS * ARB_GAS_PRICE_BID;
+
+    // see: https://github.com/makerdao/starknet-spells-goerli/tree/teleport-spell#estimate-l1-l2-fee
+    uint256 public constant STA_GAS_USAGE_ESTIMATION = 28460;
+
+    // 500gwei, ~upper bound of monthly avg gas price in `21-`22,
+    // ~100x max monthly median gas price in `21-`22
+    // https://explorer.bitquery.io/ethereum/gas?from=2021-01-01&till=2023-01-31
+    uint256 public constant STA_GAS_PRICE = 500000000000;
+    uint256 public constant STA_L1_CALL_VALUE = STA_GAS_USAGE_ESTIMATION * STA_GAS_PRICE;
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -102,6 +119,16 @@ contract DssSpellAction is DssAction {
             ARB_GAS_PRICE_BID,
             ARB_MAX_SUBMISSION_COST
         );
+
+        // ------------------ Pause Starknet Goerli L2DaiTeleportGateway -----------------
+        // Forum: https://forum.makerdao.com/t/community-notice-pecu-to-redeploy-teleport-l2-gateways/19550
+        // L2 Spell to execute via STARKNET_GOV_RELAY:
+        // src: https://github.com/makerdao/starknet-spells-goerli/blob/b7ca995cf1d266aa2382d85e35a86b4fae52aa15/src/spell.cairo
+        // contract: https://testnet.starkscan.co/class/0x00a052591661d7e249b46a1084c63b14dae6aa8b1a56ab3f7df8c8add1c374b1#overview
+        StarknetGovRelayLike(STARKNET_GOV_RELAY).relay{value: STA_L1_CALL_VALUE}(STARKNET_L2_SPELL);
+
+        // disallow legacy bridge on escrow
+        StarknetEscrowLike(STARKNET_ESCROW).approve(DAI, STARKNET_DAI_BRIDGE_LEGACY, 0);
 
         //
         // The following code is a placeholder for mainnet
