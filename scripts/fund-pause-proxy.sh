@@ -22,7 +22,4 @@ BOMBSHELL=$(forge create \
   --constructor-args "${MCD_PAUSE_PROXY}" | \
   jq -r '.deployedTo')
 
-echo "Detonating Bombshell..."
-cast send ${BOMBSHELL} 'boom()' > /dev/null 2>&1
-
 echo "Pause Proxy ETH balance (wei) after Bombshell: $(cast balance "${MCD_PAUSE_PROXY}")"

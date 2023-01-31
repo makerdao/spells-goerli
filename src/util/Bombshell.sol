@@ -22,13 +22,7 @@ pragma solidity 0.8.16;
 //
 // https://www.youtube.com/watch?v=llbW8VogyVE
 contract Bombshell {
-    address payable public to;
-
     constructor(address _to) payable {
-        to = payable(_to);
-    }
-
-    function boom() public {
-        selfdestruct(to);
+        selfdestruct(payable(_to));
     }
 }
