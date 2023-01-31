@@ -40,7 +40,22 @@ contract DssSpellAction is DssAction {
     // uint256 internal constant X_PCT_RATE      = ;
 
     function actions() public override {
-        // empty spell
+        //
+        // The following code is a placeholder for mainnet
+        //
+
+        // Tech-Ops DAI Transfer
+        // https://vote.makerdao.com/polling/QmUMnuGb
+        // TODO: add code in mainnet
+
+        // GovComms offboarding
+        // https://vote.makerdao.com/polling/QmV9iktK 
+        // https://forum.makerdao.com/t/mip39c3-sp7-core-unit-offboarding-com-001/19068/65
+        // TODO: add code in mainnet
+
+        // SPF Funding: Expanded SF-001 Domain Work
+        // https://vote.makerdao.com/polling/QmTjgcHY
+        // TODO: add code in mainnet
     }
 }
 
