@@ -376,7 +376,8 @@ contract DssSpellTest is DssSpellTestBase {
     function _setupL2s() internal {
         vm.makePersistent(address(spell), address(spell.action()));
 
-        config = ScriptTools.readInput("integration");
+        string memory root = string.concat(vm.projectRoot(), "/lib/dss-test");
+        config = ScriptTools.readInput(root, "integration");
 
         rootDomain = new RootDomain(config, getRelativeChain("mainnet"));
         optimismDomain = new OptimismDomain(config, getRelativeChain("optimism"), rootDomain);
