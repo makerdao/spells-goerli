@@ -415,8 +415,9 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     function testL2ArbitrumSpell() public {
-        _setupL2s();
-
+        _setupRootDomain();
+        
+        arbitrumDomain = new ArbitrumDomain(config, getRelativeChain("arbitrum_one"), rootDomain);
         arbitrumDomain.selectFork();
 
         // Check that the L2 Arbitrum Spell is there and configured
