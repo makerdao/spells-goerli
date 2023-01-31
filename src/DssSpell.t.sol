@@ -373,7 +373,7 @@ contract DssSpellTest is DssSpellTestBase {
         // assertEq(dai.balanceOf(wallets.addr("DAIF_WALLET")), prevBalance + 67_863 * WAD);
     }
 
-    function _setupL2s() internal {
+    function _setupRootDomain() internal {
         vm.makePersistent(address(spell), address(spell.action()));
 
         string memory root = string.concat(vm.projectRoot(), "/lib/dss-test");
