@@ -10,7 +10,7 @@ VALUE="1ether"
 
 MCD_PAUSE_PROXY=$(cast call "${CHANGELOG}" \
   'getAddress(bytes32)(address)' \
-  "$(cast --to-bytes32 "$(cast --from-ascii "MCD_PAUSE_PROXY")")")
+  "$(cast --format-bytes32-string "MCD_PAUSE_PROXY")
 
 echo "Pause Proxy ETH balance (wei) before Bombshell: $(cast balance "${MCD_PAUSE_PROXY}")"
 
