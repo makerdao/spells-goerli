@@ -380,8 +380,6 @@ contract DssSpellTest is DssSpellTestBase {
         config = ScriptTools.readInput(root, "integration");
 
         rootDomain = new RootDomain(config, getRelativeChain("mainnet"));
-        optimismDomain = new OptimismDomain(config, getRelativeChain("optimism"), rootDomain);
-        arbitrumDomain = new ArbitrumDomain(config, getRelativeChain("arbitrum_one"), rootDomain);
     }
 
     function testL2OptimismSpell() public {
