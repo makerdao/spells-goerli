@@ -17,7 +17,7 @@
 pragma solidity 0.8.16;
 
 import "dss-interfaces/Interfaces.sol";
-import {DssTest, GodMode} from "dss-test/DssTest.sol";
+import {DssTest, GodMode, ScriptTools} from "dss-test/DssTest.sol";
 
 import "./test/rates.sol";
 import "./test/addresses_goerli.sol";
