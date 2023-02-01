@@ -20,6 +20,7 @@ import "../DssSpell.t.base.sol";
 
 contract ConfigStarknet {
     StarknetValues starknetValues;
+    bytes32 L2Spell;
 
     struct StarknetValues {
         address core_implementation;
@@ -32,6 +33,9 @@ contract ConfigStarknet {
 
     function setValues() public {
         uint256 WAD = 10 ** 18;
+
+        L2Spell = 0x00a052591661d7e249b46a1084c63b14dae6aa8b1a56ab3f7df8c8add1c374b1;  // Set to zero if no spell is set.
+
         starknetValues = StarknetValues({
             core_implementation:       0x60C5fA1763cC9CB9c7c25458C6cDDFbc8F125256,
             dai_bridge_isOpen:         1,                     // 1 open, 0 closed
@@ -74,6 +78,8 @@ interface StarknetGovRelayLike {
 interface StarknetCoreLike {
     function implementation() external returns (address);
     function isNotFinalized() external returns (bool);
+    function l1ToL2Messages(bytes32) external returns (uint256);
+    function l1ToL2MessageNonce() external returns (uint256);
 }
 
 interface DaiLike {
@@ -94,6 +100,7 @@ contract StarknetTests is DssSpellTestBase, ConfigStarknet {
         _checkStarknetDaiBridge();
         _checkStarknetGovRelay();
         _checkStarknetCore();
+        _checkStarknetMessage(L2Spell);
     }
 
     function _checkStarknetEscrowMom() internal {
@@ -153,5 +160,44 @@ contract StarknetTests is DssSpellTestBase, ConfigStarknet {
         //assertEq(core.implementation(), starknetValues.core_implementation, "StarknetTest/core-implementation");
 
         assertTrue(core.isNotFinalized());
+    }
+
+    function _checkStarknetMessage(bytes32 _spell) internal {
+        StarknetCoreLike core = StarknetCoreLike(addr.addr("STARKNET_CORE"));
+
+        if (_spell != 0) {
+
+            // Nonce incremenets each message, back up one
+            uint256 _nonce = core.l1ToL2MessageNonce() - 1;
+            // Payload must be array
+            uint256[] memory _payload = new uint256[](1);
+            _payload[0] = uint256(_spell);
+
+            uint256 RELAY_SELECTOR = 300224956480472355485152391090755024345070441743081995053718200325371913697;
+
+            bytes32 _message = _getL1ToL2MsgHash(starknetValues.l2_gov_relay, RELAY_SELECTOR, _payload, _nonce);
+
+            // Assert message is scheduled
+            assertTrue(core.l1ToL2Messages(_message) > 0, "StarknetTest/SpellNotQueued");
+        }
+    }
+
+    function _getL1ToL2MsgHash(
+                uint256 toAddress,
+                uint256 selector,
+                uint256[] memory payload,
+                uint256 nonce
+            ) internal view returns (bytes32) {
+        return
+            keccak256(
+                abi.encodePacked(
+                    uint256(uint160(addr.addr("STARKNET_GOV_RELAY"))),
+                    toAddress,
+                    nonce,
+                    selector,
+                    payload.length,
+                    payload
+                )
+            );
     }
 }
