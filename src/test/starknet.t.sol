@@ -169,6 +169,7 @@ contract StarknetTests is DssSpellTestBase, ConfigStarknet {
 
             // Nonce increments each message, back up one
             uint256 _nonce = core.l1ToL2MessageNonce() - 1;
+
             // Payload must be array
             uint256[] memory _payload = new uint256[](1);
             _payload[0] = uint256(_spell);
@@ -176,6 +177,7 @@ contract StarknetTests is DssSpellTestBase, ConfigStarknet {
             // Hardcoded in L1 gov relay, not public
             uint256 RELAY_SELECTOR = 300224956480472355485152391090755024345070441743081995053718200325371913697;
 
+            // Hash of message created by Starknet Core
             bytes32 _message = _getL1ToL2MsgHash(addr.addr("STARKNET_GOV_RELAY"), starknetValues.l2_gov_relay, RELAY_SELECTOR, _payload, _nonce);
 
             // Assert message is scheduled, core returns 0 if not in message array
