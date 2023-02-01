@@ -20,7 +20,7 @@ import "../DssSpell.t.base.sol";
 
 contract ConfigStarknet {
     StarknetValues starknetValues;
-    bytes32 L2Spell;
+    bytes32 l2Spell;
 
     struct StarknetValues {
         address core_implementation;
@@ -34,7 +34,7 @@ contract ConfigStarknet {
     function setValues() public {
         uint256 WAD = 10 ** 18;
 
-        L2Spell = 0x00a052591661d7e249b46a1084c63b14dae6aa8b1a56ab3f7df8c8add1c374b1;  // Set to zero if no spell is set.
+        l2Spell = 0x00a052591661d7e249b46a1084c63b14dae6aa8b1a56ab3f7df8c8add1c374b1;  // Set to zero if no spell is set.
 
         starknetValues = StarknetValues({
             core_implementation:       0x60C5fA1763cC9CB9c7c25458C6cDDFbc8F125256,
@@ -100,7 +100,7 @@ contract StarknetTests is DssSpellTestBase, ConfigStarknet {
         _checkStarknetDaiBridge();
         _checkStarknetGovRelay();
         _checkStarknetCore();
-        _checkStarknetMessage(L2Spell);
+        _checkStarknetMessage(l2Spell);
     }
 
     function _checkStarknetEscrowMom() internal {
