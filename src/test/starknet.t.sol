@@ -177,7 +177,7 @@ contract StarknetTests is DssSpellTestBase, ConfigStarknet {
 
             bytes32 _message = _getL1ToL2MsgHash(addr.addr("STARKNET_GOV_RELAY"), starknetValues.l2_gov_relay, RELAY_SELECTOR, _payload, _nonce);
 
-            // Assert message is scheduled
+            // Assert message is scheduled, core returns 0 if not in message array
             assertTrue(core.l1ToL2Messages(_message) > 0, "StarknetTest/SpellNotQueued");
         }
     }
