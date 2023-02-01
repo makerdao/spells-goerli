@@ -32,6 +32,10 @@ interface L2Gateway {
     function validDomains(bytes32) external returns (uint256);
 }
 
+interface BridgeLike {
+    function l2TeleportGateway() external view returns (address);
+}
+
 contract DssSpellTest is DssSpellTestBase {
     string         config;
     RootDomain     rootDomain;
@@ -384,8 +388,12 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     function testL2OptimismSpell() public {
+        address l2TeleportGateway = BridgeLike(
+            chainLog.getAddress("OPTIMISM_TELEPORT_BRIDGE")
+        ).l2TeleportGateway();
+
         _setupRootDomain();
-        
+
         optimismDomain = new OptimismDomain(config, getRelativeChain("optimism"), rootDomain);
         optimismDomain.selectFork();
 
@@ -393,7 +401,7 @@ contract DssSpellTest is DssSpellTestBase {
         L2Spell optimismSpell = L2Spell(0xC077Eb64285b40C86B40769e99Eb1E61d682a6B4);
 
         L2Gateway optimismGateway = L2Gateway(optimismSpell.gateway());
-        assertEq(address(optimismGateway), 0xd9e000C419F3aA4EA1C519497f5aF249b496a00f, "l2-optimism-wrong-gateway");
+        assertEq(address(optimismGateway), l2TeleportGateway, "l2-optimism-wrong-gateway");
 
         bytes32 optDstDomain = optimismSpell.dstDomain();
         assertEq(optDstDomain, bytes32("ETH-GOER-A"), "l2-optimism-wrong-dst-domain");
@@ -416,6 +424,10 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     function testL2ArbitrumSpell() public {
+        address l2TeleportGateway = BridgeLike(
+            chainLog.getAddress("ARBITRUM_TELEPORT_BRIDGE")
+        ).l2TeleportGateway();
+
         _setupRootDomain();
         
         arbitrumDomain = new ArbitrumDomain(config, getRelativeChain("arbitrum_one"), rootDomain);
@@ -425,7 +437,7 @@ contract DssSpellTest is DssSpellTestBase {
         L2Spell arbitrumSpell = L2Spell(0x11Dc6Ed4C08Da38B36709a6C8DBaAC0eAeDD48cA);
 
         L2Gateway arbitrumGateway = L2Gateway(arbitrumSpell.gateway());
-        assertEq(address(arbitrumGateway), 0x8334a747731Be3a58bCcAf9a3D35EbC968806223, "l2-arbitrum-wrong-gateway");
+        assertEq(address(arbitrumGateway), l2TeleportGateway, "l2-arbitrum-wrong-gateway");
 
         bytes32 arbDstDomain = arbitrumSpell.dstDomain();
         assertEq(arbDstDomain, bytes32("ETH-GOER-A"), "l2-arbitrum-wrong-dst-domain");
