@@ -63,12 +63,13 @@ contract DssSpellAction is DssAction {
     address constant internal ARBITRUM_L2_SPELL = 0x11Dc6Ed4C08Da38B36709a6C8DBaAC0eAeDD48cA;
     uint256 constant internal STARKNET_L2_SPELL = 0x00a052591661d7e249b46a1084c63b14dae6aa8b1a56ab3f7df8c8add1c374b1;
 
+    // run ./scripts/get-opt-relay-cost.sh to help determine Optimism relay param
     uint32 public constant OPT_MAX_GAS = 100_000; // = 52_587 gas (estimated L2 execution cost) + margin
 
-    // run ./scripts/get-arb-relay-cost to generate the following 3 constants
-    uint256 public constant ARB_MAX_GAS = 38_920;
-    uint256 public constant ARB_GAS_PRICE_BID = 100_000_000;
-    uint256 public constant ARB_MAX_SUBMISSION_COST = 1e14;
+    // run ./scripts/get-arb-relay-cost.sh to help determine Arbitrum relay params
+    uint256 public constant ARB_MAX_GAS = 100_000; // = 38_920 gas (estimated L1 calldata + L2 execution cost) + margin (to account for surge in L1 basefee)
+    uint256 public constant ARB_GAS_PRICE_BID = 1_000_000_000; // = 0.1 gwei + 0.9 gwei margin
+    uint256 public constant ARB_MAX_SUBMISSION_COST = 1e14; // = ~0.05-0.20 * 10^14 rounded up to 1*10^14
     uint256 public constant ARB_L1_CALL_VALUE = ARB_MAX_SUBMISSION_COST + ARB_MAX_GAS * ARB_GAS_PRICE_BID;
 
     // see: https://github.com/makerdao/starknet-spells-goerli/tree/teleport-spell#estimate-l1-l2-fee
@@ -139,7 +140,7 @@ contract DssSpellAction is DssAction {
         // TODO: add code in mainnet
 
         // GovComms offboarding
-        // https://vote.makerdao.com/polling/QmV9iktK 
+        // https://vote.makerdao.com/polling/QmV9iktK
         // https://forum.makerdao.com/t/mip39c3-sp7-core-unit-offboarding-com-001/19068/65
         // TODO: add code in mainnet
 
