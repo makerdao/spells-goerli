@@ -89,6 +89,9 @@ interface DaiLike {
 contract StarknetTests is DssSpellTestBase, ConfigStarknet {
 
     function testStarknet() public {
+        // Ensure the Pause Proxy has some ETH for L2 Spells
+        assertGt(pauseProxy.balance, 0);
+
         setValues();
 
         _vote(address(spell));
