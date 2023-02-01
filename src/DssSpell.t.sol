@@ -17,6 +17,7 @@
 pragma solidity 0.8.16;
 
 import "./DssSpell.t.base.sol";
+import {ScriptTools} from "dss-test/DssTest.sol";
 
 import {RootDomain} from "dss-test/domains/RootDomain.sol";
 import {OptimismDomain} from "dss-test/domains/OptimismDomain.sol";
