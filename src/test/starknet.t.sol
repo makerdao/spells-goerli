@@ -175,7 +175,7 @@ contract StarknetTests is DssSpellTestBase, ConfigStarknet {
 
             uint256 RELAY_SELECTOR = 300224956480472355485152391090755024345070441743081995053718200325371913697;
 
-            bytes32 _message = _getL1ToL2MsgHash(starknetValues.l2_gov_relay, RELAY_SELECTOR, _payload, _nonce);
+            bytes32 _message = _getL1ToL2MsgHash(addr.addr("STARKNET_GOV_RELAY"), starknetValues.l2_gov_relay, RELAY_SELECTOR, _payload, _nonce);
 
             // Assert message is scheduled
             assertTrue(core.l1ToL2Messages(_message) > 0, "StarknetTest/SpellNotQueued");
@@ -183,15 +183,16 @@ contract StarknetTests is DssSpellTestBase, ConfigStarknet {
     }
 
     function _getL1ToL2MsgHash(
+                address sender,
                 uint256 toAddress,
                 uint256 selector,
                 uint256[] memory payload,
                 uint256 nonce
-            ) internal view returns (bytes32) {
+            ) internal pure returns (bytes32) {
         return
             keccak256(
                 abi.encodePacked(
-                    uint256(uint160(addr.addr("STARKNET_GOV_RELAY"))),
+                    uint256(uint160(sender)),
                     toAddress,
                     nonce,
                     selector,
