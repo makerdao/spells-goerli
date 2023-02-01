@@ -167,7 +167,7 @@ contract StarknetTests is DssSpellTestBase, ConfigStarknet {
 
         if (_spell != 0) {
 
-            // Nonce incremenets each message, back up one
+            // Nonce increments each message, back up one
             uint256 _nonce = core.l1ToL2MessageNonce() - 1;
             // Payload must be array
             uint256[] memory _payload = new uint256[](1);
