@@ -185,6 +185,7 @@ contract StarknetTests is DssSpellTestBase, ConfigStarknet {
         }
     }
 
+    // Modified version of internal getL1ToL2MsgHash in Starknet Core implementation
     function _getL1ToL2MsgHash(
                 address sender,
                 uint256 toAddress,
