@@ -427,6 +427,9 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     function testL2ArbitrumSpell() public {
+        // Ensure the Pause Proxy has some ETH for L2 Spells
+        assertGt(pauseProxy.balance, 0);
+
         address l2TeleportGateway = BridgeLike(
             chainLog.getAddress("ARBITRUM_TELEPORT_BRIDGE")
         ).l2TeleportGateway();
