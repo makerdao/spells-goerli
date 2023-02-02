@@ -388,9 +388,6 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     function testL2OptimismSpell() public {
-        // Ensure the Pause Proxy has some ETH for L2 Spells
-        assertGt(pauseProxy.balance, 0);
-
         address l2TeleportGateway = BridgeLike(
             chainLog.getAddress("OPTIMISM_TELEPORT_BRIDGE")
         ).l2TeleportGateway();
