@@ -69,7 +69,7 @@ contract DssSpellAction is DssAction {
     // run ./scripts/get-arb-relay-cost.sh to help determine Arbitrum relay params
     uint256 public constant ARB_MAX_GAS = 100_000; // = 38_920 gas (estimated L1 calldata + L2 execution cost) + margin (to account for surge in L1 basefee)
     uint256 public constant ARB_GAS_PRICE_BID = 1_000_000_000; // = 0.1 gwei + 0.9 gwei margin
-    uint256 public constant ARB_MAX_SUBMISSION_COST = 1e16; // = ~0.05-0.20 * 10^16 rounded up to 1*10^16
+    uint256 public constant ARB_MAX_SUBMISSION_COST = 1e15; // = ~0.05-0.20 * 10^14 rounded up to 1*10^14
     uint256 public constant ARB_L1_CALL_VALUE = ARB_MAX_SUBMISSION_COST + ARB_MAX_GAS * ARB_GAS_PRICE_BID;
 
     // see: https://github.com/makerdao/starknet-spells-goerli/tree/teleport-spell#estimate-l1-l2-fee
