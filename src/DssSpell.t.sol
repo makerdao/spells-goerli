@@ -424,8 +424,8 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     function testL2ArbitrumSpell() public {
-        // Ensure the Pause Proxy has some ETH for L2 Spells
-        assertGt(pauseProxy.balance, 0);
+        // Ensure the Arbitrum Gov Relay has some ETH to pay for the Arbitrum spell
+        assertGt(chainLog.getAddress("ARBITRUM_GOV_RELAY").balance, 0);
 
         address l2TeleportGateway = BridgeLike(
             chainLog.getAddress("ARBITRUM_TELEPORT_BRIDGE")
