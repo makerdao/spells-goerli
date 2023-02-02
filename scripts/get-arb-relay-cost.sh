@@ -16,7 +16,7 @@ L1_GOV_RELAY=$(
 L2_GOV_RELAY=$(cast call $L1_GOV_RELAY "l2GovernanceRelay()(address)")
 INBOX=$(cast call $L1_GOV_RELAY "inbox()(address)")
 
-BASE_FEE_SAFETY_FACTOR=20 # Factor by which L1 block.basefee could grow between now and the spell cast time
+BASE_FEE_SAFETY_FACTOR=200 # Factor by which L1 block.basefee could grow between now and the spell cast time
 
 ARB_GAS_PRICE_BID=$(cast gas-price --rpc-url $ARBITRUM_GOERLI_RPC_URL)
 RELAY_CALLDATA=$(
