@@ -51,26 +51,13 @@ contract DssSpellAction is DssAction {
         return false;
     }
 
-    address immutable internal OPTIMISM_GOV_RELAY = DssExecLib.getChangelogAddress("OPTIMISM_GOV_RELAY");
-    address immutable internal ARBITRUM_GOV_RELAY = DssExecLib.getChangelogAddress("ARBITRUM_GOV_RELAY");
     address immutable internal STARKNET_GOV_RELAY = DssExecLib.getChangelogAddress("STARKNET_GOV_RELAY");
 
     address immutable internal DAI = DssExecLib.getChangelogAddress("MCD_DAI");
     address immutable internal STARKNET_ESCROW = DssExecLib.getChangelogAddress("STARKNET_ESCROW");
     address immutable internal STARKNET_DAI_BRIDGE_LEGACY = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE_LEGACY");
 
-    address constant internal OPTIMISM_L2_SPELL = 0xC077Eb64285b40C86B40769e99Eb1E61d682a6B4;
-    address constant internal ARBITRUM_L2_SPELL = 0x11Dc6Ed4C08Da38B36709a6C8DBaAC0eAeDD48cA;
     uint256 constant internal STARKNET_L2_SPELL = 0x00a052591661d7e249b46a1084c63b14dae6aa8b1a56ab3f7df8c8add1c374b1;
-
-    // run ./scripts/get-opt-relay-cost.sh to help determine Optimism relay param
-    uint32 public constant OPT_MAX_GAS = 100_000; // = 52_587 gas (estimated L2 execution cost) + margin
-
-    // run ./scripts/get-arb-relay-cost.sh to help determine Arbitrum relay params
-    uint256 public constant ARB_MAX_GAS = 100_000; // = 38_920 gas (estimated L1 calldata + L2 execution cost) + margin (to account for surge in L1 basefee)
-    uint256 public constant ARB_GAS_PRICE_BID = 1_000_000_000; // = 0.1 gwei + 0.9 gwei margin
-    uint256 public constant ARB_MAX_SUBMISSION_COST = 1e14; // = ~0.05-0.20 * 10^14 rounded up to 1*10^14
-    uint256 public constant ARB_L1_CALL_VALUE = ARB_MAX_SUBMISSION_COST + ARB_MAX_GAS * ARB_GAS_PRICE_BID;
 
     // see: https://github.com/makerdao/starknet-spells-goerli/tree/teleport-spell#estimate-l1-l2-fee
     uint256 public constant STA_GAS_USAGE_ESTIMATION = 28460;
@@ -97,29 +84,6 @@ contract DssSpellAction is DssAction {
     // uint256 internal constant WAD     = 10 ** 18;
 
     function actions() public override {
-        // ------------------ Pause Optimism Goerli L2DaiTeleportGateway -----------------
-        // Forum: https://forum.makerdao.com/t/community-notice-pecu-to-redeploy-teleport-l2-gateways/19550
-        // L2 Spell to execute via OPTIMISM_GOV_RELAY:
-        // https://goerli-optimism.etherscan.io/address/0xC077Eb64285b40C86B40769e99Eb1E61d682a6B4#code
-        OptimismGovRelayLike(OPTIMISM_GOV_RELAY).relay(
-            OPTIMISM_L2_SPELL,
-            abi.encodeWithSignature("execute()"),
-            OPT_MAX_GAS
-        );
-
-        // ------------------ Pause Arbitrum Goerli L2DaiTeleportGateway -----------------
-        // Forum: https://forum.makerdao.com/t/community-notice-pecu-to-redeploy-teleport-l2-gateways/19550
-        // L2 Spell to execute via ARBITRUM_GOV_RELAY:
-        // https://goerli.arbiscan.io/address/0x11dc6ed4c08da38b36709a6c8dbaac0eaedd48ca#code
-        // Note: ARBITRUM_GOV_RELAY must have been pre-funded with at least ARB_L1_CALL_VALUE worth of Ether
-        ArbitrumGovRelayLike(ARBITRUM_GOV_RELAY).relay(
-            ARBITRUM_L2_SPELL,
-            abi.encodeWithSignature("execute()"),
-            ARB_L1_CALL_VALUE,
-            ARB_MAX_GAS,
-            ARB_GAS_PRICE_BID,
-            ARB_MAX_SUBMISSION_COST
-        );
 
         // ------------------ Pause Starknet Goerli L2DaiTeleportGateway -----------------
         // Forum: https://forum.makerdao.com/t/community-notice-pecu-to-redeploy-teleport-l2-gateways/19550
@@ -129,7 +93,7 @@ contract DssSpellAction is DssAction {
         StarknetGovRelayLike(STARKNET_GOV_RELAY).relay{value: STA_L1_CALL_VALUE}(STARKNET_L2_SPELL);
 
         // disallow legacy bridge on escrow
-        // Forum: https://forum.makerdao.com/t/starknet-changes-for-executive-spell-on-the-week-of-2023-01-30/19607 
+        // Forum: https://forum.makerdao.com/t/starknet-changes-for-executive-spell-on-the-week-of-2023-01-30/19607
         StarknetEscrowLike(STARKNET_ESCROW).approve(DAI, STARKNET_DAI_BRIDGE_LEGACY, 0);
 
         //
