@@ -43,7 +43,7 @@ contract ConfigStarknet {
             dai_bridge_maxDeposit:     type(uint256).max,     // wei
             l2_dai_bridge:             0x057b7fe4e59d295de5e7955c373023514ede5b972e872e9aa5dcdf563f5cfacb,
             l2_gov_relay:              0x00275e3f018f7884f449a1fb418b6b1de77e01c74a9fefaed1599cb22322ff74,
-            relay_selector:            300224956480472355485152391090755024345070441743081995053718200325371913697
+            relay_selector:            300224956480472355485152391090755024345070441743081995053718200325371913697  // Hardcoded in L1 gov relay, not public
         });
     }
 }
