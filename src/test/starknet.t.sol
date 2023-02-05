@@ -119,10 +119,11 @@ contract StarknetTests is DssSpellTestBase, ConfigStarknet {
     }
 
     function testStarknetEventEmission() public {
-        // Ensure the Pause Proxy has some ETH for the Starknet Spell
-        assertGt(pauseProxy.balance, 0);
+
         setValues();
         if (starknetValues.l2_spell != bytes32(0)) {
+            // Ensure the Pause Proxy has some ETH for the Starknet Spell
+            assertGt(pauseProxy.balance, 0);
             _vote(address(spell));
             DssSpell(spell).schedule();
 
