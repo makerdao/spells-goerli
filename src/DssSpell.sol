@@ -50,8 +50,6 @@ contract DssSpellAction is DssAction {
         // https://vote.makerdao.com/polling/QmRfegL4#vote-breakdown
 
         // Reduce dust for ETH-A, WBTC-A, and WSTETH-A to 7,500 DAI.
-
-
         DssExecLib.setIlkMinVaultAmount("ETH-A", 7_500);
         DssExecLib.setIlkMinVaultAmount("WBTC-A", 7_500);
         DssExecLib.setIlkMinVaultAmount("WSTETH-A", 7_500);
