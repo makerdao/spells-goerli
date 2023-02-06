@@ -98,9 +98,11 @@ contract StarknetTests is DssSpellTestBase, ConfigStarknet {
             uint256 fee
         );
 
-    function testStarknet() public {
-
+    constructor() {
         setValues();
+    }
+
+    function testStarknet() public {
 
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
@@ -111,12 +113,10 @@ contract StarknetTests is DssSpellTestBase, ConfigStarknet {
         _checkStarknetDaiBridge();
         _checkStarknetGovRelay();
         _checkStarknetCore();
-        _checkStarknetMessage(starknetValues.l2_spell);
     }
 
-    function testStarknetEventEmission() public {
+    function testStarknetSpell() public {
 
-        setValues();
         if (starknetValues.l2_spell != bytes32(0)) {
             // Ensure the Pause Proxy has some ETH for the Starknet Spell
             assertGt(pauseProxy.balance, 0);
@@ -130,6 +130,8 @@ contract StarknetTests is DssSpellTestBase, ConfigStarknet {
             DssSpell(spell).cast();
 
             assertTrue(spell.done());
+
+            _checkStarknetMessage(starknetValues.l2_spell);
         }
     }
 
@@ -186,7 +188,8 @@ contract StarknetTests is DssSpellTestBase, ConfigStarknet {
         StarknetCoreLike core = StarknetCoreLike(addr.addr("STARKNET_CORE"));
 
         // Checks to see that starknet core implementation matches core
-        //   If the core implementation changes, message checks may fail if the message structure changes.
+        //   If the core implementation changes, inspect the new implementation for safety and update the config
+        //   Note: message checks may fail if the message structure changes in the new implementation
         assertEq(core.implementation(), starknetValues.core_implementation, _concat("StarknetTest/new-core-implementation-", bytes32(uint256(uint160(core.implementation())))));
 
         assertTrue(core.isNotFinalized());
