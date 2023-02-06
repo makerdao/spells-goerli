@@ -71,6 +71,9 @@ contract DssSpellAction is DssAction {
         // Recognized Delegate Compensation
         // https://mips.makerdao.com/mips/details/MIP61
         // Not on Goerli
+
+        // Ensure prior call succeeds on Goerli cast
+        DssExecLib.accumulateDSR();
     }
 }
 
