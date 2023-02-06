@@ -36,7 +36,7 @@ contract ConfigStarknet {
         uint256 WAD = 10 ** 18;
 
         starknetValues = StarknetValues({
-            l2_spell:                  0x00a052591661d7e249b46a1084c63b14dae6aa8b1a56ab3f7df8c8add1c374b1,  // Set to zero if no spell is set.
+            l2_spell:                  0,  // Set to zero if no spell is set.
             core_implementation:       0x70c8A579aD08339cCA19d77d8646F4b6f0fd098A,
             dai_bridge_isOpen:         1,                     // 1 open, 0 closed
             dai_bridge_ceiling:        1_000_000 * WAD,       // wei

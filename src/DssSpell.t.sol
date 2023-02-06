@@ -387,7 +387,7 @@ contract DssSpellTest is DssSpellTestBase {
         rootDomain = new RootDomain(config, getRelativeChain("mainnet"));
     }
 
-    function testL2OptimismSpell() public {
+    function testL2OptimismSpell() private {
         address l2TeleportGateway = BridgeLike(
             chainLog.getAddress("OPTIMISM_TELEPORT_BRIDGE")
         ).l2TeleportGateway();
@@ -423,7 +423,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(optimismGateway.validDomains(optDstDomain), 0, "l2-optimism-invalid-dst-domain");
     }
 
-    function testL2ArbitrumSpell() public {
+    function testL2ArbitrumSpell() private {
         // Ensure the Arbitrum Gov Relay has some ETH to pay for the Arbitrum spell
         assertGt(chainLog.getAddress("ARBITRUM_GOV_RELAY").balance, 0);
 
@@ -432,7 +432,7 @@ contract DssSpellTest is DssSpellTestBase {
         ).l2TeleportGateway();
 
         _setupRootDomain();
-        
+
         arbitrumDomain = new ArbitrumDomain(config, getRelativeChain("arbitrum_one"), rootDomain);
         arbitrumDomain.selectFork();
 
