@@ -17,4 +17,5 @@ do
 done
 
 echo -e "Network: $(cast chain)"
-cast block "$(cast tx "${TXHASH}"|grep blockNumber|awk '{print $2}')"|grep timestamp|awk '{print $2}'
+echo "timestamp: $(cast block "$(cast tx "${TXHASH}"|grep blockNumber|awk '{print $2}')"|grep timestamp|awk '{print $2}')"
+echo "block: $(cast tx "${TXHASH}"|grep blockNumber|awk '{print $2}')"
