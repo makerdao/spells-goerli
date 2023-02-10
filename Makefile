@@ -7,7 +7,7 @@ test               :; ./scripts/test-dssspell-forge.sh match="$(match)" block="$
 test-forge         :; ./scripts/test-dssspell-forge.sh match="$(match)" block="$(block)"
 estimate           :; ./scripts/estimate-deploy-gas.sh
 deploy             :; ./scripts/deploy.sh
-deploy-tx-data     :; ./scripts/get-tx-data.sh tx=$(tx)
+deploy-info        :; ./scripts/get-deploy-info.sh tx=$(tx)
 verify             :; ./scripts/verify.py DssSpell $(addr)
 flatten            :; hevm flatten --source-file "src/DssSpell.sol" > out/flat.sol
 cast-spell         :; ./scripts/cast-dssspell.sh $(spell)
