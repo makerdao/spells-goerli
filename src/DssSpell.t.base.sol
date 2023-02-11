@@ -287,7 +287,10 @@ contract DssSpellTestBase is Config, DssTest {
     }
 
     function _rollToDeployedSpellBlock(address _spell) internal {
-        if (_spell == address(0)) { vm.rollFork(block.number); }
+        if (_spell == address(0)) {
+            vm.rollFork(block.number);
+            return;
+        }
 
         uint256 low = 5273074; // MCD_VAT Deployed Aug-06-2021 04:26:38 PM +UTC
         uint256 high = block.number;
