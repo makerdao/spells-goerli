@@ -303,7 +303,7 @@ contract DssSpellTestBase is Config, DssTest {
             }
         }
 
-        return vm.rollFork(low + 1);
+        vm.rollFork(low + 1);
     }
 
     function _isContractDeployed(address _spell) internal view returns (bool) {
