@@ -309,10 +309,9 @@ contract DssSpellTestBase is Config, DssTest {
                     low = mid + 1;
                 }
             }
+            vm.writeFile(spellBlockPath, vm.toString(low));
+            vm.rollFork(low);
         }
-
-        vm.writeFile(spellBlockPath, vm.toString(low));
-        vm.rollFork(low);
     }
 
     function _isContractDeployed(address _spell) internal view returns (bool) {
