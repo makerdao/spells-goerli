@@ -150,6 +150,8 @@ contract DssSpellTestBase is Config, DssTest {
     VestAbstract                 vestDai = VestAbstract(       addr.addr("MCD_VEST_DAI"));
     RwaLiquidationLike liquidationOracle = RwaLiquidationLike( addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
+    string spellBlockPath = "./spellblock.txt";
+
     DssSpell spell;
 
     event Debug(uint256 index, uint256 val);
@@ -292,7 +294,7 @@ contract DssSpellTestBase is Config, DssTest {
             return;
         }
 
-        uint256 low = 5273074; // MCD_VAT Deployed Aug-06-2021 04:26:38 PM +UTC
+        uint256 low = vm.parseUint(vm.readLine(spellBlockPath));
         uint256 high = block.number;
         uint256 mid;
 
@@ -306,6 +308,7 @@ contract DssSpellTestBase is Config, DssTest {
             }
         }
 
+        vm.writeFile(spellBlockPath, vm.toString(low));
         vm.rollFork(low);
     }
 
