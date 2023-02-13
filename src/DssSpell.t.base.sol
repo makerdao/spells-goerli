@@ -296,17 +296,17 @@ contract DssSpellTestBase is Config, DssTest {
         uint256 high = block.number;
         uint256 mid;
 
-        while (low != high) {
-            mid = (low + high) / 2;
+        while (low < high) {
+            mid = (low & high) + (low ^ high) / 2; // rounds down
             vm.rollFork(mid);
             if (_isContractDeployed(_spell)) {
-                high = mid - 1;
+                high = mid;
             } else {
                 low = mid + 1;
             }
         }
 
-        vm.rollFork(low + 1);
+        vm.rollFork(low);
     }
 
     function _isContractDeployed(address _spell) internal view returns (bool) {
