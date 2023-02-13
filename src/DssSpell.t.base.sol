@@ -266,22 +266,53 @@ contract DssSpellTestBase is Config, DssTest {
     function setUp() public {
         setValues(address(chief));
 
-        spellValues.deployed_spell_created = spellValues.deployed_spell != address(0) ? spellValues.deployed_spell_created : block.timestamp;
-        _castPreviousSpell();
-        spell = spellValues.deployed_spell != address(0) ?
-            DssSpell(spellValues.deployed_spell) : new DssSpell();
-
-        if (spellValues.deployed_spell_block != 0 && spell.eta() != 0) {
-            // if we have a deployed spell in the config
-            // we want to roll our fork to the block where it was deployed
-            // this means the test suite will continue to accurately pass/fail
-            // even if mainnet has already scheduled/cast the spell
-            vm.makePersistent(address(this));
-            vm.makePersistent(address(rates));
-            vm.makePersistent(address(addr));
-            vm.makePersistent(address(deployers));
-            vm.rollFork(spellValues.deployed_spell_block);
+        if (spellValues.deployed_spell != address(0)) {
+            spell = DssSpell(spellValues.deployed_spell);
+            if (spell.eta() != 0) {
+                // if we have a scheduled spell in the config
+                // we want to roll our fork to the block where it was deployed
+                // this means the test suite will continue to accurately pass/fail
+                // even if mainnet has already scheduled/cast the spell
+                vm.makePersistent(address(this));
+                vm.makePersistent(address(rates));
+                vm.makePersistent(address(addr));
+                vm.makePersistent(address(deployers));
+                _rollToDeployedSpellBlock(address(spell));
+            }
+        } else {
+            spell = new DssSpell();
         }
+
+        _castPreviousSpell();
+    }
+
+    function _rollToDeployedSpellBlock(address _spell) internal {
+        if (_spell == address(0)) {
+            vm.rollFork(block.number);
+            return;
+        }
+
+        uint256 low = 5273074; // MCD_VAT Deployed Aug-06-2021 04:26:38 PM +UTC
+        uint256 high = block.number;
+        uint256 mid;
+
+        while (low < high) {
+            mid = (low & high) + (low ^ high) / 2; // rounds down
+            vm.rollFork(mid);
+            if (_isContractDeployed(_spell)) {
+                high = mid;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        vm.rollFork(low);
+    }
+
+    function _isContractDeployed(address _spell) internal view returns (bool) {
+        uint256 size;
+        assembly { size := extcodesize(_spell) }
+        return size > 0;
     }
 
     function _vote(address spell_) internal {
@@ -1446,11 +1477,7 @@ contract DssSpellTestBase is Config, DssTest {
         assertEq(_stringToBytes32(spell.description()),
                 _stringToBytes32(description), "TestError/spell-description");
 
-        if(address(spell) != address(spellValues.deployed_spell)) {
-            assertEq(spell.expiration(), block.timestamp + spellValues.expiration_threshold, "TestError/spell-expiration");
-        } else {
-            assertEq(spell.expiration(), spellValues.deployed_spell_created + spellValues.expiration_threshold, "TestError/spell-expiration");
-        }
+        assertEq(spell.expiration(), block.timestamp + spellValues.expiration_threshold, "TestError/spell-expiration");
 
         assertTrue(spell.officeHours() == spellValues.office_hours_enabled, "TestError/spell-office-hours");
 
