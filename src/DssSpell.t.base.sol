@@ -292,7 +292,7 @@ contract DssSpellTestBase is Config, DssTest {
             return;
         }
 
-        string spellBlockPath = "./spellblock.txt";
+        string memory spellBlockPath = "./spellblock.txt";
 
         uint256 low = vm.parseUint(vm.readLine(spellBlockPath));
         uint256 high = block.number;
