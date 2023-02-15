@@ -46,34 +46,6 @@ contract DssSpellAction is DssAction {
 
     function actions() public override {
 
-        // Dust Parameter Changes
-        // https://vote.makerdao.com/polling/QmRfegL4#vote-breakdown
-
-        // Reduce dust for ETH-A, WBTC-A, and WSTETH-A to 7,500 DAI.
-        DssExecLib.setIlkMinVaultAmount("ETH-A", 7_500);
-        DssExecLib.setIlkMinVaultAmount("WBTC-A", 7_500);
-        DssExecLib.setIlkMinVaultAmount("WSTETH-A", 7_500);
-
-        // Reduce dust for ETH-C, WBTC-C, and WSTETH-B to 3,500 DAI.
-        DssExecLib.setIlkMinVaultAmount("ETH-C", 3_500);
-        DssExecLib.setIlkMinVaultAmount("WBTC-C", 3_500);
-        DssExecLib.setIlkMinVaultAmount("WSTETH-B", 3_500);
-
-        // Reduce dust for ETH-B and WBTC-B to 25,000 DAI.
-        DssExecLib.setIlkMinVaultAmount("ETH-B", 25_000);
-        DssExecLib.setIlkMinVaultAmount("WBTC-B", 25_000);
-
-
-        // Chainlink Automation Keeper Network Stream Setup
-        // https://vote.makerdao.com/polling/QmXeWcrX
-        // Not on Goerli
-
-        // Recognized Delegate Compensation
-        // https://mips.makerdao.com/mips/details/MIP61
-        // Not on Goerli
-
-        // Extra action to ensure prior call succeeds on Goerli cast
-        DssExecLib.accumulateDSR();
     }
 }
 
