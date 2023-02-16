@@ -237,7 +237,7 @@ contract DssSpellTest is DssSpellTestBase {
 
         // _checkChainlogKey("XXX");
 
-        _checkChainlogVersion("1.14.8");
+        _checkChainlogVersion("1.14.9");
     }
 
     function testNewIlkRegistryValues() private { // make private to disable

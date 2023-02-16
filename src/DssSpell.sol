@@ -87,6 +87,9 @@ contract DssSpellAction is DssAction {
 
         // ---- SF-001 Contributor Vesting ----
         // Note: only on mainnet
+
+        // Bump changelog
+        DssExecLib.setChangelogVersion("1.14.9");
     }
 }
 
