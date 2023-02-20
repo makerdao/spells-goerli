@@ -11,4 +11,4 @@ make && spell_address=$(dapp create DssSpell)
 
 ./scripts/verify.py DssSpell "$spell_address"
 
-sed -Ei "s/($KEY: *address\()(0x[0-9a-fA-F]{40}\))/\1$spell_address)/" "$SOURCE"
+sed -Ei "s/($KEY: *address\()(0x[a-fA-F0-9]{40}|0)\)/\1$spell_address)/" "$SOURCE"
