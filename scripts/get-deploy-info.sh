@@ -16,6 +16,15 @@ do
     esac
 done
 
+SOURCE="src/test/config.sol"
+KEY_TIMESTAMP="deployed_spell_created"
+KEY_BLOCK="deployed_spell_block"
+
+timestamp=$(cast block "$(cast tx "${TXHASH}"|grep blockNumber|awk '{print $2}')"|grep timestamp|awk '{print $2}')
+block=$(cast tx "${TXHASH}"|grep blockNumber|awk '{print $2}')
+
+sed -i "s/\($KEY_TIMESTAMP *: *\)[0-9]\+/\1$timestamp/g" "$SOURCE"
+sed -i "s/\($KEY_BLOCK *: *\)[0-9]\+/\1$block/g" "$SOURCE"
+
 echo -e "Network: $(cast chain)"
-echo "timestamp: $(cast block "$(cast tx "${TXHASH}"|grep blockNumber|awk '{print $2}')"|grep timestamp|awk '{print $2}')"
-echo "block: $(cast tx "${TXHASH}"|grep blockNumber|awk '{print $2}')"
+echo "config.sol updated with deployed timestamp and block"
