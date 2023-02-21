@@ -4,7 +4,8 @@ out = 'out'
 libs = ['lib']
 fs_permissions = [
     { access = "read", path = "./lib/dss-test/script/input/"},
-    { access = "read", path = "./out/ArbitrumDomain.sol/ArbSysOverride.json"}
+    { access = "read", path = "./out/ArbitrumDomain.sol/ArbSysOverride.json"},
+    { access = "read-write", path = "./spellblock.txt"}
 ]
 
 [rpc_endpoints]

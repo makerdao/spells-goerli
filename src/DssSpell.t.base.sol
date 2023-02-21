@@ -292,21 +292,26 @@ contract DssSpellTestBase is Config, DssTest {
             return;
         }
 
-        uint256 low = 5273074; // MCD_VAT Deployed Aug-06-2021 04:26:38 PM +UTC
+        string memory spellBlockPath = "./spellblock.txt";
+
+        uint256 low = vm.parseUint(vm.readLine(spellBlockPath));
         uint256 high = block.number;
         uint256 mid;
 
-        while (low < high) {
-            mid = (low & high) + (low ^ high) / 2; // rounds down
-            vm.rollFork(mid);
-            if (_isContractDeployed(_spell)) {
-                high = mid;
-            } else {
-                low = mid + 1;
-            }
-        }
-
         vm.rollFork(low);
+        if (!_isContractDeployed(_spell)) {
+            while (low < high) {
+                mid = (low & high) + (low ^ high) / 2; // rounds down
+                vm.rollFork(mid);
+                if (_isContractDeployed(_spell)) {
+                    high = mid;
+                } else {
+                    low = mid + 1;
+                }
+            }
+            vm.writeFile(spellBlockPath, vm.toString(low));
+            vm.rollFork(low);
+        }
     }
 
     function _isContractDeployed(address _spell) internal view returns (bool) {
