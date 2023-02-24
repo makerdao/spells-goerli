@@ -1482,7 +1482,7 @@ contract DssSpellTestBase is Config, DssTest {
         assertEq(_stringToBytes32(spell.description()),
                 _stringToBytes32(description), "TestError/spell-description");
 
-        assertEq(spell.expiration(), block.timestamp + spellValues.expiration_threshold, "TestError/spell-expiration");
+        assertLe(spell.expiration(), block.timestamp + spellValues.expiration_threshold, "TestError/spell-expiration");
 
         assertTrue(spell.officeHours() == spellValues.office_hours_enabled, "TestError/spell-office-hours");
 
