@@ -27,4 +27,4 @@ sed -i "s/\($KEY_TIMESTAMP *: *\)[0-9]\+/\1$timestamp/" "$SOURCE"
 sed -i "s/\($KEY_BLOCK *: *\)[0-9]\+/\1$block/" "$SOURCE"
 
 echo -e "Network: $(cast chain)"
-echo "config.sol updated with deployed spell address, timestamp and block"
+echo "config.sol updated with deployed spell: $spell_address, timestamp: $timestamp and block: $block"
