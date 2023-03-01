@@ -19,6 +19,9 @@ pragma solidity 0.8.16;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
+interface Fileable {
+    function file(bytes32, bytes32, uint256) external;
+}
 
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
@@ -40,56 +43,20 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
-    uint256 constant ZERO_FIVE_PCT_RATE         = 1000000000158153903837946257;
-    uint256 constant ONE_SEVENTY_FIVE_PCT_RATE  = 1000000000550121712943459312;
-    uint256 constant THREE_TWENTY_FIVE_PCT_RATE = 1000000001014175731521720677;
+    // uint256 constant ZERO_FIVE_PCT_RATE = 1000000000158153903837946257;
 
-    uint256 internal constant MILLION = 10 ** 6;
-    // uint256 internal constant RAY     = 10 ** 27;
-    // uint256 internal constant WAD     = 10 ** 18;
+    uint256 constant RAY = 10 ** 27;
+
+    address immutable MCD_SPOT = DssExecLib.spotter();
 
     function actions() public override {
-
-        // ---- New Aave v2 D3M ----
-        // https://vote.makerdao.com/polling/QmUMyywc#poll-detail
-        // Note: only on mainnet
-
-        // ---- MOMC Parameter Changes ----
-        // https://vote.makerdao.com/polling/QmUMyywc#poll-detail
-
-        // Stability Fee Changes
-
-        //Increase WSTETH-B Stability Fee to 0.5%
-        DssExecLib.setIlkStabilityFee("WSTETH-B", ZERO_FIVE_PCT_RATE, true);
-
-        // Reduce RETH-A Stability Fee to 0.5%
-        DssExecLib.setIlkStabilityFee("RETH-A", ZERO_FIVE_PCT_RATE, true);
-
-        // Reduce WBTC-A Stability Fee to 1.75%
-        DssExecLib.setIlkStabilityFee("WBTC-A", ONE_SEVENTY_FIVE_PCT_RATE, true);
-
-        // Reduce WBTC-B Stability Fee to 3.25%
-        DssExecLib.setIlkStabilityFee("WBTC-B", THREE_TWENTY_FIVE_PCT_RATE, true);
-
-        // line changes
-
-        // Increase CRVV1ETHSTETH-A line to 100 million DAI
-        // Note: only on mainnet
-
-        // Increase RETH-A line to 10 million DAI
-        DssExecLib.setIlkAutoLineDebtCeiling("RETH-A", 10 * MILLION);
-
-        // Increase MATIC-A line to 15 million DAI
-        DssExecLib.setIlkAutoLineDebtCeiling("MATIC-A", 15 * MILLION);
-
-        // Increase DIRECT-COMPV2-DAI line to 30 million DAI
-        // Note: only on mainnet
-
-        // ---- SF-001 Contributor Vesting ----
-        // Note: only on mainnet
-
-        // Bump changelog
-        DssExecLib.setChangelogVersion("1.14.9");
+        // https://forum.makerdao.com/t/usdc-a-usdp-a-gusd-a-proposed-offboarding-parameters/19474
+        Fileable(MCD_SPOT).file("USDC-A",   "mat", 15 * RAY); // 1500% collateralization ratio
+        Fileable(MCD_SPOT).file("PAXUSD-A", "mat", 15 * RAY);
+        Fileable(MCD_SPOT).file("GUSD-A",   "mat", 15 * RAY);
+        DssExecLib.updateCollateralPrice("USDC-A");
+        DssExecLib.updateCollateralPrice("PAXUSD-A");
+        DssExecLib.updateCollateralPrice("GUSD-A");
     }
 }
 

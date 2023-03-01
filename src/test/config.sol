@@ -264,7 +264,7 @@ contract Config {
             line:         0,
             dust:         15 * THOUSAND,
             pct:          0,
-            mat:          10100,
+            mat:          150000,
             liqType:      "clip",
             liqOn:        true,
             chop:         0,
@@ -284,7 +284,7 @@ contract Config {
             calc_tau:     4_320_000,
             calc_step:    0,
             calc_cut:     0,
-            offboarding:  false
+            offboarding:  true
         });
         afterSpell.collaterals["USDC-B"] = CollateralValues({
             aL_enabled:   false,
@@ -564,7 +564,7 @@ contract Config {
             line:         0,
             dust:         15 * THOUSAND,
             pct:          0,
-            mat:          10100,
+            mat:          150000,
             liqType:      "clip",
             liqOn:        true,
             chop:         0,
@@ -584,7 +584,7 @@ contract Config {
             calc_tau:     4_320_000,
             calc_step:    0,
             calc_cut:     0,
-            offboarding:  false
+            offboarding:  true
         });
         afterSpell.collaterals["COMP-A"] = CollateralValues({
             aL_enabled:   false,
@@ -744,7 +744,7 @@ contract Config {
             line:         0,
             dust:         15 * THOUSAND,
             pct:          100,
-            mat:          10100,
+            mat:          150000,
             liqType:      "clip",
             liqOn:        true,
             chop:         0,
@@ -764,7 +764,7 @@ contract Config {
             calc_tau:     4_320_000,
             calc_step:    0,
             calc_cut:     0,
-            offboarding:  false
+            offboarding:  true
         });
         afterSpell.collaterals["UNI-A"] = CollateralValues({
             aL_enabled:   false,
