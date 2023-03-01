@@ -28,3 +28,7 @@ sed -i "s/\($KEY_BLOCK *: *\)[0-9]\+/\1$block/" "$SOURCE"
 
 echo -e "Network: $(cast chain)"
 echo "config.sol updated with deployed spell: $spell_address, timestamp: $timestamp and block: $block"
+
+# commit edit change to config.sol
+(set -x; git add src/test/config.sol)
+(set -x; git commit -m "add deployed spell info")
