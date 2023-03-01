@@ -5,6 +5,7 @@ set -e
 [[ "$ETHERSCAN_API_KEY" ]] || { echo "Please set ETHERSCAN_API_KEY"; exit 1; }
 
 SOURCE="src/test/config.sol"
+KEY_SPELL="deployed_spell"
 KEY_TIMESTAMP="deployed_spell_created"
 KEY_BLOCK="deployed_spell_block"
 
@@ -13,7 +14,7 @@ make && spell_address=$(dapp create DssSpell)
 ./scripts/verify.py DssSpell "$spell_address"
 
 # edit config.sol to add the deployed spell address
-sed -Ei "s/($KEY: *address\()(0x[[:xdigit:]]{40}|0)\)/\1$spell_address)/" "$SOURCE"
+sed -Ei "s/($KEY_SPELL: *address\()(0x[[:xdigit:]]{40}|0)\)/\1$spell_address)/" "$SOURCE"
 
 # get tx hash from contract address, created using an internal transaction
 TXHASH=$(curl "https://api-goerli.etherscan.io/api?module=account&action=txlistinternal&address=$spell_address&startblock=0&endblock=99999999&sort=asc&apikey=$ETHERSCAN_API_KEY" | jq -r ".result[0].hash")
