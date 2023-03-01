@@ -9,6 +9,11 @@ KEY_SPELL="deployed_spell"
 KEY_TIMESTAMP="deployed_spell_created"
 KEY_BLOCK="deployed_spell_block"
 
+# Colors
+YELLOW="\033[0;33m"
+PURPLE="\033[0;35m"
+NC="\033[0m"
+
 make && spell_address=$(dapp create DssSpell)
 
 ./scripts/verify.py DssSpell "$spell_address"
@@ -27,8 +32,10 @@ block=$(cast tx "${TXHASH}"|grep blockNumber|awk '{print $2}')
 sed -i "s/\($KEY_TIMESTAMP *: *\)[0-9]\+/\1$timestamp/" "$SOURCE"
 sed -i "s/\($KEY_BLOCK *: *\)[0-9]\+/\1$block/" "$SOURCE"
 
-echo -e "Network: $(cast chain)"
-echo "config.sol updated with deployed spell: $spell_address, timestamp: $timestamp and block: $block"
+echo -e "${YELLOW}Network: $(cast chain)${NC}"
+echo -e "${YELLOW}config.sol updated with ${PURPLE}deployed spell:${NC} $spell_address, ${PURPLE}timestamp:${NC} $timestamp and ${PURPLE}block:${NC} $block ${NC}"
+
+make test block="$block" || { echo -e "${PURPLE}Please ensure config.sol was edited correctly${NC}"; exit 1; }
 
 # commit edit change to config.sol
 (set -x; git add src/test/config.sol)
