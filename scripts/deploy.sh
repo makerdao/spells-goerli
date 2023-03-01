@@ -16,7 +16,7 @@ make && spell_address=$(dapp create DssSpell)
 sed -Ei "s/($KEY: *address\()(0x[[:xdigit:]]{40}|0)\)/\1$spell_address)/" "$SOURCE"
 
 # get tx hash from contract address, created using an internal transaction
-TXHASH=$(curl "https://api.etherscan.io/api?module=account&action=txlistinternal&address=$spell_address&startblock=0&endblock=99999999&sort=asc&apikey=$ETHERSCAN_API_KEY" | jq ".result[0].hash")
+TXHASH=$(curl "https://api-goerli.etherscan.io/api?module=account&action=txlistinternal&address=$spell_address&startblock=0&endblock=99999999&sort=asc&apikey=$ETHERSCAN_API_KEY" | jq -r ".result[0].hash")
 
 # get deployed contract timestamp and block number info
 timestamp=$(cast block "$(cast tx "${TXHASH}"|grep blockNumber|awk '{print $2}')"|grep timestamp|awk '{print $2}')
