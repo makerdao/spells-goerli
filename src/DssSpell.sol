@@ -53,7 +53,8 @@ contract DssSpellAction is DssAction {
     address immutable MCD_SPOT = DssExecLib.spotter();
 
     function actions() public override {
-        // https://forum.makerdao.com/t/usdc-a-usdp-a-gusd-a-proposed-offboarding-parameters/19474
+        // Stablecoin vault offboarding
+        // https://vote.makerdao.com/polling/QmemXoCi#poll-detail
         Fileable(MCD_SPOT).file("USDC-A",   "mat", 15 * RAY); // 1500% collateralization ratio
         Fileable(MCD_SPOT).file("PAXUSD-A", "mat", 15 * RAY);
         Fileable(MCD_SPOT).file("GUSD-A",   "mat", 15 * RAY);
@@ -62,6 +63,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.updateCollateralPrice("GUSD-A");
 
         // MOMC Parameter Changes
+        // https://vote.makerdao.com/polling/QmXGgakY#poll-detail
         DssExecLib.setIlkStabilityFee("ETH-C", ZERO_SEVENTY_FIVE_PCT_RATE, true);
         DssExecLib.setIlkStabilityFee("WSTETH-B", ZERO_SEVENTY_FIVE_PCT_RATE, true);
         DssExecLib.setIlkStabilityFee("WBTC-C", ONE_PCT_RATE, true);
