@@ -39,4 +39,4 @@ make test block="$block" || { echo -e "${PURPLE}Please ensure config.sol was edi
 
 # commit edit change to config.sol
 (set -x; git add src/test/config.sol)
-(set -x; git commit -m "add deployed spell info")
+(set -x; git commit --edit)
