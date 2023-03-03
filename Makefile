@@ -17,4 +17,4 @@ wards              :; ./scripts/wards.sh $(target)
 time               :; ./scripts/time.sh date="$(date)" stamp="$(stamp)"
 exec-hash          :; ./scripts/hash-exec-copy.sh $(url)
 fund-pause-proxy   :; ./scripts/fund-pause-proxy.sh
-rate               :; ./scripts/rate.sh $(rate)
+rate               :; ./scripts/rate.sh $(pct)
