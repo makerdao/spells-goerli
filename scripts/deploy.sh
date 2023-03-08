@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-trap 'git stash apply' EXIT
+trap 'git stash pop' EXIT
 
 # Colors
 YELLOW="\033[0;33m"
