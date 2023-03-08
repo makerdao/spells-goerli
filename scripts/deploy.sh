@@ -44,7 +44,6 @@ make test block="$block" || { echo -e "${PURPLE}Ensure Tests PASS before commiti
 
 # commit edit change to config.sol
 if [[ $(git status --porcelain src/test/config.sol) ]]; then
-    (set -x; git add src/test/config.sol)
     (set -x; git commit -m "add deployed spell info" -- src/test/config.sol)
 else
     echo -e "${PURPLE}Ensure config.sol was edited correctly${NC}"
