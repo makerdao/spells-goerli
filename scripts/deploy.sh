@@ -2,6 +2,9 @@
 set -e
 trap 'git stash apply' EXIT
 
+# stash any changes in the staging area
+(set -x; git stash)
+
 [[ "$(cast chain --rpc-url="$ETH_RPC_URL")" == "goerli" ]] || { echo "Please set a Goerli ETH_RPC_URL"; exit 1; }
 [[ "$ETHERSCAN_API_KEY" ]] || { echo "Please set ETHERSCAN_API_KEY"; exit 1; }
 
@@ -18,9 +21,6 @@ NC="\033[0m"
 make && spell_address=$(dapp create DssSpell)
 
 ./scripts/verify.py DssSpell "$spell_address"
-
-# stash any changes in the staging area
-(set -x; git stash)
 
 # edit config.sol to add the deployed spell address
 sed -Ei "s/($KEY_SPELL: *address\()(0x[[:xdigit:]]{40}|0x0|0)\)/\1$spell_address)/" "$SOURCE"
