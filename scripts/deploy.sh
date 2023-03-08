@@ -2,21 +2,22 @@
 set -e
 trap 'git stash apply' EXIT
 
-# stash any changes in the staging area
-(set -x; git stash)
+# Colors
+YELLOW="\033[0;33m"
+PURPLE="\033[0;35m"
+NC="\033[0m"
 
-[[ "$(cast chain --rpc-url="$ETH_RPC_URL")" == "goerli" ]] || { echo "Please set a Goerli ETH_RPC_URL"; exit 1; }
-[[ "$ETHERSCAN_API_KEY" ]] || { echo "Please set ETHERSCAN_API_KEY"; exit 1; }
+# stash any changes in the staging area
+(set -x; git stash push src/test/config.sol)
+echo -e "${YELLOW}Stashing any changes to${NC} ${PURPLE}src/test/config.sol${NC}"
+
+[[ "$(cast chain --rpc-url="$ETH_RPC_URL")" == "goerli" ]] || { echo -e "${YELLOW}Please set a ${NC}${PURPLE}Goerli ETH_RPC_URL${NC}"; exit 1; }
+[[ "$ETHERSCAN_API_KEY" ]] || { echo -e "${YELLOW}Please set ${NC}${PURPLE}ETHERSCAN_API_KEY${NC}"; exit 1; }
 
 SOURCE="src/test/config.sol"
 KEY_SPELL="deployed_spell"
 KEY_TIMESTAMP="deployed_spell_created"
 KEY_BLOCK="deployed_spell_block"
-
-# Colors
-YELLOW="\033[0;33m"
-PURPLE="\033[0;35m"
-NC="\033[0m"
 
 make && spell_address=$(dapp create DssSpell)
 
