@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+trap 'git stash apply' EXIT
 
 [[ "$(cast chain --rpc-url="$ETH_RPC_URL")" == "goerli" ]] || { echo "Please set a Goerli ETH_RPC_URL"; exit 1; }
 [[ "$ETHERSCAN_API_KEY" ]] || { echo "Please set ETHERSCAN_API_KEY"; exit 1; }
@@ -38,14 +39,13 @@ sed -i "s/\($KEY_BLOCK *: *\)[0-9]\+/\1$block/" "$SOURCE"
 echo -e "${YELLOW}Network: $(cast chain)${NC}"
 echo -e "${YELLOW}config.sol updated with ${PURPLE}deployed spell:${NC} $spell_address, ${PURPLE}timestamp:${NC} $timestamp and ${PURPLE}block:${NC} $block ${NC}"
 
+make test block="$block" || { echo -e "${PURPLE}Ensure Tests PASS before commiting the config.sol changes${NC}"; exit 1; }
+
 # commit edit change to config.sol
 if [[ $(git status --porcelain src/test/config.sol) ]]; then
     (set -x; git add src/test/config.sol)
-    (set -x; git commit -m "add deployed spell info")
+    (set -x; git commit --path src/test/config.sol -m "add deployed spell info")
 else
     echo -e "${PURPLE}Ensure config.sol was edited correctly${NC}"
     exit 1
 fi
-
-# reload the staging area with stashed changes
-(set -x; git stash apply)
