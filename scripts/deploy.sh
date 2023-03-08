@@ -8,8 +8,8 @@ PURPLE="\033[0;35m"
 NC="\033[0m"
 
 # stash any changes in the staging area
-(set -x; git stash push src/test/config.sol)
 echo -e "${YELLOW}Stashing any changes to${NC} ${PURPLE}src/test/config.sol${NC}"
+(set -x; git stash push src/test/config.sol)
 
 [[ "$(cast chain --rpc-url="$ETH_RPC_URL")" == "goerli" ]] || { echo -e "${YELLOW}Please set a ${NC}${PURPLE}Goerli ETH_RPC_URL${NC}"; exit 1; }
 [[ "$ETHERSCAN_API_KEY" ]] || { echo -e "${YELLOW}Please set ${NC}${PURPLE}ETHERSCAN_API_KEY${NC}"; exit 1; }
