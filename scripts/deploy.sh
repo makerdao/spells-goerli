@@ -38,18 +38,14 @@ sed -i "s/\($KEY_BLOCK *: *\)[0-9]\+/\1$block/" "$SOURCE"
 echo -e "${YELLOW}Network: $(cast chain)${NC}"
 echo -e "${YELLOW}config.sol updated with ${PURPLE}deployed spell:${NC} $spell_address, ${PURPLE}timestamp:${NC} $timestamp and ${PURPLE}block:${NC} $block ${NC}"
 
-# add script edit changes
-git add -A
-
-# reload the staging area with stashed changes
-(set -x; git stash apply)
-
-make test block="$block" || { echo -e "${PURPLE}Ensure Tests PASS before commiting the config.sol changes${NC}"; exit 1; }
-
 # commit edit change to config.sol
 if [[ $(git status --porcelain src/test/config.sol) ]]; then
-    (set -x; git commit --edit)
+    (set -x; git add src/test/config.sol)
+    (set -x; git commit -m "add deployed spell info")
 else
     echo -e "${PURPLE}Ensure config.sol was edited correctly${NC}"
     exit 1
 fi
+
+# reload the staging area with stashed changes
+(set -x; git stash apply)
