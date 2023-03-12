@@ -16,4 +16,4 @@ diff-archive-spell :; ./scripts/diff-archive-dssspell.sh "$(if $(date),$(date),$
 wards              :; ./scripts/wards.sh $(target)
 time               :; ./scripts/time.sh date="$(date)" stamp="$(stamp)"
 exec-hash          :; ./scripts/hash-exec-copy.sh $(url)
-# fund-pause-proxy   :; ./scripts/fund-pause-proxy.sh # can be used to fund PP, see /archive/2023-02-02
+fund-pause-proxy   :; ./scripts/fund-pause-proxy.sh
