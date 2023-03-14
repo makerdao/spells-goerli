@@ -39,34 +39,11 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
-    uint256 constant ZERO_SEVENTY_FIVE_PCT_RATE = 1000000000236936036262880196;
-    uint256 constant ONE_PCT_RATE               = 1000000000315522921573372069;
-    uint256 constant ONE_FIVE_PCT_RATE          = 1000000000472114805215157978;
 
-    uint256 constant MILLION = 10 ** 6;
-    uint256 constant RAY     = 10 ** 27;
-
-    address immutable MCD_SPOT = DssExecLib.spotter();
+    // uint256 constant MILLION = 10 ** 6;
+    // uint256 constant RAY     = 10 ** 27;
 
     function actions() public override {
-        // Stablecoin vault offboarding
-        // https://vote.makerdao.com/polling/QmemXoCi#poll-detail
-        DssExecLib.setValue(MCD_SPOT, "USDC-A",   "mat", 15 * RAY); // 1500% collateralization ratio
-        DssExecLib.setValue(MCD_SPOT, "PAXUSD-A", "mat", 15 * RAY);
-        DssExecLib.setValue(MCD_SPOT, "GUSD-A",   "mat", 15 * RAY);
-        DssExecLib.updateCollateralPrice("USDC-A");
-        DssExecLib.updateCollateralPrice("PAXUSD-A");
-        DssExecLib.updateCollateralPrice("GUSD-A");
-
-        // MOMC Parameter Changes
-        // https://vote.makerdao.com/polling/QmXGgakY#poll-detail
-        DssExecLib.setIlkStabilityFee("ETH-C", ZERO_SEVENTY_FIVE_PCT_RATE, true);
-        DssExecLib.setIlkStabilityFee("WSTETH-B", ZERO_SEVENTY_FIVE_PCT_RATE, true);
-        DssExecLib.setIlkStabilityFee("WBTC-C", ONE_PCT_RATE, true);
-        DssExecLib.setIlkStabilityFee("YFI-A", ONE_FIVE_PCT_RATE, true);
-        DssExecLib.setIlkAutoLineDebtCeiling("RETH-A", 20 * MILLION);
-        DssExecLib.setIlkAutoLineDebtCeiling("YFI-A", 4 * MILLION);
-        // DssExecLib.setIlkAutoLineDebtCeiling("DIRECT-COMPV2-DAI", 70 * MILLION); ilk does not exist in Goerli
     }
 }
 
