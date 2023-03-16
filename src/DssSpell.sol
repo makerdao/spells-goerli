@@ -19,6 +19,12 @@ pragma solidity 0.8.16;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
+interface VatLike {
+    function Line() external view returns (uint256);
+    function file(bytes32, uint256) external;
+    function ilks(bytes32) external returns (uint256 Art, uint256 rate, uint256 spot, uint256 line, uint256 dust);
+}
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -39,34 +45,61 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
-    uint256 constant ZERO_SEVENTY_FIVE_PCT_RATE = 1000000000236936036262880196;
-    uint256 constant ONE_PCT_RATE               = 1000000000315522921573372069;
-    uint256 constant ONE_FIVE_PCT_RATE          = 1000000000472114805215157978;
+    uint256 internal constant MILLION = 10 ** 6;
+    uint256 internal constant BILLION = 10 ** 9;
 
-    uint256 constant MILLION = 10 ** 6;
-    uint256 constant RAY     = 10 ** 27;
+    uint256 internal constant WAD     = 10 ** 18;
 
-    address immutable MCD_SPOT = DssExecLib.spotter();
+    uint256 internal constant PSM_HUNDRED_BASIS_POINTS = 100 * WAD / 10000;
+
+    address internal immutable MCD_PSM_USDC_A = DssExecLib.getChangelogAddress("MCD_PSM_USDC_A");
+    address internal immutable MCD_PSM_PAX_A  = DssExecLib.getChangelogAddress("MCD_PSM_PAX_A");
 
     function actions() public override {
-        // Stablecoin vault offboarding
-        // https://vote.makerdao.com/polling/QmemXoCi#poll-detail
-        DssExecLib.setValue(MCD_SPOT, "USDC-A",   "mat", 15 * RAY); // 1500% collateralization ratio
-        DssExecLib.setValue(MCD_SPOT, "PAXUSD-A", "mat", 15 * RAY);
-        DssExecLib.setValue(MCD_SPOT, "GUSD-A",   "mat", 15 * RAY);
-        DssExecLib.updateCollateralPrice("USDC-A");
-        DssExecLib.updateCollateralPrice("PAXUSD-A");
-        DssExecLib.updateCollateralPrice("GUSD-A");
+        // Emergency Proposal: Risk and Governance Parameter Changes (11 March 2023)
+        // https://forum.makerdao.com/t/emergency-proposal-risk-and-governance-parameter-changes-11-march-2023/20125
 
-        // MOMC Parameter Changes
-        // https://vote.makerdao.com/polling/QmXGgakY#poll-detail
-        DssExecLib.setIlkStabilityFee("ETH-C", ZERO_SEVENTY_FIVE_PCT_RATE, true);
-        DssExecLib.setIlkStabilityFee("WSTETH-B", ZERO_SEVENTY_FIVE_PCT_RATE, true);
-        DssExecLib.setIlkStabilityFee("WBTC-C", ONE_PCT_RATE, true);
-        DssExecLib.setIlkStabilityFee("YFI-A", ONE_FIVE_PCT_RATE, true);
-        DssExecLib.setIlkAutoLineDebtCeiling("RETH-A", 20 * MILLION);
-        DssExecLib.setIlkAutoLineDebtCeiling("YFI-A", 4 * MILLION);
-        // DssExecLib.setIlkAutoLineDebtCeiling("DIRECT-COMPV2-DAI", 70 * MILLION); ilk does not exist in Goerli
+        // Reduce UNIV2USDCETH-A, UNIV2DAIUSDC-A, GUNIV3DAIUSDC1-A and GUNIV3DAIUSDC2-A Debt Ceilings to 0
+        uint256 line;
+        uint256 lineReduction;
+        VatLike vat = VatLike(DssExecLib.vat());
+
+        (,,,line,) = vat.ilks("UNIV2USDCETH-A");
+        lineReduction += line;
+        DssExecLib.removeIlkFromAutoLine("UNIV2USDCETH-A");
+        DssExecLib.setIlkDebtCeiling("UNIV2USDCETH-A", 0);
+
+        (,,,line,) = vat.ilks("UNIV2DAIUSDC-A");
+        lineReduction += line;
+        DssExecLib.removeIlkFromAutoLine("UNIV2DAIUSDC-A");
+        DssExecLib.setIlkDebtCeiling("UNIV2DAIUSDC-A", 0);
+
+        (,,,line,) = vat.ilks("GUNIV3DAIUSDC1-A");
+        lineReduction += line;
+        DssExecLib.removeIlkFromAutoLine("GUNIV3DAIUSDC1-A");
+        DssExecLib.setIlkDebtCeiling("GUNIV3DAIUSDC1-A", 0);
+
+        (,,,line,) = vat.ilks("GUNIV3DAIUSDC2-A");
+        lineReduction += line;
+        DssExecLib.removeIlkFromAutoLine("GUNIV3DAIUSDC2-A");
+        DssExecLib.setIlkDebtCeiling("GUNIV3DAIUSDC2-A", 0);
+
+        // Decrease Global Debt Ceiling in accordance with Offboarded Ilks
+        vat.file("Line", vat.Line() - lineReduction);
+
+        // Set DC-IAM module for PSM-USDC-A, PSM-PAX-A and PSM-GUSD-A
+        DssExecLib.setIlkAutoLineParameters("PSM-USDC-A", 10 * BILLION, 250 * MILLION, 24 hours);
+        DssExecLib.setIlkAutoLineParameters("PSM-PAX-A", 1 * BILLION, 250 * MILLION, 24 hours);
+        DssExecLib.setIlkAutoLineParameters("PSM-GUSD-A", 500 * MILLION, 10 * MILLION, 24 hours);
+
+        // Increase PSM-USDC-A tin from 0% to 1%
+        DssExecLib.setValue(MCD_PSM_USDC_A, "tin", PSM_HUNDRED_BASIS_POINTS);
+
+        // Reduce PSM-USDP-A tin to 0%
+        DssExecLib.setValue(MCD_PSM_PAX_A, "tin", 0);
+
+        // Increase PSM-USDP-A tout to 1%
+        DssExecLib.setValue(MCD_PSM_PAX_A, "tout", PSM_HUNDRED_BASIS_POINTS);
     }
 }
 

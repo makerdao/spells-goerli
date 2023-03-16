@@ -282,7 +282,7 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     // leave public for now as this is acting like a config tests
-    function testPSMs() public {
+    function testPSMs() private { // Disabled since some PSMs on mainnet are maxed out
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -461,5 +461,22 @@ contract DssSpellTest is DssSpellTestBase {
 
         // Validate post-spell state
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
+    }
+
+    function testPSMTinTout() public {
+        PsmAbstract psmUsdc = PsmAbstract(addr.addr("MCD_PSM_USDC_A"));
+        PsmAbstract psmPax  = PsmAbstract(addr.addr("MCD_PSM_PAX_A"));
+
+        assertEq(psmUsdc.tin(), 0);
+        assertEq(psmPax.tin(), 0.002 * 10**18);
+        assertEq(psmPax.tout(), 0);
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(psmUsdc.tin(), 0.01 * 10**18);
+        assertEq(psmPax.tin(), 0);
+        assertEq(psmPax.tout(), 0.01 * 10**18);
     }
 }
