@@ -3,7 +3,7 @@ set -e
 
 [[ "$ETH_RPC_URL" ]] || { echo "Please set a ETH_RPC_URL"; exit 1; }
 
-[[ "$1" =~ 0x* ]] || { echo "Please specify the transaction to inspect (e.g. tx=0x<txhash>)"; exit 1; }
+[[ "$1" =~  ^tx=0x[0-9a-fA-F]{64}$ ]] || { echo "Please specify the transaction to inspect (e.g. tx=0x<txhash>)"; exit 1; }
 
 for ARGUMENT in "$@"
 do
