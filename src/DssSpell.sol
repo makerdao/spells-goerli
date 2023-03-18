@@ -19,17 +19,10 @@ pragma solidity 0.8.16;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-import "dss-interfaces/dss/VatAbstract.sol";
-
-interface AuthLike {
-    function rely(address) external;
-}
-
-interface LineMomLike {
-    function owner() external view returns (address);
-    function setAuthority(address authority_) external;
-    function file(bytes32 what, address data) external;
-    function addIlk(bytes32 ilk) external;
+interface GemLike {
+    function allowance(address, address) external view returns (uint256);
+    function approve(address, uint256) external returns (bool);
+    function transfer(address, uint256) external returns (bool);
 }
 
 contract DssSpellAction is DssAction {
@@ -54,62 +47,92 @@ contract DssSpellAction is DssAction {
 
     uint256 internal constant MILLION = 10 ** 6;
 
-    address internal  constant LINE_MOM    = 0x5D54E2d56BA83C42f63a10642DcFa073EBD9D92E;
-    address immutable internal PAUSE_PROXY = DssExecLib.getChangelogAddress("MCD_PAUSE_PROXY");
-    address immutable internal CHIEF       = DssExecLib.getChangelogAddress("MCD_ADM");
-    address immutable internal AUTOLINE    = DssExecLib.getChangelogAddress("MCD_IAM_AUTO_LINE");
+    uint256 internal constant WAD     = 10 ** 18;
+
+    // MAINNET SPELL ONLY
+    
+    GemLike  internal immutable MKR                   = GemLike(DssExecLib.mkr());
+
+    address constant internal LBSBLOCKCHAIN_WALLET    = 0xB83b3e9C8E3393889Afb272D354A7a3Bd1Fbcf5C;
+    address constant internal CONSENSYS_WALLET        = 0xE78658A8acfE982Fde841abb008e57e6545e38b3;
+    address constant internal SES_WALLET              = 0x87AcDD9208f73bFc9207e1f6F0fDE906bcA95cc6;
+    address constant internal CES_WALLET              = 0x25307aB59Cd5d8b4E2C01218262Ddf6a89Ff86da;
+    address constant internal PHOENIX_LABS_WALLET     = 0xD9847E6b1314f0327F320E43B51ca0AaAD6FF509; // NOTE: This address is pending confirmation from GovAlpha
+    
 
     function actions() public override {
-        //  Out-Of-Schedule executive proposal to implement PSM Breaker (14 March 2023)
-        // https://forum.makerdao.com/t/out-of-schedule-executive-proposal-to-implement-psm-breaker/20162
 
-        VatAbstract vat = VatAbstract(DssExecLib.vat());
+        // Uncleared Delegate Compensation (MAINNET SPELL ONLY)
+        // Poll:  https://vote.makerdao.com/polling/Qmd2W3Q4#poll-details
+        // Forum: https://forum.makerdao.com/t/mip4c2-sp29-amend-mip61-to-tighten-up-recognized-delegate-participation-metrics/18696
 
-
-        // Begin LineMom ----------------------------------------------
-
-        // 1. Authorize LineMom on the Vat and AutoLine modules
-        vat.rely(LINE_MOM);
-        AuthLike(AUTOLINE).rely(LINE_MOM);
-
-        // 2. Owner is Pause Proxy - just a sanity check
-        require(LineMomLike(LINE_MOM).owner() == PAUSE_PROXY);
-
-        // 3. File the AutoLine
-        LineMomLike(LINE_MOM).file("autoLine", AUTOLINE);
-
-        // 4. Authority is Chief
-        LineMomLike(LINE_MOM).setAuthority(CHIEF);
-
-        // 5. Add PSM ilks
-        LineMomLike(LINE_MOM).addIlk("PSM-USDC-A");
-        LineMomLike(LINE_MOM).addIlk("PSM-PAX-A");
-        LineMomLike(LINE_MOM).addIlk("PSM-GUSD-A");
-
-        // 6. Add to ChainLog and bump patch version
-        DssExecLib.setChangelogAddress("LINE_MOM", LINE_MOM);
-        DssExecLib.setChangelogVersion("1.14.10");
-
-        // End LineMom ------------------------------------------------
+        // London Business School Blockchain - 3126 DAI - 0xB83b3e9C8E3393889Afb272D354A7a3Bd1Fbcf5C
+        DssExecLib.sendPaymentFromSurplusBuffer(LBSBLOCKCHAIN_WALLET,   3_126);
+        // ConsenSys                         -  181 DAI - 0xE78658A8acfE982Fde841abb008e57e6545e38b3
+        DssExecLib.sendPaymentFromSurplusBuffer(CONSENSYS_WALLET,         181);
 
 
-        // Increase Global Debt Ceiling to compensate for reduction that should not have
-        // been done in previous spell. Computed based on current debt of affected ilks.
-        uint256 correction;
-        uint256 Art;
-        uint256 rate;
-        (Art, rate,,,) = vat.ilks("UNIV2USDCETH-A");
-        correction += Art * rate;
-        (Art, rate,,,) = vat.ilks("UNIV2DAIUSDC-A");
-        correction += Art * rate;
-        (Art, rate,,,) = vat.ilks("GUNIV3DAIUSDC1-A");
-        correction += Art * rate;
-        (Art, rate,,,) = vat.ilks("GUNIV3DAIUSDC2-A");
-        correction += Art * rate;
+        // SES-001 MKR Transfer (MAINNET SPELL ONLY)
+        // Poll:  https://vote.makerdao.com/polling/QmSmhV7z#poll-details
+        // Forum: https://forum.makerdao.com/t/mip40c3-sp17-sustainable-ecosystem-scaling-core-unit-mkr-budget-ses-001/8043
+        
+        MKR.transfer(SES_WALLET, 229.78 ether);  // NOTE: 'ether' is a keyword helper, only MKR is transferred here
 
-        // Add a buffer of 10% for fee accrual
-        correction = correction * 110 / 100;
-        vat.file("Line", vat.Line() + correction);
+        // CES-001 MKR Transfer (MAINNET SPELL ONLY)
+        // Poll:  https://vote.makerdao.com/polling/QmbNVQ1E#poll-details
+        // Forum: https://forum.makerdao.com/t/request-to-poll-one-time-mkr-distribution-to-correct-ces-001-incentive-program-shortfall/19326
+
+        // NOTE: The 77.34 MKR figure needs to be confirmed by GovAlpha and the calculation confirmed
+        MKR.transfer(CES_WALLET, 77.34 ether);  // NOTE: 'ether' is a keyword helper, only MKR is transferred here
+
+
+        // Phoenix Labs SPF DAI Funding (MAINNET SPELL ONLY)
+        // Poll:  https://vote.makerdao.com/polling/QmYBegVf#poll-details
+        // Forum: https://forum.makerdao.com/t/mip55c3-sp15-phoenix-labs-initial-funding-spf/19733
+
+        DssExecLib.sendPaymentFromSurplusBuffer(PHOENIX_LABS_WALLET, 50_000);
+
+
+        // RETH-A Dust Adjustment from 15,000 DAI to 7,500 DAI
+        // Poll:  https://vote.makerdao.com/polling/QmcLGa49#poll-details
+        // Forum: https://forum.makerdao.com/t/adjusting-reth-a-dust-parameter-march-2023/20021
+
+        DssExecLib.setIlkMinVaultAmount("RETH-A", 7_500);
+
+
+        // Monetalis Update - Excess Funds Declaration
+        // Poll:  https://vote.makerdao.com/polling/QmfZ2nxw#poll-details
+        // Forum: https://forum.makerdao.com/t/request-to-poll-return-excess-mip65-funds-to-surplus-buffer/20115
+
+        // Hash: cast keccak -- "$(wget TODO -q -O - 2>/dev/null)"
+        string constant public MIP65 = "TODO_ADD_HASH";
+
+        // Monetalis Update - Remove DC-IAM from RWA-007
+        // Poll:  https://vote.makerdao.com/polling/QmRJSSGW#poll-details
+        // Forum: https://forum.makerdao.com/t/request-to-poll-increase-debt-ceiling-for-mip65-by-750m-to-1-250m/20119
+        
+        DssExecLib.removeIlkFromAutoLine("RWA007-A");
+
+        // Monetalis Update - Increase the MIP65 (RWA007-A) Debt Ceiling by 750M DAI from 500M DAI to 1,250M DAI
+        // Poll:  https://vote.makerdao.com/polling/QmNTSr9j#poll-details
+        // Forum: https://forum.makerdao.com/t/request-to-poll-increase-debt-ceiling-for-mip65-by-750m-to-1-250m/20119
+
+        // Increase RWA007-A line by 750M DAI from 500M DAI to 1,250M DAI
+        DssExecLib.increaseIlkDebtCeiling(
+            "RWA007-A", 
+            750 * MILLION,  // DC to 1,250M less existing 500M
+            true            // Increase global Line
+        );
+
+        // Bump MIP21 Oracle's `val` to 1,250M as WAD (No need to calculate anything since the rate is 0%)
+        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).bump(
+            "RWA007-A",
+             1_250 * MILLION * WAD
+        );
+
+        // Update the RWA007-A `spot` value in Vat
+        DssExecLib.updateCollateralPrice("RWA007-A");
+
     }
 }
 

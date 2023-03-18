@@ -36,15 +36,6 @@ interface BridgeLike {
     function l2TeleportGateway() external view returns (address);
 }
 
-interface LineMomLike {
-    function owner() external view returns (address);
-    function authority() external view returns (address);
-    function autoLine() external view returns (address);
-    function vat() external view returns (address);
-    function ilks(bytes32) external view returns (uint256);
-    function wipe(bytes32 ilk) external returns (uint256);
-}
-
 contract DssSpellTest is DssSpellTestBase {
     string         config;
     RootDomain     rootDomain;
@@ -244,7 +235,7 @@ contract DssSpellTest is DssSpellTestBase {
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        _checkChainlogKey("LINE_MOM");
+        // _checkChainlogKey("XXX");
 
         _checkChainlogVersion("1.14.10");
     }
@@ -290,7 +281,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(MedianAbstract(TOKENUSD_MED).bud(SET_TOKEN), 1);
     }
 
-    // leave public for now as this is acting like a config tests
+    // Leave this test public (for now) as this is acting like a config test
     function testPSMs() public {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
@@ -471,7 +462,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
 
-    function testLineMom() public {
+    function testLineMom() private {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -542,7 +533,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertTrue(line == 0, "PSM-GUSD-A AutoLine line not zeroed");
     }
 
-    function testLineAdjustment() public {
+    function testLineAdjustment() private {
         uint256 preLine = vat.Line();
 
         uint256 correction;
@@ -565,5 +556,37 @@ contract DssSpellTest is DssSpellTestBase {
         uint256 postLine = vat.Line();
         assertGt(postLine, preLine);
         assertEq(postLine, preLine + correction);
+    }
+
+    // RWA007-A Tests
+
+    function testRWA007OraclePriceBump() public {
+        (, address pip, , ) = liquidationOracle.ilks("RWA007-A");
+        (,,uint256 spot,,) = vat.ilks("RWA007-A");
+
+        assertEq(uint256(DSValueAbstract(pip).read()), 500 * MILLION * WAD, "RWA007: Bad initial PIP value");
+        assertEq(spot, 500 * MILLION * RAY, "RWA007: Bad initial spot value");
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        (uint256 Art, uint256 rate, uint256 spotAfter, uint256 line,) = vat.ilks("RWA007-A");
+
+        assertEq(uint256(DSValueAbstract(pip).read()), 1_250 * MILLION * WAD, "RWA007: Bad PIP value after bump()");
+        assertEq(spotAfter, 1_250 * MILLION * RAY, "RWA007: Bad spot value after bump()");
+
+        // Test that a draw can be performed.
+        address urn = addr.addr("RWA007_A_URN");
+        giveAuth(urn, address(this));
+        RwaUrnLike(urn).hope(address(this));  // become operator
+        uint256 room = sub(line, mul(Art, rate));
+        uint256 drawAmt = room / RAY;
+        if (mul(divup(mul(drawAmt, RAY), rate), rate) > room) {
+            drawAmt = sub(room, rate) / RAY;
+        }
+        RwaUrnLike(urn).draw(drawAmt);
+        (Art,,,,) = vat.ilks("RWA007-A");
+        assertTrue(sub(line, mul(Art, rate)) < mul(2, rate));  // got very close to line
     }
 }
