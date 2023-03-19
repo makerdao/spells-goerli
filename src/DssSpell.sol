@@ -67,6 +67,11 @@ contract DssSpellAction is DssAction {
     address constant internal CES_WALLET              = 0x25307aB59Cd5d8b4E2C01218262Ddf6a89Ff86da;
     address constant internal PHOENIX_LABS_WALLET     = 0xD9847E6b1314f0327F320E43B51ca0AaAD6FF509; // NOTE: This address is pending confirmation from GovAlpha
     
+    // TODO Rename this as appropriate (This has to go outside of the actions function)
+    // Monetalis Update - Excess Funds Declaration
+    // Poll:  https://vote.makerdao.com/polling/QmfZ2nxw#poll-details
+    // Forum: https://forum.makerdao.com/t/request-to-poll-return-excess-mip65-funds-to-surplus-buffer/20115
+    string constant public MIP65 = "HASH_GOES_HERE";
 
     function actions() public override {
 
@@ -107,13 +112,6 @@ contract DssSpellAction is DssAction {
 
         DssExecLib.setIlkMinVaultAmount("RETH-A", 7_500);
 
-
-        // Monetalis Update - Excess Funds Declaration
-        // Poll:  https://vote.makerdao.com/polling/QmfZ2nxw#poll-details
-        // Forum: https://forum.makerdao.com/t/request-to-poll-return-excess-mip65-funds-to-surplus-buffer/20115
-
-        // Hash: cast keccak -- "$(wget TODO -q -O - 2>/dev/null)"
-        // TODO string public constant MIP65 = "TODO_ADD_HASH";
 
         // Monetalis Update - Remove DC-IAM from RWA-007
         // Poll:  https://vote.makerdao.com/polling/QmRJSSGW#poll-details
