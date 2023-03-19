@@ -470,9 +470,6 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     // For PE-1208
-    function divup(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        z = add(x, sub(y, 1)) / y;
-    }
 
     function mul(uint x, uint y) internal pure returns (uint z) {
         require(y == 0 || (z = x * y) / y == x);
@@ -488,7 +485,7 @@ contract DssSpellTest is DssSpellTestBase {
 
     // RWA007-A Tests
     // TODO FINISH
-    function testRWA007OraclePriceBump() public {
+    function testRWA007OraclePriceBumpNEW() public {
 
         // Read the pip address and spot value before cast
         (,address pip,,  ) = liquidationOracle.ilks("RWA007-A");
@@ -525,7 +522,7 @@ contract DssSpellTest is DssSpellTestBase {
         uint256 drawAmt = room / RAY;
 
         // Correct our draw amount if it is too large
-        if (mul(divup(mul(drawAmt, RAY), rate), rate) > room) {
+        if (mul(_divup(mul(drawAmt, RAY), rate), rate) > room) {
             drawAmt = sub(room, rate) / RAY;
         }
 
@@ -539,6 +536,59 @@ contract DssSpellTest is DssSpellTestBase {
         assertTrue(sub(line, mul(Art, rate)) < mul(2, rate));  
 
     } 
+
+    function testRWA007OraclePriceBumpOLD() public {
+
+        // Read the pip address and spot value before cast
+        (,address pip,,  ) = liquidationOracle.ilks("RWA007-A");
+        (,,uint256 spot,,) = vat.ilks("RWA007-A");
+
+        // Check the pip and spot values before cast
+        assertEq(uint256(DSValueAbstract(pip).read()), 500 * MILLION * WAD, "RWA007: Bad initial PIP value");
+        assertEq(spot, 500 * MILLION * RAY, "RWA007: Bad initial spot value");
+
+        // TODO Check the RWA007_A_OUTPUT_CONDUIT balance before cast (if necessary)
+
+        //assertEq(dai.balanceOf(address(conduit)), 0); // conduit before
+        //assertEq(dai.balanceOf(address(conduit)), drawAmt); // conduit after
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // Read the pip address and spot value after cast, as well as Art and rate
+        (uint256 Art, uint256 rate, uint256 spotAfter, uint256 line,) = vat.ilks("RWA007-A");
+
+        // Check the pip and spot values after cast
+        assertEq(uint256(DSValueAbstract(pip).read()), 1_250 * MILLION * WAD, "RWA007: Bad PIP value after bump()");
+        assertEq(spotAfter, 1_250 * MILLION * RAY, "RWA007: Bad spot value after bump()");
+
+        // Test that a draw() can be performed
+        address urn = addr.addr("RWA007_A_URN");
+        // Give ourselves operator status, noting that setWard() has replaced giveAuth()
+        GodMode.setWard(urn, address(this), 1);
+        RwaUrnLike(urn).hope(address(this));
+
+        // Calculate how much 'room' we can draw to get close to line
+        uint256 room = line - (Art * rate);
+        uint256 drawAmt = room / RAY;
+
+        // Correct our draw amount if it is too large
+        if ((_divup(drawAmt * RAY, rate) * rate) > room) {
+            drawAmt = (room - rate) / RAY;
+        }
+
+        // Perform draw()
+        RwaUrnLike(urn).draw(drawAmt);
+
+        // Read new Art
+        (Art,,,,) = vat.ilks("RWA007-A");
+
+        // Assert that we are within 2 `rate` of line
+        assertTrue((line - (Art * rate)) < (2 * rate));  
+
+    } 
+
 /* 
     function testRWA007OraclePriceBumpClone() public {
         (, address pip, , ) = liquidationOracle.ilks("RWA007-A");
