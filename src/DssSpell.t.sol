@@ -42,6 +42,7 @@ interface RwaUrnLike {
     function draw(uint256) external;
 }
 
+
 contract DssSpellTest is DssSpellTestBase {
     string         config;
     RootDomain     rootDomain;
@@ -468,9 +469,26 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
 
+    // For PE-1208
+    function divup(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        z = add(x, sub(y, 1)) / y;
+    }
+
+    function mul(uint x, uint y) internal pure returns (uint z) {
+        require(y == 0 || (z = x * y) / y == x);
+    }
+
+    function add(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        require((z = x + y) >= x);
+    }
+
+    function sub(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        require((z = x - y) <= x);
+    }
+
     // RWA007-A Tests
     // TODO FINISH
-    /* function testRWA007OraclePriceBump() public {
+    function testRWA007OraclePriceBump() public {
 
         // Read the pip address and spot value before cast
         (,address pip,,  ) = liquidationOracle.ilks("RWA007-A");
@@ -485,8 +503,8 @@ contract DssSpellTest is DssSpellTestBase {
         //assertEq(dai.balanceOf(address(conduit)), 0); // conduit before
         //assertEq(dai.balanceOf(address(conduit)), drawAmt); // conduit after
 
-        vote(address(spell));
-        scheduleWaitAndCast(address(spell));
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Read the pip address and spot value after cast, as well as Art and rate
@@ -498,8 +516,8 @@ contract DssSpellTest is DssSpellTestBase {
 
         // Test that a draw() can be performed
         address urn = addr.addr("RWA007_A_URN");
-        // Give ourselves operator status
-        giveAuth(urn, address(this));
+        // Give ourselves operator status, noting that setWard() has replaced giveAuth()
+        setWard(urn, address(this), 1);
         RwaUrnLike(urn).hope(address(this));
 
         // Calculate how much 'room' we can draw to get close to line
@@ -520,7 +538,7 @@ contract DssSpellTest is DssSpellTestBase {
         // Assert that we are within 2 `rate` of line
         assertTrue(sub(line, mul(Art, rate)) < mul(2, rate));  
 
-    } */
+    } 
 /* 
     function testRWA007OraclePriceBumpClone() public {
         (, address pip, , ) = liquidationOracle.ilks("RWA007-A");
