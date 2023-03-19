@@ -468,31 +468,6 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
 
-    function testLineAdjustment() private {
-        uint256 preLine = vat.Line();
-
-        uint256 correction;
-        uint256 Art;
-        uint256 rate;
-        (Art, rate,,,) = vat.ilks("UNIV2USDCETH-A");
-        correction += Art * rate;
-        (Art, rate,,,) = vat.ilks("UNIV2DAIUSDC-A");
-        correction += Art * rate;
-        (Art, rate,,,) = vat.ilks("GUNIV3DAIUSDC1-A");
-        correction += Art * rate;
-        (Art, rate,,,) = vat.ilks("GUNIV3DAIUSDC2-A");
-        correction += Art * rate;
-        correction = correction * 110 / 100;
-
-        _vote(address(spell));
-        _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        uint256 postLine = vat.Line();
-        assertGt(postLine, preLine);
-        assertEq(postLine, preLine + correction);
-    }
-
     // RWA007-A Tests
     // TODO FINISH
     /* function testRWA007OraclePriceBump() public {
