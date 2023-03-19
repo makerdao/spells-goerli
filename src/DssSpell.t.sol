@@ -512,12 +512,12 @@ contract DssSpellTest is DssSpellTestBase {
 
         // Check the pip and spot values after cast
         assertEq(uint256(DSValueAbstract(pip).read()), 1_250 * MILLION * WAD, "RWA007: Bad PIP value after bump()");
-        assertEq(spot, 1_250 * MILLION * RAY, "RWA007: Bad spot value after bump()");
+        assertEq(spotAfter, 1_250 * MILLION * RAY, "RWA007: Bad spot value after bump()");
 
         // Test that a draw() can be performed
         address urn = addr.addr("RWA007_A_URN");
         // Give ourselves operator status, noting that setWard() has replaced giveAuth()
-        setWard(urn, address(this), 1);
+        GodMode.setWard(urn, address(this), 1);
         RwaUrnLike(urn).hope(address(this));
 
         // Calculate how much 'room' we can draw to get close to line
