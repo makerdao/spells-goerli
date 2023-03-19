@@ -25,6 +25,12 @@ interface GemLike {
     function transfer(address, uint256) external returns (bool);
 }
 
+interface RwaLiquidationLike {
+    function ilks(bytes32) external view returns (string memory, address, uint48, uint48);
+    function init(bytes32, uint256, string calldata, uint48) external;
+    function bump(bytes32 ilk, uint256 val) external;
+}
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -52,6 +58,8 @@ contract DssSpellAction is DssAction {
     // MAINNET SPELL ONLY
     
     GemLike  internal immutable MKR                   = GemLike(DssExecLib.mkr());
+
+    address internal immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
 
     address constant internal LBSBLOCKCHAIN_WALLET    = 0xB83b3e9C8E3393889Afb272D354A7a3Bd1Fbcf5C;
     address constant internal CONSENSYS_WALLET        = 0xE78658A8acfE982Fde841abb008e57e6545e38b3;
@@ -105,7 +113,7 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/request-to-poll-return-excess-mip65-funds-to-surplus-buffer/20115
 
         // Hash: cast keccak -- "$(wget TODO -q -O - 2>/dev/null)"
-        string constant public MIP65 = "TODO_ADD_HASH";
+        // TODO string public constant MIP65 = "TODO_ADD_HASH";
 
         // Monetalis Update - Remove DC-IAM from RWA-007
         // Poll:  https://vote.makerdao.com/polling/QmRJSSGW#poll-details
@@ -132,6 +140,9 @@ contract DssSpellAction is DssAction {
 
         // Update the RWA007-A `spot` value in Vat
         DssExecLib.updateCollateralPrice("RWA007-A");
+
+
+        
 
     }
 }

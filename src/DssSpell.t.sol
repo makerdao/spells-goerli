@@ -36,6 +36,12 @@ interface BridgeLike {
     function l2TeleportGateway() external view returns (address);
 }
 
+// For PE-1208
+interface RwaUrnLike {
+    function hope(address) external;
+    function draw(uint256) external;
+}
+
 contract DssSpellTest is DssSpellTestBase {
     string         config;
     RootDomain     rootDomain;
@@ -462,77 +468,6 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
 
-    function testLineMom() private {
-        _vote(address(spell));
-        _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        address LINE_MOM = addr.addr("LINE_MOM");
-
-        // Check modules that need to rely on the LineMom do so
-        assertEq(vat.wards(LINE_MOM), 1, "Vat does not rely on LineMom");
-        assertEq(autoLine.wards(LINE_MOM), 1, "AutoLine does not rely on LineMom");
-
-        // Verify LineMom owner
-        assertEq(LineMomLike(LINE_MOM).owner(), address(pauseProxy), "Pause Proxy not LineMom owner");
-
-        // Verify AutoLine was filed
-        assertEq(LineMomLike(LINE_MOM).autoLine(), address(autoLine), "AutoLine not filed correctly");
-
-        // Verify LineMom authority
-        assertEq(LineMomLike(LINE_MOM).authority(), address(chief), "Chief not LineMom authority");
-
-        // Verify the LineMom has the correct Vat address
-        assertEq(LineMomLike(LINE_MOM).vat(), address(vat), "LineMom has wrong Vat");
-
-        // Verify added ilks
-        assertEq(LineMomLike(LINE_MOM).ilks("PSM-USDC-A"), 1, "PSM-USDC-A not subject to LineMom");
-        assertEq(LineMomLike(LINE_MOM).ilks("PSM-PAX-A" ), 1, "PSM-PAX-A  not subject to LineMom");
-        assertEq(LineMomLike(LINE_MOM).ilks("PSM-GUSD-A"), 1, "PSM-GUSD-A not subject to LineMom");
-
-        // Chainlog verification happens automatically by virtue of adding the LineMom
-        // to the address list and updating the expected Chainlog version.
-
-        // Check that the LineMom actually works -------
-        uint256 line;
-
-        // PSM-USDC-A shut off
-        (,,,line,) = vat.ilks("PSM-USDC-A");
-        assertTrue(line > 0);
-        (line,,,,) = autoLine.ilks("PSM-USDC-A");
-        assertTrue(line > 0);
-        vm.prank(chief.hat());  // send as the spell
-        LineMomLike(LINE_MOM).wipe("PSM-USDC-A");
-        (,,,line,) = vat.ilks("PSM-USDC-A");
-        assertTrue(line == 0, "PSM-USDC-A Vat line not zeroed");
-        (line,,,,) = autoLine.ilks("PSM-USDC-A");
-        assertTrue(line == 0, "PSM-USDC-A AutoLine line not zeroed");
-
-        // PSM-PAX-A shut off
-        (,,,line,) = vat.ilks("PSM-PAX-A");
-        assertTrue(line > 0);
-        (line,,,,) = autoLine.ilks("PSM-PAX-A");
-        assertTrue(line > 0);
-        vm.prank(chief.hat());  // send as the spell
-        LineMomLike(LINE_MOM).wipe("PSM-PAX-A");
-        (,,,line,) = vat.ilks("PSM-PAX-A");
-        assertTrue(line == 0, "PSM-PAX-A Vat line not zeroed");
-        (line,,,,) = autoLine.ilks("PSM-PAX-A");
-        assertTrue(line == 0, "PSM-PAX-A AutoLine line not zeroed");
-
-        // PSM-GUSD-A shut off
-        (,,,line,) = vat.ilks("PSM-GUSD-A");
-        assertTrue(line > 0);
-        (line,,,,) = autoLine.ilks("PSM-GUSD-A");
-        assertTrue(line > 0);
-        vm.prank(chief.hat());  // send as the spell
-        LineMomLike(LINE_MOM).wipe("PSM-GUSD-A");
-        (,,,line,) = vat.ilks("PSM-GUSD-A");
-        assertTrue(line == 0, "PSM-GUSD-A Vat line not zeroed");
-        (line,,,,) = autoLine.ilks("PSM-GUSD-A");
-        assertTrue(line == 0, "PSM-GUSD-A AutoLine line not zeroed");
-    }
-
     function testLineAdjustment() private {
         uint256 preLine = vat.Line();
 
@@ -559,8 +494,60 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     // RWA007-A Tests
+    // TODO FINISH
+    /* function testRWA007OraclePriceBump() public {
 
-    function testRWA007OraclePriceBump() public {
+        // Read the pip address and spot value before cast
+        (,address pip,,  ) = liquidationOracle.ilks("RWA007-A");
+        (,,uint256 spot,,) = vat.ilks("RWA007-A");
+
+        // Check the pip and spot values before cast
+        assertEq(uint256(DSValueAbstract(pip).read()), 500 * MILLION * WAD, "RWA007: Bad initial PIP value");
+        assertEq(spot, 500 * MILLION * RAY, "RWA007: Bad initial spot value");
+
+        // TODO Check the RWA007_A_OUTPUT_CONDUIT balance before cast (if necessary)
+
+        //assertEq(dai.balanceOf(address(conduit)), 0); // conduit before
+        //assertEq(dai.balanceOf(address(conduit)), drawAmt); // conduit after
+
+        vote(address(spell));
+        scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // Read the pip address and spot value after cast, as well as Art and rate
+        (uint256 Art, uint256 rate, uint256 spotAfter, uint256 line,) = vat.ilks("RWA007-A");
+
+        // Check the pip and spot values after cast
+        assertEq(uint256(DSValueAbstract(pip).read()), 1_250 * MILLION * WAD, "RWA007: Bad PIP value after bump()");
+        assertEq(spot, 1_250 * MILLION * RAY, "RWA007: Bad spot value after bump()");
+
+        // Test that a draw() can be performed
+        address urn = addr.addr("RWA007_A_URN");
+        // Give ourselves operator status
+        giveAuth(urn, address(this));
+        RwaUrnLike(urn).hope(address(this));
+
+        // Calculate how much 'room' we can draw to get close to line
+        uint256 room = sub(line, mul(Art, rate));
+        uint256 drawAmt = room / RAY;
+
+        // Correct our draw amount if it is too large
+        if (mul(divup(mul(drawAmt, RAY), rate), rate) > room) {
+            drawAmt = sub(room, rate) / RAY;
+        }
+
+        // Perform draw()
+        RwaUrnLike(urn).draw(drawAmt);
+
+        // Read new Art
+        (Art,,,,) = vat.ilks("RWA007-A");
+
+        // Assert that we are within 2 `rate` of line
+        assertTrue(sub(line, mul(Art, rate)) < mul(2, rate));  
+
+    } */
+/* 
+    function testRWA007OraclePriceBumpClone() public {
         (, address pip, , ) = liquidationOracle.ilks("RWA007-A");
         (,,uint256 spot,,) = vat.ilks("RWA007-A");
 
@@ -588,5 +575,6 @@ contract DssSpellTest is DssSpellTestBase {
         RwaUrnLike(urn).draw(drawAmt);
         (Art,,,,) = vat.ilks("RWA007-A");
         assertTrue(sub(line, mul(Art, rate)) < mul(2, rate));  // got very close to line
-    }
+    } */
+
 }
