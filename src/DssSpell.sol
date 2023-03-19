@@ -75,35 +75,35 @@ contract DssSpellAction is DssAction {
 
     function actions() public override {
 
-        // Uncleared Delegate Compensation (MAINNET SPELL ONLY)
+        /* // Uncleared Delegate Compensation (MAINNET SPELL ONLY)
         // Poll:  https://vote.makerdao.com/polling/Qmd2W3Q4#poll-details
         // Forum: https://forum.makerdao.com/t/mip4c2-sp29-amend-mip61-to-tighten-up-recognized-delegate-participation-metrics/18696
 
         // London Business School Blockchain - 3126 DAI - 0xB83b3e9C8E3393889Afb272D354A7a3Bd1Fbcf5C
         DssExecLib.sendPaymentFromSurplusBuffer(LBSBLOCKCHAIN_WALLET,   3_126);
         // ConsenSys                         -  181 DAI - 0xE78658A8acfE982Fde841abb008e57e6545e38b3
-        DssExecLib.sendPaymentFromSurplusBuffer(CONSENSYS_WALLET,         181);
+        DssExecLib.sendPaymentFromSurplusBuffer(CONSENSYS_WALLET,         181); */
 
 
-        // SES-001 MKR Transfer (MAINNET SPELL ONLY)
+        /* // SES-001 MKR Transfer (MAINNET SPELL ONLY)
         // Poll:  https://vote.makerdao.com/polling/QmSmhV7z#poll-details
         // Forum: https://forum.makerdao.com/t/mip40c3-sp17-sustainable-ecosystem-scaling-core-unit-mkr-budget-ses-001/8043
         
-        MKR.transfer(SES_WALLET, 229.78 ether);  // NOTE: 'ether' is a keyword helper, only MKR is transferred here
+        MKR.transfer(SES_WALLET, 229.78 ether);  // NOTE: 'ether' is a keyword helper, only MKR is transferred here */
 
-        // CES-001 MKR Transfer (MAINNET SPELL ONLY)
+        /* // CES-001 MKR Transfer (MAINNET SPELL ONLY)
         // Poll:  https://vote.makerdao.com/polling/QmbNVQ1E#poll-details
         // Forum: https://forum.makerdao.com/t/request-to-poll-one-time-mkr-distribution-to-correct-ces-001-incentive-program-shortfall/19326
 
         // NOTE: The 77.34 MKR figure needs to be confirmed by GovAlpha and the calculation confirmed
-        MKR.transfer(CES_WALLET, 77.34 ether);  // NOTE: 'ether' is a keyword helper, only MKR is transferred here
+        MKR.transfer(CES_WALLET, 77.34 ether);  // NOTE: 'ether' is a keyword helper, only MKR is transferred here */
 
 
-        // Phoenix Labs SPF DAI Funding (MAINNET SPELL ONLY)
+        /* // Phoenix Labs SPF DAI Funding (MAINNET SPELL ONLY)
         // Poll:  https://vote.makerdao.com/polling/QmYBegVf#poll-details
         // Forum: https://forum.makerdao.com/t/mip55c3-sp15-phoenix-labs-initial-funding-spf/19733
 
-        DssExecLib.sendPaymentFromSurplusBuffer(PHOENIX_LABS_WALLET, 50_000);
+        DssExecLib.sendPaymentFromSurplusBuffer(PHOENIX_LABS_WALLET, 50_000); */
 
 
         // RETH-A Dust Adjustment from 15,000 DAI to 7,500 DAI
