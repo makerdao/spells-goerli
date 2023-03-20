@@ -22,6 +22,6 @@ if [[ -z $1 ]]; then
 elif [[ $1 =~ ^([1-9][0-9]*|[0-9])(\.[0-9]+)?$ ]]; then
     rate "$1"
 else
-    echo "Please specify a percentage parameter (e.g. for 4.25% use `./rates.sh 4.25` or `make rates pct=4.25`)"
+    echo "Please specify a percentage parameter (e.g. for 4.25% use $0 4.25 or make rates pct=4.25)"
     exit 1
 fi
