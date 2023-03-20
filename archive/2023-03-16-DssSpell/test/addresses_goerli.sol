@@ -63,7 +63,6 @@ contract Addresses {
         addr["OSM_MOM"]                         = 0xEdB6b497D2e18A33130CB0D2b70343E6Dcd9EE86;
         addr["FLIPPER_MOM"]                     = 0x7ceCdf6b214a3eBA1589eB8B844fB6Cb12B67Bd7;
         addr["CLIPPER_MOM"]                     = 0xC67fFD490903521F778b2A3B2A13D0FC0Be96F98;
-        addr["LINE_MOM"]                        = 0x5D54E2d56BA83C42f63a10642DcFa073EBD9D92E;
         addr["MCD_IAM_AUTO_LINE"]               = 0x21DaD87779D9FfA8Ed3E1036cBEA8784cec4fB83;
         addr["MCD_FLASH"]                       = 0xAa5F7d5b29Fa366BB04F6E4c39ACF569d5214075;
         addr["MCD_FLASH_LEGACY"]                = 0x0a6861D6200B519a8B9CFA1E7Edd582DD1573581;
