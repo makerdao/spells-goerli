@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-### rate -- list all rates or compute specific ones
+### rates -- list all rates or compute specific ones
 ### Usage:
-### ./rate.sh list all rates
-### ./rate.sh <entry> return the computed rate
+### ./rates.sh list all rates
+### ./rates.sh <entry> return the computed rate
 
 set -e
 
@@ -14,16 +14,12 @@ rate() {
     echo "$1%: ${rayte%.*}"
 }
 
-if [[ -z $1 ]];
-then
+if [[ -z $1 ]]; then
     for n in $(seq 0 0.01 100);
     do
         rate "$n"
     done
-fi
-
-if [[ $1 =~ ^([1-9][0-9]*|[0-9])(\.[0-9]+)?$ ]];
-then
+elif [[ $1 =~ ^([1-9][0-9]*|[0-9])(\.[0-9]+)?$ ]]; then
     rate "$1"
 else
     echo "Please specify a percentage parameter (i.e. 4.25 == 4.25%)"
