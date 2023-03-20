@@ -2,7 +2,7 @@
 
 ### rates -- list all rates or compute specific ones
 ### Usage:
-### ./rates.sh list all rates
+### ./rates.sh list all rates from 0 to 100% with granularity of 0.01%
 ### ./rates.sh <entry> return the computed rate
 
 set -e
