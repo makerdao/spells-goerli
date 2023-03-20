@@ -9,7 +9,7 @@ set -e
 
 rate() {
     basispoints=$(printf "%.0f" "$(echo "scale=0; $1*100" | bc)")
-    normalizedamount="$( echo "scale=4; $basispoints/10000 + 1" | bc)"
+    normalizedamount="$(echo "scale=4; $basispoints/10000 + 1" | bc)"
     rayte=$(bc -l <<< "scale=27; e( l($normalizedamount)/(60 * 60 * 24 * 365) ) * 10^27")
     echo "$1%: ${rayte%.*}"
 }
