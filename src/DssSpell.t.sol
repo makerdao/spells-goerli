@@ -478,18 +478,6 @@ contract DssSpellTest is DssSpellTestBase {
 
     // For PE-1208
 
-    function mul(uint x, uint y) internal pure returns (uint z) {
-        require(y == 0 || (z = x * y) / y == x);
-    }
-
-    function add(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        require((z = x + y) >= x);
-    }
-
-    function sub(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        require((z = x - y) <= x);
-    }
-
     // RWA007-A Tests
 
     function testRWA007OraclePriceBumpNEW() public {
@@ -528,12 +516,12 @@ contract DssSpellTest is DssSpellTestBase {
         RwaUrnLike(urn).hope(address(this));
 
         // Calculate how much 'room' we can draw to get close to line
-        uint256 room = sub(line, mul(Art, rate));
+        uint256 room = line - (Art * rate);
         uint256 drawAmt = room / RAY;
 
         // Correct our draw amount if it is too large
-        if (mul(_divup(mul(drawAmt, RAY), rate), rate) > room) {
-            drawAmt = sub(room, rate) / RAY;
+        if ((_divup((drawAmt * RAY), rate) * rate) > room) {
+            drawAmt = (room - rate) / RAY;
         }
 
         // Perform draw()
@@ -546,8 +534,8 @@ contract DssSpellTest is DssSpellTestBase {
         (Art,,,,) = vat.ilks("RWA007-A");
 
         // Assert that we are within 2 `rate` of line
-        assertTrue(sub(line, mul(Art, rate)) < mul(2, rate));  
+        assertTrue(line - (Art * rate) < (2 * rate));  
 
     } 
-    
+
 }
