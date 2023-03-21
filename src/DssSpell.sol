@@ -57,21 +57,19 @@ contract DssSpellAction is DssAction {
 
     // MAINNET SPELL ONLY
     
-    GemLike  internal immutable MKR                     = GemLike(DssExecLib.mkr());
-
     address internal immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
+    /* GemLike  internal immutable MKR                     = GemLike(DssExecLib.mkr());
 
     address constant internal LBSBLOCKCHAIN_WALLET      = 0xB83b3e9C8E3393889Afb272D354A7a3Bd1Fbcf5C;
     address constant internal CONSENSYS_WALLET          = 0xE78658A8acfE982Fde841abb008e57e6545e38b3;
     address constant internal SES_WALLET                = 0x87AcDD9208f73bFc9207e1f6F0fDE906bcA95cc6;
     address constant internal CES_WALLET                = 0x25307aB59Cd5d8b4E2C01218262Ddf6a89Ff86da;
-    address constant internal PHOENIX_LABS_WALLET       = 0xD9847E6b1314f0327F320E43B51ca0AaAD6FF509; // NOTE: This address is pending confirmation from GovAlpha
+    address constant internal PHOENIX_LABS_WALLET       = 0xD9847E6b1314f0327F320E43B51ca0AaAD6FF509; */
     
-    // TODO Rename this as appropriate (This has to go outside of the actions function)
-    // Monetalis Update - Excess Funds Declaration
+    // Monetalis Update - Excess Funds Declaration ONLY ON MAINNET
     // Poll:  https://vote.makerdao.com/polling/QmfZ2nxw#poll-details
     // Forum: https://forum.makerdao.com/t/request-to-poll-return-excess-mip65-funds-to-surplus-buffer/20115
-    string constant public MIP65 = "HASH_GOES_HERE";
+    /* string constant public MIP65 = "HASH_TBD"; */
 
     function actions() public override {
 
@@ -95,7 +93,6 @@ contract DssSpellAction is DssAction {
         // Poll:  https://vote.makerdao.com/polling/QmbNVQ1E#poll-details
         // Forum: https://forum.makerdao.com/t/request-to-poll-one-time-mkr-distribution-to-correct-ces-001-incentive-program-shortfall/19326
 
-        // NOTE: The 77.34 MKR figure needs to be confirmed by GovAlpha and the calculation confirmed
         MKR.transfer(CES_WALLET, 77.34 ether);  // NOTE: 'ether' is a keyword helper, only MKR is transferred here */
 
 
@@ -139,7 +136,6 @@ contract DssSpellAction is DssAction {
 
         // Update the RWA007-A `spot` value in Vat
         DssExecLib.updateCollateralPrice("RWA007-A");
-
 
     }
 }

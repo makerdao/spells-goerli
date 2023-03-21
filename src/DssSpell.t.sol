@@ -42,6 +42,13 @@ interface RwaUrnLike {
     function draw(uint256) external;
 }
 
+interface RwaOutputConduitLike {
+    function hope(address) external;
+    function bud(address) external view returns (uint256);
+    function pick(address) external;
+    function push() external;
+}
+
 
 contract DssSpellTest is DssSpellTestBase {
     string         config;
@@ -495,10 +502,13 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(uint256(DSValueAbstract(pip).read()), 500 * MILLION * WAD, "RWA007: Bad initial PIP value");
         assertEq(spot, 500 * MILLION * RAY, "RWA007: Bad initial spot value");
 
-        // TODO Check the RWA007_A_OUTPUT_CONDUIT balance before cast (if necessary)
+        // Load RWA007-A output conduit balance
+        RwaOutputConduitLike conduit = RwaOutputConduitLike(
+            addr.addr("RWA007_A_OUTPUT_CONDUIT")
+        );
 
-        //assertEq(dai.balanceOf(address(conduit)), 0); // conduit before
-        //assertEq(dai.balanceOf(address(conduit)), drawAmt); // conduit after
+        // Check the conduit balance is 0 before cast
+        assertEq(dai.balanceOf(address(conduit)), 0);
 
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
@@ -528,6 +538,9 @@ contract DssSpellTest is DssSpellTestBase {
 
         // Perform draw()
         RwaUrnLike(urn).draw(drawAmt);
+
+        // Check the conduit balance after cast
+        assertEq(dai.balanceOf(address(conduit)), drawAmt);
 
         // Read new Art
         (Art,,,,) = vat.ilks("RWA007-A");
