@@ -124,9 +124,10 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/request-to-poll-increase-debt-ceiling-for-mip65-by-750m-to-1-250m/20119
 
         // Increase RWA007-A line by 750M DAI from 500M DAI to 1,250M DAI
+        // Additional 499M line increase ONLY ON GOERLI
         DssExecLib.increaseIlkDebtCeiling(
             "RWA007-A", 
-            (499 + 750) * MILLION,  // DC to 1,250M less existing 500M (Note: line is 1M on Goerli)
+            (499 + 750) * MILLION,  // DC to 1,250M less existing 500M (Note: existing line is 1M on Goerli)
             true            // Increase global Line
         );
 
