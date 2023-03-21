@@ -126,7 +126,7 @@ contract DssSpellAction is DssAction {
         // Increase RWA007-A line by 750M DAI from 500M DAI to 1,250M DAI
         DssExecLib.increaseIlkDebtCeiling(
             "RWA007-A", 
-            750 * MILLION,  // DC to 1,250M less existing 500M
+            (499 + 750) * MILLION,  // DC to 1,250M less existing 500M (Note: line is 1M on Goerli)
             true            // Increase global Line
         );
 
