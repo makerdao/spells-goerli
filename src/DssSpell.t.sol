@@ -544,4 +544,32 @@ contract DssSpellTest is DssSpellTestBase {
 
     } 
 
+    // GOERLI ONLY (PE-1210 Backport)
+    function testNewModulesAuthorizingEsm() public {
+        uint256 ward;
+        address ESM = addr.addr("MCD_ESM");
+
+        ward = WardsAbstract(addr.addr("MCD_CROPPER")).wards(ESM);
+        assertEq(ward, 0, "unexpected ward");
+
+        ward = WardsAbstract(addr.addr("MCD_JOIN_CRVV1ETHSTETH_A")).wards(ESM);
+        assertEq(ward, 0, "unexpected ward");
+
+        ward = WardsAbstract(addr.addr("CHANGELOG")).wards(ESM);
+        assertEq(ward, 0, "unexpected ward");
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        ward = WardsAbstract(addr.addr("MCD_CROPPER")).wards(ESM);
+        assertEq(ward, 1, "MCD_CROPPER does not authorize ESM");
+
+        ward = WardsAbstract(addr.addr("MCD_JOIN_CRVV1ETHSTETH_A")).wards(ESM);
+        assertEq(ward, 1, "MCD_JOIN_CRVV1ETHSTETH_A does not authorize ESM");
+
+        ward = WardsAbstract(addr.addr("CHANGELOG")).wards(ESM);
+        assertEq(ward, 1, "CHANGELOG does not authorize ESM");
+    }
+
 }

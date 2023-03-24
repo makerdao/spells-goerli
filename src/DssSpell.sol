@@ -59,13 +59,13 @@ contract DssSpellAction is DssAction {
     uint256 internal constant PSM_ZERO_BASIS_POINTS = 0;
     uint256 internal constant PSM_ONE_BASIS_POINT   = 1 * WAD / 10000;
 
-
-    // MAINNET SPELL ONLY
     
     address internal immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
     address internal immutable MCD_PSM_USDC_A = DssExecLib.getChangelogAddress("MCD_PSM_USDC_A");
     address internal immutable MCD_PSM_GUSD_A = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
     address internal immutable MCD_PSM_PAX_A  = DssExecLib.getChangelogAddress("MCD_PSM_PAX_A");
+
+    // MAINNET SPELL ONLY
 
     /* GemLike  internal immutable MKR                     = GemLike(DssExecLib.mkr());
 
@@ -79,6 +79,14 @@ contract DssSpellAction is DssAction {
     // Poll:  https://vote.makerdao.com/polling/QmfZ2nxw#poll-details
     // Forum: https://forum.makerdao.com/t/request-to-poll-return-excess-mip65-funds-to-surplus-buffer/20115
     /* string constant public MIP65 = "HASH_TBD"; */
+
+    // GOERLI SPELL ONLY (PE-1210 Backport)
+
+    address immutable internal ESM          = DssExecLib.getChangelogAddress("MCD_ESM");
+    address immutable internal CROPPER      = DssExecLib.getChangelogAddress("MCD_CROPPER");
+    address immutable internal STECRV_JOIN  = DssExecLib.getChangelogAddress("MCD_JOIN_CRVV1ETHSTETH_A");
+    address immutable internal CHANGELOG    = DssExecLib.getChangelogAddress("CHANGELOG");
+
 
     function actions() public override {
 
@@ -170,6 +178,12 @@ contract DssSpellAction is DssAction {
         // Reduce the Target Available Debt (gap) by 200 million DAI from 250 million DAI to 50 million DAI.
         // Reduce the Maximum Debt Ceiling (line) by 500 million DAI from 1 billion DAI to 500 million DAI.
         DssExecLib.setIlkAutoLineParameters("PSM-PAX-A", 500 * MILLION, 50 * MILLION, 24 hours);
+
+        // GOERLI SPELL ONLY (PE-1210 Backport)
+
+        DssExecLib.authorize(CROPPER, ESM);
+        DssExecLib.authorize(STECRV_JOIN, ESM);
+        DssExecLib.authorize(CHANGELOG, ESM);
 
     }
 }
