@@ -137,6 +137,24 @@ contract DssSpellAction is DssAction {
         // Update the RWA007-A `spot` value in Vat
         DssExecLib.updateCollateralPrice("RWA007-A");
 
+        // PSM Parameter Normalization
+        // Poll:  
+        // Forum: 
+
+        //PSM-USDC-A
+        //Reduce the Fee In (tin) by 1% from 1% to 0%.
+        //Increase the Target Available Debt (gap) by 150 million DAI from 250 million DAI to 400 million DAI.
+
+        // PSM-GUSD-A
+        // Reduce the Fee In (tin) by 0.1% from 0.1% to 0%.
+        // Increase the Fee Out (tout) by 0.01% from 0% to 0.01%.
+        // Increase the Target Available Debt (gap) by 40 million DAI from 10 million DAI to 50 million DAI.
+
+        // PSM-USDP-A
+        // Reduce the Fee Out (tout) by 1% from 1% to 0%.
+        // Reduce the Target Available Debt (gap) by 200 million DAI from 250 million DAI to 50 million DAI.
+        // Reduce the Maximum Debt Ceiling (line) by 500 million DAI from 1 billion DAI to 500 million DAI.
+
     }
 }
 
