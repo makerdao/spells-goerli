@@ -51,6 +51,7 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
+    uint256 internal constant BILLION = 10 ** 9;
     uint256 internal constant MILLION = 10 ** 6;
 
     uint256 internal constant WAD     = 10 ** 18;
