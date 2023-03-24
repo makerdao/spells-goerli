@@ -301,7 +301,26 @@ contract DssSpellTest is DssSpellTestBase {
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        bytes32 _ilk = "PSM-GUSD-A";
+        bytes32 _ilk;
+
+        // USDC
+        _ilk = "PSM-USDC-A";
+        assertEq(addr.addr("MCD_JOIN_PSM_USDC_A"), reg.join(_ilk));
+        assertEq(addr.addr("MCD_CLIP_PSM_USDC_A"), reg.xlip(_ilk));
+        assertEq(addr.addr("PIP_USDC"), reg.pip(_ilk));
+        assertEq(addr.addr("MCD_PSM_USDC_A"), chainLog.getAddress("MCD_PSM_USDC_A"));
+        _checkPsmIlkIntegration(
+            _ilk,
+            GemJoinAbstract(addr.addr("MCD_JOIN_PSM_USDC_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_PSM_USDC_A")),
+            addr.addr("PIP_USDC"),
+            PsmAbstract(addr.addr("MCD_PSM_USDC_A")),
+            0,   // tin
+            0    // tout
+        );
+
+        // GUSD
+        _ilk = "PSM-GUSD-A";
         assertEq(addr.addr("MCD_JOIN_PSM_GUSD_A"), reg.join(_ilk));
         assertEq(addr.addr("MCD_CLIP_PSM_GUSD_A"), reg.xlip(_ilk));
         assertEq(addr.addr("PIP_GUSD"), reg.pip(_ilk));
@@ -312,10 +331,11 @@ contract DssSpellTest is DssSpellTestBase {
             ClipAbstract(addr.addr("MCD_CLIP_PSM_GUSD_A")),
             addr.addr("PIP_GUSD"),
             PsmAbstract(addr.addr("MCD_PSM_GUSD_A")),
-            10,  // tin
-            0    // tout
+            0,   // tin
+            1    // tout
         );
 
+        // USDP
         _ilk = "PSM-PAX-A";
         assertEq(addr.addr("MCD_JOIN_PSM_PAX_A"), reg.join(_ilk));
         assertEq(addr.addr("MCD_CLIP_PSM_PAX_A"), reg.xlip(_ilk));
@@ -328,23 +348,9 @@ contract DssSpellTest is DssSpellTestBase {
             addr.addr("PIP_PAX"),
             PsmAbstract(addr.addr("MCD_PSM_PAX_A")),
             0,   // tin
-            100    // tout
-        );
-
-        _ilk = "PSM-USDC-A";
-        assertEq(addr.addr("MCD_JOIN_PSM_USDC_A"), reg.join(_ilk));
-        assertEq(addr.addr("MCD_CLIP_PSM_USDC_A"), reg.xlip(_ilk));
-        assertEq(addr.addr("PIP_USDC"), reg.pip(_ilk));
-        assertEq(addr.addr("MCD_PSM_USDC_A"), chainLog.getAddress("MCD_PSM_USDC_A"));
-        _checkPsmIlkIntegration(
-            _ilk,
-            GemJoinAbstract(addr.addr("MCD_JOIN_PSM_USDC_A")),
-            ClipAbstract(addr.addr("MCD_CLIP_PSM_USDC_A")),
-            addr.addr("PIP_USDC"),
-            PsmAbstract(addr.addr("MCD_PSM_USDC_A")),
-            100,   // tin
             0    // tout
         );
+
     }
 
     // @dev when testing new vest contracts, use the explicit id when testing to assist in

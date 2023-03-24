@@ -55,6 +55,10 @@ contract DssSpellAction is DssAction {
 
     uint256 internal constant WAD     = 10 ** 18;
 
+    uint256 internal constant PSM_ZERO_BASIS_POINTS = 0;
+    uint256 internal constant PSM_ONE_BASIS_POINT   = 1 * WAD / 10000;
+
+
     // MAINNET SPELL ONLY
     
     address internal immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
@@ -138,22 +142,29 @@ contract DssSpellAction is DssAction {
         DssExecLib.updateCollateralPrice("RWA007-A");
 
         // PSM Parameter Normalization
-        // Poll:  
-        // Forum: 
+        // Poll:  https://vote.makerdao.com/polling/QmPcQ5vn#poll-detail
+        // Forum: https://forum.makerdao.com/t/signal-request-set-psm-fees-to-0/10894
 
         //PSM-USDC-A
         //Reduce the Fee In (tin) by 1% from 1% to 0%.
+        DssExecLib.setValue(MCD_PSM_USDC_A, "tin", PSM_ZERO_BASIS_POINTS);
         //Increase the Target Available Debt (gap) by 150 million DAI from 250 million DAI to 400 million DAI.
+        DssExecLib.setIlkAutoLineParameters("PSM-USDC-A", 10 * BILLION, 400 * MILLION, 24 hours);
 
         // PSM-GUSD-A
         // Reduce the Fee In (tin) by 0.1% from 0.1% to 0%.
+        DssExecLib.setValue(MCD_PSM_GUSD_A, "tin", PSM_ZERO_BASIS_POINTS);
         // Increase the Fee Out (tout) by 0.01% from 0% to 0.01%.
+        DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", PSM_ZERO_BASIS_POINTS);
         // Increase the Target Available Debt (gap) by 40 million DAI from 10 million DAI to 50 million DAI.
+        DssExecLib.setIlkAutoLineParameters("PSM-GUSD-A", 500 * MILLION, 50 * MILLION, 24 hours);
 
-        // PSM-USDP-A
+        // PSM-PAX-A
         // Reduce the Fee Out (tout) by 1% from 1% to 0%.
+        DssExecLib.setValue(MCD_PSM_PAX_A, "tout", PSM_ZERO_BASIS_POINTS);
         // Reduce the Target Available Debt (gap) by 200 million DAI from 250 million DAI to 50 million DAI.
         // Reduce the Maximum Debt Ceiling (line) by 500 million DAI from 1 billion DAI to 500 million DAI.
+        DssExecLib.setIlkAutoLineParameters("PSM-PAX-A", 500 * MILLION, 50 * MILLION, 24 hours);
 
     }
 }
