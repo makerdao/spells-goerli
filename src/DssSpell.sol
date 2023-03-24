@@ -51,19 +51,18 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
-    uint256 internal constant BILLION = 10 ** 9;
     uint256 internal constant MILLION = 10 ** 6;
-
+    uint256 internal constant BILLION = 10 ** 9;
+    
     uint256 internal constant WAD     = 10 ** 18;
 
     uint256 internal constant PSM_ZERO_BASIS_POINTS = 0;
     uint256 internal constant PSM_ONE_BASIS_POINT   = 1 * WAD / 10000;
 
-    
     address internal immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
-    address internal immutable MCD_PSM_USDC_A = DssExecLib.getChangelogAddress("MCD_PSM_USDC_A");
-    address internal immutable MCD_PSM_GUSD_A = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
-    address internal immutable MCD_PSM_PAX_A  = DssExecLib.getChangelogAddress("MCD_PSM_PAX_A");
+    address internal immutable MCD_PSM_USDC_A           = DssExecLib.getChangelogAddress("MCD_PSM_USDC_A");
+    address internal immutable MCD_PSM_GUSD_A           = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
+    address internal immutable MCD_PSM_PAX_A            = DssExecLib.getChangelogAddress("MCD_PSM_PAX_A");
 
     // MAINNET SPELL ONLY
 
@@ -182,6 +181,7 @@ contract DssSpellAction is DssAction {
         // DssExecLib.authorize(CROPPER, ESM); // Cropper not present on Goerli
         // DssExecLib.authorize(STECRV_JOIN, ESM); // Ilk not present on Goerli
         DssExecLib.authorize(CHANGELOG, ESM);
+
 
     }
 }
