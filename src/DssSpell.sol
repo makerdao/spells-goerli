@@ -166,7 +166,7 @@ contract DssSpellAction is DssAction {
         // Reduce the Fee In (tin) by 0.1% from 0.1% to 0%.
         DssExecLib.setValue(MCD_PSM_GUSD_A, "tin", PSM_ZERO_BASIS_POINTS);
         // Increase the Fee Out (tout) by 0.01% from 0% to 0.01%.
-        DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", PSM_ZERO_BASIS_POINTS);
+        DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", PSM_ONE_BASIS_POINT);
         // Increase the Target Available Debt (gap) by 40 million DAI from 10 million DAI to 50 million DAI.
         DssExecLib.setIlkAutoLineParameters("PSM-GUSD-A", 500 * MILLION, 50 * MILLION, 24 hours);
 

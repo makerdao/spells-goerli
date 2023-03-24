@@ -1613,7 +1613,7 @@ contract Config {
         });
         afterSpell.collaterals["PSM-PAX-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      1 * BILLION,
+            aL_line:      500 * MILLION,
             aL_gap:       50 * MILLION,
             aL_ttl:       24 hours,
             line:         0,
