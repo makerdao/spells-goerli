@@ -62,6 +62,10 @@ contract DssSpellAction is DssAction {
     // MAINNET SPELL ONLY
     
     address internal immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
+    address internal immutable MCD_PSM_USDC_A = DssExecLib.getChangelogAddress("MCD_PSM_USDC_A");
+    address internal immutable MCD_PSM_GUSD_A = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
+    address internal immutable MCD_PSM_PAX_A  = DssExecLib.getChangelogAddress("MCD_PSM_PAX_A");
+
     /* GemLike  internal immutable MKR                     = GemLike(DssExecLib.mkr());
 
     address constant internal LBSBLOCKCHAIN_WALLET      = 0xB83b3e9C8E3393889Afb272D354A7a3Bd1Fbcf5C;
