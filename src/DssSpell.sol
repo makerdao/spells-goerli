@@ -83,8 +83,6 @@ contract DssSpellAction is DssAction {
     // GOERLI SPELL ONLY (PE-1210 Backport)
 
     address immutable internal ESM          = DssExecLib.getChangelogAddress("MCD_ESM");
-    address immutable internal CROPPER      = DssExecLib.getChangelogAddress("MCD_CROPPER");
-    address immutable internal STECRV_JOIN  = DssExecLib.getChangelogAddress("MCD_JOIN_CRVV1ETHSTETH_A");
     address immutable internal CHANGELOG    = DssExecLib.getChangelogAddress("CHANGELOG");
 
 
@@ -181,8 +179,8 @@ contract DssSpellAction is DssAction {
 
         // GOERLI SPELL ONLY (PE-1210 Backport)
 
-        DssExecLib.authorize(CROPPER, ESM);
-        DssExecLib.authorize(STECRV_JOIN, ESM);
+        // DssExecLib.authorize(CROPPER, ESM); // Cropper not present on Goerli
+        // DssExecLib.authorize(STECRV_JOIN, ESM); // Ilk not present on Goerli
         DssExecLib.authorize(CHANGELOG, ESM);
 
     }
