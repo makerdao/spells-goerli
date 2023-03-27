@@ -19,15 +19,7 @@ pragma solidity 0.8.16;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-interface GemLike {
-    function allowance(address, address) external view returns (uint256);
-    function approve(address, uint256) external returns (bool);
-    function transfer(address, uint256) external returns (bool);
-}
-
 interface RwaLiquidationLike {
-    function ilks(bytes32) external view returns (string memory, address, uint48, uint48);
-    function init(bytes32, uint256, string calldata, uint48) external;
     function bump(bytes32 ilk, uint256 val) external;
 }
 
@@ -81,8 +73,8 @@ contract DssSpellAction is DssAction {
 
     // GOERLI SPELL ONLY (PE-1210 Backport)
 
-    address immutable internal ESM          = DssExecLib.getChangelogAddress("MCD_ESM");
-    address immutable internal CHANGELOG    = DssExecLib.getChangelogAddress("CHANGELOG");
+    address immutable internal ESM        = DssExecLib.getChangelogAddress("MCD_ESM");
+    address immutable internal CHANGELOG  = DssExecLib.getChangelogAddress("CHANGELOG");
 
 
     function actions() public override {
@@ -138,8 +130,8 @@ contract DssSpellAction is DssAction {
         // Additional 499M line increase ONLY ON GOERLI
         DssExecLib.increaseIlkDebtCeiling(
             "RWA007-A", 
-            (499 + 750) * MILLION,  // DC to 1,250M less existing 500M (Note: existing line is 1M on Goerli)
-            true            // Increase global Line
+            (499 + 750) * MILLION,  // DC to 1,250M less existing 500M (Note: existing line is 1M on Goerli). Onboarding was 499M less than on mainnet
+            true                    // Increase global Line
         );
 
         // Bump MIP21 Oracle's `val` to 1,250M as WAD (No need to calculate anything since the rate is 0%)
