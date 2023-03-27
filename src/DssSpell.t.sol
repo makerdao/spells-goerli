@@ -42,13 +42,6 @@ interface RwaUrnLike {
     function draw(uint256) external;
 }
 
-interface RwaOutputConduitLike {
-    function hope(address) external;
-    function bud(address) external view returns (uint256);
-    function pick(address) external;
-    function push() external;
-}
-
 
 contract DssSpellTest is DssSpellTestBase {
     string         config;
@@ -497,9 +490,8 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(spot, 500 * MILLION * RAY, "RWA007: Bad initial spot value");
 
         // Load RWA007-A output conduit balance
-        RwaOutputConduitLike conduit = RwaOutputConduitLike(
-            addr.addr("RWA007_A_OUTPUT_CONDUIT")
-        );
+        address conduit = addr.addr("RWA007_A_OUTPUT_CONDUIT");
+        
 
         // Check the conduit balance is 0 before cast
         assertEq(dai.balanceOf(address(conduit)), 0);
