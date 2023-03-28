@@ -113,7 +113,7 @@ contract DssSpellAction is DssAction {
         // Poll:  https://vote.makerdao.com/polling/QmcLGa49#poll-details
         // Forum: https://forum.makerdao.com/t/adjusting-reth-a-dust-parameter-march-2023/20021
 
-        // DssExecLib.setIlkMinVaultAmount("RETH-A", 7_500);
+        DssExecLib.setIlkMinVaultAmount("RETH-A", 7_500);
 
 
         // Monetalis Update - Remove DC-IAM from RWA-007
