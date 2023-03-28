@@ -120,7 +120,7 @@ contract DssSpellAction is DssAction {
         // Poll:  https://vote.makerdao.com/polling/QmRJSSGW#poll-details
         // Forum: https://forum.makerdao.com/t/request-to-poll-increase-debt-ceiling-for-mip65-by-750m-to-1-250m/20119
         
-        // DssExecLib.removeIlkFromAutoLine("RWA007-A");
+        DssExecLib.removeIlkFromAutoLine("RWA007-A");
 
         // Monetalis Update - Increase the MIP65 (RWA007-A) Debt Ceiling by 750M DAI from 500M DAI to 1,250M DAI
         // Poll:  https://vote.makerdao.com/polling/QmNTSr9j#poll-details
