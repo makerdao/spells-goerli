@@ -30,4 +30,5 @@ fi
 # Output target exec copy hash
 echo "Executive vote - $(date -d "$1" +"%B %d, %Y")
 Community repo commit: $commit_hash
+Raw GitHub URL: https://raw.githubusercontent.com/makerdao/community/"$commit_hash"/governance/votes/Executive%20vote%20-%20"$DATE".md
 Exec copy hash: $exec_hash"
