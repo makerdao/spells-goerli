@@ -42,7 +42,6 @@ interface RwaUrnLike {
     function draw(uint256) external;
 }
 
-
 contract DssSpellTest is DssSpellTestBase {
     string         config;
     RootDomain     rootDomain;
@@ -343,7 +342,6 @@ contract DssSpellTest is DssSpellTestBase {
             0,   // tin
             0    // tout
         );
-
     }
 
     // @dev when testing new vest contracts, use the explicit id when testing to assist in
@@ -491,7 +489,6 @@ contract DssSpellTest is DssSpellTestBase {
 
         // Load RWA007-A output conduit balance
         address conduit = addr.addr("RWA007_A_OUTPUT_CONDUIT");
-        
 
         // Check the conduit balance is 0 before cast
         assertEq(dai.balanceOf(address(conduit)), 0);
@@ -533,7 +530,6 @@ contract DssSpellTest is DssSpellTestBase {
 
         // Assert that we are within 2 `rate` of line
         assertTrue(line - (Art * rate) < (2 * rate));  
-
     } 
 
     // GOERLI ONLY (PE-1210 Backport)
