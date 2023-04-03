@@ -24,6 +24,9 @@ ETHERSCAN_API="https://api-goerli.etherscan.io/api"
 # Path to config.sol file
 CONFIG_PATH="src/test/config.sol"
 
+# DssSpell data
+SOLC="v0.8.16+commit.07a7930e"
+
 # Read contract address, block number, and timestamp from Solidity source code
 deployed_spell_address=$(grep -oE 'deployed_spell:\s+address\((0x[a-fA-F0-9]+)\)' $CONFIG_PATH | sed -E 's/^.*\((.*)\)/\1/')
 deployed_spell_block=$(grep -oE 'deployed_spell_block\s*:\s*[0-9]+' $CONFIG_PATH | sed -E 's/.*:\s*//')
@@ -44,6 +47,14 @@ if [ "$verified" ]; then
   success_check "DssSpell is verified."
 else
   error_check "DssSpell not verified."
+fi
+
+# Check contract solc version
+solc_version=$(echo "$verified_spell_info" | jq -r '.CompilerVersion')
+if [ "$solc_version" == "$SOLC" ]; then
+  success_check "DssSpell solc version matches."
+else
+  error_check "DssSpell solc version does not match."
 fi
 
 # Check contract optimizations
