@@ -40,27 +40,27 @@ verified_spell_info=$(curl -s "$ETHERSCAN_API?module=contract&action=getsourceco
 
 # Check contract verification status
 verified="${verified_spell_info}.verified"
-if ! [ "$verified" ]; then
-  error_check "DssSpell not verified."
-else
+if [ "$verified" ]; then
   success_check "DssSpell is verified."
+else
+  error_check "DssSpell not verified."
 fi
 
 # Check contract optimizations
 optimized=$(echo "$verified_spell_info" | jq -r '.OptimizationUsed == "1"')
-if [ "$optimized" = "true" ]; then
-  error_check "DssSpell was compiled with optimizations."
-else
+if [ "$optimized" = "false" ]; then
   success_check "DssSpell was not compiled with optimizations."
+else
+  error_check "DssSpell was compiled with optimizations."
 fi
 
 # Check contract library
 library_address=$(echo "$verified_spell_info" | jq -r '.Library | split(":") | .[1]')
 checksum_library_address=$(cast --to-checksum-address "$library_address")
-if [ "$checksum_library_address" != "$(cat DssExecLib.address)" ]; then
-  error_check "DssSpell library does not match hardcoded address."
-else
+if [ "$checksum_library_address" == "$(cat DssExecLib.address)" ]; then
   success_check "DssSpell library matches hardcoded address in DssExecLib.address."
+else
+  error_check "DssSpell library does not match hardcoded address."
 fi
 
 # Retrieve transaction hash
@@ -71,14 +71,14 @@ timestamp=$(cast block "$(cast tx "${tx_hash}"|grep blockNumber|awk '{print $2}'
 block=$(cast tx "${tx_hash}"|grep blockNumber|awk '{print $2}')
 
 # Check contract timestamp and block number
-if [ "$timestamp" != "$deployed_spell_timestamp" ]; then
-  error_check "DssSpell deployment timestamp does not match."
-else
+if [ "$timestamp" == "$deployed_spell_timestamp" ]; then
   success_check "DssSpell deployment timestamp matches."
+else
+  error_check "DssSpell deployment timestamp does not match."
 fi
 
-if [ "$block" != "$deployed_spell_block" ]; then
-  error_check "DssSpell deployment block number does not match."
-else
+if [ "$block" == "$deployed_spell_block" ]; then
   success_check "DssSpell deployment block number matches."
+else
+  error_check "DssSpell deployment block number does not match."
 fi
