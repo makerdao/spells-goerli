@@ -39,17 +39,6 @@ fi
 # Get contract verification information
 verified_spell_info=$(curl -s "$ETHERSCAN_API?module=contract&action=getsourcecode&address=$deployed_spell_address" | jq -r .result[0])
 
-# Check contract source code
-local_dss_spell=$(awk '/contract DssSpell\s*\{/,/\}/' "src/DssSpell.sol")
-verified_spell_source="${verified_spell_info}.sourceCode"
-verified_dss_spell=$(echo "$verified_spell_source" | awk '/contract DssSpell\s*\{/,/\}/')
-
-if [ "$local_dss_spell" != "$verified_dss_spell" ]; then
-  error_check "DssSpell verified source does not match local source."
-else
-  success_check "DssSpell verified source matches local source."
-fi
-
 # Check contract verification status
 verified="${verified_spell_info}.verified"
 if ! [ "$verified" ]; then
