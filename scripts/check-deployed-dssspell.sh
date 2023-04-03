@@ -31,9 +31,8 @@ deployed_spell_timestamp=$(grep -oE 'deployed_spell_created\s*:\s*[0-9]+' $CONFI
 
 # Check if contract address, block number, and timestamp are zero
 if [[ "$deployed_spell_address" =~ ^(address\(0\)|0)$ ]] || [[ "$deployed_spell_block" = "0" ]] || [[ "$deployed_spell_timestamp" = "0" ]]; then
-  error_check "DssSpell address, block number, or timestamp is not set in config file."
-else
-  success_check "DssSpell address, block number, and timestamp are set in config file."
+  echo "DssSpell address, block number, or timestamp is not set in config file."
+  exit 1
 fi
 
 # Get contract verification information
