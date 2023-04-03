@@ -83,5 +83,3 @@ if [ "$block" != "$deployed_spell_block" ]; then
 else
   success_check "DssSpell deployment block number matches."
 fi
-
-success_check "DssSpell deployment checks successful."
