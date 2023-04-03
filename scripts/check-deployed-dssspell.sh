@@ -39,7 +39,7 @@ fi
 verified_spell_info=$(curl -s "$ETHERSCAN_API?module=contract&action=getsourcecode&address=$deployed_spell_address" | jq -r .result[0])
 
 # Check contract verification status
-verified="${verified_spell_info}.verified"
+verified=$(echo "$verified_spell_info" | jq -r '.ContractName == "DssSpell"')
 if [ "$verified" ]; then
   success_check "DssSpell is verified."
 else
