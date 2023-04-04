@@ -84,7 +84,7 @@ else
 fi
 
 # Retrieve transaction hash
-tx_hash=$(curl -s "https://api-goerli.etherscan.io/api?module=account&action=txlistinternal&address=$deployed_spell_address&startblock=0&endblock=99999999&sort=asc&apikey=$ETHERSCAN_API_KEY" | jq -r ".result[0].hash")
+tx_hash=$(curl -s "$ETHERSCAN_API?module=account&action=txlistinternal&address=$deployed_spell_address&startblock=0&endblock=99999999&sort=asc&apikey=$ETHERSCAN_API_KEY" | jq -r ".result[0].hash")
 
 # Retrieve deployed contract timestamp and block number info
 timestamp=$(cast block "$(cast tx "${tx_hash}"|grep blockNumber|awk '{print $2}')"|grep timestamp|awk '{print $2}')
