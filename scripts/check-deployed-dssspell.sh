@@ -25,6 +25,7 @@ ETHERSCAN_API="https://api-goerli.etherscan.io/api"
 CONFIG_PATH="src/test/config.sol"
 
 # DssSpell data
+LICENSE="AGPL-3.0-or-later"
 SOLC="v0.8.16+commit.07a7930e"
 
 # Read contract address, block number, and timestamp from Solidity source code
@@ -48,6 +49,14 @@ if [ "$verified" ]; then
 else
   error_check "DssSpell not verified."
 fi
+
+# # Check license type
+# license=$(echo "$verified_spell_info" | jq -r '.LicenseType')
+# if [ "$license" == "$LICENSE" ]; then
+#   success_check "DssSpell was verified with a valid license."
+# else
+#   error_check "DssSpell was verified with an invalid or unknown license."
+# fi
 
 # Check contract solc version
 solc_version=$(echo "$verified_spell_info" | jq -r '.CompilerVersion')
