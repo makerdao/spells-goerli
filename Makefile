@@ -17,3 +17,4 @@ diff-archive-spell   :; ./scripts/diff-archive-dssspell.sh "$(if $(date),$(date)
 wards                :; ./scripts/wards.sh $(target)
 time                 :; ./scripts/time.sh date="$(date)" stamp="$(stamp)"
 exec-hash            :; ./scripts/hash-exec-copy.sh $(url)
+rates                :; ./scripts/rates.sh $(pct)
