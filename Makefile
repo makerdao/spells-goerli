@@ -10,10 +10,11 @@ deploy              :; ./scripts/deploy.sh
 deploy-info         :; ./scripts/get-deploy-info.sh tx=$(tx)
 verify              :; ./scripts/verify.py DssSpell $(addr)
 flatten             :; hevm flatten --source-file "src/DssSpell.sol" > out/flat.sol
+diff-deployed-spell :; ./scripts/diff-deployed-dssspell.sh $(spell)
 cast-spell          :; ./scripts/cast-dssspell.sh $(spell)
 archive-spell       :; ./scripts/archive-dssspell.sh "$(if $(date),$(date),$(shell date +'%Y-%m-%d'))"
 diff-archive-spell  :; ./scripts/diff-archive-dssspell.sh "$(if $(date),$(date),$(shell date +'%Y-%m-%d'))"
 wards               :; ./scripts/wards.sh $(target)
 time                :; ./scripts/time.sh date="$(date)" stamp="$(stamp)"
 exec-hash           :; ./scripts/hash-exec-copy.sh $(url)
-diff-deployed-spell :; ./scripts/diff-deployed-dssspell.sh $(spell)
+rates              :; ./scripts/rates.sh $(pct)
