@@ -15,7 +15,7 @@ function error_check() {
   echo -e "[${RED}✖${NC}] ${RED}$1${NC}"
 }
 
-[[ "$(cast chain --rpc-url="$ETH_RPC_URL")" == "goerli" ]] || { echo -e "Please set a Goerli ETH_RPC_URL"; exit 1; }
+[[ "$ETH_RPC_URL" && "$(cast chain)" == "goerli" && "$(cast chain-id)" == "5" ]] || { echo -e "Please set a Goerli ETH_RPC_URL"; exit 1; }
 [[ "$ETHERSCAN_API_KEY" ]] || { echo -e "Please set ETHERSCAN_API_KEY"; exit 1; }
 
 # Etherscan API endpoint
