@@ -473,91 +473,20 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
 
-    // For PE-1208
+    // For PE-1217
 
-    // RWA007-A Tests
-
-    function testRWA007OraclePriceBumpNEW() public {
-
-        // Read the pip address and spot value before cast
-        (,address pip,,  ) = liquidationOracle.ilks("RWA007-A");
-        (,,uint256 spot,,) = vat.ilks("RWA007-A");
-
-        // Check the pip and spot values before cast
-        assertEq(uint256(DSValueAbstract(pip).read()), 500 * MILLION * WAD, "RWA007: Bad initial PIP value");
-        assertEq(spot, 500 * MILLION * RAY, "RWA007: Bad initial spot value");
-
-        // Load RWA007-A output conduit balance
-        address conduit = addr.addr("RWA007_A_OUTPUT_CONDUIT");
-
-        // Check the conduit balance is 0 before cast
-        assertEq(dai.balanceOf(address(conduit)), 0);
-
-        _vote(address(spell));
-        _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        // Read the pip address and spot value after cast, as well as Art and rate
-        (uint256 Art, uint256 rate, uint256 spotAfter, uint256 line,) = vat.ilks("RWA007-A");
-
-        // Check the pip and spot values after cast
-        assertEq(uint256(DSValueAbstract(pip).read()), 1_250 * MILLION * WAD, "RWA007: Bad PIP value after bump()");
-        assertEq(spotAfter, 1_250 * MILLION * RAY, "RWA007: Bad spot value after bump()");
-
-        // Test that a draw() can be performed
-        address urn = addr.addr("RWA007_A_URN");
-        // Give ourselves operator status, noting that setWard() has replaced giveAuth()
-        GodMode.setWard(urn, address(this), 1);
-        RwaUrnLike(urn).hope(address(this));
-
-        // Calculate how much 'room' we can draw to get close to line
-        uint256 room = line - (Art * rate);
-        uint256 drawAmt = room / RAY;
-
-        // Correct our draw amount if it is too large
-        if ((_divup((drawAmt * RAY), rate) * rate) > room) {
-            drawAmt = (room - rate) / RAY;
-        }
-
-        // Perform draw()
-        RwaUrnLike(urn).draw(drawAmt);
-
-        // Check the conduit balance after cast
-        assertEq(dai.balanceOf(address(conduit)), drawAmt);
-
-        // Read new Art
-        (Art,,,,) = vat.ilks("RWA007-A");
-
-        // Assert that we are within 2 `rate` of line
-        assertTrue(line - (Art * rate) < (2 * rate));  
-    } 
-
-    // GOERLI ONLY (PE-1210 Backport)
     function testNewModulesAuthorizingEsm() public {
         uint256 ward;
         address ESM = addr.addr("MCD_ESM");
 
-        /* ward = WardsAbstract(addr.addr("MCD_CROPPER")).wards(ESM);
-        assertEq(ward, 0, "unexpected ward");
-
-        ward = WardsAbstract(addr.addr("MCD_JOIN_CRVV1ETHSTETH_A")).wards(ESM);
-        assertEq(ward, 0, "unexpected ward"); */
-
-        ward = WardsAbstract(addr.addr("CHANGELOG")).wards(ESM);
+        ward = WardsAbstract(addr.addr("MIP21_LIQUIDATION_ORACLE")).wards(ESM);
         assertEq(ward, 0, "unexpected ward");
 
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        /* ward = WardsAbstract(addr.addr("MCD_CROPPER")).wards(ESM);
-        assertEq(ward, 1, "MCD_CROPPER does not authorize ESM");
-
-        ward = WardsAbstract(addr.addr("MCD_JOIN_CRVV1ETHSTETH_A")).wards(ESM);
-        assertEq(ward, 1, "MCD_JOIN_CRVV1ETHSTETH_A does not authorize ESM"); */
-
-        ward = WardsAbstract(addr.addr("CHANGELOG")).wards(ESM);
-        assertEq(ward, 1, "CHANGELOG does not authorize ESM");
+        ward = WardsAbstract(addr.addr("MIP21_LIQUIDATION_ORACLE")).wards(ESM);
+        assertEq(ward, 1, "MIP21_LIQUIDATION_ORACLE does not authorize ESM");
     }
-
 }
