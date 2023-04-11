@@ -9,7 +9,7 @@ fi
 
 # Check input date for correct format
 if ! [[ $1 =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] ; then
-    echo 'Invalid date format. Please use yyyy-mm-dd'
+    echo 'Invalid date format. Please use YYYY-MM-DD'
     exit 1
 fi
 
