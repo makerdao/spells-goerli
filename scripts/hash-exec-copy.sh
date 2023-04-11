@@ -14,7 +14,9 @@ if ! [[ $1 =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] ; then
 fi
 
 # Format input date into GitHub date URL format
-DATE=$(date -d "$1" +"%B %-d, %Y" | sed -e 's/ \([1-9]\)/%20\1/g' -e 's/,/%2C/g')
+# %-d displays the day of the month without a leading zero
+# sed replace spaces with %20 and commas with %2C
+DATE=$(date -d "$1" +"%B %-d, %Y" | sed 's/ /%20/g; s/,/%2C/g')
 
 if [[ -x "$(command -v curl)" ]]; then
     # Get latest change git commit hash for target exec copy
