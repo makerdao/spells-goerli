@@ -114,6 +114,19 @@ contract DssSpellTest is DssSpellTestBase {
     }
     // END OF TESTS THAT SHOULD BE RUN ON EVERY SPELL
 
+    function testGlobalDebtCeilingDecrease() public {
+        uint256 globalDcBefore = vat.Line();
+        (,,,uint256 rwa008DcBefore,) = vat.ilks("RWA008-A");
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        uint256 globalDcAfter = vat.Line();
+
+        assertEq(globalDcAfter, globalDcBefore - rwa008DcBefore, "TestError/global-dc-not-updated");
+    }
+
     function testOsmAuth() private {  // make private to disable
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
 

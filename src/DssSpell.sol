@@ -39,8 +39,30 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
-    function actions() public override {
+    uint256 public constant FOUR_NINE_PCT_RATE = 1000000001516911765932351183;
 
+    uint256 public constant RWA008_A_DEBT_CEILING = 30_000_000;
+
+    function actions() public override {
+        // RWA008-A Off-boarding:
+
+        // Set RWA008-A Debt Ceiling to 0:
+        DssExecLib.setIlkDebtCeiling("RWA008-A", 0);
+        DssExecLib.decreaseGlobalDebtCeiling(30_000_000);
+
+        // Stability Fee Changes:
+
+        // Set WBTC-A SF to 4.9%:
+        DssExecLib.setIlkStabilityFee("WBTC-A", FOUR_NINE_PCT_RATE, true);
+
+        // Set WBTC-B SF to 4.9%:
+        DssExecLib.setIlkStabilityFee("WBTC-B", FOUR_NINE_PCT_RATE, true);
+
+        // Set WBTC-C SF to 4.9%:
+        DssExecLib.setIlkStabilityFee("WBTC-C", FOUR_NINE_PCT_RATE, true);
+
+        // Set GNO-A SF to 4.9%:
+        DssExecLib.setIlkStabilityFee("GNO-A", FOUR_NINE_PCT_RATE, true);
     }
 }
 
