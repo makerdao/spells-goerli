@@ -39,13 +39,8 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
-    address immutable internal ESM            = DssExecLib.getChangelogAddress("MCD_ESM");
-    address immutable internal RWA_LIQ_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
-
     function actions() public override {
 
-        // ----- Additional ESM authorization fix -----
-        DssExecLib.authorize(RWA_LIQ_ORACLE, ESM);
     }
 }
 
