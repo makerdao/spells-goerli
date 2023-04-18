@@ -114,13 +114,29 @@ contract DssSpellTest is DssSpellTestBase {
     }
     // END OF TESTS THAT SHOULD BE RUN ON EVERY SPELL
 
-    function testGlobalDebtCeilingDecrease() public {
-        (,,, uint256 rwa008ALine,) = vat.ilks("RWA008-A");
-        (,,, uint256 linkALine,  ) = vat.ilks("LINK-A");
-        (,,, uint256 maticALine, ) = vat.ilks("YFI-A");
-        (,,, uint256 yfiALine,   ) = vat.ilks("MATIC-A");
-        uint256 lineReduction = rwa008ALine + linkALine + maticALine + yfiALine;
+    struct DebtCeilingParams {
+        uint256 line;
+        uint256 debt;
+    }
 
+    // Avoids issues with stack too deep in `testGlobalDebtCeilingDecrease`
+    function _getDebtCeilingParams(bytes32 ilk) internal view returns (DebtCeilingParams memory) {
+        (uint256 Art, uint256 rate, , uint256 line, ) = vat.ilks(ilk);
+
+        return DebtCeilingParams({
+            line: line,
+            debt: Art * rate
+        });
+    }
+
+    function testGlobalDebtCeilingDecrease() public {
+        DebtCeilingParams memory rwa008A = _getDebtCeilingParams("RWA008-A");
+        DebtCeilingParams memory linkA = _getDebtCeilingParams("LINK-A");
+        DebtCeilingParams memory yfiA = _getDebtCeilingParams("YFI-A");
+        DebtCeilingParams memory maticA = _getDebtCeilingParams("MATIC-A");
+        uint256 sumLines = rwa008A.line + linkA.line + maticA.line + yfiA.line;
+        uint256 sumDebts = rwa008A.debt + linkA.debt + yfiA.debt + maticA.debt;
+        uint256 lineReduction = sumLines - 2 * sumDebts;
         uint256 globalLineBefore = vat.Line();
 
         _vote(address(spell));
@@ -128,7 +144,6 @@ contract DssSpellTest is DssSpellTestBase {
         assertTrue(spell.done());
 
         uint256 globalDcAfter = vat.Line();
-
         assertEq(globalDcAfter, globalLineBefore - lineReduction, "TestError/global-dc-not-updated");
     }
 

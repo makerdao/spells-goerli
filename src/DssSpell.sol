@@ -50,16 +50,20 @@ contract DssSpellAction is DssAction {
 
     function actions() public override {
 
+        uint256 Art;
+        uint256 rate;
         uint256 line;
-        uint256 lineReduction;
+        uint256 maxLineReduction;
+        uint256 totalDebt;
         VatLike vat = VatLike(DssExecLib.vat());
 
         // ---------------- RWA008-A Off-boarding Phase 0 ----------------
         // Forum: https://forum.makerdao.com/t/security-tokens-refinancing-mip6-application-for-ofh-tokens/10605/51
 
         // Set RWA008-A Debt Ceiling to 0:
-        (,,,line,) = vat.ilks("RWA008-A");
-        lineReduction += line;
+        (Art, rate, , line, ) = vat.ilks("RWA008-A");
+        maxLineReduction += line;
+        totalDebt += Art * rate;
         DssExecLib.setIlkDebtCeiling("RWA008-A", 0);
 
         // -------- YFI-A, MATIC-A, LINK-A Off-boarding Phase 0 ----------
@@ -67,19 +71,22 @@ contract DssSpellAction is DssAction {
         // Poll: https://vote.makerdao.com/polling/QmPwHhLT#poll-detail
 
         // Set YFI-A, MATIC-A, LINK-A Debt Ceiling to 0:
-        (,,,line,) = vat.ilks("LINK-A");
-        lineReduction += line;
+        (Art, rate, , line, ) = vat.ilks("LINK-A");
+        maxLineReduction += line;
+        totalDebt += Art * rate;
         DssExecLib.setIlkDebtCeiling("LINK-A", 0);
 
-        (,,,line,) = vat.ilks("YFI-A");
-        lineReduction += line;
+        (Art, rate, , line, ) = vat.ilks("YFI-A");
+        maxLineReduction += line;
+        totalDebt += Art * rate;
         DssExecLib.setIlkDebtCeiling("YFI-A", 0);
 
-        (,,,line,) = vat.ilks("MATIC-A");
-        lineReduction += line;
+        (Art, rate, , line, ) = vat.ilks("MATIC-A");
+        maxLineReduction += line;
+        totalDebt += Art * rate;
         DssExecLib.setIlkDebtCeiling("MATIC-A", 0);
 
-        DssExecLib.decreaseGlobalDebtCeiling(lineReduction / RAD);
+        DssExecLib.decreaseGlobalDebtCeiling((maxLineReduction - 2 * totalDebt) / RAD);
 
         // -------------------- Stability Fee Changes --------------------
         // Forum: https://forum.makerdao.com/t/decentralized-collateral-scope-parameter-changes-1-april-2023/20302
