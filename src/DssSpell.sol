@@ -86,6 +86,7 @@ contract DssSpellAction is DssAction {
         totalDebt += Art * rate;
         DssExecLib.setIlkDebtCeiling("MATIC-A", 0);
 
+        // TODO: this would revert if `2 * totalDebt > maxLineReduction`
         DssExecLib.decreaseGlobalDebtCeiling((maxLineReduction - 2 * totalDebt) / RAD);
 
         // -------------------- Stability Fee Changes --------------------
