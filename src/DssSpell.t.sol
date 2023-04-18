@@ -115,12 +115,13 @@ contract DssSpellTest is DssSpellTestBase {
     // END OF TESTS THAT SHOULD BE RUN ON EVERY SPELL
 
     function testGlobalDebtCeilingDecrease() public {
-        uint256 globalDcBefore = vat.Line();
-        (,,,uint256 rwa008DcBefore,) = vat.ilks("RWA008-A");
-        (,,,uint256 linkDcBefore,) = vat.ilks("LINK-A");
-        (,,,uint256 maticDcBefore,) = vat.ilks("YFI-A");
-        (,,,uint256 yfiDcBefore,) = vat.ilks("MATIC-A");
-        
+        (,,, uint256 rwa008ALine,) = vat.ilks("RWA008-A");
+        (,,, uint256 linkALine,  ) = vat.ilks("LINK-A");
+        (,,, uint256 maticALine, ) = vat.ilks("YFI-A");
+        (,,, uint256 yfiALine,   ) = vat.ilks("MATIC-A");
+        uint256 lineReduction = rwa008ALine + linkALine + maticALine + yfiALine;
+
+        uint256 globalLineBefore = vat.Line();
 
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
@@ -128,7 +129,7 @@ contract DssSpellTest is DssSpellTestBase {
 
         uint256 globalDcAfter = vat.Line();
 
-        assertEq(globalDcAfter, globalDcBefore - rwa008DcBefore - linkDcBefore - maticDcBefore - yfiDcBefore, "TestError/global-dc-not-updated");
+        assertEq(globalDcAfter, globalLineBefore - lineReduction, "TestError/global-dc-not-updated");
     }
 
     function testOsmAuth() private {  // make private to disable

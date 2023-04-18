@@ -46,6 +46,7 @@ contract DssSpellAction is DssAction {
     uint256 internal constant FOUR_NINE_PCT_RATE = 1000000001516911765932351183;
 
     uint256 internal constant MILLION = 10**6;
+    uint256 internal constant RAD     = 10**45;
 
     function actions() public override {
 
@@ -53,14 +54,18 @@ contract DssSpellAction is DssAction {
         uint256 lineReduction;
         VatLike vat = VatLike(DssExecLib.vat());
 
-        // -------------------- RWA008-A Off-boarding --------------------
-        // https://forum.makerdao.com/t/security-tokens-refinancing-mip6-application-for-ofh-tokens/10605/51
+        // ---------------- RWA008-A Off-boarding Phase 0 ----------------
+        // Forum: https://forum.makerdao.com/t/security-tokens-refinancing-mip6-application-for-ofh-tokens/10605/51
 
-        // Set RWA008-A, YFI-A, MATIC-A, LINK-A Debt Ceiling to 0:
-        (,,,line,) = vat.ilks("LINK-A");
+        // Set RWA008-A Debt Ceiling to 0:
+        (,,,line,) = vat.ilks("RWA008-A");
         lineReduction += line;
         DssExecLib.setIlkDebtCeiling("RWA008-A", 0);
 
+        // -------- YFI-A, MATIC-A, LINK-A Off-boarding Phase 0 ----------
+        // Poll: https://vote.makerdao.com/polling/QmPwHhLT#poll-detail
+
+        // Set YFI-A, MATIC-A, LINK-A Debt Ceiling to 0:
         (,,,line,) = vat.ilks("LINK-A");
         lineReduction += line;
         DssExecLib.setIlkDebtCeiling("LINK-A", 0);
@@ -73,10 +78,10 @@ contract DssSpellAction is DssAction {
         lineReduction += line;
         DssExecLib.setIlkDebtCeiling("MATIC-A", 0);
 
-        DssExecLib.decreaseGlobalDebtCeiling(lineReduction);
+        DssExecLib.decreaseGlobalDebtCeiling(lineReduction / RAD);
 
         // -------------------- Stability Fee Changes --------------------
-        // https://forum.makerdao.com/t/decentralized-collateral-scope-parameter-changes-1-april-2023/20302
+        // Forum: https://forum.makerdao.com/t/decentralized-collateral-scope-parameter-changes-1-april-2023/20302
 
         // Increase WBTC-A Stability Fee from 1.75% to 4.90%:
         DssExecLib.setIlkStabilityFee("WBTC-A", FOUR_NINE_PCT_RATE, true);
