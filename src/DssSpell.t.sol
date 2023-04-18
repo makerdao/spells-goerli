@@ -117,6 +117,10 @@ contract DssSpellTest is DssSpellTestBase {
     function testGlobalDebtCeilingDecrease() public {
         uint256 globalDcBefore = vat.Line();
         (,,,uint256 rwa008DcBefore,) = vat.ilks("RWA008-A");
+        (,,,uint256 linkDcBefore,) = vat.ilks("LINK-A");
+        (,,,uint256 maticDcBefore,) = vat.ilks("YFI-A");
+        (,,,uint256 yfiDcBefore,) = vat.ilks("MATIC-A");
+        
 
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
@@ -124,7 +128,7 @@ contract DssSpellTest is DssSpellTestBase {
 
         uint256 globalDcAfter = vat.Line();
 
-        assertEq(globalDcAfter, globalDcBefore - rwa008DcBefore, "TestError/global-dc-not-updated");
+        assertEq(globalDcAfter, globalDcBefore - rwa008DcBefore - linkDcBefore - maticDcBefore - yfiDcBefore, "TestError/global-dc-not-updated");
     }
 
     function testOsmAuth() private {  // make private to disable
