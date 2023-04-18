@@ -43,16 +43,33 @@ contract DssSpellAction is DssAction {
 
     uint256 internal constant MILLION = 10**6;
 
-    uint256 internal constant RWA008_A_DEBT_CEILING = 30 * MILLION;
-
     function actions() public override {
+
+        uint256 line;
+        uint256 lineReduction;
+        VatLike vat = VatLike(DssExecLib.vat());
 
         // -------------------- RWA008-A Off-boarding --------------------
         // https://forum.makerdao.com/t/security-tokens-refinancing-mip6-application-for-ofh-tokens/10605/51
 
-        // Set RWA008-A Debt Ceiling to 0:
+        // Set RWA008-A, YFI-A, MATIC-A, LINK-A Debt Ceiling to 0:
+        (,,,line,) = vat.ilks("LINK-A");
+        lineReduction += line;
         DssExecLib.setIlkDebtCeiling("RWA008-A", 0);
-        DssExecLib.decreaseGlobalDebtCeiling(RWA008_A_DEBT_CEILING);
+
+        (,,,line,) = vat.ilks("LINK-A");
+        lineReduction += line;
+        DssExecLib.setIlkDebtCeiling("LINK-A", 0);
+
+        (,,,line,) = vat.ilks("YFI-A");
+        lineReduction += line;
+        DssExecLib.setIlkDebtCeiling("YFI-A", 0);
+
+        (,,,line,) = vat.ilks("MATIC-A");
+        lineReduction += line;
+        DssExecLib.setIlkDebtCeiling("MATIC-A", 0);
+
+        DssExecLib.decreaseGlobalDebtCeiling(lineReduction);
 
         // -------------------- Stability Fee Changes --------------------
         // https://forum.makerdao.com/t/decentralized-collateral-scope-parameter-changes-1-april-2023/20302
