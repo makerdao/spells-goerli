@@ -39,30 +39,31 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
-    uint256 public constant FOUR_NINE_PCT_RATE = 1000000001516911765932351183;
+    uint256 internal constant FOUR_NINE_PCT_RATE = 1000000001516911765932351183;
 
-    uint256 public constant RWA008_A_DEBT_CEILING = 30_000_000;
+    uint256 internal constant RWA008_A_DEBT_CEILING = 30 * MILLION;
 
     function actions() public override {
-        // RWA008-A Off-boarding:
+
+        // -------------------- RWA008-A Off-boarding --------------------
+        // https://forum.makerdao.com/t/security-tokens-refinancing-mip6-application-for-ofh-tokens/10605/51
 
         // Set RWA008-A Debt Ceiling to 0:
         DssExecLib.setIlkDebtCeiling("RWA008-A", 0);
-        DssExecLib.decreaseGlobalDebtCeiling(30_000_000);
+        DssExecLib.decreaseGlobalDebtCeiling(RWA008_A_DEBT_CEILING);
 
-        // Stability Fee Changes:
+        // -------------------- Stability Fee Changes --------------------
+        // https://forum.makerdao.com/t/decentralized-collateral-scope-parameter-changes-1-april-2023/20302
 
-        // Set WBTC-A SF to 4.9%:
+        // Increase WBTC-A Stability Fee from 1.75% to 4.90%:
         DssExecLib.setIlkStabilityFee("WBTC-A", FOUR_NINE_PCT_RATE, true);
-
-        // Set WBTC-B SF to 4.9%:
+        // Increase WBTC-B Stability Fee from 3.25% to 4.90%:
         DssExecLib.setIlkStabilityFee("WBTC-B", FOUR_NINE_PCT_RATE, true);
-
-        // Set WBTC-C SF to 4.9%:
+        // Increase WBTC-C Stability Fee from 1.00% to 4.90%:
         DssExecLib.setIlkStabilityFee("WBTC-C", FOUR_NINE_PCT_RATE, true);
+        // Increase GNO-A Stability Fee from 2.50% to 4.90%:
+        DssExecLib.setIlkStabilityFee("GNO-A",  FOUR_NINE_PCT_RATE, true);
 
-        // Set GNO-A SF to 4.9%:
-        DssExecLib.setIlkStabilityFee("GNO-A", FOUR_NINE_PCT_RATE, true);
     }
 }
 
