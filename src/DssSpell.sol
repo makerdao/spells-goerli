@@ -41,6 +41,8 @@ contract DssSpellAction is DssAction {
 
     uint256 internal constant FOUR_NINE_PCT_RATE = 1000000001516911765932351183;
 
+    uint256 internal constant MILLION = 10**6;
+
     uint256 internal constant RWA008_A_DEBT_CEILING = 30 * MILLION;
 
     function actions() public override {
