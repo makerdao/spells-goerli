@@ -63,6 +63,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkDebtCeiling("RWA008-A", 0);
 
         // -------- YFI-A, MATIC-A, LINK-A Off-boarding Phase 0 ----------
+        // Forum: https://forum.makerdao.com/t/decentralized-collateral-scope-parameter-changes-1-april-2023/20302
         // Poll: https://vote.makerdao.com/polling/QmPwHhLT#poll-detail
 
         // Set YFI-A, MATIC-A, LINK-A Debt Ceiling to 0:
