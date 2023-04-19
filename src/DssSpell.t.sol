@@ -136,7 +136,7 @@ contract DssSpellTest is DssSpellTestBase {
         DebtCeilingParams memory maticA  = _getDebtCeilingParams("MATIC-A");
 
         uint256 sumLines         = rwa008A.line + linkA.line + maticA.line + yfiA.line;
-        uint256 sumDebts         = rwa008A.debt + linkA.debt + yfiA.debt + maticA.debt;
+        uint256 sumDebts         = 110 * (rwa008A.debt + linkA.debt + yfiA.debt + maticA.debt) / 100;
         uint256 lineReduction    = sumLines > sumDebts ? sumLines - sumDebts : 0;
         uint256 globalLineBefore = vat.Line();
 
