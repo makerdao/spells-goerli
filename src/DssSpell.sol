@@ -86,9 +86,11 @@ contract DssSpellAction is DssAction {
         sumLines += line;
         sumDebts += Art * rate;
 
+        // Leave 10% room for fees accrued after off-boarding is kicked-off.
+        uint256 sumDebtsWithBuffer = (110 * sumDebts) / 100;
         // If the total outstanding debt is beyond the total debt ceilings,
         // we don't want to decrease the global debt ceiling at all.
-        uint256 lineReduction = sumLines > sumDebts ? sumLines - sumDebts : 0;
+        uint256 lineReduction = sumLines > sumDebtsWithBuffer ? sumLines - sumDebtsWithBuffer : 0;
         DssExecLib.decreaseGlobalDebtCeiling(lineReduction / RAD);
 
         // -------------------- Stability Fee Changes --------------------
