@@ -105,6 +105,9 @@ contract DssSpellAction is DssAction {
         // Increase GNO-A Stability Fee from 2.50% to 4.90%:
         DssExecLib.setIlkStabilityFee("GNO-A",  FOUR_NINE_PCT_RATE, true);
 
+        // Bump chainlog version: PATCH -> Collateral addition or addition/modification
+        DssExecLib.setChangelogVersion("1.14.11");
+
     }
 }
 
