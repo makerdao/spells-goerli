@@ -131,12 +131,13 @@ contract DssSpellTest is DssSpellTestBase {
 
     function testGlobalDebtCeilingDecrease() public {
         DebtCeilingParams memory rwa008A = _getDebtCeilingParams("RWA008-A");
-        DebtCeilingParams memory linkA = _getDebtCeilingParams("LINK-A");
-        DebtCeilingParams memory yfiA = _getDebtCeilingParams("YFI-A");
-        DebtCeilingParams memory maticA = _getDebtCeilingParams("MATIC-A");
-        uint256 sumLines = rwa008A.line + linkA.line + maticA.line + yfiA.line;
-        uint256 sumDebts = rwa008A.debt + linkA.debt + yfiA.debt + maticA.debt;
-        uint256 lineReduction = sumLines - 2 * sumDebts;
+        DebtCeilingParams memory linkA   = _getDebtCeilingParams("LINK-A");
+        DebtCeilingParams memory yfiA    = _getDebtCeilingParams("YFI-A");
+        DebtCeilingParams memory maticA  = _getDebtCeilingParams("MATIC-A");
+
+        uint256 sumLines         = rwa008A.line + linkA.line + maticA.line + yfiA.line;
+        uint256 sumDebts         = rwa008A.debt + linkA.debt + yfiA.debt + maticA.debt;
+        uint256 lineReduction    = sumLines > sumDebts ? sumLines - sumDebts : 0;
         uint256 globalLineBefore = vat.Line();
 
         _vote(address(spell));

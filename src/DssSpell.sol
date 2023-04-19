@@ -53,8 +53,8 @@ contract DssSpellAction is DssAction {
         uint256 Art;
         uint256 rate;
         uint256 line;
-        uint256 maxLineReduction;
-        uint256 totalDebt;
+        uint256 sumLines;
+        uint256 sumDebts;
         VatLike vat = VatLike(DssExecLib.vat());
 
         // ---------------- RWA008-A Off-boarding Phase 0 ----------------
@@ -62,9 +62,9 @@ contract DssSpellAction is DssAction {
 
         // Set RWA008-A Debt Ceiling to 0:
         (Art, rate, , line, ) = vat.ilks("RWA008-A");
-        maxLineReduction += line;
-        totalDebt += Art * rate;
         DssExecLib.setIlkDebtCeiling("RWA008-A", 0);
+        sumLines += line;
+        sumDebts += Art * rate;
 
         // -------- YFI-A, MATIC-A, LINK-A Off-boarding Phase 0 ----------
         // Forum: https://forum.makerdao.com/t/decentralized-collateral-scope-parameter-changes-1-april-2023/20302
@@ -72,22 +72,24 @@ contract DssSpellAction is DssAction {
 
         // Set YFI-A, MATIC-A, LINK-A Debt Ceiling to 0:
         (Art, rate, , line, ) = vat.ilks("LINK-A");
-        maxLineReduction += line;
-        totalDebt += Art * rate;
         DssExecLib.setIlkDebtCeiling("LINK-A", 0);
+        sumLines += line;
+        sumDebts += Art * rate;
 
         (Art, rate, , line, ) = vat.ilks("YFI-A");
-        maxLineReduction += line;
-        totalDebt += Art * rate;
         DssExecLib.setIlkDebtCeiling("YFI-A", 0);
+        sumLines += line;
+        sumDebts += Art * rate;
 
         (Art, rate, , line, ) = vat.ilks("MATIC-A");
-        maxLineReduction += line;
-        totalDebt += Art * rate;
         DssExecLib.setIlkDebtCeiling("MATIC-A", 0);
+        sumLines += line;
+        sumDebts += Art * rate;
 
-        // TODO: this would revert if `2 * totalDebt > maxLineReduction`
-        DssExecLib.decreaseGlobalDebtCeiling((maxLineReduction - 2 * totalDebt) / RAD);
+        // If the total outstanding debt is beyond the total debt ceilings,
+        // we don't want to decrease the global debt ceiling at all.
+        uint256 lineReduction = sumLines > sumDebts ? sumLines - sumDebts : 0;
+        DssExecLib.decreaseGlobalDebtCeiling(lineReduction / RAD);
 
         // -------------------- Stability Fee Changes --------------------
         // Forum: https://forum.makerdao.com/t/decentralized-collateral-scope-parameter-changes-1-april-2023/20302
