@@ -490,13 +490,13 @@ contract DssSpellTest is DssSpellTestBase {
 
     function testGlobalLineDecrease() public {
         VaultParams memory rwa008A = _getDebtCeilingParams("RWA008-A");
-        VaultParams memory linkA   = _getDebtCeilingParams("LINK-A");
         VaultParams memory yfiA    = _getDebtCeilingParams("YFI-A");
         VaultParams memory maticA  = _getDebtCeilingParams("MATIC-A");
-
+        VaultParams memory linkA   = _getDebtCeilingParams("LINK-A");
         uint256 sumLines         = rwa008A.line + linkA.line + maticA.line + yfiA.line;
         uint256 sumDebts         = rwa008A.debt + linkA.debt + yfiA.debt + maticA.debt;
         uint256 lineReduction    = 90 * (sumLines > sumDebts ? sumLines - sumDebts : 0) / 100;
+
         uint256 globalLineBefore = vat.Line();
 
         _vote(address(spell));

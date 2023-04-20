@@ -22,7 +22,6 @@ import "dss-exec-lib/DssAction.sol";
 interface VatLike {
     function ilks(bytes32) external view returns (uint256 Art, uint256 rate, uint256 spot, uint256 line, uint256 dust);
 }
-
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -45,64 +44,73 @@ contract DssSpellAction is DssAction {
 
     uint256 internal constant FOUR_NINE_PCT_RATE = 1000000001516911765932351183;
 
-    uint256 internal constant MILLION = 10**6;
-    uint256 internal constant RAD     = 10**45;
+    uint256 constant internal RAD = 10 ** 45;
+
+    VatLike internal immutable vat = VatLike(DssExecLib.vat());
 
     function actions() public override {
 
+        uint256 lineReduction;
         uint256 Art;
         uint256 rate;
         uint256 line;
-        uint256 lineReduction;
 
-        VatLike vat = VatLike(DssExecLib.vat());
-
-        // ---------------- RWA008-A Off-boarding Phase 0 ----------------
+        // ---------- RWA008-A Offboarding ----------
+        // Poll: N/A
         // Forum: https://forum.makerdao.com/t/security-tokens-refinancing-mip6-application-for-ofh-tokens/10605/51
 
-        // Set RWA008-A Debt Ceiling to 0:
-        (Art, rate, , line, ) = vat.ilks("RWA008-A");
+        // Set RWA008-A Debt Ceiling to 0
+        (Art, rate, , line,) = vat.ilks("RWA008-A");
+        // Notice that this will only work because `line > Art * rate` for this specific case.
+        lineReduction += line;
+        lineReduction -= Art * rate;
         DssExecLib.setIlkDebtCeiling("RWA008-A", 0);
-        // This only works because we know `line < Art * rate` in this specific case.
-        lineReduction += line;
-        lineReduction -= Art * rate;
 
-        // -------- YFI-A, MATIC-A, LINK-A Off-boarding Phase 0 ----------
+        // ---------- First Stage of Offboarding ----------
+        // Poll: https://vote.makerdao.com/polling/QmPwHhLT
         // Forum: https://forum.makerdao.com/t/decentralized-collateral-scope-parameter-changes-1-april-2023/20302
-        // Poll: https://vote.makerdao.com/polling/QmPwHhLT#poll-detail
 
-        // Set YFI-A, MATIC-A, LINK-A Debt Ceiling to 0:
-        (Art, rate, , line, ) = vat.ilks("YFI-A");
+        // Set YFI-A line to 0
+        (Art, rate, , line,) = vat.ilks("YFI-A");
+        lineReduction += line;
+        lineReduction -= Art * rate;
+        DssExecLib.removeIlkFromAutoLine("YFI-A");
         DssExecLib.setIlkDebtCeiling("YFI-A", 0);
+
+        // Set MATIC-A line to 0
+        (Art, rate, , line,) = vat.ilks("MATIC-A");
         lineReduction += line;
         lineReduction -= Art * rate;
-
-        (Art, rate, , line, ) = vat.ilks("MATIC-A");
+        DssExecLib.removeIlkFromAutoLine("MATIC-A");
         DssExecLib.setIlkDebtCeiling("MATIC-A", 0);
-        lineReduction += line;
-        lineReduction -= Art * rate;
 
-        (Art, rate, , line, ) = vat.ilks("LINK-A");
-        DssExecLib.setIlkDebtCeiling("LINK-A", 0);
+        // Set Link-A line to 0
+        (Art, rate, , line,) = vat.ilks("LINK-A");
         lineReduction += line;
         lineReduction -= Art * rate;
+        DssExecLib.removeIlkFromAutoLine("LINK-A");
+        DssExecLib.setIlkDebtCeiling("LINK-A", 0);
 
         // Leave 10% room for fees accrued after off-boarding is kicked-off.
-        lineReduction = 90 * lineReduction / 100;
-
+        lineReduction = (90 * lineReduction) / 100;
         DssExecLib.decreaseGlobalDebtCeiling(lineReduction / RAD);
 
-        // -------------------- Stability Fee Changes --------------------
+        // ---------- Stability Fee Changes ----------
+        // Poll: N/A
         // Forum: https://forum.makerdao.com/t/decentralized-collateral-scope-parameter-changes-1-april-2023/20302
 
-        // Increase the WBTC-A Stability Fee from 1.75% to 4.90%:
-        DssExecLib.setIlkStabilityFee("WBTC-A", FOUR_NINE_PCT_RATE, true);
-        // Increase the WBTC-B Stability Fee from 3.25% to 4.90%:
-        DssExecLib.setIlkStabilityFee("WBTC-B", FOUR_NINE_PCT_RATE, true);
-        // Increase the WBTC-C Stability Fee from 1.00% to 4.90%:
-        DssExecLib.setIlkStabilityFee("WBTC-C", FOUR_NINE_PCT_RATE, true);
-        // Increase the GNO-A Stability Fee from 2.50% to 4.90%:
-        DssExecLib.setIlkStabilityFee("GNO-A",  FOUR_NINE_PCT_RATE, true);
+        // Increase the WBTC-A Stability Fee from 1.75% to 4.90%
+        DssExecLib.setIlkStabilityFee("WBTC-A", FOUR_NINE_PCT_RATE, /* doDrip = */ true);
+
+        // Increase the WBTC-B Stability Fee from 3.25% to 4.90%
+        DssExecLib.setIlkStabilityFee("WBTC-B", FOUR_NINE_PCT_RATE, /* doDrip = */ true);
+
+        // Increase the WBTC-C Stability Fee from 1.00% to 4.90%
+        DssExecLib.setIlkStabilityFee("WBTC-C", FOUR_NINE_PCT_RATE, /* doDrip = */ true);
+
+        // Increase the GNO-A Stability Fee from 2.50% to 4.90%
+        DssExecLib.setIlkStabilityFee("GNO-A", FOUR_NINE_PCT_RATE, /* doDrip = */ true);
+
     }
 }
 
