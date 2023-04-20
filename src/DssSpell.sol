@@ -20,7 +20,7 @@ import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
 interface VatLike {
-    function ilks(bytes32) external returns (uint256 Art, uint256 rate, uint256 spot, uint256 line, uint256 dust);
+    function ilks(bytes32) external view returns (uint256 Art, uint256 rate, uint256 spot, uint256 line, uint256 dust);
 }
 
 contract DssSpellAction is DssAction {
@@ -53,8 +53,8 @@ contract DssSpellAction is DssAction {
         uint256 Art;
         uint256 rate;
         uint256 line;
-        uint256 sumLines;
-        uint256 sumDebts;
+        uint256 lineReduction;
+
         VatLike vat = VatLike(DssExecLib.vat());
 
         // ---------------- RWA008-A Off-boarding Phase 0 ----------------
@@ -63,51 +63,46 @@ contract DssSpellAction is DssAction {
         // Set RWA008-A Debt Ceiling to 0:
         (Art, rate, , line, ) = vat.ilks("RWA008-A");
         DssExecLib.setIlkDebtCeiling("RWA008-A", 0);
-        sumLines += line;
-        sumDebts += Art * rate;
+        // This only works because we know `line < Art * rate` in this specific case.
+        lineReduction += line;
+        lineReduction -= Art * rate;
 
         // -------- YFI-A, MATIC-A, LINK-A Off-boarding Phase 0 ----------
         // Forum: https://forum.makerdao.com/t/decentralized-collateral-scope-parameter-changes-1-april-2023/20302
         // Poll: https://vote.makerdao.com/polling/QmPwHhLT#poll-detail
 
         // Set YFI-A, MATIC-A, LINK-A Debt Ceiling to 0:
-        (Art, rate, , line, ) = vat.ilks("LINK-A");
-        DssExecLib.setIlkDebtCeiling("LINK-A", 0);
-        sumLines += line;
-        sumDebts += Art * rate;
-
         (Art, rate, , line, ) = vat.ilks("YFI-A");
         DssExecLib.setIlkDebtCeiling("YFI-A", 0);
-        sumLines += line;
-        sumDebts += Art * rate;
+        lineReduction += line;
+        lineReduction -= Art * rate;
 
         (Art, rate, , line, ) = vat.ilks("MATIC-A");
         DssExecLib.setIlkDebtCeiling("MATIC-A", 0);
-        sumLines += line;
-        sumDebts += Art * rate;
+        lineReduction += line;
+        lineReduction -= Art * rate;
+
+        (Art, rate, , line, ) = vat.ilks("LINK-A");
+        DssExecLib.setIlkDebtCeiling("LINK-A", 0);
+        lineReduction += line;
+        lineReduction -= Art * rate;
 
         // Leave 10% room for fees accrued after off-boarding is kicked-off.
-        uint256 sumDebtsWithBuffer = (110 * sumDebts) / 100;
-        // If the total outstanding debt is beyond the total debt ceilings,
-        // we don't want to decrease the global debt ceiling at all.
-        uint256 lineReduction = sumLines > sumDebtsWithBuffer ? sumLines - sumDebtsWithBuffer : 0;
+        lineReduction = 90 * lineReduction / 100;
+
         DssExecLib.decreaseGlobalDebtCeiling(lineReduction / RAD);
 
         // -------------------- Stability Fee Changes --------------------
         // Forum: https://forum.makerdao.com/t/decentralized-collateral-scope-parameter-changes-1-april-2023/20302
 
-        // Increase WBTC-A Stability Fee from 1.75% to 4.90%:
+        // Increase the WBTC-A Stability Fee from 1.75% to 4.90%:
         DssExecLib.setIlkStabilityFee("WBTC-A", FOUR_NINE_PCT_RATE, true);
-        // Increase WBTC-B Stability Fee from 3.25% to 4.90%:
+        // Increase the WBTC-B Stability Fee from 3.25% to 4.90%:
         DssExecLib.setIlkStabilityFee("WBTC-B", FOUR_NINE_PCT_RATE, true);
-        // Increase WBTC-C Stability Fee from 1.00% to 4.90%:
+        // Increase the WBTC-C Stability Fee from 1.00% to 4.90%:
         DssExecLib.setIlkStabilityFee("WBTC-C", FOUR_NINE_PCT_RATE, true);
-        // Increase GNO-A Stability Fee from 2.50% to 4.90%:
+        // Increase the GNO-A Stability Fee from 2.50% to 4.90%:
         DssExecLib.setIlkStabilityFee("GNO-A",  FOUR_NINE_PCT_RATE, true);
-
-        // Bump chainlog version: PATCH -> Collateral addition or addition/modification
-        DssExecLib.setChangelogVersion("1.14.11");
-
     }
 }
 

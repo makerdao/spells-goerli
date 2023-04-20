@@ -114,40 +114,6 @@ contract DssSpellTest is DssSpellTestBase {
     }
     // END OF TESTS THAT SHOULD BE RUN ON EVERY SPELL
 
-    struct DebtCeilingParams {
-        uint256 line;
-        uint256 debt;
-    }
-
-    // Avoids issues with stack too deep in `testGlobalDebtCeilingDecrease`
-    function _getDebtCeilingParams(bytes32 ilk) internal view returns (DebtCeilingParams memory) {
-        (uint256 Art, uint256 rate, , uint256 line, ) = vat.ilks(ilk);
-
-        return DebtCeilingParams({
-            line: line,
-            debt: Art * rate
-        });
-    }
-
-    function testGlobalDebtCeilingDecrease() public {
-        DebtCeilingParams memory rwa008A = _getDebtCeilingParams("RWA008-A");
-        DebtCeilingParams memory linkA   = _getDebtCeilingParams("LINK-A");
-        DebtCeilingParams memory yfiA    = _getDebtCeilingParams("YFI-A");
-        DebtCeilingParams memory maticA  = _getDebtCeilingParams("MATIC-A");
-
-        uint256 sumLines         = rwa008A.line + linkA.line + maticA.line + yfiA.line;
-        uint256 sumDebts         = 110 * (rwa008A.debt + linkA.debt + yfiA.debt + maticA.debt) / 100;
-        uint256 lineReduction    = sumLines > sumDebts ? sumLines - sumDebts : 0;
-        uint256 globalLineBefore = vat.Line();
-
-        _vote(address(spell));
-        _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        uint256 globalDcAfter = vat.Line();
-        assertEq(globalDcAfter, globalLineBefore - lineReduction, "TestError/global-dc-not-updated");
-    }
-
     function testOsmAuth() private {  // make private to disable
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
 
@@ -277,7 +243,7 @@ contract DssSpellTest is DssSpellTestBase {
 
         // _checkChainlogKey("XXX");
 
-        _checkChainlogVersion("1.14.11");
+        _checkChainlogVersion("1.14.10");
     }
 
     function testNewIlkRegistryValues() private { // make private to disable
@@ -505,5 +471,39 @@ contract DssSpellTest is DssSpellTestBase {
 
         // Validate post-spell state
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
+    }
+
+    struct VaultParams {
+        uint256 line;
+        uint256 debt;
+    }
+
+    // Avoids issues with stack too deep in `testGlobalDebtCeilingDecrease`
+    function _getDebtCeilingParams(bytes32 ilk) internal view returns (VaultParams memory) {
+        (uint256 Art, uint256 rate, , uint256 line, ) = vat.ilks(ilk);
+
+        return VaultParams({
+            line: line,
+            debt: Art * rate
+        });
+    }
+
+    function testGlobalLineDecrease() public {
+        VaultParams memory rwa008A = _getDebtCeilingParams("RWA008-A");
+        VaultParams memory linkA   = _getDebtCeilingParams("LINK-A");
+        VaultParams memory yfiA    = _getDebtCeilingParams("YFI-A");
+        VaultParams memory maticA  = _getDebtCeilingParams("MATIC-A");
+
+        uint256 sumLines         = rwa008A.line + linkA.line + maticA.line + yfiA.line;
+        uint256 sumDebts         = rwa008A.debt + linkA.debt + yfiA.debt + maticA.debt;
+        uint256 lineReduction    = 90 * (sumLines > sumDebts ? sumLines - sumDebts : 0) / 100;
+        uint256 globalLineBefore = vat.Line();
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        uint256 globalDcAfter = vat.Line();
+        assertEq(globalDcAfter, globalLineBefore - lineReduction, "TestError/global-dc-not-updated");
     }
 }
