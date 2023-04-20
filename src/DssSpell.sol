@@ -44,8 +44,6 @@ contract DssSpellAction is DssAction {
 
     function actions() public override {
 
-        // ----- Additional ESM authorization fix -----
-        DssExecLib.authorize(RWA_LIQ_ORACLE, ESM);
     }
 }
 

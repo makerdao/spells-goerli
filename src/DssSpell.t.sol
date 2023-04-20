@@ -473,20 +473,4 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
 
-    // For PE-1217
-
-    function testNewModulesAuthorizingEsm() public {
-        uint256 ward;
-        address ESM = addr.addr("MCD_ESM");
-
-        ward = WardsAbstract(addr.addr("MIP21_LIQUIDATION_ORACLE")).wards(ESM);
-        assertEq(ward, 0, "unexpected ward");
-
-        _vote(address(spell));
-        _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        ward = WardsAbstract(addr.addr("MIP21_LIQUIDATION_ORACLE")).wards(ESM);
-        assertEq(ward, 1, "MIP21_LIQUIDATION_ORACLE does not authorize ESM");
-    }
 }
