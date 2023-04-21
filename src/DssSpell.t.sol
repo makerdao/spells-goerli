@@ -473,29 +473,13 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
 
-    struct VaultParams {
-        uint256 line;
-        uint256 debt;
-    }
-
-    // Avoids issues with stack too deep in `testGlobalDebtCeilingDecrease`
-    function _getDebtCeilingParams(bytes32 ilk) internal view returns (VaultParams memory) {
-        (uint256 Art, uint256 rate, , uint256 line, ) = vat.ilks(ilk);
-
-        return VaultParams({
-            line: line,
-            debt: Art * rate
-        });
-    }
-
     function testGlobalLineDecrease() public {
-        VaultParams memory rwa008A = _getDebtCeilingParams("RWA008-A");
-        VaultParams memory yfiA    = _getDebtCeilingParams("YFI-A");
-        VaultParams memory maticA  = _getDebtCeilingParams("MATIC-A");
-        VaultParams memory linkA   = _getDebtCeilingParams("LINK-A");
+        (, , , uint256 rwa008ALine, ) = vat.ilks("RWA008-A");
+        (, , , uint256 yfiALine,    ) = vat.ilks("YFI-A");
+        (, , , uint256 maticALine,  ) = vat.ilks("MATIC-A");
+        (, , , uint256 linkALine,   ) = vat.ilks("LINK-A");
 
-        uint256 sumLines      = rwa008A.line + yfiA.line + maticA.line + linkA.line;
-
+        uint256 sumLines         = rwa008ALine + yfiALine + maticALine + linkALine;
         uint256 globalLineBefore = vat.Line();
 
         _vote(address(spell));

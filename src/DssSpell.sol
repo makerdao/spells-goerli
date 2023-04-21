@@ -51,6 +51,7 @@ contract DssSpellAction is DssAction {
 
     function actions() public override {
 
+        uint256 lineReduction;
         uint256 line;
 
         // ---------- RWA008-A Offboarding ----------
@@ -58,27 +59,34 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/security-tokens-refinancing-mip6-application-for-ofh-tokens/10605/51
 
         // Set RWA008-A Debt Ceiling to 0
-        (, , , line, ) = vat.ilks("RWA008-A");
-        DssExecLib.decreaseIlkDebtCeiling("RWA008-A", line / RAD, true);
+        (,,,line,) = vat.ilks("RWA008-A");
+        lineReduction += line;
+        DssExecLib.removeIlkFromAutoLine("RWA008-A");
+        DssExecLib.setIlkDebtCeiling("RWA008-A", 0);
 
         // ---------- First Stage of Offboarding ----------
         // Poll: https://vote.makerdao.com/polling/QmPwHhLT
         // Forum: https://forum.makerdao.com/t/decentralized-collateral-scope-parameter-changes-1-april-2023/20302
 
         // Set YFI-A line to 0
-        (, , , line, ) = vat.ilks("YFI-A");
-        DssExecLib.decreaseIlkDebtCeiling("YFI-A", line / RAD, true);
+        (,,,line,) = vat.ilks("YFI-A");
+        lineReduction += line;
         DssExecLib.removeIlkFromAutoLine("YFI-A");
+        DssExecLib.setIlkDebtCeiling("YFI-A", 0);
 
         // Set MATIC-A line to 0
-        (, , , line, ) = vat.ilks("MATIC-A");
-        DssExecLib.decreaseIlkDebtCeiling("MATIC-A", line / RAD, true);
+        (,,,line,) = vat.ilks("MATIC-A");
+        lineReduction += line;
         DssExecLib.removeIlkFromAutoLine("MATIC-A");
+        DssExecLib.setIlkDebtCeiling("MATIC-A", 0);
 
         // Set LINK-A line to 0
-        (, , , line, ) = vat.ilks("LINK-A");
-        DssExecLib.decreaseIlkDebtCeiling("LINK-A", line / RAD, true);
+        (,,,line,) = vat.ilks("LINK-A");
+        lineReduction += line;
         DssExecLib.removeIlkFromAutoLine("LINK-A");
+        DssExecLib.setIlkDebtCeiling("LINK-A", 0);
+
+        DssExecLib.decreaseGlobalDebtCeiling(lineReduction / RAD);
 
         // ---------- Stability Fee Changes ----------
         // Poll: N/A
