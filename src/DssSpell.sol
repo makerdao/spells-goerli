@@ -61,7 +61,6 @@ contract DssSpellAction is DssAction {
         // Set RWA008-A Debt Ceiling to 0
         (,,,line,) = vat.ilks("RWA008-A");
         lineReduction += line;
-        DssExecLib.removeIlkFromAutoLine("RWA008-A");
         DssExecLib.setIlkDebtCeiling("RWA008-A", 0);
 
         // ---------- First Stage of Offboarding ----------
