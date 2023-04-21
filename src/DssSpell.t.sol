@@ -495,8 +495,6 @@ contract DssSpellTest is DssSpellTestBase {
         VaultParams memory linkA   = _getDebtCeilingParams("LINK-A");
 
         uint256 sumLines      = rwa008A.line + yfiA.line + maticA.line + linkA.line;
-        uint256 sumDebts      = rwa008A.debt + yfiA.debt + maticA.debt + linkA.debt;
-        uint256 lineReduction = 90 * (sumLines > sumDebts ? sumLines - sumDebts : 0) / 100;
 
         uint256 globalLineBefore = vat.Line();
 
@@ -505,6 +503,6 @@ contract DssSpellTest is DssSpellTestBase {
         assertTrue(spell.done());
 
         uint256 globalLineAfter = vat.Line();
-        assertEq(globalLineAfter, globalLineBefore - lineReduction, "TestError/global-dc-not-updated");
+        assertEq(globalLineAfter, globalLineBefore - sumLines, "TestError/global-dc-not-updated");
     }
 }
