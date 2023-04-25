@@ -401,5 +401,10 @@ contract Addresses {
         addr["MCD_JOIN_GNO_A"]                  = 0x05a3b9D5F8098e558aF33c6b83557484f840055e;
         addr["MCD_CLIP_GNO_A"]                  = 0x8274F3badD42C61B8bEa78Df941813D67d1942ED;
         addr["MCD_CLIP_CALC_GNO_A"]             = 0x08Ae3e0C0CAc87E1B4187D53F0231C97B5b4Ab3E;
+        addr["DIRECT_HUB"]                      = 0x79Dcb858D6af6FeD7A5AC9B189ea14bC94076dfb;
+        addr["DIRECT_MOM"]                      = 0x8aBafFe006205e306F4307EE7b839846CD1ff471;
+        addr["DIRECT_SPARK_DAI_POOL"]           = 0x8b6Ae79852bcae012CBc2244e4ef85c61BAeCE35;
+        addr["DIRECT_SPARK_DAI_PLAN"]           = 0x1fB2cF94D896bB50A17dD1Abd901172F088dF309;
+        addr["DIRECT_SPARK_DAI_ORACLE"]         = 0xa07C4eDB18E4B3cfB9B94D9CD348BbF6d5a7f4c2;
     }
 }

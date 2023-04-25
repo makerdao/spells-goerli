@@ -131,7 +131,7 @@ contract Config {
         afterSpell.osm_mom_authority =     chief;                   // OsmMom authority
         afterSpell.flipper_mom_authority = chief;                   // FlipperMom authority
         afterSpell.clipper_mom_authority = chief;                   // ClipperMom authority
-        afterSpell.ilk_count =             60;                      // Num expected in system
+        afterSpell.ilk_count =             61;                      // Num expected in system
 
         //
         // Values for all collateral
@@ -1968,6 +1968,36 @@ contract Config {
             calc_tau:     0,
             calc_step:    60,
             calc_cut:     99_00,
+            offboarding:  false
+        });
+        afterSpell.collaterals["DIRECT-SPARK-DAI"] = CollateralValues({
+            aL_enabled:   true,
+            aL_line:      5 * MILLION,
+            aL_gap:       5 * MILLION,
+            aL_ttl:       8 hours,
+            line:         0,
+            dust:         0,
+            pct:          0,
+            mat:          10000,
+            liqType:      "",
+            liqOn:        false,
+            chop:         0,
+            cat_dunk:     0,
+            flip_beg:     0,
+            flip_ttl:     0,
+            flip_tau:     0,
+            flipper_mom:  0,
+            dog_hole:     0,
+            clip_buf:     0,
+            clip_tail:    0,
+            clip_cusp:    0,
+            clip_chip:    0,
+            clip_tip:     0,
+            clipper_mom:  0,
+            cm_tolerance: 0,
+            calc_tau:     0,
+            calc_step:    0,
+            calc_cut:     0,
             offboarding:  false
         });
     }

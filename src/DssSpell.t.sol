@@ -36,6 +36,69 @@ interface BridgeLike {
     function l2TeleportGateway() external view returns (address);
 }
 
+interface D3MHubLike {
+    function exec(bytes32) external;
+    function vow() external view returns (address);
+    function end() external view returns (address);
+    function ilks(bytes32) external view returns (address, address, uint256, uint256, uint256);
+}
+
+interface D3MMomLike {
+    function authority() external view returns (address);
+    function disable(address) external;
+}
+
+interface D3MAavePoolLike {
+    function king() external view returns (address);
+    function stableDebt() external view returns (address);
+    function variableDebt() external view returns (address);
+}
+
+interface D3MAavePlanLike {
+    function wards(address) external view returns (uint256);
+    function buffer() external view returns (uint256);
+}
+
+interface D3MOracleLike {
+    function hub() external view returns (address);
+}
+
+interface PoolLike {
+    struct ReserveData {
+        //stores the reserve configuration
+        uint256 configuration;
+        //the liquidity index. Expressed in ray
+        uint128 liquidityIndex;
+        //the current supply rate. Expressed in ray
+        uint128 currentLiquidityRate;
+        //variable borrow index. Expressed in ray
+        uint128 variableBorrowIndex;
+        //the current variable borrow rate. Expressed in ray
+        uint128 currentVariableBorrowRate;
+        //the current stable borrow rate. Expressed in ray
+        uint128 currentStableBorrowRate;
+        //timestamp of last update
+        uint40 lastUpdateTimestamp;
+        //the id of the reserve. Represents the position in the list of the active reserves
+        uint16 id;
+        //aToken address
+        address aTokenAddress;
+        //stableDebtToken address
+        address stableDebtTokenAddress;
+        //variableDebtToken address
+        address variableDebtTokenAddress;
+        //address of the interest rate strategy
+        address interestRateStrategyAddress;
+        //the current treasury balance, scaled
+        uint128 accruedToTreasury;
+        //the outstanding unbacked aTokens minted through the bridging feature
+        uint128 unbacked;
+        //the outstanding debt borrowed against this asset in isolation mode
+        uint128 isolationModeTotalDebt;
+    }
+    function getReserveData(address asset) external view returns (ReserveData memory);
+}
+
 // For PE-1208
 interface RwaUrnLike {
     function hope(address) external;
@@ -243,7 +306,7 @@ contract DssSpellTest is DssSpellTestBase {
 
         // _checkChainlogKey("XXX");
 
-        _checkChainlogVersion("1.14.10");
+        _checkChainlogVersion("1.14.11");
     }
 
     function testNewIlkRegistryValues() private { // make private to disable
@@ -473,20 +536,73 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
 
-    function testGlobalLineDecrease() public {
-        (, , , uint256 rwa008ALine, ) = vat.ilks("RWA008-A");
-        (, , , uint256 yfiALine,    ) = vat.ilks("YFI-A");
-        (, , , uint256 maticALine,  ) = vat.ilks("MATIC-A");
-        (, , , uint256 linkALine,   ) = vat.ilks("LINK-A");
+    function testDirectSparkIntegration() public {
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
 
-        uint256 sumLines         = rwa008ALine + yfiALine + maticALine + linkALine;
-        uint256 globalLineBefore = vat.Line();
+        bytes32 ilk = "DIRECT-SPARK-DAI";
+        D3MHubLike hub = D3MHubLike(addr.addr("DIRECT_HUB"));
+        D3MAavePoolLike pool = D3MAavePoolLike(addr.addr("DIRECT_SPARK_DAI_POOL"));
+        D3MAavePlanLike plan = D3MAavePlanLike(addr.addr("DIRECT_SPARK_DAI_PLAN"));
+        D3MOracleLike oracle = D3MOracleLike(addr.addr("DIRECT_SPARK_DAI_ORACLE"));
+        D3MMomLike mom = D3MMomLike(addr.addr("DIRECT_MOM"));
+
+        // Do a bunch of sanity checks of the values that were set in the spell
+        (address _pool, address _plan, uint256 tau,,) = hub.ilks(ilk);
+        assertEq(_pool, address(pool));
+        assertEq(_plan, address(plan));
+        assertEq(tau, 7 days);
+        assertEq(hub.vow(), address(vow));
+        assertEq(hub.end(), address(end));
+        assertEq(mom.authority(), address(chief));
+        assertEq(pool.king(), pauseProxy);
+        assertEq(plan.wards(address(mom)), 1);
+        assertEq(plan.buffer(), 30 * MILLION * WAD);
+        assertEq(oracle.hub(), address(hub));
+        (address pip,) = spotter.ilks(ilk);
+        assertEq(pip, address(oracle));
+        assertEq(vat.wards(address(hub)), 1);
+
+        // Will immediately fill 5m DAI (line limit)
+        hub.exec(ilk);
+        (uint256 ink, uint256 art) = vat.urns(ilk, address(pool));
+        assertEq(ink, 5 * MILLION * WAD);
+        assertEq(art, 5 * MILLION * WAD);
+
+        // De-activate the D3M via mom
+        vm.prank(DSChiefAbstract(chief).hat());
+        mom.disable(address(plan));
+        assertEq(plan.buffer(), 0);
+        hub.exec(ilk);
+        (ink, art) = vat.urns(ilk, address(pool));
+        assertLt(ink, WAD);     // Less than some dust amount is fine (1 DAI)
+        assertLt(art, WAD);
+    }
+
+    function testSparkLendParameterAdjustments() public {
+        // Configuration masking parameters pulled from https://github.com/aave/aave-v3-core/blob/62dfda56bd884db2c291560c03abae9727a7635e/contracts/protocol/libraries/configuration/ReserveConfiguration.sol
+        uint256 FROZEN_MASK = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFFFFFFFFFFFFFF;
+        uint256 RESERVE_FACTOR_START_BIT_POSITION = 64;
+        uint256 RESERVE_FACTOR_MASK = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFF;
+        PoolLike pool = PoolLike(0x26ca51Af4506DE7a6f0785D20CD776081a05fF6d);
+        address wbtc = 0x91277b74a9d1Cc30fA0ff4927C287fe55E307D78;  // Please note this is not the same WBTC as in Maker
+
+        PoolLike.ReserveData memory daiReserveData = pool.getReserveData(address(dai));
+        PoolLike.ReserveData memory wbtcReserveData = pool.getReserveData(wbtc);
+        assertEq((wbtcReserveData.configuration & ~FROZEN_MASK) != 0, false);
+        assertEq(daiReserveData.interestRateStrategyAddress, 0xF42baf47019c71afd6FCe31134Da0232640A034a);
+        assertEq((daiReserveData.configuration & ~RESERVE_FACTOR_MASK) >> RESERVE_FACTOR_START_BIT_POSITION, 10000);
 
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        uint256 globalLineAfter = vat.Line();
-        assertEq(globalLineAfter, globalLineBefore - sumLines, "TestError/global-line-not-updated");
+        daiReserveData = pool.getReserveData(address(dai));
+        wbtcReserveData = pool.getReserveData(wbtc);
+        assertEq((wbtcReserveData.configuration & ~FROZEN_MASK) != 0, true);
+        assertEq(daiReserveData.interestRateStrategyAddress, 0x491acea4126E48e9A354b64869AE16b2f27BE333);
+        assertEq((daiReserveData.configuration & ~RESERVE_FACTOR_MASK) >> RESERVE_FACTOR_START_BIT_POSITION, 0);
+
     }
 }
