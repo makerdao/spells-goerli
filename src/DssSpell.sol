@@ -72,7 +72,8 @@ contract DssSpellAction is DssAction {
     function actions() public override {
 
         // ---- Spark D3M ----
-        // https://vote.makerdao.com/polling/QmT9Novb#poll-detail
+        // https://mips.makerdao.com/mips/details/MIP106
+        // https://mips.makerdao.com/mips/details/MIP104
         // dss-direct-deposit @ 665afffea10c71561bd234a88caf6586bf46ada2
 
         DssInstance memory dss = MCD.loadFromChainlog(DssExecLib.LOG);
