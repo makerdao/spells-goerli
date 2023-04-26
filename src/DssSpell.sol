@@ -65,9 +65,9 @@ contract DssSpellAction is DssAction {
     address internal constant WBTC                      = 0x91277b74a9d1Cc30fA0ff4927C287fe55E307D78;  // Please note this is not the same WBTC as in Maker
     address internal constant INTEREST_RATE_STRATEGY    = 0x491acea4126E48e9A354b64869AE16b2f27BE333;
 
-    uint256 constant MILLION = 10 ** 6;
-    uint256 constant WAD = 10 ** 18;
-    uint256 constant RAD = 10 ** 45;
+    uint256 internal constant MILLION = 10 ** 6;
+    uint256 internal constant WAD = 10 ** 18;
+    uint256 internal constant RAD = 10 ** 45;
 
     function actions() public override {
 
