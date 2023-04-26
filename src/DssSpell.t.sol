@@ -304,26 +304,30 @@ contract DssSpellTest is DssSpellTestBase {
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // _checkChainlogKey("XXX");
+        _checkChainlogKey("DIRECT_HUB");
+        _checkChainlogKey("DIRECT_MOM");
+        _checkChainlogKey("DIRECT_SPARK_DAI_POOL");
+        _checkChainlogKey("DIRECT_SPARK_DAI_PLAN");
+        _checkChainlogKey("DIRECT_SPARK_DAI_ORACLE");
 
         _checkChainlogVersion("1.14.11");
     }
 
-    function testNewIlkRegistryValues() private { // make private to disable
+    function testNewIlkRegistryValues() public { // make private to disable
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
         // GNO-A
-        assertEq(reg.pos("GNO-A"),    55);
-        assertEq(reg.join("GNO-A"),   addr.addr("MCD_JOIN_GNO_A"));
-        assertEq(reg.gem("GNO-A"),    addr.addr("GNO"));
-        assertEq(reg.dec("GNO-A"),    GemAbstract(addr.addr("GNO")).decimals());
-        assertEq(reg.class("GNO-A"),  1);
-        assertEq(reg.pip("GNO-A"),    addr.addr("PIP_GNO"));
-        assertEq(reg.name("GNO-A"),   "Gnosis Token");
-        assertEq(reg.symbol("GNO-A"), GemAbstract(addr.addr("GNO")).symbol());
+        assertEq(reg.pos("DIRECT-SPARK-DAI"),    60);
+        assertEq(reg.join("DIRECT-SPARK-DAI"),   addr.addr("DIRECT_HUB"));
+        assertEq(reg.gem("DIRECT-SPARK-DAI"),    0x4480b29AB7a1b0761e6d0d480325de28B7266d73);
+        assertEq(reg.dec("DIRECT-SPARK-DAI"),    18);
+        assertEq(reg.class("DIRECT-SPARK-DAI"),  4);
+        assertEq(reg.pip("DIRECT-SPARK-DAI"),    addr.addr("DIRECT_SPARK_DAI_ORACLE"));
+        assertEq(reg.name("DIRECT-SPARK-DAI"),   "Spark DAI");
+        assertEq(reg.symbol("DIRECT-SPARK-DAI"), "spDAI");
     }
 
     function testOSMs() private { // make private to disable
