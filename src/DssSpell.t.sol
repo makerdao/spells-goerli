@@ -319,7 +319,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
-        // GNO-A
+        // DIRECT-SPARK-DAI
         assertEq(reg.pos("DIRECT-SPARK-DAI"),    60);
         assertEq(reg.join("DIRECT-SPARK-DAI"),   addr.addr("DIRECT_HUB"));
         assertEq(reg.gem("DIRECT-SPARK-DAI"),    0x4480b29AB7a1b0761e6d0d480325de28B7266d73);
