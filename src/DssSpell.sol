@@ -120,16 +120,15 @@ contract DssSpellAction is DssAction {
 
     // -- RWA014 END --
 
+    IlkRegistryAbstract internal immutable REGISTRY          = IlkRegistryAbstract(DssExecLib.reg());
+    address internal immutable MIP21_LIQUIDATION_ORACLE      = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
+    address internal immutable MCD_PSM_USDC_A                = DssExecLib.getChangelogAddress("MCD_PSM_USDC_A");
+    address internal immutable MCD_VAT                       = DssExecLib.vat();
+    address internal immutable MCD_JUG                       = DssExecLib.jug();
+    address internal immutable MCD_SPOT                      = DssExecLib.spotter();
+    address internal immutable MCD_JOIN_DAI                  = DssExecLib.daiJoin();
+
     function onboardRWA014() internal {
-        IlkRegistryAbstract REGISTRY     = IlkRegistryAbstract(DssExecLib.reg());
-        address MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
-        address MCD_PSM_USDC_A           = DssExecLib.getChangelogAddress("MCD_PSM_USDC_A");
-        address MCD_VAT                  = DssExecLib.vat();
-        address MCD_JUG                  = DssExecLib.jug();
-        address MCD_SPOT                 = DssExecLib.spotter();
-        address MCD_JOIN_DAI             = DssExecLib.daiJoin();
-
-
         bytes32 ilk      = "RWA014-A";
         uint256 decimals = GemAbstract(RWA014).decimals();
 
