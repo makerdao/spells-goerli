@@ -66,6 +66,10 @@ interface RwaInputConduitLike {
     function file(bytes32 what, address data) external;
 }
 
+interface StarknetLike {
+    function setCeiling(uint256) external;
+}
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -128,6 +132,8 @@ contract DssSpellAction is DssAction {
     address internal immutable MCD_SPOT                      = DssExecLib.spotter();
     address internal immutable MCD_JOIN_DAI                  = DssExecLib.daiJoin();
 
+    address internal immutable STARKNET_DAI_BRIDGE           = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");
+
     function onboardRWA014() internal {
         bytes32 ilk      = "RWA014-A";
         uint256 decimals = GemAbstract(RWA014).decimals();
@@ -143,7 +149,7 @@ contract DssSpellAction is DssAction {
         require(RwaUrnLike(RWA014_A_URN).daiJoin()                                   == MCD_JOIN_DAI,                               "urn-daijoin-not-match");
         require(RwaUrnLike(RWA014_A_URN).gemJoin()                                   == MCD_JOIN_RWA014_A,                          "urn-gemjoin-not-match");
         require(RwaUrnLike(RWA014_A_URN).outputConduit()                             == RWA014_A_OUTPUT_CONDUIT,                    "urn-outputconduit-not-match");
-        
+
         require(RwaJarLike(RWA014_A_JAR).chainlog()                                  == DssExecLib.LOG,                             "jar-chainlog-not-match");
         require(RwaJarLike(RWA014_A_JAR).dai()                                       == DssExecLib.dai(),                           "jar-dai-not-match");
         require(RwaJarLike(RWA014_A_JAR).daiJoin()                                   == MCD_JOIN_DAI,                               "jar-daijoin-not-match");
@@ -151,7 +157,7 @@ contract DssSpellAction is DssAction {
         require(RwaOutputConduitLike(RWA014_A_OUTPUT_CONDUIT).dai()                  == DssExecLib.dai(),                           "output-conduit-dai-not-match");
         require(RwaOutputConduitLike(RWA014_A_OUTPUT_CONDUIT).gem()                  == DssExecLib.getChangelogAddress("USDC"),     "output-conduit-gem-not-match");
         require(RwaOutputConduitLike(RWA014_A_OUTPUT_CONDUIT).psm()                  == MCD_PSM_USDC_A,                             "output-conduit-psm-not-match");
-        
+
         require(RwaInputConduitLike(RWA014_A_INPUT_CONDUIT_URN).psm()                == MCD_PSM_USDC_A,                             "input-conduit-urn-psm-not-match");
         require(RwaInputConduitLike(RWA014_A_INPUT_CONDUIT_URN).to()                 == RWA014_A_URN,                               "input-conduit-urn-to-not-match");
         require(RwaInputConduitLike(RWA014_A_INPUT_CONDUIT_URN).dai()                == DssExecLib.dai(),                           "input-conduit-urn-dai-not-match");
@@ -250,7 +256,11 @@ contract DssSpellAction is DssAction {
         // Lock RWA014 Token in the URN
         GemAbstract(RWA014).approve(RWA014_A_URN, 1 * WAD);
         RwaUrnLike(RWA014_A_URN).lock(1 * WAD);
-        
+
+        // ---------- Starknet ----------
+        // Increase Starknet Bridge Limit from 1,000,000 DAI to 5,000,000 DAI
+        // https://forum.makerdao.com/t/april-26th-2023-spell-starknet-bridge-limit/20589
+        StarknetLike(STARKNET_DAI_BRIDGE).setCeiling(5_000_000 * WAD);
 
         // Bump the chainlog
         DssExecLib.setChangelogVersion("1.14.12");
