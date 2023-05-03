@@ -91,38 +91,35 @@ contract DssSpellAction is DssAction {
     // uint256 internal constant X_PCT_RATE      = ;
 
     uint256 internal constant WAD = 10 ** 18;
+    uint256 internal constant MILLION = 10 ** 6;
 
     // -- RWA014 MIP21 components --
     address internal constant RWA014                         = 0x22a7440DCfF0E8881Ec93cE519c34C15feB2A09a;
     address internal constant MCD_JOIN_RWA014_A              = 0xc7Ba0aBa8512199c816834351CC978cf684D7fD9;
     address internal constant RWA014_A_URN                   = 0xb475F63163aE3b0D5f6e30Dd914F5aA7204B1169;
     address internal constant RWA014_A_JAR                   = 0x398E36Ed3c6bEf85f78b03d08b1980c6c3dd5357;
-    // Output Conduit
     address internal constant RWA014_A_OUTPUT_CONDUIT        = 0x563c3CD928DB7cAf5B9872bFa2dd0E4F31158256;
-    // Jar and URN Input Conduits
     address internal constant RWA014_A_INPUT_CONDUIT_URN     = 0x3b749869f62694804B0411DA77F13e816C49A25F;
     address internal constant RWA014_A_INPUT_CONDUIT_JAR     = 0xa9C909eDD4ee06D625EaDD546CccDB1BB3e02D02;
-
-    // MIP21_LIQUIDATION_ORACLE params
-
-    // https://gateway.pinata.cloud/ipfs/QmRLwB7Ty3ywSzq17GdDdwHvsZGwBg79oUTpSTJGtodToY
+    // TODO: IPFS link
     string  internal constant RWA014_DOC                     = "TODO";
     uint256 internal constant RWA014_A_INITIAL_PRICE         = 500_000_000 * WAD;
     uint48  internal constant RWA014_A_TAU                   = 0;
-
     // Ilk registry params
     uint256 internal constant RWA014_REG_CLASS_RWA           = 3;
-
     // Remaining params
     uint256 internal constant RWA014_A_LINE                  = 500_000_000;
     uint256 internal constant RWA014_A_MAT                   = 100_00;
-
-    // operator address
+    // Operator address
     address internal constant RWA014_A_OPERATOR              = address(0); // TODO
-    // custody address
+    // Custody address
     address internal constant RWA014_A_COINBASE_CUSTODY      = address(0); // TODO
-
     // -- RWA014 END --
+
+    uint256 internal constant ZERO_SEVENTY_FIVE_PCT_RATE     = 1000000000236936036262880196;
+    uint256 internal constant ONE_PCT_RATE                   = 1000000000315522921573372069;
+    uint256 internal constant ONE_SEVENTY_FIVE_PCT_RATE      = 1000000000550121712943459312;
+    uint256 internal constant THREE_TWENTY_FIVE_PCT_RATE     = 1000000001014175731521720677;
 
     IlkRegistryAbstract internal immutable REGISTRY          = IlkRegistryAbstract(DssExecLib.reg());
     address internal immutable MIP21_LIQUIDATION_ORACLE      = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
@@ -261,6 +258,51 @@ contract DssSpellAction is DssAction {
         // Increase Starknet Bridge Limit from 1,000,000 DAI to 5,000,000 DAI
         // https://forum.makerdao.com/t/april-26th-2023-spell-starknet-bridge-limit/20589
         StarknetLike(STARKNET_DAI_BRIDGE).setCeiling(5_000_000 * WAD);
+
+        // ---------- Risk Parameters Changes (Stability Fee & DC-IAM) ----------
+        // Poll: https://vote.makerdao.com/polling/QmYFfRuR#poll-detail
+        // Forum: https://forum.makerdao.com/t/out-of-scope-proposed-risk-parameters-changes-stability-fee-dc-iam/20564
+
+        // Increase ETH-A Stability Fee by 0.25% from 1.5% to 1.75%.
+        DssExecLib.setIlkStabilityFee("ETH-A", ONE_SEVENTY_FIVE_PCT_RATE, true);
+
+        // Increase ETH-B Stability Fee by 0.25% from 3% to 3.25%.
+        DssExecLib.setIlkStabilityFee("ETH-B", THREE_TWENTY_FIVE_PCT_RATE, true);
+
+        // Increase ETH-C Stability Fee by 0.25% from 0.75% to 1%.
+        DssExecLib.setIlkStabilityFee("ETH-C", ONE_PCT_RATE, true);
+
+        // Increase WSTETH-A Stability Fee by 0.25% from 1.5% to 1.75%.
+        DssExecLib.setIlkStabilityFee("WSTETH-A", ONE_SEVENTY_FIVE_PCT_RATE, true);
+
+        // Increase WSTETH-B Stability Fee by 0.25% from 0.75% to 1%.
+        DssExecLib.setIlkStabilityFee("WSTETH-B", ONE_PCT_RATE, true);
+
+        // Increase RETH-A Stability Fee by 0.25% from 0.5% to 0.75%.
+        DssExecLib.setIlkStabilityFee("RETH-A", ZERO_SEVENTY_FIVE_PCT_RATE, true);
+
+        // Increase CRVV1ETHSTETH-A Stability Fee by 0.25% from 1.5% to 1.75%.
+        // NOTE: ignore in goerli
+        // DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", ONE_SEVENTY_FIVE_PCT_RATE, true);
+
+
+        // Increase the WSTETH-A gap by 15 million DAI from 15 million DAI to 30 million DAI.
+        // Increase the WSTETH-A ttl by 21,600 seconds from 21,600 seconds to 43,200 seconds
+        DssExecLib.setIlkAutoLineParameters("WSTETH-A", 500 * MILLION, 30 * MILLION, 12 hours);
+
+        // Increase the WSTETH-B gap by 15 million DAI from 15 million DAI to 30 million DAI.
+        // Increase the WSTETH-B ttl by 28,800 seconds from 28,800 seconds to 57,600 seconds.
+        DssExecLib.setIlkAutoLineParameters("WSTETH-B", 500 * MILLION, 30 * MILLION, 16 hours);
+
+        // Reduce the WBTC-A gap by 10 million DAI from 20 million DAI to 10 million DAI.
+        DssExecLib.setIlkAutoLineParameters("WBTC-A", 500 * MILLION, 10 * MILLION, 24 hours);
+
+        // Reduce the WBTC-B gap by 5 million DAI from 10 million DAI to 5 million DAI.
+        DssExecLib.setIlkAutoLineParameters("WBTC-B", 250 * MILLION, 5 * MILLION, 24 hours);
+
+        // Reduce the WBTC-C gap by 10 million DAI from 20 million DAI to 10 million DAI.
+        DssExecLib.setIlkAutoLineParameters("WBTC-C", 500 * MILLION, 10 * MILLION, 24 hours);
+
 
         // Bump the chainlog
         DssExecLib.setChangelogVersion("1.14.12");
