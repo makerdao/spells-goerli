@@ -256,7 +256,7 @@ contract DssSpellAction is DssAction {
 
         // ---------- Starknet ----------
         // Increase Starknet Bridge Limit from 1,000,000 DAI to 5,000,000 DAI
-        // https://forum.makerdao.com/t/april-26th-2023-spell-starknet-bridge-limit/20589
+        // Forum: https://forum.makerdao.com/t/april-26th-2023-spell-starknet-bridge-limit/20589
         StarknetLike(STARKNET_DAI_BRIDGE).setCeiling(5_000_000 * WAD);
 
         // ---------- Risk Parameters Changes (Stability Fee & DC-IAM) ----------
