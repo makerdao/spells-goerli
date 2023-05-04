@@ -39,7 +39,7 @@ contract ConfigStarknet {
             l2_spell:                  0,  // Set to zero if no spell is set.
             core_implementation:       0xc95B2435c3e0c9A4674c1060EA2D2494487baBAe, // As at 2023-03-20
             dai_bridge_isOpen:         1,                     // 1 open, 0 closed
-            dai_bridge_ceiling:        1_000_000 * WAD,       // wei
+            dai_bridge_ceiling:        5_000_000 * WAD,       // wei
             dai_bridge_maxDeposit:     type(uint256).max,     // wei
             l2_dai_bridge:             0x057b7fe4e59d295de5e7955c373023514ede5b972e872e9aa5dcdf563f5cfacb,
             l2_gov_relay:              0x00275e3f018f7884f449a1fb418b6b1de77e01c74a9fefaed1599cb22322ff74,
