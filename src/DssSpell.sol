@@ -48,10 +48,10 @@ interface RwaJarLike {
 }
 
 interface RwaInputConduitLike {
-    function dai() external view returns(address);
-    function gem() external view returns(address);
-    function psm() external view returns(address);
-    function to() external view returns(address);
+    function dai() external view returns (address);
+    function gem() external view returns (address);
+    function psm() external view returns (address);
+    function to() external view returns (address);
     function mate(address) external;
     function file(bytes32 what, address data) external;
 }
