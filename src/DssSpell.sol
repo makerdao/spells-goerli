@@ -67,7 +67,7 @@ interface RwaInputConduitLike {
 }
 
 interface StarknetLike {
-    function setCeiling(uint256) external;
+    function setCeiling(uint256 _ceiling) external;
 }
 
 contract DssSpellAction is DssAction {
