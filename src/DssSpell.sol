@@ -27,34 +27,24 @@ interface Initializable {
 }
 
 interface RwaLiquidationLike {
-    function ilks(bytes32) external returns (string memory, address, uint48, uint48);
+    function ilks(bytes32) external view returns (string memory, address, uint48, uint48);
     function init(bytes32, uint256, string calldata, uint48) external;
 }
 
 interface RwaUrnLike {
     function lock(uint256) external;
-    function vat() external view returns(address);
-    function jug() external view returns(address);
-    function gemJoin() external view returns(address);
-    function daiJoin() external view returns(address);
-    function outputConduit() external view returns(address);
+    function vat() external view returns (address);
+    function jug() external view returns (address);
+    function gemJoin() external view returns (address);
+    function daiJoin() external view returns (address);
+    function outputConduit() external view returns (address);
     function hope(address) external;
 }
 
 interface RwaJarLike {
-    function chainlog() external view returns(address);
-    function dai() external view returns(address);
-    function daiJoin() external view returns(address);
-}
-
-interface RwaOutputConduitLike {
-    function dai() external view returns(address);
-    function gem() external view returns(address);
-    function psm() external view returns(address);
-    function file(bytes32 what, address data) external;
-    function hope(address) external;
-    function mate(address) external;
-    function kiss(address) external;
+    function chainlog() external view returns (address);
+    function dai() external view returns (address);
+    function daiJoin() external view returns (address);
 }
 
 interface RwaInputConduitLike {
@@ -62,8 +52,18 @@ interface RwaInputConduitLike {
     function gem() external view returns(address);
     function psm() external view returns(address);
     function to() external view returns(address);
-    function mate(address usr) external;
+    function mate(address) external;
     function file(bytes32 what, address data) external;
+}
+
+interface RwaOutputConduitLike {
+    function dai() external view returns (address);
+    function gem() external view returns (address);
+    function psm() external view returns (address);
+    function file(bytes32 what, address data) external;
+    function hope(address) external;
+    function mate(address) external;
+    function kiss(address) external;
 }
 
 contract DssSpellAction is DssAction {
@@ -86,17 +86,22 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
-    uint256 internal constant WAD = 10 ** 18;
-    uint256 internal constant MILLION = 10 ** 6;
+    uint256 internal constant ZERO_PT_SEVENTY_FIVE_PCT_RATE  = 1000000000236936036262880196;
+    uint256 internal constant ONE_PCT_RATE                   = 1000000000315522921573372069;
+    uint256 internal constant ONE_PT_SEVENTY_FIVE_PCT_RATE   = 1000000000550121712943459312;
+    uint256 internal constant THREE_PT_TWENTY_FIVE_PCT_RATE  = 1000000001014175731521720677;
+
+    uint256 internal constant WAD                            = 10 ** 18;
+    uint256 internal constant MILLION                        = 10 ** 6;
 
     // -- RWA014 MIP21 components --
     address internal constant RWA014                         = 0x22a7440DCfF0E8881Ec93cE519c34C15feB2A09a;
     address internal constant MCD_JOIN_RWA014_A              = 0xc7Ba0aBa8512199c816834351CC978cf684D7fD9;
     address internal constant RWA014_A_URN                   = 0xb475F63163aE3b0D5f6e30Dd914F5aA7204B1169;
     address internal constant RWA014_A_JAR                   = 0x398E36Ed3c6bEf85f78b03d08b1980c6c3dd5357;
-    address internal constant RWA014_A_OUTPUT_CONDUIT        = 0x563c3CD928DB7cAf5B9872bFa2dd0E4F31158256;
     address internal constant RWA014_A_INPUT_CONDUIT_URN     = 0x3b749869f62694804B0411DA77F13e816C49A25F;
     address internal constant RWA014_A_INPUT_CONDUIT_JAR     = 0xa9C909eDD4ee06D625EaDD546CccDB1BB3e02D02;
+    address internal constant RWA014_A_OUTPUT_CONDUIT        = 0x563c3CD928DB7cAf5B9872bFa2dd0E4F31158256;
     // TODO: IPFS link
     string  internal constant RWA014_DOC                     = "TODO";
     uint256 internal constant RWA014_A_INITIAL_PRICE         = 500_000_000 * WAD;
@@ -112,12 +117,7 @@ contract DssSpellAction is DssAction {
     address internal constant RWA014_A_COINBASE_CUSTODY      = address(0); // TODO
     // -- RWA014 END --
 
-    uint256 internal constant ZERO_SEVENTY_FIVE_PCT_RATE     = 1000000000236936036262880196;
-    uint256 internal constant ONE_PCT_RATE                   = 1000000000315522921573372069;
-    uint256 internal constant ONE_SEVENTY_FIVE_PCT_RATE      = 1000000000550121712943459312;
-    uint256 internal constant THREE_TWENTY_FIVE_PCT_RATE     = 1000000001014175731521720677;
-
-    IlkRegistryAbstract internal immutable REGISTRY          = IlkRegistryAbstract(DssExecLib.reg());
+    address internal immutable REGISTRY                      = DssExecLib.reg();
     address internal immutable MIP21_LIQUIDATION_ORACLE      = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
     address internal immutable MCD_PSM_USDC_A                = DssExecLib.getChangelogAddress("MCD_PSM_USDC_A");
     address internal immutable MCD_VAT                       = DssExecLib.vat();
@@ -224,7 +224,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.setChangelogAddress("RWA014_A_OUTPUT_CONDUIT",    RWA014_A_OUTPUT_CONDUIT);
 
         // Add RWA014 to ILK REGISTRY
-        REGISTRY.put(
+        IlkRegistryAbstract(REGISTRY).put(
             ilk,
             MCD_JOIN_RWA014_A,
             RWA014,
@@ -253,22 +253,22 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/out-of-scope-proposed-risk-parameters-changes-stability-fee-dc-iam/20564
 
         // Increase ETH-A Stability Fee by 0.25% from 1.5% to 1.75%.
-        DssExecLib.setIlkStabilityFee("ETH-A", ONE_SEVENTY_FIVE_PCT_RATE, true);
+        DssExecLib.setIlkStabilityFee("ETH-A", ONE_PT_SEVENTY_FIVE_PCT_RATE, true);
 
         // Increase ETH-B Stability Fee by 0.25% from 3% to 3.25%.
-        DssExecLib.setIlkStabilityFee("ETH-B", THREE_TWENTY_FIVE_PCT_RATE, true);
+        DssExecLib.setIlkStabilityFee("ETH-B", THREE_PT_TWENTY_FIVE_PCT_RATE, true);
 
         // Increase ETH-C Stability Fee by 0.25% from 0.75% to 1%.
         DssExecLib.setIlkStabilityFee("ETH-C", ONE_PCT_RATE, true);
 
         // Increase WSTETH-A Stability Fee by 0.25% from 1.5% to 1.75%.
-        DssExecLib.setIlkStabilityFee("WSTETH-A", ONE_SEVENTY_FIVE_PCT_RATE, true);
+        DssExecLib.setIlkStabilityFee("WSTETH-A", ONE_PT_SEVENTY_FIVE_PCT_RATE, true);
 
         // Increase WSTETH-B Stability Fee by 0.25% from 0.75% to 1%.
         DssExecLib.setIlkStabilityFee("WSTETH-B", ONE_PCT_RATE, true);
 
         // Increase RETH-A Stability Fee by 0.25% from 0.5% to 0.75%.
-        DssExecLib.setIlkStabilityFee("RETH-A", ZERO_SEVENTY_FIVE_PCT_RATE, true);
+        DssExecLib.setIlkStabilityFee("RETH-A", ZERO_PT_SEVENTY_FIVE_PCT_RATE, true);
 
         // Increase CRVV1ETHSTETH-A Stability Fee by 0.25% from 1.5% to 1.75%.
         // NOTE: ignore in goerli

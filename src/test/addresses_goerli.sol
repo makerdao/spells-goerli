@@ -354,8 +354,8 @@ contract Addresses {
         addr["RWA014_A_INPUT_CONDUIT_URN"]      = 0x3b749869f62694804B0411DA77F13e816C49A25F;
         addr["RWA014_A_INPUT_CONDUIT_JAR"]      = 0xa9C909eDD4ee06D625EaDD546CccDB1BB3e02D02;
         addr["RWA014_A_OUTPUT_CONDUIT"]         = 0x563c3CD928DB7cAf5B9872bFa2dd0E4F31158256;
-        addr["RWA014_A_OPERATOR"]               = address(0);
-        addr["RWA014_A_COINBASE_CUSTODY"]       = address(0);
+        addr["RWA014_A_OPERATOR"]               = address(0); // TODO: TBD
+        addr["RWA014_A_COINBASE_CUSTODY"]       = address(0); // TODO: TBD
         addr["PROXY_PAUSE_ACTIONS"]             = 0x8D1187FCa9A104211bd25c689C08718AD8730C83;
         addr["PROXY_DEPLOYER"]                  = 0xc9476Fd378de5b0de5C4280D4323f6F89f723c15;
         addr["GUNIV3DAIUSDC1"]                  = 0xc5D83e829Ecdce4d67645EE1a1317451e0b4c68d;

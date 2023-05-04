@@ -37,7 +37,7 @@ interface BridgeLike {
 }
 
 interface RwaLiquidationOracleLike {
-    function ilks(bytes32) external returns (string memory, address, uint48 toc, uint48 tau);
+    function ilks(bytes32) external view returns (string memory, address, uint48 toc, uint48 tau);
     function bump(bytes32 ilk, uint256 val) external;
     function tell(bytes32) external;
     function cure(bytes32) external;
