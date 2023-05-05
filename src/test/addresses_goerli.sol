@@ -346,16 +346,6 @@ contract Addresses {
         addr["RWA013_A_URN"]                    = 0xdC47d203753D3B5fb4fcD5900EBd96b0eC6761B6;
         addr["RWA013_A_OUTPUT_CONDUIT"]         = 0xc5A1418aC32B5f978460f1211B76B5D44e69B530;
         addr["RWA013_A_INPUT_CONDUIT"]          = 0xc5A1418aC32B5f978460f1211B76B5D44e69B530;
-        addr["RWA014"]                          = 0x22a7440DCfF0E8881Ec93cE519c34C15feB2A09a;
-        addr["PIP_RWA014"]                      = 0x0dC2eeaAbD3c8F6fD7FB62D690AfEEA8c7AE5A6F;
-        addr["MCD_JOIN_RWA014_A"]               = 0xc7Ba0aBa8512199c816834351CC978cf684D7fD9;
-        addr["RWA014_A_URN"]                    = 0xb475F63163aE3b0D5f6e30Dd914F5aA7204B1169;
-        addr["RWA014_A_JAR"]                    = 0x398E36Ed3c6bEf85f78b03d08b1980c6c3dd5357;
-        addr["RWA014_A_INPUT_CONDUIT_URN"]      = 0x3b749869f62694804B0411DA77F13e816C49A25F;
-        addr["RWA014_A_INPUT_CONDUIT_JAR"]      = 0xa9C909eDD4ee06D625EaDD546CccDB1BB3e02D02;
-        addr["RWA014_A_OUTPUT_CONDUIT"]         = 0x563c3CD928DB7cAf5B9872bFa2dd0E4F31158256;
-        addr["RWA014_A_OPERATOR"]               = address(0); // TODO: TBD
-        addr["RWA014_A_COINBASE_CUSTODY"]       = address(0); // TODO: TBD
         addr["PROXY_PAUSE_ACTIONS"]             = 0x8D1187FCa9A104211bd25c689C08718AD8730C83;
         addr["PROXY_DEPLOYER"]                  = 0xc9476Fd378de5b0de5C4280D4323f6F89f723c15;
         addr["GUNIV3DAIUSDC1"]                  = 0xc5D83e829Ecdce4d67645EE1a1317451e0b4c68d;
