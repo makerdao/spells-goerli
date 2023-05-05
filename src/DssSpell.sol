@@ -90,7 +90,7 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
-    uint256 internal constant ZERO_PT_SEVENTY_FIVE_PCT_RATE  = 1000000000236936036262880196;
+    uint256 internal constant ZERO_PT_SEVEN_FIVE_PCT_RATE  = 1000000000236936036262880196;
     uint256 internal constant ONE_PCT_RATE                   = 1000000000315522921573372069;
     uint256 internal constant ONE_PT_SEVENTY_FIVE_PCT_RATE   = 1000000000550121712943459312;
     uint256 internal constant THREE_PT_TWENTY_FIVE_PCT_RATE  = 1000000001014175731521720677;
@@ -256,7 +256,7 @@ contract DssSpellAction is DssAction {
         RwaUrnLike(RWA014_A_URN).lock(1 * WAD);
 
         // ---------- Starknet ----------
-        // Increase Starknet Bridge Limit from 1,000,000 DAI to 5,000,000 DAI
+        // Increase L1 Starknet Bridge Limit from 1,000,000 DAI to 5,000,000 DAI
         // Forum: https://forum.makerdao.com/t/april-26th-2023-spell-starknet-bridge-limit/20589
         StarknetLike(STARKNET_DAI_BRIDGE).setCeiling(5 * MILLION * WAD);
 
