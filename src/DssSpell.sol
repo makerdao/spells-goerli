@@ -108,12 +108,12 @@ contract DssSpellAction is DssAction {
     address internal constant RWA014_A_OUTPUT_CONDUIT        = 0x563c3CD928DB7cAf5B9872bFa2dd0E4F31158256;
     // TODO: IPFS link
     string  internal constant RWA014_DOC                     = "TODO";
-    uint256 internal constant RWA014_A_INITIAL_PRICE         = 500_000_000 * WAD;
+    uint256 internal constant RWA014_A_INITIAL_PRICE         = 500 * MILLION * WAD;
     uint48  internal constant RWA014_A_TAU                   = 0;
     // Ilk registry params
     uint256 internal constant RWA014_REG_CLASS_RWA           = 3;
     // Remaining params
-    uint256 internal constant RWA014_A_LINE                  = 500_000_000;
+    uint256 internal constant RWA014_A_LINE                  = 500 * MILLION;
     uint256 internal constant RWA014_A_MAT                   = 100_00;
     // Operator address
     address internal constant RWA014_A_OPERATOR              = address(0); // TODO
@@ -124,6 +124,7 @@ contract DssSpellAction is DssAction {
     address internal immutable REGISTRY                      = DssExecLib.reg();
     address internal immutable MIP21_LIQUIDATION_ORACLE      = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
     address internal immutable MCD_PSM_USDC_A                = DssExecLib.getChangelogAddress("MCD_PSM_USDC_A");
+    address immutable internal ESM                           = DssExecLib.getChangelogAddress("MCD_ESM");
     address internal immutable MCD_VAT                       = DssExecLib.vat();
     address internal immutable MCD_JUG                       = DssExecLib.jug();
     address internal immutable MCD_SPOT                      = DssExecLib.spotter();
@@ -178,13 +179,13 @@ contract DssSpellAction is DssAction {
         // Allow RWA014 Join to modify Vat registry
         DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA014_A);
 
-        // 1m debt ceiling
+        // 500m debt ceiling
         DssExecLib.increaseIlkDebtCeiling(ilk, RWA014_A_LINE, /* _global = */ true);
 
         // Set price feed for RWA014
         DssExecLib.setContract(MCD_SPOT, ilk, "pip", pip);
 
-        // Set collateralization ratio
+        // Set minimum collateralization ratio
         DssExecLib.setIlkLiquidationRatio(ilk, RWA014_A_MAT);
 
         // Poke the spotter to pull in a price
@@ -193,11 +194,11 @@ contract DssSpellAction is DssAction {
         // Give the urn permissions on the join adapter
         DssExecLib.authorize(MCD_JOIN_RWA014_A, RWA014_A_URN);
 
-        // MCD_PAUSE_PROXY and Monetalis permission on URN
+        // MCD_PAUSE_PROXY and OPERATOR permission on URN
         RwaUrnLike(RWA014_A_URN).hope(address(this));
         RwaUrnLike(RWA014_A_URN).hope(address(RWA014_A_OPERATOR));
 
-        // MCD_PAUSE_PROXY and Monetalis permission on RWA014_A_OUTPUT_CONDUIT
+        // MCD_PAUSE_PROXY and OPERATOR permission on RWA014_A_OUTPUT_CONDUIT
         RwaOutputConduitLike(RWA014_A_OUTPUT_CONDUIT).hope(address(this));
         RwaOutputConduitLike(RWA014_A_OUTPUT_CONDUIT).mate(address(this));
         RwaOutputConduitLike(RWA014_A_OUTPUT_CONDUIT).hope(RWA014_A_OPERATOR);
@@ -207,13 +208,13 @@ contract DssSpellAction is DssAction {
         // Set "quitTo" address for RWA014_A_OUTPUT_CONDUIT
         RwaOutputConduitLike(RWA014_A_OUTPUT_CONDUIT).file("quitTo", RWA014_A_URN);
 
-        // MCD_PAUSE_PROXY and Monetalis permission on RWA014_A_INPUT_CONDUIT_URN
+        // MCD_PAUSE_PROXY and OPERATOR permission on RWA014_A_INPUT_CONDUIT_URN
         RwaInputConduitLike(RWA014_A_INPUT_CONDUIT_URN).mate(address(this));
         RwaInputConduitLike(RWA014_A_INPUT_CONDUIT_URN).mate(RWA014_A_OPERATOR);
         // Set "quitTo" address for RWA014_A_INPUT_CONDUIT_URN
         RwaInputConduitLike(RWA014_A_INPUT_CONDUIT_URN).file("quitTo", RWA014_A_COINBASE_CUSTODY);
 
-        // MCD_PAUSE_PROXY and Monetalis permission on RWA014_A_INPUT_CONDUIT_JAR
+        // MCD_PAUSE_PROXY and OPERATOR permission on RWA014_A_INPUT_CONDUIT_JAR
         RwaInputConduitLike(RWA014_A_INPUT_CONDUIT_JAR).mate(address(this));
         RwaInputConduitLike(RWA014_A_INPUT_CONDUIT_JAR).mate(RWA014_A_OPERATOR);
         // Set "quitTo" address for RWA014_A_INPUT_CONDUIT_JAR
@@ -257,7 +258,7 @@ contract DssSpellAction is DssAction {
         // ---------- Starknet ----------
         // Increase Starknet Bridge Limit from 1,000,000 DAI to 5,000,000 DAI
         // Forum: https://forum.makerdao.com/t/april-26th-2023-spell-starknet-bridge-limit/20589
-        StarknetLike(STARKNET_DAI_BRIDGE).setCeiling(5_000_000 * WAD);
+        StarknetLike(STARKNET_DAI_BRIDGE).setCeiling(5 * MILLION * WAD);
 
         // ---------- Risk Parameters Changes (Stability Fee & DC-IAM) ----------
         // Poll: https://vote.makerdao.com/polling/QmYFfRuR#poll-detail
@@ -303,6 +304,12 @@ contract DssSpellAction is DssAction {
         // Reduce the WBTC-C gap by 10 million DAI from 20 million DAI to 10 million DAI.
         DssExecLib.setIlkAutoLineParameters("WBTC-C", 500 * MILLION, 10 * MILLION, 24 hours);
 
+        // ----- Additional ESM authorization fix -----
+        DssExecLib.authorize(MCD_JOIN_RWA014_A, ESM);
+        DssExecLib.authorize(RWA014_A_URN, ESM);
+        DssExecLib.authorize(RWA014_A_OUTPUT_CONDUIT, ESM);
+        DssExecLib.authorize(RWA014_A_INPUT_CONDUIT_URN, ESM);
+        DssExecLib.authorize(RWA014_A_INPUT_CONDUIT_JAR, ESM);
 
         // Bump the chainlog
         DssExecLib.setChangelogVersion("1.14.12");

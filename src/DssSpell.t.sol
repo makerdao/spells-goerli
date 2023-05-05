@@ -46,6 +46,7 @@ interface RwaLiquidationOracleLike {
 }
 
 interface RwaUrnLike {
+    function wards(address) external view returns (uint256);
     function can(address) external view returns (uint256);
     function gemJoin() external view returns (GemAbstract);
     function lock(uint256) external;
@@ -55,6 +56,7 @@ interface RwaUrnLike {
 }
 
 interface RwaOutputConduitLike {
+    function wards(address) external view returns (uint256);
     function can(address) external view returns (uint256);
     function may(address) external view returns (uint256);
     function gem() external view returns (GemAbstract);
@@ -524,6 +526,7 @@ contract DssSpellTest is DssSpellTestBase {
     address RWA014_A_OPERATOR                  = addr.addr("RWA014_A_OPERATOR");
     address RWA014_A_COINBASE_CUSTODY          = addr.addr("RWA014_A_COINBASE_CUSTODY");
     
+    address ESM                                = addr.addr("MCD_ESM");
     RwaLiquidationOracleLike oracle            = RwaLiquidationOracleLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
     GemAbstract          rwagem_014            = GemAbstract(addr.addr("RWA014"));
@@ -540,24 +543,28 @@ contract DssSpellTest is DssSpellTestBase {
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
+        assertEq(rwaconduitout_014.wards(ESM), 1, "OutputConduit/ward-esm-not-set");
         assertEq(rwaconduitout_014.can(pauseProxy), 1, "OutputConduit/pause-proxy-not-operator");
         assertEq(rwaconduitout_014.can(RWA014_A_OPERATOR), 1, "OutputConduit/monetalis-not-operator");
         assertEq(rwaconduitout_014.may(pauseProxy), 1, "OutputConduit/pause-proxy-not-mate");
         assertEq(rwaconduitout_014.may(RWA014_A_OPERATOR), 1, "OutputConduit/monetalis-not-mate");
-        assertEq(rwaconduitout_014.quitTo(), address(rwaurn_014), "OutputConduit/quit-to-not-urn");
-        
+        assertEq(rwaconduitout_014.quitTo(), address(rwaurn_014), "OutputConduit/quit-to-not-urn");     
         assertEq(rwaconduitout_014.bud(RWA014_A_COINBASE_CUSTODY), 1, "OutputConduit/coinbase-custody-not-whitelisted-for-pick");
 
+        assertEq(rwaconduitinurn_014.wards(ESM), 1, "InputConduitUrn/ward-esm-not-set");
         assertEq(rwaconduitinurn_014.may(pauseProxy), 1, "InputConduitUrn/pause-proxy-not-mate");
         assertEq(rwaconduitinurn_014.may(RWA014_A_OPERATOR), 1, "InputConduitUrn/monetalis-not-mate");
         assertEq(rwaconduitinurn_014.quitTo(), RWA014_A_COINBASE_CUSTODY, "InputConduitUrn/quit-to-not-set");
 
+        assertEq(rwaconduitinjar_014.wards(ESM), 1, "InputConduitJar/ward-esm-not-set");
         assertEq(rwaconduitinjar_014.may(pauseProxy), 1, "InputConduitJar/pause-proxy-not-mate");
         assertEq(rwaconduitinjar_014.may(RWA014_A_OPERATOR), 1, "InputConduitJar/monetalis-not-mate");
         assertEq(rwaconduitinjar_014.quitTo(), RWA014_A_COINBASE_CUSTODY, "InputConduitJar/quit-to-not-set");
 
         assertEq(rwajoin_014.wards(address(rwaurn_014)), 1, "Join/ward-urn-not-set");
+        assertEq(rwajoin_014.wards(ESM), 1, "Join/ward-esm-not-set");
 
+        assertEq(rwaurn_014.wards(ESM), 1, "Urn/ward-esm-not-set");
         assertEq(rwaurn_014.can(pauseProxy), 1, "Urn/pause-proxy-not-hoped");
         assertEq(rwaurn_014.can(RWA014_A_OPERATOR), 1, "Urn/operator-not-hoped");
     }
