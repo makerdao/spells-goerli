@@ -519,10 +519,6 @@ contract DssSpellTest is DssSpellTestBase {
 
     // RWA tests
 
-    function sub(uint x, uint y) internal pure returns (uint z) {
-        require((z = x - y) <= x, "sub-underflow");
-    }
-
     address RWA014_A_OPERATOR                  = addr.addr("RWA014_A_OPERATOR");
     address RWA014_A_COINBASE_CUSTODY          = addr.addr("RWA014_A_COINBASE_CUSTODY");
     
@@ -536,7 +532,7 @@ contract DssSpellTest is DssSpellTestBase {
     GemAbstract          psmGem                = rwaconduitout_014.gem();
     RwaInputConduitLike  rwaconduitinurn_014   = RwaInputConduitLike(addr.addr("RWA014_A_INPUT_CONDUIT_URN"));
     RwaInputConduitLike  rwaconduitinjar_014   = RwaInputConduitLike(addr.addr("RWA014_A_INPUT_CONDUIT_JAR"));
-    uint256 daiPsmGemDiffDecimals              = 10**sub(dai.decimals(), psmGem.decimals());
+    uint256 daiPsmGemDiffDecimals              = 10 ** (dai.decimals() - psmGem.decimals());
 
     function testRWA014_INTEGRATION_CONDUITS_SETUP() public {
         _vote(address(spell));
