@@ -82,7 +82,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkStabilityFee("RETH-A", ZERO_PT_SEVEN_FIVE_PCT_RATE, true);
 
         // Increase CRVV1ETHSTETH-A Stability Fee by 0.25% from 1.5% to 1.75%.
-        // NOTE: ignore in goerli
+        // NOTE: ignore in goerli because CRVV1ETHSTETH-A doesn't exist there.
         // DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", ONE_SEVENTY_FIVE_PCT_RATE, true);
 
 
@@ -102,9 +102,6 @@ contract DssSpellAction is DssAction {
 
         // Reduce the WBTC-C gap by 10 million DAI from 20 million DAI to 10 million DAI.
         DssExecLib.setIlkAutoLineParameters("WBTC-C", 500 * MILLION, 10 * MILLION, 24 hours);
-
-        // Bump the chainlog
-        DssExecLib.setChangelogVersion("1.14.12");
     }
 }
 
