@@ -45,8 +45,8 @@ contract DssSpellAction is DssAction {
 
     uint256 internal constant ZERO_PT_SEVEN_FIVE_PCT_RATE    = 1000000000236936036262880196;
     uint256 internal constant ONE_PCT_RATE                   = 1000000000315522921573372069;
-    uint256 internal constant ONE_PT_SEVENTY_FIVE_PCT_RATE   = 1000000000550121712943459312;
-    uint256 internal constant THREE_PT_TWENTY_FIVE_PCT_RATE  = 1000000001014175731521720677;
+    uint256 internal constant ONE_PT_SEVEN_FIVE_PCT_RATE     = 1000000000550121712943459312;
+    uint256 internal constant THREE_PT_TWO_FIVE_PCT_RATE     = 1000000001014175731521720677;
 
     uint256 internal constant WAD                            = 10 ** 18;
     uint256 internal constant MILLION                        = 10 ** 6;
@@ -64,16 +64,16 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/out-of-scope-proposed-risk-parameters-changes-stability-fee-dc-iam/20564
 
         // Increase ETH-A Stability Fee by 0.25% from 1.5% to 1.75%.
-        DssExecLib.setIlkStabilityFee("ETH-A", ONE_PT_SEVENTY_FIVE_PCT_RATE, true);
+        DssExecLib.setIlkStabilityFee("ETH-A", ONE_PT_SEVEN_FIVE_PCT_RATE, true);
 
         // Increase ETH-B Stability Fee by 0.25% from 3% to 3.25%.
-        DssExecLib.setIlkStabilityFee("ETH-B", THREE_PT_TWENTY_FIVE_PCT_RATE, true);
+        DssExecLib.setIlkStabilityFee("ETH-B", THREE_PT_TWO_FIVE_PCT_RATE, true);
 
         // Increase ETH-C Stability Fee by 0.25% from 0.75% to 1%.
         DssExecLib.setIlkStabilityFee("ETH-C", ONE_PCT_RATE, true);
 
         // Increase WSTETH-A Stability Fee by 0.25% from 1.5% to 1.75%.
-        DssExecLib.setIlkStabilityFee("WSTETH-A", ONE_PT_SEVENTY_FIVE_PCT_RATE, true);
+        DssExecLib.setIlkStabilityFee("WSTETH-A", ONE_PT_SEVEN_FIVE_PCT_RATE, true);
 
         // Increase WSTETH-B Stability Fee by 0.25% from 0.75% to 1%.
         DssExecLib.setIlkStabilityFee("WSTETH-B", ONE_PCT_RATE, true);
