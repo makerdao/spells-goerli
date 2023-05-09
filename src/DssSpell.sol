@@ -60,7 +60,7 @@ contract DssSpellAction is DssAction {
         StarknetLike(STARKNET_DAI_BRIDGE).setCeiling(5 * MILLION * WAD);
 
         // ---------- Risk Parameters Changes (Stability Fee & DC-IAM) ----------
-        // Poll: https://vote.makerdao.com/polling/QmYFfRuR#poll-detail
+        // Poll:  https://vote.makerdao.com/polling/QmYFfRuR#poll-detail
         // Forum: https://forum.makerdao.com/t/out-of-scope-proposed-risk-parameters-changes-stability-fee-dc-iam/20564
 
         // Increase ETH-A Stability Fee by 0.25% from 1.5% to 1.75%.
