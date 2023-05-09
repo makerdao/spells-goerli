@@ -83,7 +83,7 @@ contract DssSpellAction is DssAction {
 
         // Increase CRVV1ETHSTETH-A Stability Fee by 0.25% from 1.5% to 1.75%.
         // NOTE: ignore in goerli because CRVV1ETHSTETH-A doesn't exist there.
-        // DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", ONE_SEVENTY_FIVE_PCT_RATE, true);
+        // DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", ONE_PT_SEVEN_FIVE_PCT_RATE, true);
 
 
         // Increase the WSTETH-A gap by 15 million DAI from 15 million DAI to 30 million DAI.
