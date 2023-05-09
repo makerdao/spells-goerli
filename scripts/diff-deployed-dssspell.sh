@@ -2,6 +2,8 @@
 
 set -e
 
+[[ "$ETHERSCAN_API_KEY" ]] || { echo -e "Please set ETHERSCAN_API_KEY"; exit 1; }
+
 if [[ "$1" =~  ^0x[0-9a-fA-F]{40}$ ]]; then
     deployed_spell_address=$1
 else
@@ -17,7 +19,7 @@ spell_source="out/flat.sol"
 etherscan_source="out/etherscan.sol"
 
 # Download the deployed spell source code from Etherscan API
-curl -s "https://api-goerli.etherscan.io/api?module=contract&action=getsourcecode&address=${deployed_spell_address}" \
+curl -s "https://api-goerli.etherscan.io/api?module=contract&action=getsourcecode&address=${deployed_spell_address}&apikey=${ETHERSCAN_API_KEY}" \
     | jq -r '.result[0].SourceCode' > $etherscan_source
 
 # Compare the downloaded source code with the local spell
