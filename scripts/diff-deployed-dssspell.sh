@@ -17,7 +17,7 @@ spell_source="out/flat.sol"
 etherscan_source="out/etherscan.sol"
 
 # Download the deployed spell source code from Etherscan API
-curl -s "https://api.etherscan.io/api?module=contract&action=getsourcecode&address=${deployed_spell_address}" \
+curl -s "https://api-goerli.etherscan.io/api?module=contract&action=getsourcecode&address=${deployed_spell_address}" \
     | jq -r '.result[0].SourceCode' > $etherscan_source
 
 # Compare the downloaded source code with the local spell
