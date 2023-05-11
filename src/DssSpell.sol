@@ -19,15 +19,11 @@ pragma solidity 0.8.16;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-interface StarknetLike {
-    function setCeiling(uint256 _ceiling) external;
-}
-
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
-    // Turn office hours off
+    // Always keep office hours off on goerli
     function officeHours() public pure override returns (bool) {
         return false;
     }
@@ -42,66 +38,97 @@ contract DssSpellAction is DssAction {
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
     // uint256 internal constant X_PCT_RATE      = ;
-
-    uint256 internal constant ZERO_PT_SEVEN_FIVE_PCT_RATE    = 1000000000236936036262880196;
-    uint256 internal constant ONE_PCT_RATE                   = 1000000000315522921573372069;
-    uint256 internal constant ONE_PT_SEVEN_FIVE_PCT_RATE     = 1000000000550121712943459312;
-    uint256 internal constant THREE_PT_TWO_FIVE_PCT_RATE     = 1000000001014175731521720677;
-
-    uint256 internal constant WAD                            = 10 ** 18;
-    uint256 internal constant MILLION                        = 10 ** 6;
-
-    address internal immutable STARKNET_DAI_BRIDGE           = DssExecLib.getChangelogAddress("STARKNET_DAI_BRIDGE");
+    uint256 internal constant RAY       = 10 ** 27;
+    address internal immutable MCD_SPOT = DssExecLib.spotter();
 
     function actions() public override {
-        // ---------- Starknet ----------
-        // Increase L1 Starknet Bridge Limit from 1,000,000 DAI to 5,000,000 DAI
-        // Forum: https://forum.makerdao.com/t/april-26th-2023-spell-starknet-bridge-limit/20589
-        StarknetLike(STARKNET_DAI_BRIDGE).setCeiling(5 * MILLION * WAD);
+        // --------- Collateral Offboardings ---------
+        // Poll: https://vote.makerdao.com/polling/QmPwHhLT#poll-detail
+        // Forum: https://forum.makerdao.com/t/decentralized-collateral-scope-parameter-changes-1-april-2023/20302
 
-        // ---------- Risk Parameters Changes (Stability Fee & DC-IAM) ----------
-        // Poll:  https://vote.makerdao.com/polling/QmYFfRuR#poll-detail
-        // Forum: https://forum.makerdao.com/t/out-of-scope-proposed-risk-parameters-changes-stability-fee-dc-iam/20564
+        // Set Liquidation Penalty (chop) to 0%.
+        DssExecLib.setIlkLiquidationPenalty("YFI-A", 0);
+        // Set Flat Kick Incentive (tip) to 0.
+        // We are using low level methods because DssExecLib only allows setting `tip < WAD`: https://github.com/makerdao/dss-exec-lib/blob/69b658f35d8618272cd139dfc18c5713caf6b96b/src/DssExecLib.sol#L767
+        DssExecLib.setValue(DssExecLib.clip("YFI-A"), "tip", 0);
+        // Set Proportional Kick Incentive (chip) to 0.
+        DssExecLib.setKeeperIncentivePercent("YFI-A", 0);
+        // Set Liquidation Ratio (mat) to 10,000%.
+        // We are using low level methods because DssExecLib only allows setting `mat < 1000%`: https://github.com/makerdao/dss-exec-lib/blob/69b658f35d8618272cd139dfc18c5713caf6b96b/src/DssExecLib.sol#L717
+        DssExecLib.setValue(MCD_SPOT, "YFI-A", "mat", 100 * RAY);
+        // Update spotter price
+        DssExecLib.updateCollateralPrice("YFI-A");
 
-        // Increase ETH-A Stability Fee by 0.25% from 1.5% to 1.75%.
-        DssExecLib.setIlkStabilityFee("ETH-A", ONE_PT_SEVEN_FIVE_PCT_RATE, true);
+        // Set Liquidation Penalty (chop) to 0%.
+        DssExecLib.setIlkLiquidationPenalty("LINK-A", 0);
+        // Set Flat Kick Incentive (tip) to 0.
+        // We are using low level methods because DssExecLib only allows setting `tip < WAD`: https://github.com/makerdao/dss-exec-lib/blob/69b658f35d8618272cd139dfc18c5713caf6b96b/src/DssExecLib.sol#L767
+        DssExecLib.setValue(DssExecLib.clip("LINK-A"), "tip", 0);
+        // Set Proportional Kick Incentive (chip) to 0.
+        DssExecLib.setKeeperIncentivePercent("LINK-A", 0);
+        // Set Liquidation Ratio (mat) to 10,000%.
+        // We are using low level methods because DssExecLib only allows setting `mat < 1000%`: https://github.com/makerdao/dss-exec-lib/blob/69b658f35d8618272cd139dfc18c5713caf6b96b/src/DssExecLib.sol#L717
+        DssExecLib.setValue(MCD_SPOT, "LINK-A", "mat", 100 * RAY);
+        // Update spotter price
+        DssExecLib.updateCollateralPrice("LINK-A");
 
-        // Increase ETH-B Stability Fee by 0.25% from 3% to 3.25%.
-        DssExecLib.setIlkStabilityFee("ETH-B", THREE_PT_TWO_FIVE_PCT_RATE, true);
+        // Set Liquidation Penalty (chop) to 0%.
+        DssExecLib.setIlkLiquidationPenalty("MATIC-A", 0);
+        // Set Flat Kick Incentive (tip) to 0.
+        // We are using low level methods because DssExecLib only allows setting `tip < WAD`: https://github.com/makerdao/dss-exec-lib/blob/69b658f35d8618272cd139dfc18c5713caf6b96b/src/DssExecLib.sol#L767
+        DssExecLib.setValue(DssExecLib.clip("MATIC-A"), "tip", 0);
+        // Set Proportional Kick Incentive (chip) to 0.
+        DssExecLib.setKeeperIncentivePercent("MATIC-A", 0);
+        // Set Liquidation Ratio (mat) to 10,000%.
+        // We are using low level methods because DssExecLib only allows setting `mat < 1000%`: https://github.com/makerdao/dss-exec-lib/blob/69b658f35d8618272cd139dfc18c5713caf6b96b/src/DssExecLib.sol#L717
+        DssExecLib.setValue(MCD_SPOT, "MATIC-A", "mat", 100 * RAY);
+        // Update spotter price
+        DssExecLib.updateCollateralPrice("MATIC-A");
 
-        // Increase ETH-C Stability Fee by 0.25% from 0.75% to 1%.
-        DssExecLib.setIlkStabilityFee("ETH-C", ONE_PCT_RATE, true);
+        // Set Liquidation Penalty (chop) to 0%.
+        DssExecLib.setIlkLiquidationPenalty("UNIV2USDCETH-A", 0);
+        // Set Flat Kick Incentive (tip) to 0.
+        // We are using low level methods because DssExecLib only allows setting `tip < WAD`: https://github.com/makerdao/dss-exec-lib/blob/69b658f35d8618272cd139dfc18c5713caf6b96b/src/DssExecLib.sol#L767
+        DssExecLib.setValue(DssExecLib.clip("UNIV2USDCETH-A"), "tip", 0);
+        // Set Proportional Kick Incentive (chip) to 0.
+        DssExecLib.setKeeperIncentivePercent("UNIV2USDCETH-A", 0);
+        // Set Liquidation Ratio (mat) to 10,000%.
+        // We are using low level methods because DssExecLib only allows setting `mat < 1000%`: https://github.com/makerdao/dss-exec-lib/blob/69b658f35d8618272cd139dfc18c5713caf6b96b/src/DssExecLib.sol#L717
+        DssExecLib.setValue(MCD_SPOT, "UNIV2USDCETH-A", "mat", 100 * RAY);
+        // Update spotter price
+        DssExecLib.updateCollateralPrice("UNIV2USDCETH-A");
 
-        // Increase WSTETH-A Stability Fee by 0.25% from 1.5% to 1.75%.
-        DssExecLib.setIlkStabilityFee("WSTETH-A", ONE_PT_SEVEN_FIVE_PCT_RATE, true);
+        // --------- Delegate Compensation MKR Transfers ---------
+        // Poll: N/A
+        // Forum: https://forum.makerdao.com/t/constitutional-delegate-compensation-april-2023/20804
+        // NOTE: ignore in goerli
+        // 0xDefensor                  - 23.8 MKR - 0x9542b441d65B6BF4dDdd3d4D2a66D8dCB9EE07a9
+        // BONAPUBLICA                 - 23.8 MKR - 0x167c1a762B08D7e78dbF8f24e5C3f1Ab415021D3
+        // Frontier Research           - 23.8 MKR - 0xa2d55b89654079987cf3985aeff5a7bd44da15a8
+        // GFX Labs                    - 23.8 MKR - 0x9b68c14e936104e9a7a24c712beecdc220002984
+        // QGov                        - 23.8 MKR - 0xB0524D8707F76c681901b782372EbeD2d4bA28a6
+        // TRUE NAME                   - 23.8 MKR - 0x612f7924c367575a0edf21333d96b15f1b345a5d
+        // vigilant                    - 23.8 MKR - 0x2474937cB55500601BCCE9f4cb0A0A72Dc226F61
+        // CodeKnight                  - 5.95 MKR - 0xf6006d4cF95d6CB2CD1E24AC215D5BF3bca81e7D
+        // Flip Flop Flap Delegate LLC - 5.95 MKR - 0x3d9751EFd857662f2B007A881e05CfD1D7833484
+        // PBG                         - 5.95 MKR - 0x8D4df847dB7FfE0B46AF084fE031F7691C6478c2
+        // UPMaker                     - 5.95 MKR - 0xbb819df169670dc71a16f58f55956fe642cc6bcd
 
-        // Increase WSTETH-B Stability Fee by 0.25% from 0.75% to 1%.
-        DssExecLib.setIlkStabilityFee("WSTETH-B", ONE_PCT_RATE, true);
+        // --------- DAI Budget Streams ---------
+        // Poll: https://vote.makerdao.com/polling/Qmbndmkr#poll-detail
+        // Forum: https://forum.makerdao.com/t/mip101-the-maker-constitution/19621
+        // NOTE: ignore in goerli
 
-        // Increase RETH-A Stability Fee by 0.25% from 0.5% to 0.75%.
-        DssExecLib.setIlkStabilityFee("RETH-A", ZERO_PT_SEVEN_FIVE_PCT_RATE, true);
+        // Mip: https://mips.makerdao.com/mips/details/MIP107#6-1-governance-security-engineering-budget
+        // Governance Security Engineering Budget | 2023-05-01 00:00:00 to 2024-04-30 23:59:59 | 2,200,000 DAI | 0x569fAD613887ddd8c1815b56A00005BCA7FDa9C0
 
-        // Increase CRVV1ETHSTETH-A Stability Fee by 0.25% from 1.5% to 1.75%.
-        // NOTE: ignore in goerli because CRVV1ETHSTETH-A doesn't exist there.
-        // DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", ONE_PT_SEVEN_FIVE_PCT_RATE, true);
+        // Mip: https://mips.makerdao.com/mips/details/MIP107#7-1-multichain-engineering-budget
+        // Multichain Engineering Budget          | 2023-05-01 00:00:00 to 2024-04-30 23:59:59 | 2,300,000 DAI | 0x868B44e8191A2574334deB8E7efA38910df941FA
 
-
-        // Increase the WSTETH-A gap by 15 million DAI from 15 million DAI to 30 million DAI.
-        // Increase the WSTETH-A ttl by 21,600 seconds from 21,600 seconds to 43,200 seconds
-        DssExecLib.setIlkAutoLineParameters("WSTETH-A", 500 * MILLION, 30 * MILLION, 12 hours);
-
-        // Increase the WSTETH-B gap by 15 million DAI from 15 million DAI to 30 million DAI.
-        // Increase the WSTETH-B ttl by 28,800 seconds from 28,800 seconds to 57,600 seconds.
-        DssExecLib.setIlkAutoLineParameters("WSTETH-B", 500 * MILLION, 30 * MILLION, 16 hours);
-
-        // Reduce the WBTC-A gap by 10 million DAI from 20 million DAI to 10 million DAI.
-        DssExecLib.setIlkAutoLineParameters("WBTC-A", 500 * MILLION, 10 * MILLION, 24 hours);
-
-        // Reduce the WBTC-B gap by 5 million DAI from 10 million DAI to 5 million DAI.
-        DssExecLib.setIlkAutoLineParameters("WBTC-B", 250 * MILLION, 5 * MILLION, 24 hours);
-
-        // Reduce the WBTC-C gap by 10 million DAI from 20 million DAI to 10 million DAI.
-        DssExecLib.setIlkAutoLineParameters("WBTC-C", 500 * MILLION, 10 * MILLION, 24 hours);
+        // --------- Data Insights MKR Transfer ---------
+        // Mip: https://mips.makerdao.com/mips/details/MIP40c3SP64#mkr-vesting
+        // NOTE: ignore in goerli
+        // DIN-001 - 103.16 MKR - 0x7327Aed0Ddf75391098e8753512D8aEc8D740a1F
     }
 }
 
