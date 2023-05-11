@@ -39,6 +39,7 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
     uint256 internal constant RAY       = 10 ** 27;
+
     address internal immutable MCD_SPOT = DssExecLib.spotter();
 
     function actions() public override {
@@ -49,8 +50,7 @@ contract DssSpellAction is DssAction {
         // Set Liquidation Penalty (chop) to 0%.
         DssExecLib.setIlkLiquidationPenalty("YFI-A", 0);
         // Set Flat Kick Incentive (tip) to 0.
-        // We are using low level methods because DssExecLib only allows setting `tip < WAD`: https://github.com/makerdao/dss-exec-lib/blob/69b658f35d8618272cd139dfc18c5713caf6b96b/src/DssExecLib.sol#L767
-        DssExecLib.setValue(DssExecLib.clip("YFI-A"), "tip", 0);
+        DssExecLib.setKeeperIncentiveFlatRate("YFI-A", 0);
         // Set Proportional Kick Incentive (chip) to 0.
         DssExecLib.setKeeperIncentivePercent("YFI-A", 0);
         // Set Liquidation Ratio (mat) to 10,000%.
@@ -62,8 +62,7 @@ contract DssSpellAction is DssAction {
         // Set Liquidation Penalty (chop) to 0%.
         DssExecLib.setIlkLiquidationPenalty("LINK-A", 0);
         // Set Flat Kick Incentive (tip) to 0.
-        // We are using low level methods because DssExecLib only allows setting `tip < WAD`: https://github.com/makerdao/dss-exec-lib/blob/69b658f35d8618272cd139dfc18c5713caf6b96b/src/DssExecLib.sol#L767
-        DssExecLib.setValue(DssExecLib.clip("LINK-A"), "tip", 0);
+        DssExecLib.setKeeperIncentiveFlatRate("LINK-A", 0);
         // Set Proportional Kick Incentive (chip) to 0.
         DssExecLib.setKeeperIncentivePercent("LINK-A", 0);
         // Set Liquidation Ratio (mat) to 10,000%.
@@ -75,8 +74,7 @@ contract DssSpellAction is DssAction {
         // Set Liquidation Penalty (chop) to 0%.
         DssExecLib.setIlkLiquidationPenalty("MATIC-A", 0);
         // Set Flat Kick Incentive (tip) to 0.
-        // We are using low level methods because DssExecLib only allows setting `tip < WAD`: https://github.com/makerdao/dss-exec-lib/blob/69b658f35d8618272cd139dfc18c5713caf6b96b/src/DssExecLib.sol#L767
-        DssExecLib.setValue(DssExecLib.clip("MATIC-A"), "tip", 0);
+        DssExecLib.setKeeperIncentiveFlatRate("MATIC-A", 0);
         // Set Proportional Kick Incentive (chip) to 0.
         DssExecLib.setKeeperIncentivePercent("MATIC-A", 0);
         // Set Liquidation Ratio (mat) to 10,000%.
@@ -88,8 +86,7 @@ contract DssSpellAction is DssAction {
         // Set Liquidation Penalty (chop) to 0%.
         DssExecLib.setIlkLiquidationPenalty("UNIV2USDCETH-A", 0);
         // Set Flat Kick Incentive (tip) to 0.
-        // We are using low level methods because DssExecLib only allows setting `tip < WAD`: https://github.com/makerdao/dss-exec-lib/blob/69b658f35d8618272cd139dfc18c5713caf6b96b/src/DssExecLib.sol#L767
-        DssExecLib.setValue(DssExecLib.clip("UNIV2USDCETH-A"), "tip", 0);
+        DssExecLib.setKeeperIncentiveFlatRate("UNIV2USDCETH-A", 0);
         // Set Proportional Kick Incentive (chip) to 0.
         DssExecLib.setKeeperIncentivePercent("UNIV2USDCETH-A", 0);
         // Set Liquidation Ratio (mat) to 10,000%.
