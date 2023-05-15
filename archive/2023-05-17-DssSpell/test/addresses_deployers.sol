@@ -35,7 +35,7 @@ contract Deployers {
     address public constant PE_07         = 0xDa0c0De020F80d43dde58c2653aa73d28Df1fBe1;
     address public constant PE_08         = 0xC1E6d8136441FC66612Df3584007f7CB68765e5D;
     address public constant PE_09         = 0xa22A61c233d7242728b4255420063c92fc1AEBb9;
-    address public constant PE_10         = 0x92723e0bF280942B98bf2d1e832Bde9A3Bd2F2c2; 
+    address public constant PE_10         = 0x92723e0bF280942B98bf2d1e832Bde9A3Bd2F2c2;
     address public constant CES_01        = 0x9956fca5a8994737f124c481cEDC6BB3dc5BF010;
     address public constant CES_02        = 0xc0b362cbb0117Ec6A4b589f744d4dECb2768A2eB;
     address public constant CES_03        = 0xb27B6fa77D7FBf3C1BD34B0f7DA59b39D3DB0f7e;
@@ -44,6 +44,7 @@ contract Deployers {
     address public constant STARKNET_02   = 0x38F8e3b67FA8329FE4BaA1775e5480807f78887B;
     address public constant CENTRIFUGE_01 = 0x9956fca5a8994737f124c481cEDC6BB3dc5BF010;
     address public constant CENTRIFUGE_02 = 0x0A735602a357802f553113F5831FE2fbf2F0E2e0;
+    address public constant SIDESTREAM    = 0x47f1aaC8c1BDD49B0c2438c1754518695E9f08d3;
 
     constructor() {
         addr = [
