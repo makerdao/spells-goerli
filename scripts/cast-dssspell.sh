@@ -40,6 +40,7 @@ else
     if [[ "$(echo "$deposits < $target" | bc)" == 1 ]]; then
         lockAmt=$(echo "$target - $deposits" | bc)
         [[ "$(echo "$(cast call "$MCD_GOV" 'balanceOf(address)(uint256)' "$ETH_FROM") >= $lockAmt" | bc)" == 1 ]] || { echo "$ETH_FROM: Insufficient MKR Balance"; exit 1; }
+
         castSend "$MCD_GOV" 'approve(address,uint256)' "$MCD_ADM" "$lockAmt"
         castSend "$MCD_ADM" 'lock(uint256)' "$lockAmt"
 
