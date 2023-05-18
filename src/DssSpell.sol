@@ -23,22 +23,22 @@ import "dss-interfaces/dss/GemJoinAbstract.sol";
 import "dss-interfaces/ERC/GemAbstract.sol";
 
 interface Initializable {
-    function init(bytes32) external;
+    function init(bytes32 ilk) external;
 }
 
 interface RwaLiquidationLike {
-    function ilks(bytes32) external view returns (string memory, address, uint48, uint48);
-    function init(bytes32, uint256, string calldata, uint48) external;
+    function ilks(bytes32) external view returns (string memory doc, address pip, uint48 tau, uint48 toc);
+    function init(bytes32 ilk, uint256 val, string calldata doc, uint48 tau) external;
 }
 
 interface RwaUrnLike {
-    function lock(uint256) external;
+    function lock(uint256 wad) external;
     function vat() external view returns (address);
     function jug() external view returns (address);
     function gemJoin() external view returns (address);
     function daiJoin() external view returns (address);
     function outputConduit() external view returns (address);
-    function hope(address) external;
+    function hope(address usr) external;
 }
 
 interface RwaJarLike {
@@ -52,7 +52,7 @@ interface RwaInputConduitLike {
     function gem() external view returns (address);
     function psm() external view returns (address);
     function to() external view returns (address);
-    function mate(address) external;
+    function mate(address usr) external;
     function file(bytes32 what, address data) external;
 }
 
@@ -61,9 +61,9 @@ interface RwaOutputConduitLike {
     function gem() external view returns (address);
     function psm() external view returns (address);
     function file(bytes32 what, address data) external;
-    function hope(address) external;
-    function mate(address) external;
-    function kiss(address) external;
+    function hope(address usr) external;
+    function mate(address usr) external;
+    function kiss(address who) external;
 }
 
 contract DssSpellAction is DssAction {
