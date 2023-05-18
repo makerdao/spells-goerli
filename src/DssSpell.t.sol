@@ -79,6 +79,55 @@ interface RwaInputConduitLike {
     function push() external;
 }
 
+interface PoolLike {
+    struct ReserveData {
+        //stores the reserve configuration
+        uint256 configuration;
+        //the liquidity index. Expressed in ray
+        uint128 liquidityIndex;
+        //the current supply rate. Expressed in ray
+        uint128 currentLiquidityRate;
+        //variable borrow index. Expressed in ray
+        uint128 variableBorrowIndex;
+        //the current variable borrow rate. Expressed in ray
+        uint128 currentVariableBorrowRate;
+        //the current stable borrow rate. Expressed in ray
+        uint128 currentStableBorrowRate;
+        //timestamp of last update
+        uint40 lastUpdateTimestamp;
+        //the id of the reserve. Represents the position in the list of the active reserves
+        uint16 id;
+        //aToken address
+        address aTokenAddress;
+        //stableDebtToken address
+        address stableDebtTokenAddress;
+        //variableDebtToken address
+        address variableDebtTokenAddress;
+        //address of the interest rate strategy
+        address interestRateStrategyAddress;
+        //the current treasury balance, scaled
+        uint128 accruedToTreasury;
+        //the outstanding unbacked aTokens minted through the bridging feature
+        uint128 unbacked;
+        //the outstanding debt borrowed against this asset in isolation mode
+        uint128 isolationModeTotalDebt;
+    }
+    function getReserveData(address asset) external view returns (ReserveData memory);
+    function supply(
+        address asset,
+        uint256 amount,
+        address onBehalfOf,
+        uint16 referralCode
+    ) external;
+    function borrow(
+        address asset,
+        uint256 amount,
+        uint256 interestRateMode,
+        uint16 referralCode,
+        address onBehalfOf
+    ) external;
+}
+
 contract DssSpellTest is DssSpellTestBase {
     string         config;
     RootDomain     rootDomain;
@@ -896,5 +945,44 @@ contract DssSpellTest is DssSpellTestBase {
         (uint256 ink, uint256 art) = vat.urns("RWA014-A", address(rwaurn_014));
         assertEq(art, 0, "RWA014/bad-art-after-spell");
         assertEq(ink, lockAmount, "RWA014/bad-ink-after-spell"); // Whole unit of collateral is locked
+    }
+
+    function testSparkLendCollateralOnboarding() public {
+        // Configuration masking parameters pulled from https://github.com/aave/aave-v3-core/blob/62dfda56bd884db2c291560c03abae9727a7635e/contracts/protocol/libraries/configuration/ReserveConfiguration.sol
+        uint256 BORROWABLE_IN_ISOLATION_MASK = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFFFFFFFFFFFFFFF;
+        PoolLike pool = PoolLike(0x26ca51Af4506DE7a6f0785D20CD776081a05fF6d);
+        address token = addr.addr("GNO");
+
+        PoolLike.ReserveData memory daiReserveData = pool.getReserveData(address(dai));
+        PoolLike.ReserveData memory tokenReserveData = pool.getReserveData(token);
+        assertEq((daiReserveData.configuration & ~BORROWABLE_IN_ISOLATION_MASK) != 0, false);
+        assertTrue(tokenReserveData.aTokenAddress == address(0));   // Not set yet
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        daiReserveData = pool.getReserveData(address(dai));
+        tokenReserveData = pool.getReserveData(token);
+        assertEq((daiReserveData.configuration & ~BORROWABLE_IN_ISOLATION_MASK) != 0, true);
+        assertTrue(tokenReserveData.aTokenAddress != address(0));
+        assertTrue(tokenReserveData.interestRateStrategyAddress, 0xE7Fe5041ec55c229fb41fD9183E5bc24B5E34959);
+
+        // Integration test - take out a maximum loan
+
+        // Make sure there is enough liquidity to borrow
+        deal(address(dai), address(123), 50 * MILLION * WAD);
+        vm.prank(address(123)); dai.approve(address(pool), type(uint256).max);
+        vm.prank(address(123)); pool.supply(address(dai), 50 * MILLION * WAD, address(123), 0);
+
+        deal(token, address(this), 50 * MILLION * WAD);
+        GemAbstract(token).approve(address(pool), type(uint256).max);
+
+        pool.supply(token, 50 * MILLION * WAD, address(this), 0);
+        pool.borrow(address(dai), 4 * MILLION * WAD, 2, 0, address(this));
+        vm.expectRevert('53');   // 'Debt ceiling is exceeded'
+        pool.borrow(address(dai), 1_100_000 * WAD, 2, 0, address(this));    // Over 5m limit
+        vm.expectRevert('60');   // 'Asset is not borrowable in isolation mode'
+        pool.borrow(0x6E4F1e8d4c5E5E6e2781FD814EE0744cc16Eb352, 1 ether, 2, 0, address(this));  // Can't borrow another asset in isolation mode
     }
 }
