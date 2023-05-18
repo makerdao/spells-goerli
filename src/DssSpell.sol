@@ -112,7 +112,7 @@ contract DssSpellAction is DssAction {
     uint256 internal constant RWA014_A_LINE                  = 500 * MILLION;
     uint256 internal constant RWA014_A_MAT                   = 100_00;
     // Operator address
-    address internal constant RWA014_A_OPERATOR              = address(0); // TODO
+    address internal constant RWA014_A_OPERATOR              = 0x3064D13712338Ee0E092b66Afb3B054F0b7779CB;
     // Custody address
     address internal constant RWA014_A_COINBASE_CUSTODY      = 0x2E5F1f08EBC01d6136c95a40e19D4c64C0be772c;
     // -- RWA014 END --
@@ -257,7 +257,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.authorize(RWA014_A_INPUT_CONDUIT_JAR, ESM);
 
         // --------- Keeper Network Amendments ---------
-        // Poll: https://vote.makerdao.com/polling/QmZZJcCj
+        // Poll: https://vote.makerdao.com/polling/QmZZJcCj#poll-detail
         // NOTE: ignore in goerli
 
         // GELATO    | 1,500 DAI/day | 3 years | Vest Target: 0x0B5a34D084b6A5ae4361de033d1e6255623b41eD | Treasury: 0xbfDC6b9944B7EFdb1e2Bc9D55ae9424a2a55b206
