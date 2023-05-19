@@ -127,6 +127,7 @@ contract DssSpellAction is DssAction {
 
     uint256 internal constant WAD                            = 10 ** 18;
     uint256 internal constant MILLION                        = 10 ** 6;
+    uint256 internal constant DEBT_CEILING_UNITS             = 10 ** 2;
 
     // -- RWA014 MIP21 components --
     address internal constant RWA014                         = 0x22a7440DCfF0E8881Ec93cE519c34C15feB2A09a;
@@ -355,7 +356,7 @@ contract DssSpellAction is DssAction {
                 liquidationThreshold: 2500,
                 liquidationBonus: 11000
             });
-            PoolConfiguratorLike(SPARK_POOL_CONFIGURATOR).setDebtCeiling(token, 5 * MILLION);   // In whole-units
+            PoolConfiguratorLike(SPARK_POOL_CONFIGURATOR).setDebtCeiling(token, 5 * MILLION * DEBT_CEILING_UNITS);
 
             address[] memory tokens = new address[](1);
             tokens[0] = token;
