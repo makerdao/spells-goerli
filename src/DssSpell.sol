@@ -20,6 +20,7 @@ import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 import "dss-interfaces/dss/IlkRegistryAbstract.sol";
 import "dss-interfaces/dss/GemJoinAbstract.sol";
+import "dss-interfaces/dss/MedianAbstract.sol";
 import "dss-interfaces/ERC/GemAbstract.sol";
 
 interface Initializable {
@@ -158,7 +159,8 @@ contract DssSpellAction is DssAction {
     address internal constant SPARK_VARIABLE_DEBT_TOKEN_IMPL = 0xb9E6DBFa4De19CCed908BcbFe1d015190678AB5f;
     address internal constant SPARK_INTEREST_RATE_STRATEGY   = 0xE7Fe5041ec55c229fb41fD9183E5bc24B5E34959;
     address internal constant SPARK_TREASURY                 = 0x0D56700c90a690D8795D6C148aCD94b12932f4E3;
-    address internal constant SPARK_GNO_ORACLE               = ;
+    address internal constant SPARK_GNO_ORACLE               = 0xa2B52104c454D3f6717028783695de985C1CfFdb;
+    address internal constant GNO_MEDIANIZER                 = 0x0cd01b018C355a60B2Cc68A1e3d53853f05A7280;
 
     address internal immutable REGISTRY                      = DssExecLib.reg();
     address internal immutable MIP21_LIQUIDATION_ORACLE      = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
@@ -320,6 +322,9 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/onboarding-of-gno-to-spark/20831
         // List of addresses: https://github.com/marsfoundation/sparklend/blob/master/script/output/5/spark-latest.json
         {
+            // Whitelist the GNO Fig adapter
+            MedianAbstract(GNO_MEDIANIZER).kiss(SPARK_GNO_ORACLE);
+
             // Set DAI as a borrowable asset in isolation mode
             PoolConfiguratorLike(SPARK_POOL_CONFIGURATOR).setBorrowableInIsolation(MCD_DAI, true);
 
@@ -352,9 +357,13 @@ contract DssSpellAction is DssAction {
             });
             PoolConfiguratorLike(SPARK_POOL_CONFIGURATOR).setDebtCeiling(token, 5 * MILLION);   // In whole-units
 
+            address[] memory tokens = new address[](1);
+            tokens[0] = token;
+            address[] memory oracles = new address[](1);
+            oracles[0] = SPARK_GNO_ORACLE;
             AaveOracleLike(SPARK_AAVE_ORACLE).setAssetSources(
-                new address[](1) = [token],
-                new address[](1) = [SPARK_GNO_ORACLE]
+                tokens,
+                oracles
             );
         }
 

@@ -966,7 +966,7 @@ contract DssSpellTest is DssSpellTestBase {
         tokenReserveData = pool.getReserveData(token);
         assertEq((daiReserveData.configuration & ~BORROWABLE_IN_ISOLATION_MASK) != 0, true);
         assertTrue(tokenReserveData.aTokenAddress != address(0));
-        assertTrue(tokenReserveData.interestRateStrategyAddress, 0xE7Fe5041ec55c229fb41fD9183E5bc24B5E34959);
+        assertEq(tokenReserveData.interestRateStrategyAddress, 0xE7Fe5041ec55c229fb41fD9183E5bc24B5E34959);
 
         // Integration test - take out a maximum loan
 
@@ -980,9 +980,9 @@ contract DssSpellTest is DssSpellTestBase {
 
         pool.supply(token, 50 * MILLION * WAD, address(this), 0);
         pool.borrow(address(dai), 4 * MILLION * WAD, 2, 0, address(this));
-        vm.expectRevert('53');   // 'Debt ceiling is exceeded'
+        vm.expectRevert(bytes('53'));   // 'Debt ceiling is exceeded'
         pool.borrow(address(dai), 1_100_000 * WAD, 2, 0, address(this));    // Over 5m limit
-        vm.expectRevert('60');   // 'Asset is not borrowable in isolation mode'
+        vm.expectRevert(bytes('60'));   // 'Asset is not borrowable in isolation mode'
         pool.borrow(0x6E4F1e8d4c5E5E6e2781FD814EE0744cc16Eb352, 1 ether, 2, 0, address(this));  // Can't borrow another asset in isolation mode
     }
 }
