@@ -952,11 +952,16 @@ contract DssSpellTest is DssSpellTestBase {
         uint256 BORROWABLE_IN_ISOLATION_MASK = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFDFFFFFFFFFFFFFFF;
         PoolLike pool = PoolLike(0x26ca51Af4506DE7a6f0785D20CD776081a05fF6d);
         address token = addr.addr("GNO");
+        MedianAbstract medianizer = MedianAbstract(0x0cd01b018C355a60B2Cc68A1e3d53853f05A7280);
+        address oracleAdapter = 0xa2B52104c454D3f6717028783695de985C1CfFdb;
+        address interestRateStrategy = 0xE7Fe5041ec55c229fb41fD9183E5bc24B5E34959;
+        address wstETH = 0x6E4F1e8d4c5E5E6e2781FD814EE0744cc16Eb352;
 
         PoolLike.ReserveData memory daiReserveData = pool.getReserveData(address(dai));
         PoolLike.ReserveData memory tokenReserveData = pool.getReserveData(token);
         assertEq((daiReserveData.configuration & ~BORROWABLE_IN_ISOLATION_MASK) != 0, false);
         assertTrue(tokenReserveData.aTokenAddress == address(0));   // Not set yet
+        assertEq(medianizer.bud(oracleAdapter), 0);
 
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
@@ -966,7 +971,8 @@ contract DssSpellTest is DssSpellTestBase {
         tokenReserveData = pool.getReserveData(token);
         assertEq((daiReserveData.configuration & ~BORROWABLE_IN_ISOLATION_MASK) != 0, true);
         assertTrue(tokenReserveData.aTokenAddress != address(0));
-        assertEq(tokenReserveData.interestRateStrategyAddress, 0xE7Fe5041ec55c229fb41fD9183E5bc24B5E34959);
+        assertEq(tokenReserveData.interestRateStrategyAddress, interestRateStrategy);
+        assertEq(medianizer.bud(oracleAdapter), 1);
 
         // Integration test - take out a maximum loan
 
@@ -983,6 +989,6 @@ contract DssSpellTest is DssSpellTestBase {
         vm.expectRevert(bytes('53'));   // 'Debt ceiling is exceeded'
         pool.borrow(address(dai), 1_100_000 * WAD, 2, 0, address(this));    // Over 5m limit
         vm.expectRevert(bytes('60'));   // 'Asset is not borrowable in isolation mode'
-        pool.borrow(0x6E4F1e8d4c5E5E6e2781FD814EE0744cc16Eb352, 1 ether, 2, 0, address(this));  // Can't borrow another asset in isolation mode (wstETH)
+        pool.borrow(wstETH, 1 ether, 2, 0, address(this));  // Can't borrow another asset in isolation mode (wstETH)
     }
 }
