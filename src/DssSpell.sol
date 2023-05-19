@@ -20,6 +20,7 @@ import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 import "dss-interfaces/dss/IlkRegistryAbstract.sol";
 import "dss-interfaces/dss/GemJoinAbstract.sol";
+import "dss-interfaces/dss/MedianAbstract.sol";
 import "dss-interfaces/ERC/GemAbstract.sol";
 
 interface Initializable {
@@ -66,6 +67,39 @@ interface RwaOutputConduitLike {
     function kiss(address who) external;
 }
 
+interface PoolConfiguratorLike {
+    struct InitReserveInput {
+        address aTokenImpl;
+        address stableDebtTokenImpl;
+        address variableDebtTokenImpl;
+        uint8 underlyingAssetDecimals;
+        address interestRateStrategyAddress;
+        address underlyingAsset;
+        address treasury;
+        address incentivesController;
+        string aTokenName;
+        string aTokenSymbol;
+        string variableDebtTokenName;
+        string variableDebtTokenSymbol;
+        string stableDebtTokenName;
+        string stableDebtTokenSymbol;
+        bytes params;
+    }
+    function initReserves(InitReserveInput[] calldata input) external;
+    function configureReserveAsCollateral(
+        address asset,
+        uint256 ltv,
+        uint256 liquidationThreshold,
+        uint256 liquidationBonus
+    ) external;
+    function setBorrowableInIsolation(address asset, bool borrowable) external;
+    function setDebtCeiling(address asset, uint256 newDebtCeiling) external;
+}
+
+interface AaveOracleLike {
+    function setAssetSources(address[] calldata assets, address[] calldata sources) external;
+}
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -88,6 +122,7 @@ contract DssSpellAction is DssAction {
 
     uint256 internal constant WAD                            = 10 ** 18;
     uint256 internal constant MILLION                        = 10 ** 6;
+    uint256 internal constant DEBT_CEILING_UNITS             = 10 ** 2;
 
     // -- RWA014 MIP21 components --
     address internal constant RWA014                         = 0x22a7440DCfF0E8881Ec93cE519c34C15feB2A09a;
@@ -112,6 +147,17 @@ contract DssSpellAction is DssAction {
     address internal constant RWA014_A_COINBASE_CUSTODY      = 0x2E5F1f08EBC01d6136c95a40e19D4c64C0be772c;
     // -- RWA014 END --
 
+    // -- Spark GNO Onboarding components --
+    address internal constant SPARK_POOL_CONFIGURATOR        = 0xe0C7ec61cC47e7c02b9B24F03f75C7BC406CCA98;
+    address internal constant SPARK_AAVE_ORACLE              = 0x5Cd822d9a4421be687930498ec4B498EB972ad29;
+    address internal constant SPARK_ATOKEN_IMPL              = 0x35542cbc5730d5e39CF79dDBd8976ac984ca109b;
+    address internal constant SPARK_STABLE_DEBT_TOKEN_IMPL   = 0x571501be53711c372cE69De51865dD34B87698D5;
+    address internal constant SPARK_VARIABLE_DEBT_TOKEN_IMPL = 0xb9E6DBFa4De19CCed908BcbFe1d015190678AB5f;
+    address internal constant SPARK_INTEREST_RATE_STRATEGY   = 0xE7Fe5041ec55c229fb41fD9183E5bc24B5E34959;
+    address internal constant SPARK_TREASURY                 = 0x0D56700c90a690D8795D6C148aCD94b12932f4E3;
+    address internal constant SPARK_GNO_ORACLE               = 0xa2B52104c454D3f6717028783695de985C1CfFdb;
+    address internal constant GNO_MEDIANIZER                 = 0x0cd01b018C355a60B2Cc68A1e3d53853f05A7280;
+
     address internal immutable REGISTRY                      = DssExecLib.reg();
     address internal immutable MIP21_LIQUIDATION_ORACLE      = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
     address internal immutable MCD_PSM_USDC_A                = DssExecLib.getChangelogAddress("MCD_PSM_USDC_A");
@@ -120,6 +166,7 @@ contract DssSpellAction is DssAction {
     address internal immutable MCD_JUG                       = DssExecLib.jug();
     address internal immutable MCD_SPOT                      = DssExecLib.spotter();
     address internal immutable MCD_JOIN_DAI                  = DssExecLib.daiJoin();
+    address internal immutable MCD_DAI                       = DssExecLib.dai();
 
     function onboardRWA014() internal {
         bytes32 ilk      = "RWA014-A";
@@ -265,6 +312,56 @@ contract DssSpellAction is DssAction {
         // Poll: https://vote.makerdao.com/polling/Qmc6Wqrc#poll-detail
         // NOTE: ignore in goerli
 
+
+        // --------- Onboard GNO to Spark ---------
+        // Poll: https://vote.makerdao.com/polling/QmXdGdxS#poll-detail
+        // Forum: https://forum.makerdao.com/t/onboarding-of-gno-to-spark/20831
+        // List of addresses: https://github.com/marsfoundation/sparklend/blob/master/script/output/5/spark-latest.json
+        {
+            // Whitelist the GNO Fig adapter
+            MedianAbstract(GNO_MEDIANIZER).kiss(SPARK_GNO_ORACLE);
+
+            // Set DAI as a borrowable asset in isolation mode
+            PoolConfiguratorLike(SPARK_POOL_CONFIGURATOR).setBorrowableInIsolation(MCD_DAI, true);
+
+            // Add GNO
+            address token = DssExecLib.getChangelogAddress("GNO");
+            PoolConfiguratorLike.InitReserveInput[] memory input = new PoolConfiguratorLike.InitReserveInput[](1);
+            input[0] = PoolConfiguratorLike.InitReserveInput({
+                aTokenImpl: SPARK_ATOKEN_IMPL,
+                stableDebtTokenImpl: SPARK_STABLE_DEBT_TOKEN_IMPL,
+                variableDebtTokenImpl: SPARK_VARIABLE_DEBT_TOKEN_IMPL,
+                underlyingAssetDecimals: GemAbstract(token).decimals(),
+                interestRateStrategyAddress: SPARK_INTEREST_RATE_STRATEGY,      // Dummy strategy - compare to other borrow-disabled asset like sDAI
+                underlyingAsset: token,
+                treasury: SPARK_TREASURY,
+                incentivesController: address(0),
+                aTokenName: "Spark GNO",
+                aTokenSymbol: "spGNO",
+                variableDebtTokenName: "Spark Variable Debt GNO",
+                variableDebtTokenSymbol: "variableDebtGNO",
+                stableDebtTokenName: "Spark Stable Debt GNO",
+                stableDebtTokenSymbol: "stableDebtGNO",
+                params: ""
+            });
+            PoolConfiguratorLike(SPARK_POOL_CONFIGURATOR).initReserves(input);
+            PoolConfiguratorLike(SPARK_POOL_CONFIGURATOR).configureReserveAsCollateral({
+                asset: token, 
+                ltv: 2000,
+                liquidationThreshold: 2500,
+                liquidationBonus: 11000
+            });
+            PoolConfiguratorLike(SPARK_POOL_CONFIGURATOR).setDebtCeiling(token, 5 * MILLION * DEBT_CEILING_UNITS);
+
+            address[] memory tokens = new address[](1);
+            tokens[0] = token;
+            address[] memory oracles = new address[](1);
+            oracles[0] = SPARK_GNO_ORACLE;
+            AaveOracleLike(SPARK_AAVE_ORACLE).setAssetSources(
+                tokens,
+                oracles
+            );
+        }
 
         // Bump the chainlog
         DssExecLib.setChangelogVersion("1.14.12");
