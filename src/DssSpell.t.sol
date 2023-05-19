@@ -983,6 +983,6 @@ contract DssSpellTest is DssSpellTestBase {
         vm.expectRevert(bytes('53'));   // 'Debt ceiling is exceeded'
         pool.borrow(address(dai), 1_100_000 * WAD, 2, 0, address(this));    // Over 5m limit
         vm.expectRevert(bytes('60'));   // 'Asset is not borrowable in isolation mode'
-        pool.borrow(0x6E4F1e8d4c5E5E6e2781FD814EE0744cc16Eb352, 1 ether, 2, 0, address(this));  // Can't borrow another asset in isolation mode
+        pool.borrow(0x6E4F1e8d4c5E5E6e2781FD814EE0744cc16Eb352, 1 ether, 2, 0, address(this));  // Can't borrow another asset in isolation mode (wstETH)
     }
 }
