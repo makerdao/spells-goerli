@@ -37,7 +37,7 @@ contract ConfigStarknet {
 
         starknetValues = StarknetValues({
             l2_spell:                  0,  // Set to zero if no spell is set.
-            core_implementation:       0x3CeCEe6B359fAc09c79Ca4032826894F7e660B33, // As at 2023-03-20
+            core_implementation:       0x3CeCEe6B359fAc09c79Ca4032826894F7e660B33, // As at 2023-05-17
             dai_bridge_isOpen:         1,                     // 1 open, 0 closed
             dai_bridge_ceiling:        5_000_000 * WAD,       // wei
             dai_bridge_maxDeposit:     type(uint256).max,     // wei
