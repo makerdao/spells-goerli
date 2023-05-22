@@ -144,6 +144,11 @@ interface PoolLike {
     ) external;
 }
 
+interface OracleLike {
+    function latestAnswer() external view returns (int256);
+    function kiss(address who) external;
+}
+
 contract DssSpellTest is DssSpellTestBase {
     string         config;
     RootDomain     rootDomain;
@@ -1035,7 +1040,7 @@ contract DssSpellTest is DssSpellTestBase {
         PoolLike pool = PoolLike(0x26ca51Af4506DE7a6f0785D20CD776081a05fF6d);
         address token = addr.addr("GNO");
         MedianAbstract medianizer = MedianAbstract(0x0cd01b018C355a60B2Cc68A1e3d53853f05A7280);
-        address oracleAdapter = 0xa2B52104c454D3f6717028783695de985C1CfFdb;
+        address oracleAdapter = 0xF7CBEF92ef380502dCe9DE8A654A5c1d2A513E78;
         address interestRateStrategy = 0xE7Fe5041ec55c229fb41fD9183E5bc24B5E34959;
         address wstETH = 0x6E4F1e8d4c5E5E6e2781FD814EE0744cc16Eb352;
 
@@ -1058,6 +1063,10 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(tokenReserveData.configuration & ~LTV_MASK, 20_00);
         assertEq((tokenReserveData.configuration & ~LIQUIDATION_THRESHOLD_MASK) >> LIQUIDATION_THRESHOLD_START_BIT_POSITION, 25_00);
         assertEq((tokenReserveData.configuration & ~LIQUIDATION_BONUS_MASK) >> LIQUIDATION_BONUS_START_BIT_POSITION, 110_00);
+
+        GodMode.setWard(oracleAdapter, address(this), 1);
+        OracleLike(oracleAdapter).kiss(address(this));
+        assertApproxEqRel(OracleLike(oracleAdapter).latestAnswer(), 113_00000000, 10 * WAD / 100);    // Price is in 8 decimals and is around $113 USD / GNO (Allow 10% deviation)
 
         // Integration test - take out a maximum loan
 
