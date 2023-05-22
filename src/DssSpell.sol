@@ -352,9 +352,9 @@ contract DssSpellAction is DssAction {
             PoolConfiguratorLike(SPARK_POOL_CONFIGURATOR).initReserves(input);
             PoolConfiguratorLike(SPARK_POOL_CONFIGURATOR).configureReserveAsCollateral({
                 asset: token, 
-                ltv: 2000,
-                liquidationThreshold: 2500,
-                liquidationBonus: 11000
+                ltv: 20_00,
+                liquidationThreshold: 25_00,
+                liquidationBonus: 110_00
             });
             PoolConfiguratorLike(SPARK_POOL_CONFIGURATOR).setDebtCeiling(token, 5 * MILLION * DEBT_CEILING_UNITS);
 
