@@ -142,7 +142,7 @@ contract DssSpellAction is DssAction {
     address internal constant SPARK_VARIABLE_DEBT_TOKEN_IMPL = 0xb9E6DBFa4De19CCed908BcbFe1d015190678AB5f;
     address internal constant SPARK_INTEREST_RATE_STRATEGY   = 0xE7Fe5041ec55c229fb41fD9183E5bc24B5E34959;
     address internal constant SPARK_TREASURY                 = 0x0D56700c90a690D8795D6C148aCD94b12932f4E3;
-    address internal constant SPARK_GNO_ORACLE               = 0xa2B52104c454D3f6717028783695de985C1CfFdb;
+    address internal constant SPARK_GNO_ORACLE               = 0xF7CBEF92ef380502dCe9DE8A654A5c1d2A513E78;
     address internal constant GNO_MEDIANIZER                 = 0x0cd01b018C355a60B2Cc68A1e3d53853f05A7280;
 
     address internal immutable REGISTRY                      = DssExecLib.reg();
