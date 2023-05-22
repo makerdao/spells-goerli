@@ -46,9 +46,13 @@ interface RwaLiquidationOracleLike {
 }
 
 interface RwaUrnLike {
+    function vat() external view returns (address);
+    function jug() external view returns (address);
+    function daiJoin() external view returns (address);
+    function outputConduit() external view returns (address);
     function wards(address) external view returns (uint256);
     function can(address) external view returns (uint256);
-    function gemJoin() external view returns (GemAbstract);
+    function gemJoin() external view returns (address);
     function lock(uint256) external;
     function draw(uint256) external;
     function wipe(uint256) external;
@@ -59,7 +63,9 @@ interface RwaOutputConduitLike {
     function wards(address) external view returns (uint256);
     function can(address) external view returns (uint256);
     function may(address) external view returns (uint256);
-    function gem() external view returns (GemAbstract);
+    function dai() external view returns (address);
+    function psm() external view returns (address);
+    function gem() external view returns (address);
     function bud(address) external view returns (uint256);
     function pick(address) external;
     function push() external;
@@ -72,11 +78,21 @@ interface RwaOutputConduitLike {
 }
 
 interface RwaInputConduitLike {
+    function dai() external view returns (address);
+    function gem() external view returns (address);
+    function psm() external view returns (address);
+    function to() external view returns (address);
     function wards(address) external view returns (uint256);
     function may(address) external view returns (uint256);
     function quitTo() external view returns (address);
     function mate(address) external;
     function push() external;
+}
+
+interface RwaJarLike {
+    function chainlog() external view returns (address);
+    function dai() external view returns (address);
+    function daiJoin() external view returns (address);
 }
 
 interface PoolLike {
@@ -604,11 +620,43 @@ contract DssSpellTest is DssSpellTestBase {
     GemAbstract          rwagem_014            = GemAbstract(addr.addr("RWA014"));
     GemJoinAbstract      rwajoin_014           = GemJoinAbstract(addr.addr("MCD_JOIN_RWA014_A"));
     RwaUrnLike           rwaurn_014            = RwaUrnLike(addr.addr("RWA014_A_URN"));
+    RwaJarLike           rwajar_014            = RwaJarLike(addr.addr("RWA014_A_JAR"));
     RwaOutputConduitLike rwaconduitout_014     = RwaOutputConduitLike(addr.addr("RWA014_A_OUTPUT_CONDUIT"));
-    GemAbstract          psmGem                = rwaconduitout_014.gem();
+    GemAbstract          psmGem                = GemAbstract(rwaconduitout_014.gem());
     RwaInputConduitLike  rwaconduitinurn_014   = RwaInputConduitLike(addr.addr("RWA014_A_INPUT_CONDUIT_URN"));
     RwaInputConduitLike  rwaconduitinjar_014   = RwaInputConduitLike(addr.addr("RWA014_A_INPUT_CONDUIT_JAR"));
     uint256 daiPsmGemDiffDecimals              = 10 ** (dai.decimals() - psmGem.decimals());
+
+    function testRWA014_CONTRACT_DEPLOYMENT_SETUP() public {
+        require(rwajoin_014.vat()                        == addr.addr("MCD_VAT"),            "join-vat-not-match");
+        require(rwajoin_014.ilk()                        == "RWA014-A",                      "join-ilk-not-match");
+        require(rwajoin_014.gem()                        == address(rwagem_014),             "join-gem-not-match");
+        require(rwajoin_014.dec()                        == rwagem_014.decimals(),           "join-dec-not-match");
+
+        require(rwaurn_014.vat()                         == addr.addr("MCD_VAT"),            "urn-vat-not-match");
+        require(rwaurn_014.jug()                         == addr.addr("MCD_JUG"),            "urn-jug-not-match");
+        require(rwaurn_014.daiJoin()                     == addr.addr("MCD_JOIN_DAI"),       "urn-daijoin-not-match");
+        require(rwaurn_014.gemJoin()                     == address(rwajoin_014),            "urn-gemjoin-not-match");
+        require(rwaurn_014.outputConduit()               == address(rwaconduitout_014),      "urn-outputconduit-not-match");
+
+        require(rwajar_014.chainlog()                    == addr.addr("CHANGELOG"),          "jar-chainlog-not-match");
+        require(rwajar_014.dai()                         == addr.addr("MCD_DAI"),            "jar-dai-not-match");
+        require(rwajar_014.daiJoin()                     == addr.addr("MCD_JOIN_DAI"),       "jar-daijoin-not-match");
+
+        require(rwaconduitout_014.dai()                  == addr.addr("MCD_DAI"),            "output-conduit-dai-not-match");
+        require(rwaconduitout_014.gem()                  == addr.addr("USDC"),               "output-conduit-gem-not-match");
+        require(rwaconduitout_014.psm()                  == addr.addr("MCD_PSM_USDC_A"),     "output-conduit-psm-not-match");
+
+        require(rwaconduitinurn_014.psm()                == addr.addr("MCD_PSM_USDC_A"),     "input-conduit-urn-psm-not-match");
+        require(rwaconduitinurn_014.to()                 == address(rwaurn_014),             "input-conduit-urn-to-not-match");
+        require(rwaconduitinurn_014.dai()                == addr.addr("MCD_DAI"),            "input-conduit-urn-dai-not-match");
+        require(rwaconduitinurn_014.gem()                == addr.addr("USDC"),               "input-conduit-urn-gem-not-match");
+
+        require(rwaconduitinjar_014.psm()                == addr.addr("MCD_PSM_USDC_A"),     "input-conduit-jar-psm-not-match");
+        require(rwaconduitinjar_014.to()                 == address(rwajar_014),             "input-conduit-jar-to-not-match");
+        require(rwaconduitinjar_014.dai()                == addr.addr("MCD_DAI"),            "input-conduit-jar-dai-not-match");
+        require(rwaconduitinjar_014.gem()                == addr.addr("USDC"),               "input-conduit-jar-gem-not-match");
+    }
 
     function testRWA014_INTEGRATION_CONDUITS_SETUP() public {
         _vote(address(spell));

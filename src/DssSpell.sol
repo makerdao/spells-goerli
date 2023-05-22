@@ -38,33 +38,15 @@ interface RwaLiquidationLike {
 
 interface RwaUrnLike {
     function lock(uint256 wad) external;
-    function vat() external view returns (address);
-    function jug() external view returns (address);
-    function gemJoin() external view returns (address);
-    function daiJoin() external view returns (address);
-    function outputConduit() external view returns (address);
     function hope(address usr) external;
 }
 
-interface RwaJarLike {
-    function chainlog() external view returns (address);
-    function dai() external view returns (address);
-    function daiJoin() external view returns (address);
-}
-
 interface RwaInputConduitLike {
-    function dai() external view returns (address);
-    function gem() external view returns (address);
-    function psm() external view returns (address);
-    function to() external view returns (address);
     function mate(address usr) external;
     function file(bytes32 what, address data) external;
 }
 
 interface RwaOutputConduitLike {
-    function dai() external view returns (address);
-    function gem() external view returns (address);
-    function psm() external view returns (address);
     function file(bytes32 what, address data) external;
     function hope(address usr) external;
     function mate(address usr) external;
@@ -165,48 +147,14 @@ contract DssSpellAction is DssAction {
 
     address internal immutable REGISTRY                      = DssExecLib.reg();
     address internal immutable MIP21_LIQUIDATION_ORACLE      = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
-    address internal immutable MCD_PSM_USDC_A                = DssExecLib.getChangelogAddress("MCD_PSM_USDC_A");
     address internal immutable ESM                           = DssExecLib.getChangelogAddress("MCD_ESM");
     address internal immutable MCD_VAT                       = DssExecLib.vat();
     address internal immutable MCD_JUG                       = DssExecLib.jug();
     address internal immutable MCD_SPOT                      = DssExecLib.spotter();
-    address internal immutable MCD_JOIN_DAI                  = DssExecLib.daiJoin();
     address internal immutable MCD_DAI                       = DssExecLib.dai();
 
     function onboardRWA014() internal {
         bytes32 ilk      = "RWA014-A";
-        uint256 decimals = GemAbstract(RWA014).decimals();
-
-        // Sanity checks
-        require(GemJoinAbstract(MCD_JOIN_RWA014_A).vat()                             == MCD_VAT,                                    "join-vat-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA014_A).ilk()                             == ilk,                                        "join-ilk-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA014_A).gem()                             == RWA014,                                     "join-gem-not-match");
-        require(GemJoinAbstract(MCD_JOIN_RWA014_A).dec()                             == decimals,                                   "join-dec-not-match");
-
-        require(RwaUrnLike(RWA014_A_URN).vat()                                       == MCD_VAT,                                    "urn-vat-not-match");
-        require(RwaUrnLike(RWA014_A_URN).jug()                                       == MCD_JUG,                                    "urn-jug-not-match");
-        require(RwaUrnLike(RWA014_A_URN).daiJoin()                                   == MCD_JOIN_DAI,                               "urn-daijoin-not-match");
-        require(RwaUrnLike(RWA014_A_URN).gemJoin()                                   == MCD_JOIN_RWA014_A,                          "urn-gemjoin-not-match");
-        require(RwaUrnLike(RWA014_A_URN).outputConduit()                             == RWA014_A_OUTPUT_CONDUIT,                    "urn-outputconduit-not-match");
-
-        require(RwaJarLike(RWA014_A_JAR).chainlog()                                  == DssExecLib.LOG,                             "jar-chainlog-not-match");
-        require(RwaJarLike(RWA014_A_JAR).dai()                                       == DssExecLib.dai(),                           "jar-dai-not-match");
-        require(RwaJarLike(RWA014_A_JAR).daiJoin()                                   == MCD_JOIN_DAI,                               "jar-daijoin-not-match");
-
-        require(RwaOutputConduitLike(RWA014_A_OUTPUT_CONDUIT).dai()                  == DssExecLib.dai(),                           "output-conduit-dai-not-match");
-        require(RwaOutputConduitLike(RWA014_A_OUTPUT_CONDUIT).gem()                  == DssExecLib.getChangelogAddress("USDC"),     "output-conduit-gem-not-match");
-        require(RwaOutputConduitLike(RWA014_A_OUTPUT_CONDUIT).psm()                  == MCD_PSM_USDC_A,                             "output-conduit-psm-not-match");
-
-        require(RwaInputConduitLike(RWA014_A_INPUT_CONDUIT_URN).psm()                == MCD_PSM_USDC_A,                             "input-conduit-urn-psm-not-match");
-        require(RwaInputConduitLike(RWA014_A_INPUT_CONDUIT_URN).to()                 == RWA014_A_URN,                               "input-conduit-urn-to-not-match");
-        require(RwaInputConduitLike(RWA014_A_INPUT_CONDUIT_URN).dai()                == DssExecLib.dai(),                           "input-conduit-urn-dai-not-match");
-        require(RwaInputConduitLike(RWA014_A_INPUT_CONDUIT_URN).gem()                == DssExecLib.getChangelogAddress("USDC"),     "input-conduit-urn-gem-not-match");
-
-        require(RwaInputConduitLike(RWA014_A_INPUT_CONDUIT_JAR).psm()                == MCD_PSM_USDC_A,                             "input-conduit-jar-psm-not-match");
-        require(RwaInputConduitLike(RWA014_A_INPUT_CONDUIT_JAR).to()                 == RWA014_A_JAR,                               "input-conduit-jar-to-not-match");
-        require(RwaInputConduitLike(RWA014_A_INPUT_CONDUIT_JAR).dai()                == DssExecLib.dai(),                           "input-conduit-jar-dai-not-match");
-        require(RwaInputConduitLike(RWA014_A_INPUT_CONDUIT_JAR).gem()                == DssExecLib.getChangelogAddress("USDC"),     "input-conduit-jar-gem-not-match");
-
 
         // Init the RwaLiquidationOracle
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA014_A_INITIAL_PRICE, RWA014_DOC, RWA014_A_TAU);
@@ -276,7 +224,7 @@ contract DssSpellAction is DssAction {
             ilk,
             MCD_JOIN_RWA014_A,
             RWA014,
-            decimals,
+            GemAbstract(RWA014).decimals(),
             RWA014_REG_CLASS_RWA,
             pip,
             address(0),
