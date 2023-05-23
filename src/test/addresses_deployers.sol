@@ -42,7 +42,7 @@ contract Deployers {
     address public constant CES_04          = 0x3ec4699bEc79F8FF862C220Ef0a718689A1d09f4;
     address public constant STARKNET_01     = 0x8aa7c51A6D380F4d9E273adD4298D913416031Ec;
     address public constant STARKNET_02     = 0x38F8e3b67FA8329FE4BaA1775e5480807f78887B;
-    address public constant CENTRIFUGE_01   = 0x9956fca5a8994737f124c481cEDC6BB3dc5BF010;
+    address public constant CENTRIFUGE_01   = 0x9956fca5a8994737f124c481cEDC6BB3dc5BF010; // NOTE: need to cleanup this as it has same address as CES_01
     address public constant CENTRIFUGE_02   = 0x0A735602a357802f553113F5831FE2fbf2F0E2e0;
     address public constant SIDESTREAM_01   = 0x47f1aaC8c1BDD49B0c2438c1754518695E9f08d3;
     address public constant PHOENIX_LABS_01 = 0xd1236a6A111879d9862f8374BA15344b6B233Fbd;

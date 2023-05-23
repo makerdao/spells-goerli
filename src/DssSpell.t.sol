@@ -844,7 +844,7 @@ contract DssSpellTest is DssSpellTestBase {
         // as we have SF 0 we need to pay exectly the same amount of DAI we have drawn
         uint256 daiToPay = drawAmount;
 
-        // Note: In the version of inputCounduit for this deal `push` is permissionles
+        // Note: In the version of inputConduit for this deal `push` is permissionles
         // // wards
         // GodMode.setWard(address(rwaconduitinurn_014), address(this), 1);
         // // may
