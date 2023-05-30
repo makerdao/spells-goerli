@@ -13,29 +13,29 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
 pragma solidity 0.6.12;
 // Enable ABIEncoderV2 when onboarding collateral through `DssExecLib.addNewCollateral()`
 // pragma experimental ABIEncoderV2;
-
 import "dss-exec-lib/DssExec.sol";
+import { CollateralOpts } from "dss-exec-lib/CollateralOpts.sol";
+import "dss-interfaces/dss/IlkRegistryAbstract.sol";
 import "dss-exec-lib/DssAction.sol";
 // Enable ABIEncoderV2 when onboarding collateral through `DssExecLib.addNewCollateral()`
 pragma experimental ABIEncoderV2;
 
-interface StarknetGovRelayLike {
-    function relay(uint256 spell) external;
+interface Authorizable {
+    function rely(address) external;
+    function deny(address) external;
+    function setAuthority(address) external;
 }
 
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
-
     // Turn office hours off
     function officeHours() public override returns (bool) {
         return false;
     }
-
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
     // To check this yourself, use the following rate calculation (example 8%):
@@ -46,71 +46,64 @@ contract DssSpellAction is DssAction {
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
     uint256 internal constant TWO_FIVE_PCT_RATE   = 1000000000782997609082909351;
-
+    uint256 constant THOUSAND   = 10 ** 3;
+    uint256 constant MILLION    = 10 ** 6;
     // --- DEPLOYED COLLATERAL ADDRESSES ---
-    address internal constant GNO                 = 0x86Bc432064d7F933184909975a384C7E4c9d0977;
-    address internal constant PIP_GNO             = 0xf15221A159A4e7ba01E0d6e72111F0Ddff8Fa8Da;
-    address internal constant MCD_JOIN_GNO_A      = 0x05a3b9D5F8098e558aF33c6b83557484f840055e;
-    address internal constant MCD_CLIP_GNO_A      = 0x8274F3badD42C61B8bEa78Df941813D67d1942ED;
-    address internal constant MCD_CLIP_CALC_GNO_A = 0x08Ae3e0C0CAc87E1B4187D53F0231C97B5b4Ab3E;
+    address internal constant USDT                 = 0xac0d203a8d9dD6EAf444d3DA95a0cfB3dcf9DBc9;
+    address internal constant VAL_USDT             = 0xab6f09c3c3f0d25379690308fd63321bD655d218;
+    address internal constant PIP_USDT             = 0x58b3586bF716e78D3036Af45A3d63a9fAd520f76;
+    address internal constant MCD_JOIN_USDT_A      = 0xC186C13Eca0937697899018AF62B40460d3Cd148;
+    address internal constant MCD_CLIP_USDT_A      = 0x812105Ff1A7546fB5160445E24b96fEf25980Fe8;
+    address internal constant MCD_CLIP_CALC_USDT_A = 0xecAFd89A7bf2d878aBf3fE903C4e806d8284fd80;
+    address internal constant ETH_FROM = 0x125fC0CcCDee5ac474062F6358d4d056b0430b84;
 
     function actions() public override {
         // ----------------------------- Collateral onboarding -----------------------------
-        //  Add GNO-A as a new Vault Type
+        //  Add USDT-A as a new Vault Type
         //  Poll Link:   TODO
-        //  Forum Post:  https://forum.makerdao.com/t/gno-collateral-onboarding-risk-evaluation/18820
+        //  Forum Post:  https://forum.makerdao.com/t/USDT-collateral-onboarding-risk-evaluation/18820
+        CollateralOpts memory co = CollateralOpts({
+            ilk:                   "USDT-D",
+            gem:                   USDT,
+            join:                  MCD_JOIN_USDT_A,
+            clip:                  MCD_CLIP_USDT_A,
+            calc:                  MCD_CLIP_CALC_USDT_A,
+            pip:                   PIP_USDT,
+            isLiquidatable:        true,
+            isOSM:                 true,
+            whitelistOSM:          true,
+            ilkDebtCeiling:        100 * MILLION,
+            minVaultAmount:        7500,
+            maxLiquidationAmount:  25 * MILLION,
+            liquidationPenalty:    1300,                // 13% penalty fee
+            ilkStabilityFee:       TWO_FIVE_PCT_RATE,   // 1.5% stability fee
+            startingPriceFactor:   12000,               // Auction price begins at 120% of oracle
+            breakerTolerance:      5000,                // Allows for a 50% hourly price drop before disabling liquidations
+            auctionDuration:       90 minutes,
+            permittedDrop:         4000,                // 40% price drop before reset
+            liquidationRatio:      10100,               // 175% collateralization
+            kprFlatReward:         300,                 // 300 Dai
+            kprPctReward:          10                   // 0.1%
+        });
 
-        DssExecLib.addNewCollateral(
-            CollateralOpts({
-                ilk:                  "GNO-A",
-                gem:                  GNO,
-                join:                 MCD_JOIN_GNO_A,
-                clip:                 MCD_CLIP_GNO_A,
-                calc:                 MCD_CLIP_CALC_GNO_A,
-                pip:                  PIP_GNO,
-                isLiquidatable:       true,
-                isOSM:                true,
-                whitelistOSM:         true,
-                ilkDebtCeiling:       5_000_000,         // line updated to 5M
-                minVaultAmount:       100_000,           // debt floor - dust in DAI
-                maxLiquidationAmount: 2_000_000,
-                liquidationPenalty:   13_00,             // 13% penalty on liquidation
-                ilkStabilityFee:      TWO_FIVE_PCT_RATE, // 2.50% stability fee
-                startingPriceFactor:  120_00,            // Auction price begins at 120% of oracle price
-                breakerTolerance:     50_00,             // Allows for a 50% hourly price drop before disabling liquidation
-                auctionDuration:      140 minutes,
-                permittedDrop:        25_00,             // 25% price drop before reset
-                liquidationRatio:     350_00,            // 350% collateralization
-                kprFlatReward:        250,               // 250 DAI tip - flat fee per kpr
-                kprPctReward:         10                 // 0.1% chip - per kpr
-            })
-        );
-
-        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_GNO_A, 60 seconds, 99_00);
-        DssExecLib.setIlkAutoLineParameters("GNO-A", 5_000_000, 3_000_000, 8 hours);
-
-        // ----------------------------- Collateral offboarding -----------------------------
-        //  Offboard RENBTC-A
-        //  Poll Link:   https://vote.makerdao.com/polling/QmTNMDfb#poll-detail
-        //  Forum Post:  https://forum.makerdao.com/t/renbtc-a-proposed-offboarding-parameters-context/18864
-        DssExecLib.setIlkLiquidationPenalty("RENBTC-A", 0);
-        DssExecLib.setKeeperIncentiveFlatRate("RENBTC-A", 0);
-        DssExecLib.setIlkLiquidationRatio("RENBTC-A", 500_000);
-        DssExecLib.setIlkMinVaultAmount("RENBTC-A", 350_000);
-
-        // -------------------- Changelog Update ---------------------
-
-        DssExecLib.setChangelogAddress("GNO",                 GNO);
-        DssExecLib.setChangelogAddress("PIP_GNO",             PIP_GNO);
-        DssExecLib.setChangelogAddress("MCD_JOIN_GNO_A",      MCD_JOIN_GNO_A);
-        DssExecLib.setChangelogAddress("MCD_CLIP_GNO_A",      MCD_CLIP_GNO_A);
-        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_GNO_A", MCD_CLIP_CALC_GNO_A);
-
-        // Bump changelog
-        DssExecLib.setChangelogVersion("1.14.7");
+        DssExecLib.addNewCollateral(co);
+        DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_USDT_A, 130 seconds, 9900);
+        DssExecLib.setIlkAutoLineParameters("USDT-D", 20 * MILLION, 3 * MILLION, 8 hours);
+        IlkRegistryAbstract(DssExecLib.reg()).update("USDT-D");
+        DssExecLib.setChangelogAddress("USDT", USDT);
+        DssExecLib.setChangelogAddress("PIP_USDT", PIP_USDT);
+        DssExecLib.setChangelogAddress("MCD_JOIN_USDT_D", MCD_JOIN_USDT_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_USDT_D", MCD_CLIP_USDT_A);
+        DssExecLib.setChangelogAddress("MCD_CLIP_CALC_USDT_D", MCD_CLIP_CALC_USDT_A);
+        // Denying the ETH_FROM Address
+        Authorizable(VAL_USDT).deny(ETH_FROM);
+        Authorizable(PIP_USDT).deny(ETH_FROM);
+        Authorizable(MCD_JOIN_USDT_A).deny(ETH_FROM);
+        Authorizable(MCD_CLIP_USDT_A).deny(ETH_FROM);
+        Authorizable(MCD_CLIP_CALC_USDT_A).deny(ETH_FROM);
     }
 }
-
 contract DssSpell is DssExec {
-    constructor() DssExec(block.timestamp + 30 days, address(new DssSpellAction())) public {}
+    constructor() DssExec(block.timestamp + 30 days, address(new DssSpellAction())) public {
+    }
 }
