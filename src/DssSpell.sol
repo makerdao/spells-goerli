@@ -117,22 +117,22 @@ contract DssSpellAction is DssAction {
         // Poll: https://vote.makerdao.com/polling/QmaoGpAQ#poll-detail
         // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-2-non-scope-defined-parameter-changes-may-2023/20981#stability-scope-parameter-changes-proposal-6
 
-        // Increase DSR to TBD
+        // Increase DSR to 3.49%
         DssExecLib.setDSR(THREE_PT_FOUR_NINE, true);
 
-        // Set ETH-A Stability Fee to TBD
+        // Set ETH-A Stability Fee to 3.74%
         DssExecLib.setIlkStabilityFee("ETH-A", THREE_PT_SEVEN_FOUR, /* doDrip = */ true);
 
-        // Set ETH-B Stability Fee to TBD
+        // Set ETH-B Stability Fee to 4.24%
         DssExecLib.setIlkStabilityFee("ETH-B", FOUR_PT_TWO_FOUR, /* doDrip = */ true);
 
-        // Set ETH-C Stability Fee to TBD
+        // Set ETH-C Stability Fee to 3.49%
         DssExecLib.setIlkStabilityFee("ETH-C", THREE_PT_FOUR_NINE, /* doDrip = */ true);
 
-        // Set WSTETH-A Stability Fee to TBD
+        // Set WSTETH-A Stability Fee to 3.74%
         DssExecLib.setIlkStabilityFee("WSTETH-A", THREE_PT_SEVEN_FOUR, /* doDrip = */ true);
 
-        // Set WSTETH-B Stability Fee to TBD
+        // Set WSTETH-B Stability Fee to 3.49%
         DssExecLib.setIlkStabilityFee("WSTETH-B", THREE_PT_FOUR_NINE, /* doDrip = */ true);
 
         // --- Spark Protocol Parameter Changes ---
@@ -147,20 +147,20 @@ contract DssSpellAction is DssAction {
         // Increase rETH-A gap to 5 million DAI
         DssExecLib.setIlkAutoLineParameters("RETH-A", /* line */ 50 * MILLION, /* gap */ 5 * MILLION, /* ttl */ 8 hours);
 
-        // Increase rETH-A Stability Fee to TBD
+        // Increase rETH-A Stability Fee to 3.74%
         DssExecLib.setIlkStabilityFee("RETH-A", THREE_PT_SEVEN_FOUR, true);
 
-        // Increase CRVV1ETHSTETH-A Stability Fee to TBD
+        // Increase CRVV1ETHSTETH-A Stability Fee to 4.24%
         // NOTE: disabled for goerli because the collateral is not on the chain
         // DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", FOUR_PT_TWO_FOUR, true);
 
-        // Increase WBTC-A Stability Fee to TBD
+        // Increase WBTC-A Stability Fee to 5.80%
         DssExecLib.setIlkStabilityFee("WBTC-A", FIVE_PT_EIGHT, true);
 
-        // Increase WBTC-B Stability Fee to TBD
+        // Increase WBTC-B Stability Fee to 6.30%
         DssExecLib.setIlkStabilityFee("WBTC-B", SIX_PT_THREE, true);
 
-        // Increase WBTC-C Stability Fee to TBD
+        // Increase WBTC-C Stability Fee to 5.55%
         DssExecLib.setIlkStabilityFee("WBTC-C", FIVE_PT_FIVE_FIVE, true);
 
         // --- RWA015 (BlockTower Andromeda) ---
