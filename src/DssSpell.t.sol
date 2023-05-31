@@ -550,4 +550,30 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(SPARK_ACL_MANAGER.isPoolAdmin(SPARK_PROXY), true);
         assertTrue(pool.getReserveData(RETH).aTokenAddress != address(0));
     }
+    
+    // TODO Fillout new docs
+    string RWA010_OLDDOC      = "QmRqsQRnLfaRuhFr5wCfDQZKzNo7FRVUyTJPhS76nfz6nX";
+    string RWA010_NEWDOC      = "FILLOUT";
+
+    string RWA011_OLDDOC      = "QmRqsQRnLfaRuhFr5wCfDQZKzNo7FRVUyTJPhS76nfz6nX";
+    string RWA011_NEWDOC      = "FILLOUT";
+
+    string RWA012_OLDDOC      = "QmRqsQRnLfaRuhFr5wCfDQZKzNo7FRVUyTJPhS76nfz6nX";
+    string RWA012_NEWDOC      = "FILLOUT";
+
+    string RWA013_OLDDOC      = "QmRqsQRnLfaRuhFr5wCfDQZKzNo7FRVUyTJPhS76nfz6nX";
+    string RWA013_NEWDOC      = "FILLOUT";
+
+    function testRWA010DocChange() public {
+        _checkRWADocUpdate("RWA010-A", RWA010_OLDDOC, RWA010_NEWDOC);
+    }
+    function testRWA011DocChange() public {
+        _checkRWADocUpdate("RWA011-A", RWA011_OLDDOC, RWA011_NEWDOC);
+    }
+    function testRWA012DocChange() public {
+        _checkRWADocUpdate("RWA012-A", RWA012_OLDDOC, RWA012_NEWDOC);
+    }
+    function testRWA013DocChange() public {
+        _checkRWADocUpdate("RWA013-A", RWA013_OLDDOC, RWA013_NEWDOC);
+    }
 }

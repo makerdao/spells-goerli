@@ -30,6 +30,10 @@ interface DssVestLike {
     function file(bytes32, uint256) external;
     function restrict(uint256) external;
 }
+interface RwaLiquidationLike {
+    function ilks(bytes32) external view returns (string memory, address, uint48, uint48);
+    function init(bytes32, uint256, string calldata, uint48) external;
+}
 
 interface ACLManagerLike {
     function addPoolAdmin(address admin) external;
@@ -42,8 +46,9 @@ interface ProxyLike {
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
-    VatLike  internal immutable vat  = VatLike(DssExecLib.vat());
+    VatLike internal immutable vat = VatLike(DssExecLib.getChangelogAddress("MCD_VAT"));
     DssVestLike internal immutable vest = DssVestLike(DssExecLib.getChangelogAddress("MCD_VEST_MKR_TREASURY"));
+    RwaLiquidationLike immutable rwaLiquidation = RwaLiquidationLike(DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE"));
 
     // Always keep office hours off on goerli
     function officeHours() public pure override returns (bool) {
@@ -61,6 +66,7 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
+    uint256 internal constant RAD               = 10 ** 45;
     uint256 internal constant MILLION           = 10 ** 6;
 
     uint256 internal constant THREE_PT_FOUR_NINE    = 1000000001087798189708544327;
@@ -74,9 +80,20 @@ contract DssSpellAction is DssAction {
     address internal constant SPARK_PROXY = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
     address internal constant SPARK_SPELL = 0x3068FA0B6Fc6A5c998988a271501fF7A6892c6Ff;
 
+    function _updateDoc(bytes32 ilk, string memory doc) internal {
+        ( , address pip, uint48 tau, ) = rwaLiquidation.ilks(ilk);
+        require(pip != address(0), "DssSpell/unexisting-rwa-ilk");
+
+        // Init the RwaLiquidationOracle to reset the doc
+        rwaLiquidation.init(
+            ilk, // ilk to update
+            0,   // price ignored if init() has already been called
+            doc, // new legal document
+            tau  // old tau value
+        );
+    }
 
     function actions() public override {
-        uint256 lineReduction;
         uint256 line;
 
         // --- BlockTower Vault Debt Ceiling Adjustments ---
@@ -88,7 +105,12 @@ contract DssSpellAction is DssAction {
         // Decrease the Debt Ceiling (line) of BlockTower S2 (RWA011-A) from 30 million Dai to zero Dai.
         DssExecLib.setIlkDebtCeiling("RWA011-A", 0);
         // Increase the Debt Ceiling (line) of BlockTower S3 (RWA012-A) from 30 million Dai to 80 million Dai.
-        DssExecLib.increaseIlkDebtCeiling("RWA012-A", 50 * MILLION, /* increase global line */ true);
+        DssExecLib.increaseIlkDebtCeiling("RWA012-A", 50 * MILLION, /* do not increase global line */ false);
+        // TODO: Fill out doc values
+        _updateDoc("RWA010-A", "FILLOUT");
+        _updateDoc("RWA011-A", "FILLOUT");
+        _updateDoc("RWA012-A", "FILLOUT");
+        _updateDoc("RWA013-A", "FILLOUT");
 
         // --- MKR Vesting Transfers ---
         // Sidestream - 348.28 MKR - 0xb1f950a51516a697E103aaa69E152d839182f6Fe
@@ -107,22 +129,22 @@ contract DssSpellAction is DssAction {
         // Poll: https://vote.makerdao.com/polling/QmaoGpAQ#poll-detail
         // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-2-non-scope-defined-parameter-changes-may-2023/20981#stability-scope-parameter-changes-proposal-6
 
-        // Increase DSR to TBD
+        // Increase DSR to 3.49%
         DssExecLib.setDSR(THREE_PT_FOUR_NINE, true);
 
-        // Set ETH-A Stability Fee to TBD
+        // Set ETH-A Stability Fee to 3.74%
         DssExecLib.setIlkStabilityFee("ETH-A", THREE_PT_SEVEN_FOUR, /* doDrip = */ true);
 
-        // Set ETH-B Stability Fee to TBD
+        // Set ETH-B Stability Fee to 4.24%
         DssExecLib.setIlkStabilityFee("ETH-B", FOUR_PT_TWO_FOUR, /* doDrip = */ true);
 
-        // Set ETH-C Stability Fee to TBD
+        // Set ETH-C Stability Fee to 3.49%
         DssExecLib.setIlkStabilityFee("ETH-C", THREE_PT_FOUR_NINE, /* doDrip = */ true);
 
-        // Set WSTETH-A Stability Fee to TBD
+        // Set WSTETH-A Stability Fee to 3.74%
         DssExecLib.setIlkStabilityFee("WSTETH-A", THREE_PT_SEVEN_FOUR, /* doDrip = */ true);
 
-        // Set WSTETH-B Stability Fee to TBD
+        // Set WSTETH-B Stability Fee to 3.49%
         DssExecLib.setIlkStabilityFee("WSTETH-B", THREE_PT_FOUR_NINE, /* doDrip = */ true);
 
         // --- Spark Protocol Parameter Changes ---
@@ -144,20 +166,20 @@ contract DssSpellAction is DssAction {
         // Increase rETH-A gap to 5 million DAI
         DssExecLib.setIlkAutoLineParameters("RETH-A", /* line */ 50 * MILLION, /* gap */ 5 * MILLION, /* ttl */ 8 hours);
 
-        // Increase rETH-A Stability Fee to TBD
+        // Increase rETH-A Stability Fee to 3.74%
         DssExecLib.setIlkStabilityFee("RETH-A", THREE_PT_SEVEN_FOUR, true);
 
-        // Increase CRVV1ETHSTETH-A Stability Fee to TBD
+        // Increase CRVV1ETHSTETH-A Stability Fee to 4.24%
         // NOTE: disabled for goerli because the collateral is not on the chain
         // DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", FOUR_PT_TWO_FOUR, true);
 
-        // Increase WBTC-A Stability Fee to TBD
+        // Increase WBTC-A Stability Fee to 5.80%
         DssExecLib.setIlkStabilityFee("WBTC-A", FIVE_PT_EIGHT, true);
 
-        // Increase WBTC-B Stability Fee to TBD
+        // Increase WBTC-B Stability Fee to 6.30%
         DssExecLib.setIlkStabilityFee("WBTC-B", SIX_PT_THREE, true);
 
-        // Increase WBTC-C Stability Fee to TBD
+        // Increase WBTC-C Stability Fee to 5.55%
         DssExecLib.setIlkStabilityFee("WBTC-C", FIVE_PT_FIVE_FIVE, true);
 
         // --- RWA015 (BlockTower Andromeda) ---
@@ -172,9 +194,7 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/reducing-psm-usdp-a-debt-ceiling/20980
         // Set PSM-USDP-A Debt Ceiling to 0 and remove from autoline
         (,,,line,) = vat.ilks("PSM-PAX-A");
-        DssExecLib.setIlkDebtCeiling("PSM-PAX-A", 0);
-        lineReduction += line;
-        vat.file("Line", vat.Line() - lineReduction);
+        DssExecLib.decreaseIlkDebtCeiling("PSM-PAX-A", line / RAD, /* decrease global ceiling */ true);
         DssExecLib.removeIlkFromAutoLine("PSM-PAX-A");
     }
 }
