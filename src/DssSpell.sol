@@ -30,6 +30,10 @@ interface DssVestLike {
     function file(bytes32, uint256) external;
     function restrict(uint256) external;
 }
+interface RwaLiquidationLike {
+    function ilks(bytes32) external view returns (string memory, address, uint48, uint48);
+    function init(bytes32, uint256, string calldata, uint48) external;
+}
 
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
@@ -62,6 +66,20 @@ contract DssSpellAction is DssAction {
     uint256 internal constant SIX_PT_THREE          = 1000000001937312893803622469;
     uint256 internal constant FIVE_PT_FIVE_FIVE     = 1000000001712791360746325100;
 
+    address immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
+
+    function _updateDoc(bytes32 ilk, string memory doc) internal {
+        ( , address pip, uint48 tau, ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
+        require(pip != address(0), "DssSpell/unexisting-rwa-ilk");
+
+        // Init the RwaLiquidationOracle to reset the doc
+        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(
+            ilk, // ilk to update
+            0,   // price ignored if init() has already been called
+            doc, // new legal document
+            tau  // old tau value
+        );
+    }
 
     function actions() public override {
         uint256 lineReduction;
@@ -77,6 +95,11 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkDebtCeiling("RWA011-A", 0);
         // Increase the Debt Ceiling (line) of BlockTower S3 (RWA012-A) from 30 million Dai to 80 million Dai.
         DssExecLib.increaseIlkDebtCeiling("RWA012-A", 50 * MILLION, /* increase global line */ true);
+        // TODO: Fill out doc values
+        _updateDoc("RWA010-A", "FILLOUT");
+        _updateDoc("RWA011-A", "FILLOUT");
+        _updateDoc("RWA012-A", "FILLOUT");
+        _updateDoc("RWA013-A", "FILLOUT");
 
         // --- MKR Vesting Transfers ---
         // Sidestream - 348.28 MKR - 0xb1f950a51516a697E103aaa69E152d839182f6Fe
