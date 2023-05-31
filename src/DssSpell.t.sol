@@ -36,6 +36,46 @@ interface BridgeLike {
     function l2TeleportGateway() external view returns (address);
 }
 
+interface ACLManagerLike {
+    function isPoolAdmin(address admin) external view returns (bool);
+}
+
+interface PoolLike {
+    struct ReserveData {
+        //stores the reserve configuration
+        uint256 configuration;
+        //the liquidity index. Expressed in ray
+        uint128 liquidityIndex;
+        //the current supply rate. Expressed in ray
+        uint128 currentLiquidityRate;
+        //variable borrow index. Expressed in ray
+        uint128 variableBorrowIndex;
+        //the current variable borrow rate. Expressed in ray
+        uint128 currentVariableBorrowRate;
+        //the current stable borrow rate. Expressed in ray
+        uint128 currentStableBorrowRate;
+        //timestamp of last update
+        uint40 lastUpdateTimestamp;
+        //the id of the reserve. Represents the position in the list of the active reserves
+        uint16 id;
+        //aToken address
+        address aTokenAddress;
+        //stableDebtToken address
+        address stableDebtTokenAddress;
+        //variableDebtToken address
+        address variableDebtTokenAddress;
+        //address of the interest rate strategy
+        address interestRateStrategyAddress;
+        //the current treasury balance, scaled
+        uint128 accruedToTreasury;
+        //the outstanding unbacked aTokens minted through the bridging feature
+        uint128 unbacked;
+        //the outstanding debt borrowed against this asset in isolation mode
+        uint128 isolationModeTotalDebt;
+    }
+    function getReserveData(address asset) external view returns (ReserveData memory);
+}
+
 contract DssSpellTest is DssSpellTestBase {
     string         config;
     RootDomain     rootDomain;
@@ -489,5 +529,25 @@ contract DssSpellTest is DssSpellTestBase {
 
         // Validate post-spell state
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
+    }
+
+    function testSparkSpell() public {
+        ACLManagerLike SPARK_ACL_MANAGER = ACLManagerLike(0xb137E7d16564c81ae2b0C8ee6B55De81dd46ECe5);
+        address SPARK_PROXY = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
+        address RETH = 0x62BC478FFC429161115A6E4090f819CE5C50A5d9;
+        PoolLike pool = PoolLike(0x26ca51Af4506DE7a6f0785D20CD776081a05fF6d);
+
+        // Spell is thoroughly checked in Spark repo, but just triple check the spell was cast here
+        assertEq(WardsAbstract(SPARK_PROXY).wards(address(esm)), 0);
+        assertEq(SPARK_ACL_MANAGER.isPoolAdmin(SPARK_PROXY), false);
+        assertTrue(pool.getReserveData(RETH).aTokenAddress == address(0));
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(WardsAbstract(SPARK_PROXY).wards(address(esm)), 1);
+        assertEq(SPARK_ACL_MANAGER.isPoolAdmin(SPARK_PROXY), true);
+        assertTrue(pool.getReserveData(RETH).aTokenAddress != address(0));
     }
 }

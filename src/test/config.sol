@@ -2002,8 +2002,8 @@ contract Config {
         });
         afterSpell.collaterals["DIRECT-SPARK-DAI"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      5 * MILLION,
-            aL_gap:       5 * MILLION,
+            aL_line:      20 * MILLION,
+            aL_gap:       20 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
             dust:         0,
