@@ -19,9 +19,23 @@ pragma solidity 0.8.16;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
+interface VatLike {
+    function Line() external view returns (uint256);
+    function file(bytes32 what, uint256 data) external;
+    function ilks(bytes32 ilk) external view returns (uint256 Art, uint256 rate, uint256 spot, uint256 line, uint256 dust);
+}
+
+interface DssVestLike {
+    function create(address, uint256, uint256, uint256, uint256, address) external returns (uint256);
+    function file(bytes32, uint256) external;
+    function restrict(uint256) external;
+}
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
+    VatLike  internal immutable vat  = VatLike(DssExecLib.vat());
+    DssVestLike internal immutable vest = DssVestLike(DssExecLib.getChangelogAddress("MCD_VEST_MKR_TREASURY"));
 
     // Always keep office hours off on goerli
     function officeHours() public pure override returns (bool) {
@@ -39,10 +53,25 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
+    uint256 internal constant MILLION           = 10 ** 6;
+    // TODO: [A] rename, adjust value
+    // TODO: [B] add other rate constants
+    uint256 internal constant ONE_PCT_RATE      = 0;
+
     function actions() public override {
+        uint256 lineReduction;
+        uint256 line;
+
         // --- BlockTower Vault Debt Ceiling Adjustments ---
         // Poll: https://vote.makerdao.com/polling/QmPMrvfV#poll-detail
         // Forum: https://forum.makerdao.com/t/blocktower-credit-rwa-vaults-parameters-shift/20707
+
+        // Decrease the Debt Ceiling (line) of BlockTower S1 (RWA010-A) from 20 million Dai to zero Dai.
+        DssExecLib.setIlkDebtCeiling("RWA010-A", 0);
+        // Decrease the Debt Ceiling (line) of BlockTower S2 (RWA011-A) from 30 million Dai to zero Dai.
+        DssExecLib.setIlkDebtCeiling("RWA011-A", 0);
+        // Increase the Debt Ceiling (line) of BlockTower S3 (RWA012-A) from 30 million Dai to 80 million Dai.
+        DssExecLib.increaseIlkDebtCeiling("RWA012-A", 50 * MILLION, /* increase global line */ true);
 
         // --- MKR Vesting Transfers ---
         // Sidestream - 348.28 MKR - 0xb1f950a51516a697E103aaa69E152d839182f6Fe
@@ -61,17 +90,62 @@ contract DssSpellAction is DssAction {
         // Poll: https://vote.makerdao.com/polling/QmaoGpAQ#poll-detail
         // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-2-non-scope-defined-parameter-changes-may-2023/20981#stability-scope-parameter-changes-proposal-6
 
+        // Increase DSR to TBD
+        // TODO: [A] adjust the rate
+        DssExecLib.setDSR(ONE_PCT_RATE, true);
+
+        // Set ETH-A Stability Fee to TBD
+        // TODO: [B] adjust the rate
+        DssExecLib.setIlkStabilityFee("ETH-A", ONE_PCT_RATE, /* doDrip = */ true);
+
+        // Set ETH-B Stability Fee to TBD
+        // TODO: [B] adjust the rate
+        DssExecLib.setIlkStabilityFee("ETH-B", ONE_PCT_RATE, /* doDrip = */ true);
+
+        // Set ETH-C Stability Fee to TBD
+        // TODO: [B] adjust the rate
+        DssExecLib.setIlkStabilityFee("ETH-C", ONE_PCT_RATE, /* doDrip = */ true);
+
+        // Set WSTETH-A Stability Fee to TBD
+        // TODO: [B] adjust the rate
+        DssExecLib.setIlkStabilityFee("WSTETH-A", ONE_PCT_RATE, /* doDrip = */ true);
+
+        // Set WSTETH-B Stability Fee to TBD
+        // TODO: [B] adjust the rate
+        DssExecLib.setIlkStabilityFee("WSTETH-B", ONE_PCT_RATE, /* doDrip = */ true);
+
         // --- Spark Protocol Parameter Changes ---
         // Poll: https://vote.makerdao.com/polling/QmWatYqy#poll-detail
-        // Forum: https://forum.makerdao.com/t/2023-05-24-spark-protocol-updates/20958
-
-        // --- Spark Protocol Proxy Changes ---
-        // Poll: https://vote.makerdao.com/polling/Qmc9fd3j#poll-detail
         // Forum: https://forum.makerdao.com/t/2023-05-24-spark-protocol-updates/20958
 
         // --- Non-Scope Defined Parameter Adjustments ---
         // Poll: https://vote.makerdao.com/polling/QmQXhS3Z#poll-detail
         // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-2-non-scope-defined-parameter-changes-may-2023/20981
+
+        // Increase rETH-A line to 50 million DAI
+        // Increase rETH-A gap to 5 million DAI
+        DssExecLib.setIlkAutoLineParameters("RETH-A", /* line */ 50 * MILLION, /* gap */ 5 * MILLION, /* ttl */ 8 hours);
+
+        // Increase rETH-A Stability Fee to TBD
+        // TODO: [B] adjust the rate
+        DssExecLib.setIlkStabilityFee("RETH-A", ONE_PCT_RATE, true);
+
+        // Increase CRVV1ETHSTETH-A Stability Fee to TBD
+        // TODO: [B] adjust the rate
+        // NOTE: disabled for goerli because the collateral is not on the chain
+        // DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", ONE_PCT_RATE, true);
+
+        // Increase WBTC-A Stability Fee to TBD
+        // TODO: [B] adjust the rate
+        DssExecLib.setIlkStabilityFee("WBTC-A", ONE_PCT_RATE, true);
+
+        // Increase WBTC-B Stability Fee to TBD
+        // TODO: [B] adjust the rate
+        DssExecLib.setIlkStabilityFee("WBTC-B", ONE_PCT_RATE, true);
+
+        // Increase WBTC-C Stability Fee to TBD
+        // TODO: [B] adjust the rate
+        DssExecLib.setIlkStabilityFee("WBTC-C", ONE_PCT_RATE, true);
 
         // --- RWA015 (BlockTower Andromeda) ---
         // Poll: https://vote.makerdao.com/polling/QmbudkVR#poll-detail
@@ -83,7 +157,10 @@ contract DssSpellAction is DssAction {
         // --- USDP PSM Debt Ceiling ---
         // Poll: https://vote.makerdao.com/polling/QmQYSLHH#poll-detail
         // Forum: https://forum.makerdao.com/t/reducing-psm-usdp-a-debt-ceiling/20980
-
+        (,,,line,) = vat.ilks("PSM-USDP-A");
+        DssExecLib.setIlkDebtCeiling("PSM-USDP-A", 0);
+        lineReduction += line;
+        vat.file("Line", vat.Line() - lineReduction);
     }
 }
 
