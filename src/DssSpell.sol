@@ -54,6 +54,7 @@ contract DssSpellAction is DssAction {
     // uint256 internal constant X_PCT_RATE      = ;
 
     uint256 internal constant MILLION           = 10 ** 6;
+
     uint256 internal constant THREE_PT_FOUR_NINE    = 1000000001087798189708544327;
     uint256 internal constant THREE_PT_SEVEN_FOUR   = 1000000001164306917698440949;
     uint256 internal constant FOUR_PT_TWO_FOUR      = 1000000001316772794769098706;
@@ -150,10 +151,12 @@ contract DssSpellAction is DssAction {
         // --- USDP PSM Debt Ceiling ---
         // Poll: https://vote.makerdao.com/polling/QmQYSLHH#poll-detail
         // Forum: https://forum.makerdao.com/t/reducing-psm-usdp-a-debt-ceiling/20980
+        // Set PSM-USDP-A Debt Ceiling to 0 and remove from autoline
         (,,,line,) = vat.ilks("PSM-PAX-A");
         DssExecLib.setIlkDebtCeiling("PSM-PAX-A", 0);
         lineReduction += line;
         vat.file("Line", vat.Line() - lineReduction);
+        DssExecLib.removeIlkFromAutoLine("PSM-PAX-A");
     }
 }
 
