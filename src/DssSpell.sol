@@ -57,6 +57,7 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
+    uint256 internal constant RAD               = 10 ** 45;
     uint256 internal constant MILLION           = 10 ** 6;
 
     uint256 internal constant THREE_PT_FOUR_NINE    = 1000000001087798189708544327;
@@ -82,7 +83,6 @@ contract DssSpellAction is DssAction {
     }
 
     function actions() public override {
-        uint256 lineReduction;
         uint256 line;
 
         // --- BlockTower Vault Debt Ceiling Adjustments ---
@@ -94,7 +94,7 @@ contract DssSpellAction is DssAction {
         // Decrease the Debt Ceiling (line) of BlockTower S2 (RWA011-A) from 30 million Dai to zero Dai.
         DssExecLib.setIlkDebtCeiling("RWA011-A", 0);
         // Increase the Debt Ceiling (line) of BlockTower S3 (RWA012-A) from 30 million Dai to 80 million Dai.
-        DssExecLib.increaseIlkDebtCeiling("RWA012-A", 50 * MILLION, /* increase global line */ false);
+        DssExecLib.increaseIlkDebtCeiling("RWA012-A", 50 * MILLION, /* do not increase global line */ false);
         // TODO: Fill out doc values
         _updateDoc("RWA010-A", "FILLOUT");
         _updateDoc("RWA011-A", "FILLOUT");
@@ -176,9 +176,7 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/reducing-psm-usdp-a-debt-ceiling/20980
         // Set PSM-USDP-A Debt Ceiling to 0 and remove from autoline
         (,,,line,) = vat.ilks("PSM-PAX-A");
-        DssExecLib.setIlkDebtCeiling("PSM-PAX-A", 0);
-        lineReduction += line;
-        vat.file("Line", vat.Line() - lineReduction);
+        DssExecLib.decreaseIlkDebtCeiling("PSM-PAX-A", line / RAD, /* decrease global ceiling */ true);
         DssExecLib.removeIlkFromAutoLine("PSM-PAX-A");
     }
 }
