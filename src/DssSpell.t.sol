@@ -265,20 +265,20 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     function testNewIlkRegistryValues() private { // make private to disable
-        // _vote(address(spell));
-        // _scheduleWaitAndCast(address(spell));
-        // assertTrue(spell.done());
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
 
         // Insert new ilk registry values tests here
         // RWA014
-        // assertEq(reg.pos("RWA014-A"),    61);
-        // assertEq(reg.join("RWA014-A"),   addr.addr("MCD_JOIN_RWA014_A"));
-        // assertEq(reg.gem("RWA014-A"),    addr.addr("RWA014"));
-        // assertEq(reg.dec("RWA014-A"),    GemAbstract(addr.addr("RWA014")).decimals());
-        // assertEq(reg.class("RWA014-A"),  3);
-        // assertEq(reg.pip("RWA014-A"),    addr.addr("PIP_RWA014"));
-        // assertEq(reg.name("RWA014-A"),   "RWA014-A: Coinbase Custody");
-        // assertEq(reg.symbol("RWA014-A"), GemAbstract(addr.addr("RWA014")).symbol());
+        assertEq(reg.pos("RWA014-A"),    61);
+        assertEq(reg.join("RWA014-A"),   addr.addr("MCD_JOIN_RWA014_A"));
+        assertEq(reg.gem("RWA014-A"),    addr.addr("RWA014"));
+        assertEq(reg.dec("RWA014-A"),    GemAbstract(addr.addr("RWA014")).decimals());
+        assertEq(reg.class("RWA014-A"),  3);
+        assertEq(reg.pip("RWA014-A"),    addr.addr("PIP_RWA014"));
+        assertEq(reg.name("RWA014-A"),   "RWA014-A: Coinbase Custody");
+        assertEq(reg.symbol("RWA014-A"), GemAbstract(addr.addr("RWA014")).symbol());
     }
 
     function testOSMs() private { // make private to disable

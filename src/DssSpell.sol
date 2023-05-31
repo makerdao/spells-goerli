@@ -39,7 +39,52 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
-    function actions() public override {}
+    function actions() public override {
+        // --- BlockTower Vault Debt Ceiling Adjustments ---
+        // Poll: https://vote.makerdao.com/polling/QmPMrvfV#poll-detail
+        // Forum: https://forum.makerdao.com/t/blocktower-credit-rwa-vaults-parameters-shift/20707
+
+        // --- MKR Vesting Transfers ---
+        // Sidestream - 348.28 MKR - 0xb1f950a51516a697E103aaa69E152d839182f6Fe
+        // Poll: N/A
+        // MIP: https://mips.makerdao.com/mips/details/MIP40c3SP44#estimated-mkr-expenditure
+
+        // Skip for goerli
+
+        // DUX - 225.12 MKR - 0x5A994D8428CCEbCC153863CCdA9D2Be6352f89ad
+        // Poll: N/A
+        // MIP: https://mips.makerdao.com/mips/details/MIP40c3SP27
+
+        // Skip for goerli
+
+        // --- Stability Scope Defined Parameter Adjustments ---
+        // Poll: https://vote.makerdao.com/polling/QmaoGpAQ#poll-detail
+        // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-2-non-scope-defined-parameter-changes-may-2023/20981#stability-scope-parameter-changes-proposal-6
+
+        // --- Spark Protocol Parameter Changes ---
+        // Poll: https://vote.makerdao.com/polling/QmWatYqy#poll-detail
+        // Forum: https://forum.makerdao.com/t/2023-05-24-spark-protocol-updates/20958
+
+        // --- Spark Protocol Proxy Changes ---
+        // Poll: https://vote.makerdao.com/polling/Qmc9fd3j#poll-detail
+        // Forum: https://forum.makerdao.com/t/2023-05-24-spark-protocol-updates/20958
+
+        // --- Non-Scope Defined Parameter Adjustments ---
+        // Poll: https://vote.makerdao.com/polling/QmQXhS3Z#poll-detail
+        // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-2-non-scope-defined-parameter-changes-may-2023/20981
+
+        // --- RWA015 (BlockTower Andromeda) ---
+        // Poll: https://vote.makerdao.com/polling/QmbudkVR#poll-detail
+        // Forum links:
+        //   - https://forum.makerdao.com/t/mip90-liquid-aaa-structured-credit-money-market-fund/18428
+        //   - https://forum.makerdao.com/t/project-andromeda-risk-legal-assessment/20969
+        //   - https://forum.makerdao.com/t/rwa015-project-andromeda-technical-assessment/20974
+
+        // --- USDP PSM Debt Ceiling ---
+        // Poll: https://vote.makerdao.com/polling/QmQYSLHH#poll-detail
+        // Forum: https://forum.makerdao.com/t/reducing-psm-usdp-a-debt-ceiling/20980
+
+    }
 }
 
 contract DssSpell is DssExec {
