@@ -150,8 +150,8 @@ contract DssSpellAction is DssAction {
         // --- USDP PSM Debt Ceiling ---
         // Poll: https://vote.makerdao.com/polling/QmQYSLHH#poll-detail
         // Forum: https://forum.makerdao.com/t/reducing-psm-usdp-a-debt-ceiling/20980
-        (,,,line,) = vat.ilks("PSM-USDP-A");
-        DssExecLib.setIlkDebtCeiling("PSM-USDP-A", 0);
+        (,,,line,) = vat.ilks("PSM-PAX-A");
+        DssExecLib.setIlkDebtCeiling("PSM-PAX-A", 0);
         lineReduction += line;
         vat.file("Line", vat.Line() - lineReduction);
     }
