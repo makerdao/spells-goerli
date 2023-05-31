@@ -40,6 +40,7 @@ contract DssSpellAction is DssAction {
     string public constant override description = "Goerli Spell";
     VatLike internal immutable vat = VatLike(DssExecLib.getChangelogAddress("MCD_VAT"));
     DssVestLike internal immutable vest = DssVestLike(DssExecLib.getChangelogAddress("MCD_VEST_MKR_TREASURY"));
+    RwaLiquidationLike immutable rwaLiquidation = RwaLiquidationLike(DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE"));
 
     // Always keep office hours off on goerli
     function officeHours() public pure override returns (bool) {
@@ -67,14 +68,12 @@ contract DssSpellAction is DssAction {
     uint256 internal constant SIX_PT_THREE          = 1000000001937312893803622469;
     uint256 internal constant FIVE_PT_FIVE_FIVE     = 1000000001712791360746325100;
 
-    address immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
-
     function _updateDoc(bytes32 ilk, string memory doc) internal {
-        ( , address pip, uint48 tau, ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
+        ( , address pip, uint48 tau, ) = rwaLiquidation.ilks(ilk);
         require(pip != address(0), "DssSpell/unexisting-rwa-ilk");
 
         // Init the RwaLiquidationOracle to reset the doc
-        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(
+        rwaLiquidation.init(
             ilk, // ilk to update
             0,   // price ignored if init() has already been called
             doc, // new legal document
