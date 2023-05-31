@@ -54,9 +54,13 @@ contract DssSpellAction is DssAction {
     // uint256 internal constant X_PCT_RATE      = ;
 
     uint256 internal constant MILLION           = 10 ** 6;
-    // TODO: [A] rename, adjust value
-    // TODO: [B] add other rate constants
-    uint256 internal constant ONE_PCT_RATE      = 0;
+    uint256 internal constant THREE_PT_FOUR_NINE    = 1000000001087798189708544327;
+    uint256 internal constant THREE_PT_SEVEN_FOUR   = 1000000001164306917698440949;
+    uint256 internal constant FOUR_PT_TWO_FOUR      = 1000000001316772794769098706;
+    uint256 internal constant FIVE_PT_EIGHT         = 1000000001787808646832390371;
+    uint256 internal constant SIX_PT_THREE          = 1000000001937312893803622469;
+    uint256 internal constant FIVE_PT_FIVE_FIVE     = 1000000001712791360746325100;
+
 
     function actions() public override {
         uint256 lineReduction;
@@ -91,28 +95,22 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-2-non-scope-defined-parameter-changes-may-2023/20981#stability-scope-parameter-changes-proposal-6
 
         // Increase DSR to TBD
-        // TODO: [A] adjust the rate
-        DssExecLib.setDSR(ONE_PCT_RATE, true);
+        DssExecLib.setDSR(THREE_PT_FOUR_NINE, true);
 
         // Set ETH-A Stability Fee to TBD
-        // TODO: [B] adjust the rate
-        DssExecLib.setIlkStabilityFee("ETH-A", ONE_PCT_RATE, /* doDrip = */ true);
+        DssExecLib.setIlkStabilityFee("ETH-A", THREE_PT_SEVEN_FOUR, /* doDrip = */ true);
 
         // Set ETH-B Stability Fee to TBD
-        // TODO: [B] adjust the rate
-        DssExecLib.setIlkStabilityFee("ETH-B", ONE_PCT_RATE, /* doDrip = */ true);
+        DssExecLib.setIlkStabilityFee("ETH-B", FOUR_PT_TWO_FOUR, /* doDrip = */ true);
 
         // Set ETH-C Stability Fee to TBD
-        // TODO: [B] adjust the rate
-        DssExecLib.setIlkStabilityFee("ETH-C", ONE_PCT_RATE, /* doDrip = */ true);
+        DssExecLib.setIlkStabilityFee("ETH-C", THREE_PT_FOUR_NINE, /* doDrip = */ true);
 
         // Set WSTETH-A Stability Fee to TBD
-        // TODO: [B] adjust the rate
-        DssExecLib.setIlkStabilityFee("WSTETH-A", ONE_PCT_RATE, /* doDrip = */ true);
+        DssExecLib.setIlkStabilityFee("WSTETH-A", THREE_PT_SEVEN_FOUR, /* doDrip = */ true);
 
         // Set WSTETH-B Stability Fee to TBD
-        // TODO: [B] adjust the rate
-        DssExecLib.setIlkStabilityFee("WSTETH-B", ONE_PCT_RATE, /* doDrip = */ true);
+        DssExecLib.setIlkStabilityFee("WSTETH-B", THREE_PT_FOUR_NINE, /* doDrip = */ true);
 
         // --- Spark Protocol Parameter Changes ---
         // Poll: https://vote.makerdao.com/polling/QmWatYqy#poll-detail
@@ -127,25 +125,20 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkAutoLineParameters("RETH-A", /* line */ 50 * MILLION, /* gap */ 5 * MILLION, /* ttl */ 8 hours);
 
         // Increase rETH-A Stability Fee to TBD
-        // TODO: [B] adjust the rate
-        DssExecLib.setIlkStabilityFee("RETH-A", ONE_PCT_RATE, true);
+        DssExecLib.setIlkStabilityFee("RETH-A", THREE_PT_SEVEN_FOUR, true);
 
         // Increase CRVV1ETHSTETH-A Stability Fee to TBD
-        // TODO: [B] adjust the rate
         // NOTE: disabled for goerli because the collateral is not on the chain
-        // DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", ONE_PCT_RATE, true);
+        // DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", FOUR_PT_TWO_FOUR, true);
 
         // Increase WBTC-A Stability Fee to TBD
-        // TODO: [B] adjust the rate
-        DssExecLib.setIlkStabilityFee("WBTC-A", ONE_PCT_RATE, true);
+        DssExecLib.setIlkStabilityFee("WBTC-A", FIVE_PT_EIGHT, true);
 
         // Increase WBTC-B Stability Fee to TBD
-        // TODO: [B] adjust the rate
-        DssExecLib.setIlkStabilityFee("WBTC-B", ONE_PCT_RATE, true);
+        DssExecLib.setIlkStabilityFee("WBTC-B", SIX_PT_THREE, true);
 
         // Increase WBTC-C Stability Fee to TBD
-        // TODO: [B] adjust the rate
-        DssExecLib.setIlkStabilityFee("WBTC-C", ONE_PCT_RATE, true);
+        DssExecLib.setIlkStabilityFee("WBTC-C", FIVE_PT_FIVE_FIVE, true);
 
         // --- RWA015 (BlockTower Andromeda) ---
         // Poll: https://vote.makerdao.com/polling/QmbudkVR#poll-detail
