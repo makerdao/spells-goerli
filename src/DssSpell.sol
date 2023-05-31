@@ -94,7 +94,7 @@ contract DssSpellAction is DssAction {
         // Decrease the Debt Ceiling (line) of BlockTower S2 (RWA011-A) from 30 million Dai to zero Dai.
         DssExecLib.setIlkDebtCeiling("RWA011-A", 0);
         // Increase the Debt Ceiling (line) of BlockTower S3 (RWA012-A) from 30 million Dai to 80 million Dai.
-        DssExecLib.increaseIlkDebtCeiling("RWA012-A", 50 * MILLION, /* increase global line */ true);
+        DssExecLib.increaseIlkDebtCeiling("RWA012-A", 50 * MILLION, /* increase global line */ false);
         // TODO: Fill out doc values
         _updateDoc("RWA010-A", "FILLOUT");
         _updateDoc("RWA011-A", "FILLOUT");
