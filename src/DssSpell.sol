@@ -38,7 +38,7 @@ interface RwaLiquidationLike {
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
-    VatLike  internal immutable vat  = VatLike(DssExecLib.vat());
+    VatLike internal immutable vat = VatLike(DssExecLib.getChangelogAddress("MCD_VAT"));
     DssVestLike internal immutable vest = DssVestLike(DssExecLib.getChangelogAddress("MCD_VEST_MKR_TREASURY"));
 
     // Always keep office hours off on goerli
