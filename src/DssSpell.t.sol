@@ -301,7 +301,9 @@ contract DssSpellTest is DssSpellTestBase {
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        _checkChainlogVersion("1.14.12");
+        _checkChainlogKey("EXEC_PROXY_SPARK");
+
+        _checkChainlogVersion("1.14.13");
     }
 
     function testNewIlkRegistryValues() private { // make private to disable
@@ -550,7 +552,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(SPARK_ACL_MANAGER.isPoolAdmin(SPARK_PROXY), true);
         assertTrue(pool.getReserveData(RETH).aTokenAddress != address(0));
     }
-    
+
     // TODO Fillout new docs
     string RWA010_OLDDOC      = "QmRqsQRnLfaRuhFr5wCfDQZKzNo7FRVUyTJPhS76nfz6nX";
     string RWA010_NEWDOC      = "FILLOUT";
