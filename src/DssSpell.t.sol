@@ -555,16 +555,16 @@ contract DssSpellTest is DssSpellTestBase {
 
     // TODO Fillout new docs
     string RWA010_OLDDOC      = "QmRqsQRnLfaRuhFr5wCfDQZKzNo7FRVUyTJPhS76nfz6nX";
-    string RWA010_NEWDOC      = "FILLOUT";
+    string RWA010_NEWDOC      = "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU";
 
     string RWA011_OLDDOC      = "QmRqsQRnLfaRuhFr5wCfDQZKzNo7FRVUyTJPhS76nfz6nX";
-    string RWA011_NEWDOC      = "FILLOUT";
+    string RWA011_NEWDOC      = "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU";
 
     string RWA012_OLDDOC      = "QmRqsQRnLfaRuhFr5wCfDQZKzNo7FRVUyTJPhS76nfz6nX";
-    string RWA012_NEWDOC      = "FILLOUT";
+    string RWA012_NEWDOC      = "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU";
 
     string RWA013_OLDDOC      = "QmRqsQRnLfaRuhFr5wCfDQZKzNo7FRVUyTJPhS76nfz6nX";
-    string RWA013_NEWDOC      = "FILLOUT";
+    string RWA013_NEWDOC      = "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU";
 
     function testRWA010DocChange() public {
         _checkRWADocUpdate("RWA010-A", RWA010_OLDDOC, RWA010_NEWDOC);
