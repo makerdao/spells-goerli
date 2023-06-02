@@ -18,6 +18,8 @@ pragma solidity 0.8.16;
 
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
+import "dss-interfaces/dss/IlkRegistryAbstract.sol";
+import "dss-interfaces/ERC/GemAbstract.sol";
 
 interface VatLike {
     function Line() external view returns (uint256);
@@ -188,6 +190,8 @@ contract DssSpellAction is DssAction {
         //   - https://forum.makerdao.com/t/mip90-liquid-aaa-structured-credit-money-market-fund/18428
         //   - https://forum.makerdao.com/t/project-andromeda-risk-legal-assessment/20969
         //   - https://forum.makerdao.com/t/rwa015-project-andromeda-technical-assessment/20974
+        onboardRWA015A();
+        bootstrapRWA015A();
 
         // --- USDP PSM Debt Ceiling ---
         // Poll: https://vote.makerdao.com/polling/QmQYSLHH#poll-detail
@@ -199,8 +203,188 @@ contract DssSpellAction is DssAction {
 
         DssExecLib.setChangelogVersion("1.14.13");
     }
+
+    uint256 internal constant WAD = 10 ** 18;
+
+    // -- RWA015 components --
+    address internal constant RWA015                     = 0x8384c55389f1ab6345dd4EF5fF2eF791D4875D2A;
+    address internal constant MCD_JOIN_RWA015_A          = 0x59ea019366FC8E8fBaf20EeA7F68F6557521FD20;
+    address internal constant RWA015_A_URN               = 0xf24456f7132479cdABBD67511D2e985cE69BFd0D;
+    address internal constant RWA015_A_JAR               = 0x3799FF53c20042BB9b0d2580Bc66257397e69CAE;
+    address internal constant RWA015_A_INPUT_CONDUIT_URN = 0xa737C5EB4aD00d30f92CFcdf3f92B8B1AE79383F;
+    address internal constant RWA015_A_INPUT_CONDUIT_JAR = 0xe7Bcb3E53db0E502B3E9127A703c44461ab2b09f;
+    address internal constant RWA015_A_OUTPUT_CONDUIT    = 0xe80420B69106E6993A7df14C191e7813dE3Ed8Db;
+    // Operator address
+    address internal constant RWA015_A_OPERATOR          = 0x23a10f09Fac6CCDbfb6d9f0215C795F9591D7476;
+    // Custody address
+    address internal constant RWA015_A_CUSTODY           = 0x65729807485F6f7695AF863d97D62140B7d69d83;
+
+    // Ilk registry params
+    uint256 internal constant RWA015_REG_CLASS_RWA = 3;
+
+    // RWA Oracle Params
+    uint256 internal constant RWA015_A_INITIAL_PRICE = 2_500_000;
+    string  internal constant RWA015_DOC             = "QmdbPyQLDdGQhKGXBgod7TbQmrUJ7tiN9aX1zSL7bmtkTN";
+    uint48  internal constant RWA015_A_TAU           = 0;
+
+    // Remaining params
+    uint256 internal constant RWA015_A_LINE = 2_500_000;
+    uint256 internal constant RWA015_A_MAT  = 100_00;
+    // -- RWA015 END --
+
+    address internal immutable reg  = DssExecLib.reg();
+    address internal immutable jug  = DssExecLib.jug();
+    address internal immutable spot = DssExecLib.spotter();
+    address internal immutable esm  = DssExecLib.esm();
+
+    function onboardRWA015A() internal {
+        bytes32 ilk = "RWA015-A";
+
+        // Init the RwaLiquidationOracle
+        RwaLiquidationLike(rwaLiquidation).init(
+            ilk,
+            // We are not using DssExecLib, so the precision has to be set explicitly
+            RWA015_A_INITIAL_PRICE * WAD,
+            RWA015_DOC,
+            RWA015_A_TAU
+        );
+        (, address pip, , ) = RwaLiquidationLike(rwaLiquidation).ilks(ilk);
+
+        // Init RWA015 in Vat
+        Initializable(address(vat)).init(ilk);
+        // Init RWA015 in Jug
+        Initializable(jug).init(ilk);
+
+        // Allow RWA015 Join to modify Vat registry
+        DssExecLib.authorize(address(vat), MCD_JOIN_RWA015_A);
+
+        // 500m debt ceiling
+        DssExecLib.increaseIlkDebtCeiling(ilk, RWA015_A_LINE, /* _global = */ true);
+
+        // Set price feed for RWA015
+        DssExecLib.setContract(spot, ilk, "pip", pip);
+
+        // Set minimum collateralization ratio
+        DssExecLib.setIlkLiquidationRatio(ilk, RWA015_A_MAT);
+
+        // Poke the spotter to pull in a price
+        DssExecLib.updateCollateralPrice(ilk);
+
+        // Give the urn permissions on the join adapter
+        DssExecLib.authorize(MCD_JOIN_RWA015_A, RWA015_A_URN);
+
+        // OPERATOR permission on URN
+        RwaUrnLike(RWA015_A_URN).hope(address(RWA015_A_OPERATOR));
+
+        // OPERATOR permission on RWA015_A_OUTPUT_CONDUIT
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).hope(RWA015_A_OPERATOR);
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).mate(RWA015_A_OPERATOR);
+        // Custody whitelist for output conduit destination address
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).kiss(address(RWA015_A_CUSTODY));
+        // Set "quitTo" address for RWA015_A_OUTPUT_CONDUIT
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).file("quitTo", RWA015_A_URN);
+
+        // OPERATOR permission on RWA015_A_INPUT_CONDUIT_URN
+        RwaInputConduitLike(RWA015_A_INPUT_CONDUIT_URN).mate(RWA015_A_OPERATOR);
+        // Set "quitTo" address for RWA015_A_INPUT_CONDUIT_URN
+        RwaInputConduitLike(RWA015_A_INPUT_CONDUIT_URN).file("quitTo", RWA015_A_CUSTODY);
+
+        // OPERATOR permission on RWA015_A_INPUT_CONDUIT_JAR
+        RwaInputConduitLike(RWA015_A_INPUT_CONDUIT_JAR).mate(RWA015_A_OPERATOR);
+        // Set "quitTo" address for RWA015_A_INPUT_CONDUIT_JAR
+        RwaInputConduitLike(RWA015_A_INPUT_CONDUIT_JAR).file("quitTo", RWA015_A_CUSTODY);
+
+        // Add RWA015 contract to the changelog
+        DssExecLib.setChangelogAddress("RWA015",                     RWA015);
+        DssExecLib.setChangelogAddress("PIP_RWA015",                 pip);
+        DssExecLib.setChangelogAddress("MCD_JOIN_RWA015_A",          MCD_JOIN_RWA015_A);
+        DssExecLib.setChangelogAddress("RWA015_A_URN",               RWA015_A_URN);
+        DssExecLib.setChangelogAddress("RWA015_A_JAR",               RWA015_A_JAR);
+        DssExecLib.setChangelogAddress("RWA015_A_INPUT_CONDUIT_URN", RWA015_A_INPUT_CONDUIT_URN);
+        DssExecLib.setChangelogAddress("RWA015_A_INPUT_CONDUIT_JAR", RWA015_A_INPUT_CONDUIT_JAR);
+        DssExecLib.setChangelogAddress("RWA015_A_OUTPUT_CONDUIT",    RWA015_A_OUTPUT_CONDUIT);
+
+        // Add RWA015 to ILK REGISTRY
+        IlkRegistryAbstract(reg).put(
+            ilk,
+            MCD_JOIN_RWA015_A,
+            RWA015,
+            GemAbstract(RWA015).decimals(),
+            RWA015_REG_CLASS_RWA,
+            pip,
+            address(0),
+            "RWA015-A: BlockTower Andromeda",
+            GemAbstract(RWA015).symbol()
+        );
+
+        // ----- Additional ESM authorization -----
+        DssExecLib.authorize(MCD_JOIN_RWA015_A,          esm);
+        DssExecLib.authorize(RWA015_A_URN,               esm);
+        DssExecLib.authorize(RWA015_A_OUTPUT_CONDUIT,    esm);
+        DssExecLib.authorize(RWA015_A_INPUT_CONDUIT_URN, esm);
+        DssExecLib.authorize(RWA015_A_INPUT_CONDUIT_JAR, esm);
+    }
+
+    function bootstrapRWA015A() internal {
+        // Grant all required permissions for MCD_PAUSE_PROXY
+        RwaUrnLike(RWA015_A_URN).hope(address(this));
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).hope(address(this));
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).mate(address(this));
+        RwaInputConduitLike(RWA015_A_INPUT_CONDUIT_URN).mate(address(this));
+        RwaInputConduitLike(RWA015_A_INPUT_CONDUIT_JAR).mate(address(this));
+
+        // Lock RWA015 Token in the URN
+        GemAbstract(RWA015).approve(RWA015_A_URN, 1 * WAD);
+        RwaUrnLike(RWA015_A_URN).lock(1 * WAD);
+        // Draw until the current debt ceiling
+        RwaUrnLike(RWA015_A_URN).draw(RWA015_A_LINE * WAD);
+
+        // Pick the destination for the assets
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).pick(RWA015_A_CUSTODY);
+        // Swap Dai for the chosen stablecoin through the PSM and send it to the picked address.
+        // For Goerli we push only 100 Dai
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).push(100 * WAD);
+        // For Mainnet we push the entire balance
+        // RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).push();
+
+        // Revoke all granted permissions from MCD_PAUSE_PROXY
+        RwaUrnLike(RWA015_A_URN).nope(address(this));
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).nope(address(this));
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).hate(address(this));
+        RwaInputConduitLike(RWA015_A_INPUT_CONDUIT_URN).hate(address(this));
+        RwaInputConduitLike(RWA015_A_INPUT_CONDUIT_JAR).hate(address(this));
+    }
 }
 
 contract DssSpell is DssExec {
     constructor() DssExec(block.timestamp + 30 days, address(new DssSpellAction())) {}
+}
+
+interface Initializable {
+    function init(bytes32 ilk) external;
+}
+
+interface RwaUrnLike {
+    function hope(address usr) external;
+    function nope(address usr) external;
+    function lock(uint256 wad) external;
+    function draw(uint256 wad) external;
+}
+
+interface RwaInputConduitLike {
+    function mate(address usr) external;
+    function hate(address usr) external;
+    function file(bytes32 what, address data) external;
+}
+
+interface RwaOutputConduitLike {
+    function file(bytes32 what, address data) external;
+    function hope(address usr) external;
+    function nope(address usr) external;
+    function mate(address usr) external;
+    function hate(address usr) external;
+    function kiss(address who) external;
+    function pick(address who) external;
+    function push() external;
+    function push(uint256 wad) external;
 }
