@@ -624,7 +624,6 @@ contract DssSpellTest is DssSpellTestBase {
         assertTrue(pool.getReserveData(RETH).aTokenAddress != address(0));
     }
 
-    // TODO Fillout new docs
     string RWA010_OLDDOC      = "QmRqsQRnLfaRuhFr5wCfDQZKzNo7FRVUyTJPhS76nfz6nX";
     string RWA010_NEWDOC      = "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU";
 
