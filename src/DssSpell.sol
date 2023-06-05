@@ -194,7 +194,9 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/reducing-psm-usdp-a-debt-ceiling/20980
         // Set PSM-USDP-A Debt Ceiling to 0 and remove from autoline
         (,,,line,) = vat.ilks("PSM-PAX-A");
-        DssExecLib.decreaseIlkDebtCeiling("PSM-PAX-A", line / RAD, /* decrease global ceiling */ true);
+        // do not decrease the debt ceiling according to the point in
+        // https://github.com/makerdao/spells-goerli/pull/202#discussion_r1217131039
+        DssExecLib.decreaseIlkDebtCeiling("PSM-PAX-A", line / RAD, /* decrease global ceiling */ false);
         DssExecLib.removeIlkFromAutoLine("PSM-PAX-A");
 
         DssExecLib.setChangelogVersion("1.14.13");
