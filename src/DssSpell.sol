@@ -33,7 +33,7 @@ interface DssVestLike {
     function restrict(uint256) external;
 }
 interface RwaLiquidationLike {
-    function ilks(bytes32) external view returns (string memory, address, uint48, uint48);
+    function ilks(bytes32) external view returns (string memory doc, address pip, uint48 tau, uint48 toc);
     function init(bytes32, uint256, string calldata, uint48) external;
 }
 
