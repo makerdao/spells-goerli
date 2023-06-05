@@ -34,7 +34,7 @@ interface DssVestLike {
 }
 interface RwaLiquidationLike {
     function ilks(bytes32) external view returns (string memory doc, address pip, uint48 tau, uint48 toc);
-    function init(bytes32, uint256, string calldata, uint48) external;
+    function init(bytes32 ilk, uint256 val, string memory doc, uint48 tau) external;
 }
 
 interface ACLManagerLike {
