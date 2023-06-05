@@ -45,6 +45,35 @@ interface ProxyLike {
     function exec(address target, bytes calldata args) external payable returns (bytes memory out);
 }
 
+interface Initializable {
+    function init(bytes32 ilk) external;
+}
+
+interface RwaUrnLike {
+    function hope(address usr) external;
+    function nope(address usr) external;
+    function lock(uint256 wad) external;
+    function draw(uint256 wad) external;
+}
+
+interface RwaInputConduitLike {
+    function mate(address usr) external;
+    function hate(address usr) external;
+    function file(bytes32 what, address data) external;
+}
+
+interface RwaOutputConduitLike {
+    function file(bytes32 what, address data) external;
+    function hope(address usr) external;
+    function nope(address usr) external;
+    function mate(address usr) external;
+    function hate(address usr) external;
+    function kiss(address who) external;
+    function pick(address who) external;
+    function push() external;
+    function push(uint256 wad) external;
+}
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -69,6 +98,7 @@ contract DssSpellAction is DssAction {
     // uint256 internal constant X_PCT_RATE      = ;
 
     uint256 internal constant RAD               = 10 ** 45;
+    uint256 internal constant WAD               = 10 ** 18;
     uint256 internal constant MILLION           = 10 ** 6;
 
     uint256 internal constant THREE_PT_FOUR_NINE    = 1000000001087798189708544327;
@@ -81,132 +111,6 @@ contract DssSpellAction is DssAction {
     address internal constant SPARK_ACL_MANAGER = 0xb137E7d16564c81ae2b0C8ee6B55De81dd46ECe5;
     address internal constant SPARK_PROXY = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
     address internal constant SPARK_SPELL = 0x3068FA0B6Fc6A5c998988a271501fF7A6892c6Ff;
-
-    function _updateDoc(bytes32 ilk, string memory doc) internal {
-        ( , address pip, uint48 tau, ) = rwaLiquidation.ilks(ilk);
-        require(pip != address(0), "DssSpell/unexisting-rwa-ilk");
-
-        // Init the RwaLiquidationOracle to reset the doc
-        rwaLiquidation.init(
-            ilk, // ilk to update
-            0,   // price ignored if init() has already been called
-            doc, // new legal document
-            tau  // old tau value
-        );
-    }
-
-    function actions() public override {
-        uint256 line;
-
-        // --- BlockTower Vault Debt Ceiling Adjustments ---
-        // Poll: https://vote.makerdao.com/polling/QmPMrvfV#poll-detail
-        // Forum: https://forum.makerdao.com/t/blocktower-credit-rwa-vaults-parameters-shift/20707
-
-        // Decrease the Debt Ceiling (line) of BlockTower S1 (RWA010-A) from 20 million Dai to zero Dai.
-        DssExecLib.setIlkDebtCeiling("RWA010-A", 0);
-        // Decrease the Debt Ceiling (line) of BlockTower S2 (RWA011-A) from 30 million Dai to zero Dai.
-        DssExecLib.setIlkDebtCeiling("RWA011-A", 0);
-        // Increase the Debt Ceiling (line) of BlockTower S3 (RWA012-A) from 30 million Dai to 80 million Dai.
-        DssExecLib.increaseIlkDebtCeiling("RWA012-A", 50 * MILLION, /* do not increase global line */ false);
-        _updateDoc("RWA010-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
-        _updateDoc("RWA011-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
-        _updateDoc("RWA012-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
-        _updateDoc("RWA013-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
-
-        // --- MKR Vesting Transfers ---
-        // Sidestream - 348.28 MKR - 0xb1f950a51516a697E103aaa69E152d839182f6Fe
-        // Poll: N/A
-        // MIP: https://mips.makerdao.com/mips/details/MIP40c3SP44#estimated-mkr-expenditure
-
-        // Skip for goerli
-
-        // DUX - 225.12 MKR - 0x5A994D8428CCEbCC153863CCdA9D2Be6352f89ad
-        // Poll: N/A
-        // MIP: https://mips.makerdao.com/mips/details/MIP40c3SP27
-
-        // Skip for goerli
-
-        // --- Stability Scope Defined Parameter Adjustments ---
-        // Poll: https://vote.makerdao.com/polling/QmaoGpAQ#poll-detail
-        // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-2-non-scope-defined-parameter-changes-may-2023/20981#stability-scope-parameter-changes-proposal-6
-
-        // Increase DSR to 3.49%
-        DssExecLib.setDSR(THREE_PT_FOUR_NINE, true);
-
-        // Set ETH-A Stability Fee to 3.74%
-        DssExecLib.setIlkStabilityFee("ETH-A", THREE_PT_SEVEN_FOUR, /* doDrip = */ true);
-
-        // Set ETH-B Stability Fee to 4.24%
-        DssExecLib.setIlkStabilityFee("ETH-B", FOUR_PT_TWO_FOUR, /* doDrip = */ true);
-
-        // Set ETH-C Stability Fee to 3.49%
-        DssExecLib.setIlkStabilityFee("ETH-C", THREE_PT_FOUR_NINE, /* doDrip = */ true);
-
-        // Set WSTETH-A Stability Fee to 3.74%
-        DssExecLib.setIlkStabilityFee("WSTETH-A", THREE_PT_SEVEN_FOUR, /* doDrip = */ true);
-
-        // Set WSTETH-B Stability Fee to 3.49%
-        DssExecLib.setIlkStabilityFee("WSTETH-B", THREE_PT_FOUR_NINE, /* doDrip = */ true);
-
-        // --- Spark Protocol Parameter Changes ---
-        // D3M Parameter Adjustments Poll: https://vote.makerdao.com/polling/QmWatYqy#poll-detail
-        // Executive Proxy Poll: https://vote.makerdao.com/polling/Qmc9fd3j#poll-detail
-        // Onboard rETH Poll: https://vote.makerdao.com/polling/QmeEV7ph#vote-breakdown (Inside Proxy Spell)
-        // DAI Interest Rate Strategy Poll: https://vote.makerdao.com/polling/QmWodV1J#poll-detail (Inside Proxy Spell)
-        // Forum: https://forum.makerdao.com/t/2023-05-24-spark-protocol-updates/20958
-        DssExecLib.setIlkAutoLineParameters("DIRECT-SPARK-DAI", /* line */ 20 * MILLION, /* gap */ 20 * MILLION, /* ttl */ 8 hours);
-        DssExecLib.authorize(SPARK_PROXY, DssExecLib.esm());
-        ACLManagerLike(SPARK_ACL_MANAGER).addPoolAdmin(SPARK_PROXY);
-        ProxyLike(SPARK_PROXY).exec(SPARK_SPELL, abi.encodeWithSignature("execute()"));
-        DssExecLib.setChangelogAddress("EXEC_PROXY_SPARK", SPARK_PROXY);
-
-        // --- Non-Scope Defined Parameter Adjustments ---
-        // Poll: https://vote.makerdao.com/polling/QmQXhS3Z#poll-detail
-        // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-2-non-scope-defined-parameter-changes-may-2023/20981
-
-        // Increase rETH-A line to 50 million DAI
-        // Increase rETH-A gap to 5 million DAI
-        DssExecLib.setIlkAutoLineParameters("RETH-A", /* line */ 50 * MILLION, /* gap */ 5 * MILLION, /* ttl */ 8 hours);
-
-        // Increase rETH-A Stability Fee to 3.74%
-        DssExecLib.setIlkStabilityFee("RETH-A", THREE_PT_SEVEN_FOUR, true);
-
-        // Increase CRVV1ETHSTETH-A Stability Fee to 4.24%
-        // NOTE: disabled for goerli because the collateral is not on the chain
-        // DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", FOUR_PT_TWO_FOUR, true);
-
-        // Increase WBTC-A Stability Fee to 5.80%
-        DssExecLib.setIlkStabilityFee("WBTC-A", FIVE_PT_EIGHT, true);
-
-        // Increase WBTC-B Stability Fee to 6.30%
-        DssExecLib.setIlkStabilityFee("WBTC-B", SIX_PT_THREE, true);
-
-        // Increase WBTC-C Stability Fee to 5.55%
-        DssExecLib.setIlkStabilityFee("WBTC-C", FIVE_PT_FIVE_FIVE, true);
-
-        // --- RWA015 (BlockTower Andromeda) ---
-        // Poll: https://vote.makerdao.com/polling/QmbudkVR#poll-detail
-        // Forum links:
-        //   - https://forum.makerdao.com/t/mip90-liquid-aaa-structured-credit-money-market-fund/18428
-        //   - https://forum.makerdao.com/t/project-andromeda-risk-legal-assessment/20969
-        //   - https://forum.makerdao.com/t/rwa015-project-andromeda-technical-assessment/20974
-        onboardRWA015A();
-        bootstrapRWA015A();
-
-        // --- USDP PSM Debt Ceiling ---
-        // Poll: https://vote.makerdao.com/polling/QmQYSLHH#poll-detail
-        // Forum: https://forum.makerdao.com/t/reducing-psm-usdp-a-debt-ceiling/20980
-        // Set PSM-USDP-A Debt Ceiling to 0 and remove from autoline
-        (,,,line,) = vat.ilks("PSM-PAX-A");
-        // do not decrease the debt ceiling according to the point in
-        // https://github.com/makerdao/spells-goerli/pull/202#discussion_r1217131039
-        DssExecLib.decreaseIlkDebtCeiling("PSM-PAX-A", line / RAD, /* decrease global ceiling */ false);
-        DssExecLib.removeIlkFromAutoLine("PSM-PAX-A");
-
-        DssExecLib.setChangelogVersion("1.14.13");
-    }
-
-    uint256 internal constant WAD = 10 ** 18;
 
     // -- RWA015 components --
     address internal constant RWA015                     = 0x8384c55389f1ab6345dd4EF5fF2eF791D4875D2A;
@@ -238,6 +142,19 @@ contract DssSpellAction is DssAction {
     address internal immutable jug  = DssExecLib.jug();
     address internal immutable spot = DssExecLib.spotter();
     address internal immutable esm  = DssExecLib.esm();
+
+    function _updateDoc(bytes32 ilk, string memory doc) internal {
+        ( , address pip, uint48 tau, ) = rwaLiquidation.ilks(ilk);
+        require(pip != address(0), "DssSpell/unexisting-rwa-ilk");
+
+        // Init the RwaLiquidationOracle to reset the doc
+        rwaLiquidation.init(
+            ilk, // ilk to update
+            0,   // price ignored if init() has already been called
+            doc, // new legal document
+            tau  // old tau value
+        );
+    }
 
     function onboardRWA015A() internal {
         bytes32 ilk = "RWA015-A";
@@ -356,37 +273,120 @@ contract DssSpellAction is DssAction {
         RwaInputConduitLike(RWA015_A_INPUT_CONDUIT_URN).hate(address(this));
         RwaInputConduitLike(RWA015_A_INPUT_CONDUIT_JAR).hate(address(this));
     }
+
+    function actions() public override {
+        uint256 line;
+
+        // --- BlockTower Vault Debt Ceiling Adjustments ---
+        // Poll: https://vote.makerdao.com/polling/QmPMrvfV#poll-detail
+        // Forum: https://forum.makerdao.com/t/blocktower-credit-rwa-vaults-parameters-shift/20707
+
+        // Decrease the Debt Ceiling (line) of BlockTower S1 (RWA010-A) from 20 million Dai to zero Dai.
+        DssExecLib.setIlkDebtCeiling("RWA010-A", 0);
+        // Decrease the Debt Ceiling (line) of BlockTower S2 (RWA011-A) from 30 million Dai to zero Dai.
+        DssExecLib.setIlkDebtCeiling("RWA011-A", 0);
+        // Increase the Debt Ceiling (line) of BlockTower S3 (RWA012-A) from 30 million Dai to 80 million Dai.
+        DssExecLib.increaseIlkDebtCeiling("RWA012-A", 50 * MILLION, /* do not increase global line */ false);
+        _updateDoc("RWA010-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
+        _updateDoc("RWA011-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
+        _updateDoc("RWA012-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
+        _updateDoc("RWA013-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
+
+        // --- MKR Vesting Transfers ---
+        // Sidestream - 348.28 MKR - 0xb1f950a51516a697E103aaa69E152d839182f6Fe
+        // Poll: N/A
+        // MIP: https://mips.makerdao.com/mips/details/MIP40c3SP44#estimated-mkr-expenditure
+
+        // Skip for goerli
+
+        // DUX - 225.12 MKR - 0x5A994D8428CCEbCC153863CCdA9D2Be6352f89ad
+        // Poll: N/A
+        // MIP: https://mips.makerdao.com/mips/details/MIP40c3SP27
+
+        // Skip for goerli
+
+        // --- Stability Scope Defined Parameter Adjustments ---
+        // Poll: https://vote.makerdao.com/polling/QmaoGpAQ#poll-detail
+        // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-2-non-scope-defined-parameter-changes-may-2023/20981#stability-scope-parameter-changes-proposal-6
+
+        // Increase DSR to 3.49%
+        DssExecLib.setDSR(THREE_PT_FOUR_NINE, true);
+
+        // Set ETH-A Stability Fee to 3.74%
+        DssExecLib.setIlkStabilityFee("ETH-A", THREE_PT_SEVEN_FOUR, /* doDrip = */ true);
+
+        // Set ETH-B Stability Fee to 4.24%
+        DssExecLib.setIlkStabilityFee("ETH-B", FOUR_PT_TWO_FOUR, /* doDrip = */ true);
+
+        // Set ETH-C Stability Fee to 3.49%
+        DssExecLib.setIlkStabilityFee("ETH-C", THREE_PT_FOUR_NINE, /* doDrip = */ true);
+
+        // Set WSTETH-A Stability Fee to 3.74%
+        DssExecLib.setIlkStabilityFee("WSTETH-A", THREE_PT_SEVEN_FOUR, /* doDrip = */ true);
+
+        // Set WSTETH-B Stability Fee to 3.49%
+        DssExecLib.setIlkStabilityFee("WSTETH-B", THREE_PT_FOUR_NINE, /* doDrip = */ true);
+
+        // --- Spark Protocol Parameter Changes ---
+        // D3M Parameter Adjustments Poll: https://vote.makerdao.com/polling/QmWatYqy#poll-detail
+        // Executive Proxy Poll: https://vote.makerdao.com/polling/Qmc9fd3j#poll-detail
+        // Onboard rETH Poll: https://vote.makerdao.com/polling/QmeEV7ph#vote-breakdown (Inside Proxy Spell)
+        // DAI Interest Rate Strategy Poll: https://vote.makerdao.com/polling/QmWodV1J#poll-detail (Inside Proxy Spell)
+        // Forum: https://forum.makerdao.com/t/2023-05-24-spark-protocol-updates/20958
+        DssExecLib.setIlkAutoLineParameters("DIRECT-SPARK-DAI", /* line */ 20 * MILLION, /* gap */ 20 * MILLION, /* ttl */ 8 hours);
+        DssExecLib.authorize(SPARK_PROXY, DssExecLib.esm());
+        ACLManagerLike(SPARK_ACL_MANAGER).addPoolAdmin(SPARK_PROXY);
+        ProxyLike(SPARK_PROXY).exec(SPARK_SPELL, abi.encodeWithSignature("execute()"));
+        DssExecLib.setChangelogAddress("EXEC_PROXY_SPARK", SPARK_PROXY);
+
+        // --- Non-Scope Defined Parameter Adjustments ---
+        // Poll: https://vote.makerdao.com/polling/QmQXhS3Z#poll-detail
+        // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-2-non-scope-defined-parameter-changes-may-2023/20981
+
+        // Increase rETH-A line to 50 million DAI
+        // Increase rETH-A gap to 5 million DAI
+        DssExecLib.setIlkAutoLineParameters("RETH-A", /* line */ 50 * MILLION, /* gap */ 5 * MILLION, /* ttl */ 8 hours);
+
+        // Increase rETH-A Stability Fee to 3.74%
+        DssExecLib.setIlkStabilityFee("RETH-A", THREE_PT_SEVEN_FOUR, true);
+
+        // Increase CRVV1ETHSTETH-A Stability Fee to 4.24%
+        // NOTE: disabled for goerli because the collateral is not on the chain
+        // DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", FOUR_PT_TWO_FOUR, true);
+
+        // Increase WBTC-A Stability Fee to 5.80%
+        DssExecLib.setIlkStabilityFee("WBTC-A", FIVE_PT_EIGHT, true);
+
+        // Increase WBTC-B Stability Fee to 6.30%
+        DssExecLib.setIlkStabilityFee("WBTC-B", SIX_PT_THREE, true);
+
+        // Increase WBTC-C Stability Fee to 5.55%
+        DssExecLib.setIlkStabilityFee("WBTC-C", FIVE_PT_FIVE_FIVE, true);
+
+        // --- RWA015 (BlockTower Andromeda) ---
+        // Poll: https://vote.makerdao.com/polling/QmbudkVR#poll-detail
+        // Forum links:
+        //   - https://forum.makerdao.com/t/mip90-liquid-aaa-structured-credit-money-market-fund/18428
+        //   - https://forum.makerdao.com/t/project-andromeda-risk-legal-assessment/20969
+        //   - https://forum.makerdao.com/t/rwa015-project-andromeda-technical-assessment/20974
+        onboardRWA015A();
+        bootstrapRWA015A();
+
+        // --- USDP PSM Debt Ceiling ---
+        // Poll: https://vote.makerdao.com/polling/QmQYSLHH#poll-detail
+        // Forum: https://forum.makerdao.com/t/reducing-psm-usdp-a-debt-ceiling/20980
+        // Set PSM-USDP-A Debt Ceiling to 0 and remove from autoline
+        (,,,line,) = vat.ilks("PSM-PAX-A");
+        // do not decrease the debt ceiling according to the point in
+        // https://github.com/makerdao/spells-goerli/pull/202#discussion_r1217131039
+        DssExecLib.decreaseIlkDebtCeiling("PSM-PAX-A", line / RAD, /* decrease global ceiling */ false);
+        DssExecLib.removeIlkFromAutoLine("PSM-PAX-A");
+
+        DssExecLib.setChangelogVersion("1.14.13");
+    }
 }
+
 
 contract DssSpell is DssExec {
     constructor() DssExec(block.timestamp + 30 days, address(new DssSpellAction())) {}
-}
-
-interface Initializable {
-    function init(bytes32 ilk) external;
-}
-
-interface RwaUrnLike {
-    function hope(address usr) external;
-    function nope(address usr) external;
-    function lock(uint256 wad) external;
-    function draw(uint256 wad) external;
-}
-
-interface RwaInputConduitLike {
-    function mate(address usr) external;
-    function hate(address usr) external;
-    function file(bytes32 what, address data) external;
-}
-
-interface RwaOutputConduitLike {
-    function file(bytes32 what, address data) external;
-    function hope(address usr) external;
-    function nope(address usr) external;
-    function mate(address usr) external;
-    function hate(address usr) external;
-    function kiss(address who) external;
-    function pick(address who) external;
-    function push() external;
-    function push(uint256 wad) external;
 }
