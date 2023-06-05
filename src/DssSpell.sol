@@ -28,9 +28,9 @@ interface VatLike {
 }
 
 interface DssVestLike {
-    function create(address, uint256, uint256, uint256, uint256, address) external returns (uint256);
-    function file(bytes32, uint256) external;
-    function restrict(uint256) external;
+    function create(address _usr, uint256 _tot, uint256 _bgn, uint256 _tau, uint256 _eta, address _mgr) external returns (uint256 id);
+    function file(bytes32 what, uint256 data) external;
+    function restrict(uint256 _id) external;
 }
 interface RwaLiquidationLike {
     function ilks(bytes32) external view returns (string memory doc, address pip, uint48 tau, uint48 toc);
@@ -77,7 +77,6 @@ interface RwaOutputConduitLike {
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
-    VatLike internal immutable vat = VatLike(DssExecLib.getChangelogAddress("MCD_VAT"));
     DssVestLike internal immutable vest = DssVestLike(DssExecLib.getChangelogAddress("MCD_VEST_MKR_TREASURY"));
     RwaLiquidationLike immutable rwaLiquidation = RwaLiquidationLike(DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE"));
 
@@ -107,7 +106,6 @@ contract DssSpellAction is DssAction {
     uint256 internal constant FIVE_PT_EIGHT         = 1000000001787808646832390371;
     uint256 internal constant SIX_PT_THREE          = 1000000001937312893803622469;
     uint256 internal constant FIVE_PT_FIVE_FIVE     = 1000000001712791360746325100;
-
     address internal constant SPARK_ACL_MANAGER = 0xb137E7d16564c81ae2b0C8ee6B55De81dd46ECe5;
     address internal constant SPARK_PROXY = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
     address internal constant SPARK_SPELL = 0x3068FA0B6Fc6A5c998988a271501fF7A6892c6Ff;
@@ -142,6 +140,7 @@ contract DssSpellAction is DssAction {
     address internal immutable jug  = DssExecLib.jug();
     address internal immutable spot = DssExecLib.spotter();
     address internal immutable esm  = DssExecLib.esm();
+    VatLike internal immutable vat = VatLike(DssExecLib.getChangelogAddress("MCD_VAT"));
 
     function _updateDoc(bytes32 ilk, string memory doc) internal {
         ( , address pip, uint48 tau, ) = rwaLiquidation.ilks(ilk);
