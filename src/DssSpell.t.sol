@@ -40,6 +40,66 @@ interface ACLManagerLike {
     function isPoolAdmin(address admin) external view returns (bool);
 }
 
+interface RwaLiquidationOracleLike {
+    function ilks(bytes32) external view returns (string memory, address, uint48 toc, uint48 tau);
+    function bump(bytes32 ilk, uint256 val) external;
+    function tell(bytes32) external;
+    function cure(bytes32) external;
+    function cull(bytes32, address) external;
+    function good(bytes32) external view returns (bool);
+}
+
+interface RwaUrnLike {
+    function vat() external view returns (address);
+    function jug() external view returns (address);
+    function daiJoin() external view returns (address);
+    function outputConduit() external view returns (address);
+    function wards(address) external view returns (uint256);
+    function hope(address) external;
+    function can(address) external view returns (uint256);
+    function gemJoin() external view returns (address);
+    function lock(uint256) external;
+    function draw(uint256) external;
+    function wipe(uint256) external;
+    function free(uint256) external;
+}
+
+interface RwaOutputConduitLike {
+    function wards(address) external view returns (uint256);
+    function can(address) external view returns (uint256);
+    function may(address) external view returns (uint256);
+    function dai() external view returns (address);
+    function psm() external view returns (address);
+    function gem() external view returns (address);
+    function bud(address) external view returns (uint256);
+    function pick(address) external;
+    function push() external;
+    function push(uint256) external;
+    function quit() external;
+    function kiss(address) external;
+    function mate(address) external;
+    function hope(address) external;
+    function quitTo() external view returns (address);
+}
+
+interface RwaInputConduitLike {
+    function dai() external view returns (address);
+    function gem() external view returns (address);
+    function psm() external view returns (address);
+    function to() external view returns (address);
+    function wards(address) external view returns (uint256);
+    function may(address) external view returns (uint256);
+    function quitTo() external view returns (address);
+    function mate(address) external;
+    function push() external;
+}
+
+interface RwaJarLike {
+    function chainlog() external view returns (address);
+    function dai() external view returns (address);
+    function daiJoin() external view returns (address);
+}
+
 interface PoolLike {
     struct ReserveData {
         //stores the reserve configuration
@@ -1171,64 +1231,4 @@ contract DssSpellTest is DssSpellTestBase {
         (uint256 ink,) = vat.urns("RWA015-A", address(rwa015AUrn));
         assertEq(ink, lockAmount, "RWA015-A/bad-ink-after-spell"); // Whole unit of collateral is locked
     }
-}
-
-interface RwaLiquidationOracleLike {
-    function ilks(bytes32) external view returns (string memory, address, uint48 toc, uint48 tau);
-    function bump(bytes32 ilk, uint256 val) external;
-    function tell(bytes32) external;
-    function cure(bytes32) external;
-    function cull(bytes32, address) external;
-    function good(bytes32) external view returns (bool);
-}
-
-interface RwaUrnLike {
-    function vat() external view returns (address);
-    function jug() external view returns (address);
-    function daiJoin() external view returns (address);
-    function outputConduit() external view returns (address);
-    function wards(address) external view returns (uint256);
-    function hope(address) external;
-    function can(address) external view returns (uint256);
-    function gemJoin() external view returns (address);
-    function lock(uint256) external;
-    function draw(uint256) external;
-    function wipe(uint256) external;
-    function free(uint256) external;
-}
-
-interface RwaOutputConduitLike {
-    function wards(address) external view returns (uint256);
-    function can(address) external view returns (uint256);
-    function may(address) external view returns (uint256);
-    function dai() external view returns (address);
-    function psm() external view returns (address);
-    function gem() external view returns (address);
-    function bud(address) external view returns (uint256);
-    function pick(address) external;
-    function push() external;
-    function push(uint256) external;
-    function quit() external;
-    function kiss(address) external;
-    function mate(address) external;
-    function hope(address) external;
-    function quitTo() external view returns (address);
-}
-
-interface RwaInputConduitLike {
-    function dai() external view returns (address);
-    function gem() external view returns (address);
-    function psm() external view returns (address);
-    function to() external view returns (address);
-    function wards(address) external view returns (uint256);
-    function may(address) external view returns (uint256);
-    function quitTo() external view returns (address);
-    function mate(address) external;
-    function push() external;
-}
-
-interface RwaJarLike {
-    function chainlog() external view returns (address);
-    function dai() external view returns (address);
-    function daiJoin() external view returns (address);
 }
