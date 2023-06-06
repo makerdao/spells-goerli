@@ -27,11 +27,13 @@ interface VatLike {
     function ilks(bytes32 ilk) external view returns (uint256 Art, uint256 rate, uint256 spot, uint256 line, uint256 dust);
 }
 
-interface DssVestLike {
-    function create(address _usr, uint256 _tot, uint256 _bgn, uint256 _tau, uint256 _eta, address _mgr) external returns (uint256 id);
-    function file(bytes32 what, uint256 data) external;
-    function restrict(uint256 _id) external;
-}
+// Disable for goerli
+// interface DssVestLike {
+//     function create(address _usr, uint256 _tot, uint256 _bgn, uint256 _tau, uint256 _eta, address _mgr) external returns (uint256 id);
+//     function file(bytes32 what, uint256 data) external;
+//     function restrict(uint256 _id) external;
+// }
+
 interface RwaLiquidationLike {
     function ilks(bytes32) external view returns (string memory doc, address pip, uint48 tau, uint48 toc);
     function init(bytes32 ilk, uint256 val, string memory doc, uint48 tau) external;
@@ -70,15 +72,23 @@ interface RwaOutputConduitLike {
     function hate(address usr) external;
     function kiss(address who) external;
     function pick(address who) external;
-    function push() external;
+    // Used on mainnet
+    // function push() external;
     function push(uint256 wad) external;
 }
 
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
-    DssVestLike internal immutable vest = DssVestLike(DssExecLib.getChangelogAddress("MCD_VEST_MKR_TREASURY"));
-    RwaLiquidationLike immutable rwaLiquidation = RwaLiquidationLike(DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE"));
+
+    // Not used on goerli
+    // address internal immutable MCD_VEST_MKR_TREASURY = DssExecLib.getChangelogAddress("MCD_VEST_MKR_TREASURY");
+    address internal immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
+    address internal immutable REGISTRY = DssExecLib.reg();
+    address internal immutable MCD_JUG  = DssExecLib.jug();
+    address internal immutable MCD_SPOT = DssExecLib.spotter();
+    address internal immutable MCD_ESM  = DssExecLib.esm();
+    address internal immutable MCD_VAT  = DssExecLib.vat();
 
     // Always keep office hours off on goerli
     function officeHours() public pure override returns (bool) {
@@ -96,16 +106,18 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
-    uint256 internal constant RAD               = 10 ** 45;
-    uint256 internal constant WAD               = 10 ** 18;
     uint256 internal constant MILLION           = 10 ** 6;
+    uint256 internal constant WAD               = 10 ** 18;
+    uint256 internal constant RAD               = 10 ** 45;
 
-    uint256 internal constant THREE_PT_FOUR_NINE    = 1000000001087798189708544327;
-    uint256 internal constant THREE_PT_SEVEN_FOUR   = 1000000001164306917698440949;
-    uint256 internal constant FOUR_PT_TWO_FOUR      = 1000000001316772794769098706;
-    uint256 internal constant FIVE_PT_EIGHT         = 1000000001787808646832390371;
-    uint256 internal constant SIX_PT_THREE          = 1000000001937312893803622469;
-    uint256 internal constant FIVE_PT_FIVE_FIVE     = 1000000001712791360746325100;
+    uint256 internal constant THREE_PT_FOUR_NINE_PCT_RATE    = 1000000001087798189708544327;
+    uint256 internal constant THREE_PT_SEVEN_FOUR_PCT_RATE   = 1000000001164306917698440949;
+    uint256 internal constant FOUR_PT_TWO_FOUR_PCT_RATE      = 1000000001316772794769098706;
+    uint256 internal constant FIVE_PT_EIGHT_PCT_RATE         = 1000000001787808646832390371;
+    uint256 internal constant SIX_PT_THREE_PCT_RATE          = 1000000001937312893803622469;
+    uint256 internal constant FIVE_PT_FIVE_FIVE_PCT_RATE     = 1000000001712791360746325100;
+
+    // -- Spark Components --
     address internal constant SPARK_ACL_MANAGER = 0xb137E7d16564c81ae2b0C8ee6B55De81dd46ECe5;
     address internal constant SPARK_PROXY = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
     address internal constant SPARK_SPELL = 0x3068FA0B6Fc6A5c998988a271501fF7A6892c6Ff;
@@ -136,18 +148,12 @@ contract DssSpellAction is DssAction {
     uint256 internal constant RWA015_A_MAT  = 100_00;
     // -- RWA015 END --
 
-    address internal immutable reg  = DssExecLib.reg();
-    address internal immutable jug  = DssExecLib.jug();
-    address internal immutable spot = DssExecLib.spotter();
-    address internal immutable esm  = DssExecLib.esm();
-    VatLike internal immutable vat = VatLike(DssExecLib.getChangelogAddress("MCD_VAT"));
-
     function _updateDoc(bytes32 ilk, string memory doc) internal {
-        ( , address pip, uint48 tau, ) = rwaLiquidation.ilks(ilk);
+        ( , address pip, uint48 tau, ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
         require(pip != address(0), "DssSpell/unexisting-rwa-ilk");
 
         // Init the RwaLiquidationOracle to reset the doc
-        rwaLiquidation.init(
+        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(
             ilk, // ilk to update
             0,   // price ignored if init() has already been called
             doc, // new legal document
@@ -159,28 +165,28 @@ contract DssSpellAction is DssAction {
         bytes32 ilk = "RWA015-A";
 
         // Init the RwaLiquidationOracle
-        RwaLiquidationLike(rwaLiquidation).init(
+        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(
             ilk,
             // We are not using DssExecLib, so the precision has to be set explicitly
             RWA015_A_INITIAL_PRICE * WAD,
             RWA015_DOC,
             RWA015_A_TAU
         );
-        (, address pip, , ) = RwaLiquidationLike(rwaLiquidation).ilks(ilk);
+        (, address pip, , ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
 
         // Init RWA015 in Vat
-        Initializable(address(vat)).init(ilk);
+        Initializable(MCD_VAT).init(ilk);
         // Init RWA015 in Jug
-        Initializable(jug).init(ilk);
+        Initializable(MCD_JUG).init(ilk);
 
         // Allow RWA015 Join to modify Vat registry
-        DssExecLib.authorize(address(vat), MCD_JOIN_RWA015_A);
+        DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA015_A);
 
         // 500m debt ceiling
         DssExecLib.increaseIlkDebtCeiling(ilk, RWA015_A_LINE, /* _global = */ true);
 
         // Set price feed for RWA015
-        DssExecLib.setContract(spot, ilk, "pip", pip);
+        DssExecLib.setContract(MCD_SPOT, ilk, "pip", pip);
 
         // Set minimum collateralization ratio
         DssExecLib.setIlkLiquidationRatio(ilk, RWA015_A_MAT);
@@ -223,7 +229,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.setChangelogAddress("RWA015_A_OUTPUT_CONDUIT",    RWA015_A_OUTPUT_CONDUIT);
 
         // Add RWA015 to ILK REGISTRY
-        IlkRegistryAbstract(reg).put(
+        IlkRegistryAbstract(REGISTRY).put(
             ilk,
             MCD_JOIN_RWA015_A,
             RWA015,
@@ -236,15 +242,13 @@ contract DssSpellAction is DssAction {
         );
 
         // ----- Additional ESM authorization -----
-        DssExecLib.authorize(MCD_JOIN_RWA015_A,          esm);
-        DssExecLib.authorize(RWA015_A_URN,               esm);
-        DssExecLib.authorize(RWA015_A_OUTPUT_CONDUIT,    esm);
-        DssExecLib.authorize(RWA015_A_INPUT_CONDUIT_URN, esm);
-        DssExecLib.authorize(RWA015_A_INPUT_CONDUIT_JAR, esm);
-    }
+        DssExecLib.authorize(MCD_JOIN_RWA015_A,          MCD_ESM);
+        DssExecLib.authorize(RWA015_A_URN,               MCD_ESM);
+        DssExecLib.authorize(RWA015_A_OUTPUT_CONDUIT,    MCD_ESM);
+        DssExecLib.authorize(RWA015_A_INPUT_CONDUIT_URN, MCD_ESM);
+        DssExecLib.authorize(RWA015_A_INPUT_CONDUIT_JAR, MCD_ESM);
 
-    function bootstrapRWA015A() internal {
-        // Grant all required permissions for MCD_PAUSE_PROXY
+        // --- Bootstrap ---
         RwaUrnLike(RWA015_A_URN).hope(address(this));
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).hope(address(this));
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).mate(address(this));
@@ -271,10 +275,10 @@ contract DssSpellAction is DssAction {
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).hate(address(this));
         RwaInputConduitLike(RWA015_A_INPUT_CONDUIT_URN).hate(address(this));
         RwaInputConduitLike(RWA015_A_INPUT_CONDUIT_JAR).hate(address(this));
+
     }
 
     function actions() public override {
-        uint256 line;
 
         // --- BlockTower Vault Debt Ceiling Adjustments ---
         // Poll: https://vote.makerdao.com/polling/QmPMrvfV#poll-detail
@@ -286,6 +290,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkDebtCeiling("RWA011-A", 0);
         // Increase the Debt Ceiling (line) of BlockTower S3 (RWA012-A) from 30 million Dai to 80 million Dai.
         DssExecLib.increaseIlkDebtCeiling("RWA012-A", 50 * MILLION, /* do not increase global line */ false);
+
         _updateDoc("RWA010-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
         _updateDoc("RWA011-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
         _updateDoc("RWA012-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
@@ -300,7 +305,7 @@ contract DssSpellAction is DssAction {
 
         // DUX - 225.12 MKR - 0x5A994D8428CCEbCC153863CCdA9D2Be6352f89ad
         // Poll: N/A
-        // MIP: https://mips.makerdao.com/mips/details/MIP40c3SP27
+        // MIP: https://mips.makerdao.com/mips/details/MIP40c3SP27#total-mkr-expenditure-cap
 
         // Skip for goerli
 
@@ -309,22 +314,22 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-2-non-scope-defined-parameter-changes-may-2023/20981#stability-scope-parameter-changes-proposal-6
 
         // Increase DSR to 3.49%
-        DssExecLib.setDSR(THREE_PT_FOUR_NINE, true);
+        DssExecLib.setDSR(THREE_PT_FOUR_NINE_PCT_RATE, /* doDrip = */ true);
 
         // Set ETH-A Stability Fee to 3.74%
-        DssExecLib.setIlkStabilityFee("ETH-A", THREE_PT_SEVEN_FOUR, /* doDrip = */ true);
+        DssExecLib.setIlkStabilityFee("ETH-A", THREE_PT_SEVEN_FOUR_PCT_RATE, /* doDrip = */ true);
 
         // Set ETH-B Stability Fee to 4.24%
-        DssExecLib.setIlkStabilityFee("ETH-B", FOUR_PT_TWO_FOUR, /* doDrip = */ true);
+        DssExecLib.setIlkStabilityFee("ETH-B", FOUR_PT_TWO_FOUR_PCT_RATE, /* doDrip = */ true);
 
         // Set ETH-C Stability Fee to 3.49%
-        DssExecLib.setIlkStabilityFee("ETH-C", THREE_PT_FOUR_NINE, /* doDrip = */ true);
+        DssExecLib.setIlkStabilityFee("ETH-C", THREE_PT_FOUR_NINE_PCT_RATE, /* doDrip = */ true);
 
         // Set WSTETH-A Stability Fee to 3.74%
-        DssExecLib.setIlkStabilityFee("WSTETH-A", THREE_PT_SEVEN_FOUR, /* doDrip = */ true);
+        DssExecLib.setIlkStabilityFee("WSTETH-A", THREE_PT_SEVEN_FOUR_PCT_RATE, /* doDrip = */ true);
 
         // Set WSTETH-B Stability Fee to 3.49%
-        DssExecLib.setIlkStabilityFee("WSTETH-B", THREE_PT_FOUR_NINE, /* doDrip = */ true);
+        DssExecLib.setIlkStabilityFee("WSTETH-B", THREE_PT_FOUR_NINE_PCT_RATE, /* doDrip = */ true);
 
         // --- Spark Protocol Parameter Changes ---
         // D3M Parameter Adjustments Poll: https://vote.makerdao.com/polling/QmWatYqy#poll-detail
@@ -347,20 +352,20 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkAutoLineParameters("RETH-A", /* line */ 50 * MILLION, /* gap */ 5 * MILLION, /* ttl */ 8 hours);
 
         // Increase rETH-A Stability Fee to 3.74%
-        DssExecLib.setIlkStabilityFee("RETH-A", THREE_PT_SEVEN_FOUR, true);
+        DssExecLib.setIlkStabilityFee("RETH-A", THREE_PT_SEVEN_FOUR_PCT_RATE, true);
 
         // Increase CRVV1ETHSTETH-A Stability Fee to 4.24%
         // NOTE: disabled for goerli because the collateral is not on the chain
-        // DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", FOUR_PT_TWO_FOUR, true);
+        // DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", FOUR_PT_TWO_FOUR_PCT_RATE, true);
 
         // Increase WBTC-A Stability Fee to 5.80%
-        DssExecLib.setIlkStabilityFee("WBTC-A", FIVE_PT_EIGHT, true);
+        DssExecLib.setIlkStabilityFee("WBTC-A", FIVE_PT_EIGHT_PCT_RATE, true);
 
         // Increase WBTC-B Stability Fee to 6.30%
-        DssExecLib.setIlkStabilityFee("WBTC-B", SIX_PT_THREE, true);
+        DssExecLib.setIlkStabilityFee("WBTC-B", SIX_PT_THREE_PCT_RATE, true);
 
         // Increase WBTC-C Stability Fee to 5.55%
-        DssExecLib.setIlkStabilityFee("WBTC-C", FIVE_PT_FIVE_FIVE, true);
+        DssExecLib.setIlkStabilityFee("WBTC-C", FIVE_PT_FIVE_FIVE_PCT_RATE, true);
 
         // --- RWA015 (BlockTower Andromeda) ---
         // Poll: https://vote.makerdao.com/polling/QmbudkVR#poll-detail
@@ -369,13 +374,13 @@ contract DssSpellAction is DssAction {
         //   - https://forum.makerdao.com/t/project-andromeda-risk-legal-assessment/20969
         //   - https://forum.makerdao.com/t/rwa015-project-andromeda-technical-assessment/20974
         onboardRWA015A();
-        bootstrapRWA015A();
 
         // --- USDP PSM Debt Ceiling ---
         // Poll: https://vote.makerdao.com/polling/QmQYSLHH#poll-detail
         // Forum: https://forum.makerdao.com/t/reducing-psm-usdp-a-debt-ceiling/20980
         // Set PSM-USDP-A Debt Ceiling to 0 and remove from autoline
-        (,,,line,) = vat.ilks("PSM-PAX-A");
+        uint256 line;
+        (,,,line,) = VatLike(MCD_VAT).ilks("PSM-PAX-A");
         // do not decrease the debt ceiling according to the point in
         // https://github.com/makerdao/spells-goerli/pull/202#discussion_r1217131039
         DssExecLib.decreaseIlkDebtCeiling("PSM-PAX-A", line / RAD, /* decrease global ceiling */ false);
