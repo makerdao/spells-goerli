@@ -21,16 +21,9 @@ import "dss-exec-lib/DssAction.sol";
 import "dss-interfaces/dss/IlkRegistryAbstract.sol";
 import "dss-interfaces/ERC/GemAbstract.sol";
 
-interface VatLike {
-    function Line() external view returns (uint256);
-    function file(bytes32 what, uint256 data) external;
-    function ilks(bytes32 ilk) external view returns (uint256 Art, uint256 rate, uint256 spot, uint256 line, uint256 dust);
-}
-
 // Disable for goerli
 // interface DssVestLike {
 //     function create(address _usr, uint256 _tot, uint256 _bgn, uint256 _tau, uint256 _eta, address _mgr) external returns (uint256 id);
-//     function file(bytes32 what, uint256 data) external;
 //     function restrict(uint256 _id) external;
 // }
 
@@ -136,11 +129,11 @@ contract DssSpellAction is DssAction {
     address internal constant RWA015_A_CUSTODY           = 0x65729807485F6f7695AF863d97D62140B7d69d83;
 
     // Ilk registry params
-    uint256 internal constant RWA015_REG_CLASS_RWA = 3;
+    uint256 internal constant RWA015_A_REG_CLASS_RWA = 3;
 
     // RWA Oracle Params
     uint256 internal constant RWA015_A_INITIAL_PRICE = 2_500_000;
-    string  internal constant RWA015_DOC             = "QmdbPyQLDdGQhKGXBgod7TbQmrUJ7tiN9aX1zSL7bmtkTN";
+    string  internal constant RWA015_A_DOC             = "QmdbPyQLDdGQhKGXBgod7TbQmrUJ7tiN9aX1zSL7bmtkTN";
     uint48  internal constant RWA015_A_TAU           = 0;
 
     // Remaining params
@@ -148,6 +141,7 @@ contract DssSpellAction is DssAction {
     uint256 internal constant RWA015_A_MAT  = 100_00;
     // -- RWA015 END --
 
+    // Function from https://github.com/makerdao/spells-goerli/blob/7d783931a6799fe8278e416b5ac60d4bb9c20047/archive/2022-11-14-DssSpell/Goerli-DssSpell.sol#L59
     function _updateDoc(bytes32 ilk, string memory doc) internal {
         ( , address pip, uint48 tau, ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
         require(pip != address(0), "DssSpell/unexisting-rwa-ilk");
@@ -169,7 +163,7 @@ contract DssSpellAction is DssAction {
             ilk,
             // We are not using DssExecLib, so the precision has to be set explicitly
             RWA015_A_INITIAL_PRICE * WAD,
-            RWA015_DOC,
+            RWA015_A_DOC,
             RWA015_A_TAU
         );
         (, address pip, , ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
@@ -234,7 +228,7 @@ contract DssSpellAction is DssAction {
             MCD_JOIN_RWA015_A,
             RWA015,
             GemAbstract(RWA015).decimals(),
-            RWA015_REG_CLASS_RWA,
+            RWA015_A_REG_CLASS_RWA,
             pip,
             address(0),
             "RWA015-A: BlockTower Andromeda",
@@ -289,6 +283,7 @@ contract DssSpellAction is DssAction {
         // Decrease the Debt Ceiling (line) of BlockTower S2 (RWA011-A) from 30 million Dai to zero Dai.
         DssExecLib.setIlkDebtCeiling("RWA011-A", 0);
         // Increase the Debt Ceiling (line) of BlockTower S3 (RWA012-A) from 30 million Dai to 80 million Dai.
+        // Note: Do not increase global Line because there is no net change from these operations
         DssExecLib.increaseIlkDebtCeiling("RWA012-A", 50 * MILLION, /* do not increase global line */ false);
 
         _updateDoc("RWA010-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
@@ -379,11 +374,10 @@ contract DssSpellAction is DssAction {
         // Poll: https://vote.makerdao.com/polling/QmQYSLHH#poll-detail
         // Forum: https://forum.makerdao.com/t/reducing-psm-usdp-a-debt-ceiling/20980
         // Set PSM-USDP-A Debt Ceiling to 0 and remove from autoline
-        uint256 line;
-        (,,,line,) = VatLike(MCD_VAT).ilks("PSM-PAX-A");
+
         // do not decrease the debt ceiling according to the point in
         // https://github.com/makerdao/spells-goerli/pull/202#discussion_r1217131039
-        DssExecLib.decreaseIlkDebtCeiling("PSM-PAX-A", line / RAD, /* decrease global ceiling */ false);
+        DssExecLib.setIlkDebtCeiling("PSM-PAX-A", 0);
         DssExecLib.removeIlkFromAutoLine("PSM-PAX-A");
 
         DssExecLib.setChangelogVersion("1.14.13");
