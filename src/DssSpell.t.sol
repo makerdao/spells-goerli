@@ -361,7 +361,7 @@ contract DssSpellTest is DssSpellTestBase {
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        _checkChainlogKey("EXEC_PROXY_SPARK");
+        _checkChainlogKey("SUBPROXY_SPARK");
 
 
         // RWA015
@@ -1231,3 +1231,4 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(ink, lockAmount, "RWA015-A/bad-ink-after-spell"); // Whole unit of collateral is locked
     }
 }
+
