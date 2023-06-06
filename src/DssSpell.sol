@@ -155,7 +155,7 @@ contract DssSpellAction is DssAction {
         );
     }
 
-    function onboardRWA015A() internal {
+    function _onboardRWA015A() internal {
         bytes32 ilk = "RWA015-A";
 
         // Init the RwaLiquidationOracle
@@ -284,7 +284,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkDebtCeiling("RWA011-A", 0);
         // Increase the Debt Ceiling (line) of BlockTower S3 (RWA012-A) from 30 million Dai to 80 million Dai.
         // Note: Do not increase global Line because there is no net change from these operations
-        DssExecLib.increaseIlkDebtCeiling("RWA012-A", 50 * MILLION, /* do not increase global line */ false);
+        DssExecLib.increaseIlkDebtCeiling("RWA012-A", 50 * MILLION, /* global */ false);
 
         _updateDoc("RWA010-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
         _updateDoc("RWA011-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
@@ -368,7 +368,7 @@ contract DssSpellAction is DssAction {
         //   - https://forum.makerdao.com/t/mip90-liquid-aaa-structured-credit-money-market-fund/18428
         //   - https://forum.makerdao.com/t/project-andromeda-risk-legal-assessment/20969
         //   - https://forum.makerdao.com/t/rwa015-project-andromeda-technical-assessment/20974
-        onboardRWA015A();
+        _onboardRWA015A();
 
         // --- USDP PSM Debt Ceiling ---
         // Poll: https://vote.makerdao.com/polling/QmQYSLHH#poll-detail
