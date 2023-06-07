@@ -264,7 +264,7 @@ contract DssSpellAction is DssAction {
         // Pick the destination for the assets
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).pick(RWA015_A_CUSTODY);
         // Swap Dai for the chosen stablecoin through the PSM and send it to the picked address.
-        // For Goerli we push only 100 Dai
+        // For Goerli we push only 100 DAI
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).push(100 * WAD);
         // For Mainnet we push the entire balance
         // RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).push();
@@ -288,9 +288,9 @@ contract DssSpellAction is DssAction {
         (uint256 RWA011_A_ART, , , ,) = VatLike(MCD_VAT).ilks("RWA011-A");
 
         if (RWA010_A_ART + RWA011_A_ART == 0) {
-            // Decrease the Debt Ceiling (line) of BlockTower S1 (RWA010-A) from 20 million DAI to zero Dai.
+            // Decrease the Debt Ceiling (line) of BlockTower S1 (RWA010-A) from 20 million DAI to 0 DAI.
             DssExecLib.setIlkDebtCeiling("RWA010-A", 0);
-            // Decrease the Debt Ceiling (line) of BlockTower S2 (RWA011-A) from 30 million DAI to zero Dai.
+            // Decrease the Debt Ceiling (line) of BlockTower S2 (RWA011-A) from 30 million DAI to 0 DAI.
             DssExecLib.setIlkDebtCeiling("RWA011-A", 0);
             // Increase the Debt Ceiling (line) of BlockTower S3 (RWA012-A) from 30 million DAI to 80 million DAI.
             // Note: Do not increase global Line because there is no net change from these operations
