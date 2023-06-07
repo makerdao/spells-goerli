@@ -305,7 +305,7 @@ contract DssSpellAction is DssAction {
             );
         }
 
-
+        
         _updateDoc("RWA010-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
         _updateDoc("RWA011-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
         _updateDoc("RWA012-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
@@ -331,19 +331,19 @@ contract DssSpellAction is DssAction {
         // Increase the DSR from 1.00% to 3.49%
         DssExecLib.setDSR(THREE_PT_FOUR_NINE_PCT_RATE, /* doDrip = */ true);
 
-        // Set ETH-A Stability Fee to 3.74%
+        // Increase the ETH-A Stability Fee from 1.75% to 3.74%
         DssExecLib.setIlkStabilityFee("ETH-A", THREE_PT_SEVEN_FOUR_PCT_RATE, /* doDrip = */ true);
 
-        // Set ETH-B Stability Fee to 4.24%
+        // Increase the ETH-B Stability Fee from 3.25% to 4.24%
         DssExecLib.setIlkStabilityFee("ETH-B", FOUR_PT_TWO_FOUR_PCT_RATE, /* doDrip = */ true);
 
-        // Set ETH-C Stability Fee to 3.49%
+        // Increase the ETH-C Stability Fee from 1.00% to 3.49%
         DssExecLib.setIlkStabilityFee("ETH-C", THREE_PT_FOUR_NINE_PCT_RATE, /* doDrip = */ true);
 
-        // Set WSTETH-A Stability Fee to 3.74%
+        // Increase the WSTETH-A Stability Fee from 1.75% to 3.74%
         DssExecLib.setIlkStabilityFee("WSTETH-A", THREE_PT_SEVEN_FOUR_PCT_RATE, /* doDrip = */ true);
 
-        // Set WSTETH-B Stability Fee to 3.49%
+        // Increase the WSTETH-B Stability Fee from 1.00% to 3.49%
         DssExecLib.setIlkStabilityFee("WSTETH-B", THREE_PT_FOUR_NINE_PCT_RATE, /* doDrip = */ true);
 
         // --- Spark Protocol Parameter Changes ---
@@ -362,24 +362,24 @@ contract DssSpellAction is DssAction {
         // Poll: https://vote.makerdao.com/polling/QmQXhS3Z#poll-detail
         // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-2-non-scope-defined-parameter-changes-may-2023/20981
 
-        // Increase rETH-A line to 50 million DAI
-        // Increase rETH-A gap to 5 million DAI
+        // Increase RETH-A line from 20 million DAI to 50 million DAI
+        // Increase RETH-A gap from 3 million DAI to 5 million DAI
         DssExecLib.setIlkAutoLineParameters("RETH-A", /* line */ 50 * MILLION, /* gap */ 5 * MILLION, /* ttl */ 8 hours);
 
-        // Increase rETH-A Stability Fee to 3.74%
+        // Increase the RETH-A Stability Fee from 0.75% to 3.74%
         DssExecLib.setIlkStabilityFee("RETH-A", THREE_PT_SEVEN_FOUR_PCT_RATE, true);
 
         // Increase CRVV1ETHSTETH-A Stability Fee to 4.24%
         // NOTE: disabled for goerli because the collateral is not on the chain
         // DssExecLib.setIlkStabilityFee("CRVV1ETHSTETH-A", FOUR_PT_TWO_FOUR_PCT_RATE, true);
 
-        // Increase WBTC-A Stability Fee to 5.80%
+        // Increase the WBTC-A Stability Fee from 4.90% to 5.80%
         DssExecLib.setIlkStabilityFee("WBTC-A", FIVE_PT_EIGHT_PCT_RATE, true);
 
-        // Increase WBTC-B Stability Fee to 6.30%
+        // Increase the WBTC-B Stability Fee from 4.90% to 6.30%
         DssExecLib.setIlkStabilityFee("WBTC-B", SIX_PT_THREE_PCT_RATE, true);
 
-        // Increase WBTC-C Stability Fee to 5.55%
+        // Increase the WBTC-C Stability Fee from 4.90% to 5.55%
         DssExecLib.setIlkStabilityFee("WBTC-C", FIVE_PT_FIVE_FIVE_PCT_RATE, true);
 
         // --- RWA015 (BlockTower Andromeda) ---
@@ -393,10 +393,11 @@ contract DssSpellAction is DssAction {
         // --- USDP PSM Debt Ceiling ---
         // Poll: https://vote.makerdao.com/polling/QmQYSLHH#poll-detail
         // Forum: https://forum.makerdao.com/t/reducing-psm-usdp-a-debt-ceiling/20980
-        // Set PSM-USDP-A Debt Ceiling to 0 and remove from autoline
+        // Reduce the PSM-PAX-A Debt Ceiling from 500 million DAI to 0 DAI
 
-        // do not decrease the debt ceiling according to the point in
+        // Do not decrease the global Line according to the point in
         // https://github.com/makerdao/spells-goerli/pull/202#discussion_r1217131039
+        DssExecLib.removeIlkFromAutoLine("PSM-PAX-A");
         DssExecLib.setIlkDebtCeiling("PSM-PAX-A", 0);
         DssExecLib.removeIlkFromAutoLine("PSM-PAX-A");
 
