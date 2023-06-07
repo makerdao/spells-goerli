@@ -301,8 +301,9 @@ contract DssSpellAction is DssAction {
             // 80M * 1.04^5 * 1.00 as a WAD
             RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).bump(
                 "RWA012-A",
-                 97_332_232 * WAD
+                 97_332_233 * WAD
             );
+            DssExecLib.updateCollateralPrice("RWA012-A");
         }
 
 

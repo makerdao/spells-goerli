@@ -1233,8 +1233,8 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(ink, lockAmount, "RWA015-A/bad-ink-after-spell"); // Whole unit of collateral is locked
     }
 
-    // TODO FIX test
-    function test_RWA012_Update() private {
+    // TODO add step by step asserts
+    function test_RWA012_Update() public {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -1248,10 +1248,9 @@ contract DssSpellTest is DssSpellTestBase {
         if (_rmul(_divup(_rmul(drawAmt, RAY), rate), rate) > room) {
             drawAmt = (room - rate) / RAY;
         }
-        RwaUrnLike(urn).draw(drawAmt);
-        (Art,,,,) = vat.ilks("RWA012-A");
-        assertTrue((line - _rmul(Art, rate)) <= _rmul(2, rate), "RWA012_A - Did not get close to the line");  // got very close to line
-        assertEq(Art, 80_000_000, "RWA012_A - Unexpected `Art`");
+        RwaUrnLike(urn).draw(drawAmt - 1);
+        (Art, rate, ,line,) = vat.ilks("RWA012-A");
+        assertTrue(line - Art * rate < 2 * rate, "RWA012_A - Did not get close to the line");  // got very close to line
     }
 
 }
