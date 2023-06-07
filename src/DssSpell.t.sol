@@ -667,7 +667,7 @@ contract DssSpellTest is DssSpellTestBase {
     uint256 daiPsmGemDiffDecimals               = 10 ** (dai.decimals() - psmGem.decimals());
 
     // Note: This is an exception because of exceeding the `action` size in the spell. Main pattern is to have this checks in the spell itself
-    function testRWA015_A_CONTRACT_DEPLOYMENT_SETUP() public {
+    function testRWA015_CONTRACT_DEPLOYMENT_SETUP() public {
         assertEq(rwa015AJoin.vat(), addr.addr("MCD_VAT"),  "join-vat-not-match");
         assertEq(rwa015AJoin.ilk(), "RWA015-A",            "join-ilk-not-match");
         assertEq(rwa015AJoin.gem(), address(rwa015AGem),   "join-gem-not-match");
@@ -698,7 +698,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(rwa015AInputConduitJar.gem(), addr.addr("USDC"),           "input-conduit-jar-gem-not-match");
     }
 
-    function testRWA015_A_INTEGRATION_CONDUITS_SETUP() public {
+    function testRWA015_INTEGRATION_CONDUITS_SETUP() public {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -736,7 +736,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(rwa015AUrn.can(RWA015_A_OPERATOR), 1, "Urn/operator-not-hoped");
     }
 
-    function testRWA015_A_INTEGRATION_BUMP() public {
+    function testRWA015_INTEGRATION_BUMP() public {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -747,12 +747,12 @@ contract DssSpellTest is DssSpellTestBase {
 
         assertEq(DSValueAbstract(pip).read(), bytes32(2_500_000 * WAD), "RWA015-A: Bad initial PIP value");
 
-        oracle.bump("RWA015-A", 1_280_000_000 * WAD);
+        oracle.bump("RWA015-A", 1_280 * MILLION * WAD);
 
-        assertEq(DSValueAbstract(pip).read(), bytes32(1_280_000_000 * WAD), "RWA015-A: Bad PIP value after bump()");
+        assertEq(DSValueAbstract(pip).read(), bytes32(1_280 * MILLION * WAD), "RWA015-A: Bad PIP value after bump()");
     }
 
-    function testRWA015_A_INTEGRATION_TELL() public {
+    function testRWA015_INTEGRATION_TELL() public {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -772,7 +772,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertTrue(!oracle.good("RWA015-A"), "RWA015-A: Oracle still good after tell()");
     }
 
-    function testRWA015_A_INTEGRATION_TELL_CURE_GOOD() public {
+    function testRWA015_INTEGRATION_TELL_CURE_GOOD() public {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -802,7 +802,7 @@ contract DssSpellTest is DssSpellTestBase {
         oracle.cure("RWA015-A");
     }
 
-    function testRWA015_A_INTEGRATION_TELL_CULL() public {
+    function testRWA015_INTEGRATION_TELL_CULL() public {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -824,12 +824,12 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(DSValueAbstract(pip).read(), bytes32(0), "RWA015-A: Oracle PIP value not set to zero after cull()");
     }
 
-    function testRWA015_A_PAUSE_PROXY_OWNS_RWA015_TOKEN_BEFORE_SPELL() public {
+    function testRWA015_PAUSE_PROXY_OWNS_RWA015_TOKEN_BEFORE_SPELL() public {
         assertEq(rwa015AGem.balanceOf(addr.addr('MCD_PAUSE_PROXY')), 1 * WAD);
     }
 
     // This test applicable this deal because the lock and draw steps are executed in the spell.
-    function testRWA015_A_SPELL_LOCK_OPERATOR_DRAW_WIPE_FREE() private {
+    function testRWA015_SPELL_LOCK_OPERATOR_DRAW_WIPE_FREE() private {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -958,7 +958,7 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     // This test is not applicable this deal because the lock and draw steps are executed in the spell.
-    function testRWA015_A_OPERATOR_LOCK_DRAW_CAGE() private {
+    function testRWA015_OPERATOR_LOCK_DRAW_CAGE() private {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -1054,7 +1054,7 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     // This test is not applicable this deal because the draw is executed in the spell.
-    function testRWA015_A_SPELL_LOCK() private {
+    function testRWA015_SPELL_LOCK() private {
         (uint256 pink, uint256 part) = vat.urns("RWA015-A", address(rwa015AUrn));
         uint256 prevBalance = rwa015AGem.balanceOf(address(rwa015AUrn.gemJoin()));
 
@@ -1077,7 +1077,7 @@ contract DssSpellTest is DssSpellTestBase {
 
     // The tests below are specific to RWA015-A deal and were adapted from the existing ones
 
-    function testRWA015_A_SPELL_OPERATOR_WIPE_FREE() public {
+    function testRWA015_SPELL_OPERATOR_WIPE_FREE() public {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -1091,8 +1091,8 @@ contract DssSpellTest is DssSpellTestBase {
         GodMode.setBalance(address(psmGem), address(this), daiToPay / daiPsmGemDiffDecimals);
         // We also need to increase the global and PSM-USDC-A debt ceilings
         GodMode.setWard(address(vat), address(this), 1);
-        vat.file("Line", 100_000_000_000 * RAD);
-        vat.file("PSM-USDC-A", "line", 10_000_000_000 * RAD);
+        vat.file("Line", 100 * BILLION * RAD);
+        vat.file("PSM-USDC-A", "line", 10 * BILLION * RAD);
 
         // Note: In the version of inputConduit for this deal `push` is permissionles
         // // wards
@@ -1129,7 +1129,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(art, 0, "RWA015-A: bad `art` after wipe()");
     }
 
-    function testRWA015_A_SPELL_CAGE() public {
+    function testRWA015_SPELL_CAGE() public {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -1211,7 +1211,7 @@ contract DssSpellTest is DssSpellTestBase {
         );
     }
 
-    function testRWA015_A_SPELL_LOCK_IGNORE_ART() public {
+    function testRWA015_SPELL_LOCK_IGNORE_ART() public {
         (uint256 pink, uint256 part) = vat.urns("RWA015-A", address(rwa015AUrn));
         uint256 prevBalance = rwa015AGem.balanceOf(address(rwa015AUrn.gemJoin()));
 
