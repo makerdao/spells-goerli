@@ -182,6 +182,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA015_A);
 
         // 500m debt ceiling
+        // Stability Fee is 0 for this ilk
         DssExecLib.increaseIlkDebtCeiling(ilk, RWA015_A_LINE, /* _global = */ true);
 
         // Set price feed for RWA015
