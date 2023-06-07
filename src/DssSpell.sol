@@ -288,11 +288,11 @@ contract DssSpellAction is DssAction {
         (uint256 RWA011_A_ART, , , ,) = VatLike(MCD_VAT).ilks("RWA011-A");
 
         if (RWA010_A_ART + RWA011_A_ART == 0) {
-            // Decrease the Debt Ceiling (line) of BlockTower S1 (RWA010-A) from 20 million Dai to zero Dai.
+            // Decrease the Debt Ceiling (line) of BlockTower S1 (RWA010-A) from 20 million DAI to zero Dai.
             DssExecLib.setIlkDebtCeiling("RWA010-A", 0);
-            // Decrease the Debt Ceiling (line) of BlockTower S2 (RWA011-A) from 30 million Dai to zero Dai.
+            // Decrease the Debt Ceiling (line) of BlockTower S2 (RWA011-A) from 30 million DAI to zero Dai.
             DssExecLib.setIlkDebtCeiling("RWA011-A", 0);
-            // Increase the Debt Ceiling (line) of BlockTower S3 (RWA012-A) from 30 million Dai to 80 million Dai.
+            // Increase the Debt Ceiling (line) of BlockTower S3 (RWA012-A) from 30 million DAI to 80 million DAI.
             // Note: Do not increase global Line because there is no net change from these operations
             DssExecLib.setIlkDebtCeiling("RWA012-A", 80 * MILLION);
 
