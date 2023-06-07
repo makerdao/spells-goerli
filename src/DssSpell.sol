@@ -305,7 +305,7 @@ contract DssSpellAction is DssAction {
             );
         }
 
-        
+
         _updateDoc("RWA010-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
         _updateDoc("RWA011-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
         _updateDoc("RWA012-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
@@ -399,7 +399,6 @@ contract DssSpellAction is DssAction {
         // https://github.com/makerdao/spells-goerli/pull/202#discussion_r1217131039
         DssExecLib.removeIlkFromAutoLine("PSM-PAX-A");
         DssExecLib.setIlkDebtCeiling("PSM-PAX-A", 0);
-        DssExecLib.removeIlkFromAutoLine("PSM-PAX-A");
 
         DssExecLib.setChangelogVersion("1.14.13");
     }
