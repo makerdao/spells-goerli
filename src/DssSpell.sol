@@ -328,7 +328,7 @@ contract DssSpellAction is DssAction {
         // Poll: https://vote.makerdao.com/polling/QmaoGpAQ#poll-detail
         // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-2-non-scope-defined-parameter-changes-may-2023/20981#stability-scope-parameter-changes-proposal-6
 
-        // Increase DSR to 3.49%
+        // Increase the DSR from 1.00% to 3.49%
         DssExecLib.setDSR(THREE_PT_FOUR_NINE_PCT_RATE, /* doDrip = */ true);
 
         // Set ETH-A Stability Fee to 3.74%
