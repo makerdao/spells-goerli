@@ -104,10 +104,6 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
-    uint256 internal constant MILLION           = 10 ** 6;
-    uint256 internal constant WAD               = 10 ** 18;
-    uint256 internal constant RAD               = 10 ** 45;
-
     uint256 internal constant THREE_PT_FOUR_NINE_PCT_RATE    = 1000000001087798189708544327;
     uint256 internal constant THREE_PT_SEVEN_FOUR_PCT_RATE   = 1000000001164306917698440949;
     uint256 internal constant FOUR_PT_TWO_FOUR_PCT_RATE      = 1000000001316772794769098706;
@@ -115,10 +111,14 @@ contract DssSpellAction is DssAction {
     uint256 internal constant SIX_PT_THREE_PCT_RATE          = 1000000001937312893803622469;
     uint256 internal constant FIVE_PT_FIVE_FIVE_PCT_RATE     = 1000000001712791360746325100;
 
+    uint256 internal constant MILLION           = 10 ** 6;
+    uint256 internal constant WAD               = 10 ** 18;
+    uint256 internal constant RAD               = 10 ** 45;
+
     // -- Spark Components --
     address internal constant SPARK_ACL_MANAGER = 0xb137E7d16564c81ae2b0C8ee6B55De81dd46ECe5;
-    address internal constant SPARK_PROXY = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
-    address internal constant SPARK_SPELL = 0x3068FA0B6Fc6A5c998988a271501fF7A6892c6Ff;
+    address internal constant SPARK_PROXY       = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
+    address internal constant SPARK_SPELL       = 0x3068FA0B6Fc6A5c998988a271501fF7A6892c6Ff;
 
     // -- RWA015 components --
     address internal constant RWA015                     = 0x8384c55389f1ab6345dd4EF5fF2eF791D4875D2A;
