@@ -27,9 +27,14 @@ import "dss-interfaces/ERC/GemAbstract.sol";
 //     function restrict(uint256 _id) external;
 // }
 
+interface VatLike {
+    function ilks(bytes32) external view returns (uint256 Art, uint256 rate, uint256 spot, uint256 line, uint256 dust);
+}
+
 interface RwaLiquidationLike {
     function ilks(bytes32) external view returns (string memory doc, address pip, uint48 tau, uint48 toc);
     function init(bytes32 ilk, uint256 val, string memory doc, uint48 tau) external;
+    function bump(bytes32 ilk, uint256 val) external;
 }
 
 interface ACLManagerLike {
@@ -278,13 +283,24 @@ contract DssSpellAction is DssAction {
         // Poll: https://vote.makerdao.com/polling/QmPMrvfV#poll-detail
         // Forum: https://forum.makerdao.com/t/blocktower-credit-rwa-vaults-parameters-shift/20707
 
-        // Decrease the Debt Ceiling (line) of BlockTower S1 (RWA010-A) from 20 million Dai to zero Dai.
-        DssExecLib.setIlkDebtCeiling("RWA010-A", 0);
-        // Decrease the Debt Ceiling (line) of BlockTower S2 (RWA011-A) from 30 million Dai to zero Dai.
-        DssExecLib.setIlkDebtCeiling("RWA011-A", 0);
-        // Increase the Debt Ceiling (line) of BlockTower S3 (RWA012-A) from 30 million Dai to 80 million Dai.
-        // Note: Do not increase global Line because there is no net change from these operations
-        DssExecLib.increaseIlkDebtCeiling("RWA012-A", 50 * MILLION, /* global */ false);
+        (uint256 RWA010_A_ART, , , ,) = VatLike(MCD_VAT).ilks("RWA010-A");
+        (uint256 RWA011_A_ART, , , ,) = VatLike(MCD_VAT).ilks("RWA011-A");
+
+        if (RWA010_A_ART + RWA011_A_ART == 0) {
+            // Decrease the Debt Ceiling (line) of BlockTower S1 (RWA010-A) from 20 million Dai to zero Dai.
+            DssExecLib.setIlkDebtCeiling("RWA010-A", 0);
+            // Decrease the Debt Ceiling (line) of BlockTower S2 (RWA011-A) from 30 million Dai to zero Dai.
+            DssExecLib.setIlkDebtCeiling("RWA011-A", 0);
+            // Increase the Debt Ceiling (line) of BlockTower S3 (RWA012-A) from 30 million Dai to 80 million Dai.
+            // Note: Do not increase global Line because there is no net change from these operations
+            DssExecLib.increaseIlkDebtCeiling("RWA012-A", 50 * MILLION, /* global */ false);
+
+            RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).bump(
+                "RWA012-A",
+                 80 * MILLION * WAD
+            );
+        }
+
 
         _updateDoc("RWA010-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
         _updateDoc("RWA011-A", "QmY382BPa5UQfmpTfi6KhjqQHtqq1fFFg2owBfsD2LKmYU");
