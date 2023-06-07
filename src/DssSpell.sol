@@ -294,11 +294,14 @@ contract DssSpellAction is DssAction {
             DssExecLib.setIlkDebtCeiling("RWA011-A", 0);
             // Increase the Debt Ceiling (line) of BlockTower S3 (RWA012-A) from 30 million Dai to 80 million Dai.
             // Note: Do not increase global Line because there is no net change from these operations
-            DssExecLib.increaseIlkDebtCeiling("RWA012-A", 50 * MILLION, /* global */ false);
+            DssExecLib.setIlkDebtCeiling("RWA012-A", 80 * MILLION);
 
+            // Increase the price to enable DAI to be drawn -- value corresponds to
+            // [ (debt ceiling) + (2 years interest at current rate) ] * mat, i.e.
+            // 80M * 1.04^5 * 1.00 as a WAD
             RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).bump(
                 "RWA012-A",
-                 80 * MILLION * WAD
+                 97_332_232 * WAD
             );
         }
 

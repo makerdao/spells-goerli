@@ -663,6 +663,8 @@ contract DssSpellTest is DssSpellTestBase {
     GemAbstract              psmGem                 = GemAbstract(rwa015AOutputConduit.gem());
     RwaInputConduitLike      rwa015AInputConduitUrn = RwaInputConduitLike(addr.addr("RWA015_A_INPUT_CONDUIT_URN"));
     RwaInputConduitLike      rwa015AInputConduitJar = RwaInputConduitLike(addr.addr("RWA015_A_INPUT_CONDUIT_JAR"));
+    GemAbstract              rwa012AGem             = GemAbstract(addr.addr("RWA012"));
+    GemJoinAbstract          rwa012AJoin            = GemJoinAbstract(addr.addr("MCD_JOIN_RWA012_A"));
 
     uint256 daiPsmGemDiffDecimals               = 10 ** (dai.decimals() - psmGem.decimals());
 
@@ -1230,5 +1232,27 @@ contract DssSpellTest is DssSpellTestBase {
         (uint256 ink,) = vat.urns("RWA015-A", address(rwa015AUrn));
         assertEq(ink, lockAmount, "RWA015-A/bad-ink-after-spell"); // Whole unit of collateral is locked
     }
+
+    // TODO FIX test
+    function test_RWA012_Update() private {
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        address urn = addr.addr("RWA012_A_URN");
+        GodMode.setWard(address(urn), address(this), 1);
+        RwaUrnLike(urn).hope(address(this));  // become operator
+        ( uint256 Art, uint256 rate, , uint256 line,) = vat.ilks("RWA012-A");
+        uint256 room = line - _rmul(Art, rate);
+        uint256 drawAmt = _divup(room, RAY);
+        if (_rmul(_divup(_rmul(drawAmt, RAY), rate), rate) > room) {
+            drawAmt = (room - rate) / RAY;
+        }
+        RwaUrnLike(urn).draw(drawAmt);
+        (Art,,,,) = vat.ilks("RWA012-A");
+        assertTrue((line - _rmul(Art, rate)) <= _rmul(2, rate), "RWA012_A - Did not get close to the line");  // got very close to line
+        assertEq(Art, 80_000_000, "RWA012_A - Unexpected `Art`");
+    }
+
 }
 
