@@ -1055,6 +1055,9 @@ contract DssSpellTestBase is Config, DssTest {
         // `amount` is the amount of _TOKEN_ we are selling/buying (NOT measured in Dai)
         uint256 amount = 100_000;
 
+        // Amount should be more than 10,000 as `tin` and `tout` are basis point measurements
+        require(amount >= 10_000, "checkPsmIlkIntegration/amount-too-low-for-precision-checks");
+
         // Increase line where necessary to allow for coverage for both `buyGem` and `sellGem`
         {
             // Get the Art (current debt) and line (debt ceiling) for this PSM
