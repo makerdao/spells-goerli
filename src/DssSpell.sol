@@ -177,7 +177,7 @@ contract DssSpellAction is DssAction {
 
         // Stability Fee is 0 for this ilk
 
-        // 500m debt ceiling
+        // 2_500_000 debt ceiling
         DssExecLib.increaseIlkDebtCeiling(ilk, RWA015_A_LINE, /* _global = */ true);
 
         // Set price feed for RWA015
