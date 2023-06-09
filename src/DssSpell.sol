@@ -138,7 +138,7 @@ contract DssSpellAction is DssAction {
 
     // RWA Oracle Params
     uint256 internal constant RWA015_A_INITIAL_PRICE = 2_500_000 * WAD;
-    string  internal constant RWA015_A_DOC             = "QmdbPyQLDdGQhKGXBgod7TbQmrUJ7tiN9aX1zSL7bmtkTN";
+    string  internal constant RWA015_A_DOC           = "QmdbPyQLDdGQhKGXBgod7TbQmrUJ7tiN9aX1zSL7bmtkTN";
     uint48  internal constant RWA015_A_TAU           = 0;
 
     // Remaining params
