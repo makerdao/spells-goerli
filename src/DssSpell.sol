@@ -193,7 +193,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.authorize(MCD_JOIN_RWA015_A, RWA015_A_URN);
 
         // OPERATOR permission on URN
-        RwaUrnLike(RWA015_A_URN).hope(address(RWA015_A_OPERATOR));
+        RwaUrnLike(RWA015_A_URN).hope(RWA015_A_OPERATOR);
 
         // OPERATOR permission on RWA015_A_OUTPUT_CONDUIT
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).hope(RWA015_A_OPERATOR);
