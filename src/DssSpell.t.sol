@@ -749,9 +749,9 @@ contract DssSpellTest is DssSpellTestBase {
 
         assertEq(DSValueAbstract(pip).read(), bytes32(2_500_000 * WAD), "RWA015-A: Bad initial PIP value");
 
-        oracle.bump("RWA015-A", 1_280 * MILLION * WAD);
+        oracle.bump("RWA015-A", 12_500_000 * WAD);
 
-        assertEq(DSValueAbstract(pip).read(), bytes32(1_280 * MILLION * WAD), "RWA015-A: Bad PIP value after bump()");
+        assertEq(DSValueAbstract(pip).read(), bytes32(12_500_000 * WAD), "RWA015-A: Bad PIP value after bump()");
     }
 
     function testRWA015_INTEGRATION_TELL() public {
