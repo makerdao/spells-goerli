@@ -137,7 +137,7 @@ contract DssSpellAction is DssAction {
     uint256 internal constant RWA015_A_REG_CLASS_RWA = 3;
 
     // RWA Oracle Params
-    uint256 internal constant RWA015_A_INITIAL_PRICE = 2_500_000;
+    uint256 internal constant RWA015_A_INITIAL_PRICE = 2_500_000 * WAD;
     string  internal constant RWA015_A_DOC             = "QmdbPyQLDdGQhKGXBgod7TbQmrUJ7tiN9aX1zSL7bmtkTN";
     uint48  internal constant RWA015_A_TAU           = 0;
 
@@ -164,13 +164,7 @@ contract DssSpellAction is DssAction {
         bytes32 ilk = "RWA015-A";
 
         // Init the RwaLiquidationOracle
-        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(
-            ilk,
-            // We are not using DssExecLib, so the precision has to be set explicitly
-            RWA015_A_INITIAL_PRICE * WAD,
-            RWA015_A_DOC,
-            RWA015_A_TAU
-        );
+        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(ilk, RWA015_A_INITIAL_PRICE, RWA015_A_DOC, RWA015_A_TAU);
         (, address pip, , ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
 
         // Init RWA015 in Vat
