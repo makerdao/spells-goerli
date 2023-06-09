@@ -851,10 +851,10 @@ contract DssSpellTest is DssSpellTestBase {
         // 0 DAI in Output Conduit
         assertEq(dai.balanceOf(address(rwa015AOutputConduit)), 0, "RWA015-A: Dangling Dai in input conduit before draw()");
 
-        // Draw 500mm
+        // Draw entire balance up to line
         rwa015AUrn.draw(drawAmount);
 
-        // 500mm DAI in Output Conduit
+        // entire balance up to line DAI in Output Conduit
         assertEq(dai.balanceOf(address(rwa015AOutputConduit)), drawAmount, "RWA015-A: Dai drawn was not send to the recipient");
 
         (uint256 ink, uint256 art) = vat.urns("RWA015-A", address(rwa015AUrn));
@@ -930,7 +930,7 @@ contract DssSpellTest is DssSpellTestBase {
         // setting address(this) as operator
         vm.store(address(rwa015AUrn), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
 
-        // Draw 500m + 1
+        // Draw entire balance up to line + 1
         rwa015AUrn.draw(drawAmount);
     }
 
@@ -944,7 +944,7 @@ contract DssSpellTest is DssSpellTestBase {
         // setting address(this) as operator
         vm.store(address(rwa015AUrn), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
 
-        // Draw 500mm
+        // Draw entire balance up to line
         rwa015AUrn.draw(drawAmount);
 
         // auth
@@ -980,10 +980,10 @@ contract DssSpellTest is DssSpellTestBase {
         // 0 DAI in Output Conduit
         assertEq(dai.balanceOf(address(rwa015AOutputConduit)), 0, "RWA015-A: Dangling Dai in input conduit before draw()");
 
-        // Draw 500mm
+        // Draw entire balance up to line
         rwa015AUrn.draw(drawAmount);
 
-        // 500mm DAI in Output Conduit
+        // entire balance up to line DAI in Output Conduit
         assertEq(dai.balanceOf(address(rwa015AOutputConduit)), drawAmount, "RWA015-A: Dai drawn was not send to the recipient");
 
         (uint256 ink, uint256 art) = vat.urns("RWA015-A", address(rwa015AUrn));
