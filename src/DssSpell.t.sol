@@ -888,7 +888,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(psmGem.balanceOf(address(this)), pushAmount / daiPsmGemDiffDecimals, "RWA015-A: Psm GEM not sent to destination after push()");
         assertEq(dai.balanceOf(address(rwa015AUrn)), drawAmount - pushAmount, "RWA015-A: Dai not sent to destination after push()");
 
-        // as we have SF 0 we need to pay exectly the same amount of DAI we have drawn
+        // As the stability fee is 0 we need to pay exactly the same amount of DAI that we have drawn
         uint256 daiToPay = drawAmount;
 
         // Note: In the version of inputConduit for this deal `push` is permissionles
