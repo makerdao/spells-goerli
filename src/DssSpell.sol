@@ -259,7 +259,7 @@ contract DssSpellAction is DssAction {
         // Pick the destination for the assets
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).pick(RWA015_A_CUSTODY);
         // Swap Dai for the chosen stablecoin through the PSM and send it to the picked address.
-        // For Goerli we push only 100 DAI
+        // For Goerli we push only 100 DAI because the testnet PSM does not have liquidity to support full transfer of 2.5m
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).push(100 * WAD);
         // For Mainnet we push the entire balance
         // RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).push();
