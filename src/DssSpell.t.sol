@@ -384,12 +384,14 @@ contract DssSpellTest is DssSpellTestBase {
 
         // Insert new ilk registry values tests here
         // RWA015
+        (, address pipRwa015,,) = oracle.ilks("RWA015-A");
+
         assertEq(reg.pos("RWA015-A"),    62);
         assertEq(reg.join("RWA015-A"),   addr.addr("MCD_JOIN_RWA015_A"));
         assertEq(reg.gem("RWA015-A"),    addr.addr("RWA015"));
         assertEq(reg.dec("RWA015-A"),    GemAbstract(addr.addr("RWA015")).decimals());
         assertEq(reg.class("RWA015-A"),  3);
-        assertEq(reg.pip("RWA015-A"),    addr.addr("PIP_RWA015"));
+        assertEq(reg.pip("RWA015-A"),    pipRwa015);
         assertEq(reg.name("RWA015-A"),   "RWA015-A: BlockTower Andromeda");
         assertEq(reg.symbol("RWA015-A"), GemAbstract(addr.addr("RWA015")).symbol());
     }
