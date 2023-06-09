@@ -939,7 +939,7 @@ contract DssSpellTest is DssSpellTestBase {
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        uint256 drawAmount = 1_000 * WAD;
+        uint256 drawAmount = 2_500_000 * WAD;
 
         // setting address(this) as operator
         vm.store(address(rwa015AUrn), keccak256(abi.encode(address(this), uint256(1))), bytes32(uint256(1)));
