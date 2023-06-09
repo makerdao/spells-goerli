@@ -291,7 +291,7 @@ contract DssSpellAction is DssAction {
             DssExecLib.setIlkDebtCeiling("RWA012-A", 80 * MILLION);
 
             // Increase the price to enable DAI to be drawn -- value corresponds to
-            // [ (debt ceiling) + (2 years interest at current rate) ] * mat, i.e.
+            // [ (Debt ceiling) + (RWA stability fee ) ^ (minimum deal duration in years) ] * liquidation ratio
             // 80M * 1.04^5 * 1.00 as a WAD
             RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).bump(
                 "RWA012-A",
