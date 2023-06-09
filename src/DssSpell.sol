@@ -175,8 +175,9 @@ contract DssSpellAction is DssAction {
         // Allow RWA015 Join to modify Vat registry
         DssExecLib.authorize(MCD_VAT, MCD_JOIN_RWA015_A);
 
-        // 500m debt ceiling
         // Stability Fee is 0 for this ilk
+
+        // 500m debt ceiling
         DssExecLib.increaseIlkDebtCeiling(ilk, RWA015_A_LINE, /* _global = */ true);
 
         // Set price feed for RWA015
