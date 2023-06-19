@@ -36,6 +36,36 @@ interface BridgeLike {
     function l2TeleportGateway() external view returns (address);
 }
 
+interface RwaUrnLike {
+    function vat() external view returns (address);
+    function jug() external view returns (address);
+    function daiJoin() external view returns (address);
+    function outputConduit() external view returns (address);
+    function wards(address) external view returns (uint256);
+    function hope(address) external;
+    function can(address) external view returns (uint256);
+    function gemJoin() external view returns (address);
+    function lock(uint256) external;
+    function draw(uint256) external;
+    function wipe(uint256) external;
+    function free(uint256) external;
+}
+
+interface RwaOutputConduitLike {
+    function wards(address) external view returns (uint256);
+    function can(address) external view returns (uint256);
+    function may(address) external view returns (uint256);
+    function dai() external view returns (address);
+    function psm() external view returns (address);
+    function gem() external view returns (address);
+    function bud(address) external view returns (uint256);
+    function quitTo() external view returns (address);
+}
+
+interface RwaLiquidationOracleLike {
+    function ilks(bytes32) external view returns (string memory, address, uint48 toc, uint48 tau);
+}
+
 contract DssSpellTest is DssSpellTestBase {
     string         config;
     RootDomain     rootDomain;
@@ -354,7 +384,7 @@ contract DssSpellTest is DssSpellTestBase {
             addr.addr("PIP_GUSD"),
             PsmAbstract(addr.addr("MCD_PSM_GUSD_A")),
             0,   // tin
-            1    // tout
+            0    // tout
         );
 
         // USDP
@@ -501,6 +531,59 @@ contract DssSpellTest is DssSpellTestBase {
 
         // Validate post-spell state
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
+    }
+
+    string RWA015_OLDDOC      = "QmdbPyQLDdGQhKGXBgod7TbQmrUJ7tiN9aX1zSL7bmtkTN";
+    string RWA015_NEWDOC      = "TBD";
+
+    function testRWA015DocChange() public {
+        _checkRWADocUpdate("RWA015-A", RWA015_OLDDOC, RWA015_NEWDOC);
+    }
+
+    // RWA tests
+
+    address RWA015_A_OPERATOR = addr.addr("RWA015_A_OPERATOR");
+    address RWA015_A_CUSTODY  = addr.addr("RWA015_A_CUSTODY");
+
+    RwaUrnLike               rwa015AUrn             = RwaUrnLike(addr.addr("RWA015_A_URN"));
+    RwaOutputConduitLike     rwa015AOutputConduit   = RwaOutputConduitLike(addr.addr("RWA015_A_OUTPUT_CONDUIT"));
+    RwaLiquidationOracleLike oracle                 = RwaLiquidationOracleLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
+
+    function testRWA015_OUTPUT_CONDUIT_DEPLOYMENT_SETUP() public {
+        assertEq(rwa015AOutputConduit.dai(), addr.addr("MCD_DAI"),        "output-conduit-dai-not-match");
+        assertEq(rwa015AOutputConduit.gem(), addr.addr("GUSD"),           "output-conduit-gem-not-match");
+        assertEq(rwa015AOutputConduit.psm(), addr.addr("MCD_PSM_GUSD_A"), "output-conduit-psm-not-match");
+    }
+
+    function testRWA015_INTEGRATION_CONDUITS_SETUP() public {
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(rwa015AUrn.outputConduit(), address(rwa015AOutputConduit), "RwaUrn/urn-outputconduit-not-match");
+
+        assertEq(rwa015AOutputConduit.wards(pauseProxy),      1, "OutputConduit/ward-pause-proxy-not-set");
+        assertEq(rwa015AOutputConduit.wards(address(esm)),    1, "OutputConduit/ward-esm-not-set");
+        assertEq(rwa015AOutputConduit.can(pauseProxy),        0, "OutputConduit/pause-proxy-hoped");
+        assertEq(rwa015AOutputConduit.can(RWA015_A_OPERATOR), 1, "OutputConduit/operator-not-hope");
+        assertEq(rwa015AOutputConduit.may(pauseProxy),        0, "OutputConduit/pause-proxy-not-mated");
+        assertEq(rwa015AOutputConduit.may(RWA015_A_OPERATOR), 1, "OutputConduit/operator-not-mate");
+        assertEq(rwa015AOutputConduit.bud(RWA015_A_CUSTODY),  1, "OutputConduit/destination-address-not-whitelisted-for-pick");
+
+        assertEq(rwa015AOutputConduit.quitTo(), address(rwa015AUrn), "OutputConduit/quit-to-not-urn");
+    }
+
+    function test_RWA015_ORACLE_PRICE_BUMP() public {
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // Get collateral's parameters
+        (,, uint256 spot,) = vat.ilks("RWA015-A");
+        // Get the oracle address
+        (,address pip,,  ) = oracle.ilks("RWA015-A");
+        assertEq(uint256(DSValueAbstract(pip).read()), 1_280_000_000 * WAD, "RWA015: Bad PIP value after bump()");
+        assertEq(spot, 1_280_000_000 * RAY, "RWA015: Bad spot value after bump()");  // got very close to line
     }
 }
 
