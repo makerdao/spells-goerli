@@ -579,7 +579,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertTrue(spell.done());
 
         // Get collateral's parameters
-        (,, uint256 spot,) = vat.ilks("RWA015-A");
+        (,, uint256 spot,,) = vat.ilks("RWA015-A");
         // Get the oracle address
         (,address pip,,  ) = oracle.ilks("RWA015-A");
         assertEq(uint256(DSValueAbstract(pip).read()), 1_280_000_000 * WAD, "RWA015: Bad PIP value after bump()");
