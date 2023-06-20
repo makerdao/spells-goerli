@@ -117,17 +117,17 @@ contract DssSpellAction is DssAction {
         RwaUrnLike(RWA015_A_URN).file("outputConduit", RWA015_A_OUTPUT_CONDUIT);
 
         // ----- Additional ESM authorization -----
-        DssExecLib.authorize(RWA015_A_OUTPUT_CONDUIT,    MCD_ESM);
+        DssExecLib.authorize(RWA015_A_OUTPUT_CONDUIT, MCD_ESM);
 
         DssExecLib.setChangelogAddress("RWA015_A_OUTPUT_CONDUIT", RWA015_A_OUTPUT_CONDUIT);
 
         // --- GUSD PSM Parameter Changes ---
         // Poll: https://vote.makerdao.com/polling/QmaXg3JT#vote-breakdown
 
-        // Remove from autoline
-        DssExecLib.removeIlkFromAutoLine("PSM-GUSD-A");
+        // Decrease the line for autoline
+        DssExecLib.setIlkAutoLineParameters("PSM-GUSD-A", 110 * MILLION, 10 * MILLION, 24 hours);
         // Reduce the line by 390 million DAI from 500 million DAI to 110 million DAI.
-        DssExecLib.setIlkDebtCeiling("PSM-GUSD-A", 110 * MILLION);
+        DssExecLib.setIlkDebtCeiling("PSM-GUSD-A", 9 * MILLION);
         // Reduce the tout by 0.01% from 0.01% to 0%.
         DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 0);
 
