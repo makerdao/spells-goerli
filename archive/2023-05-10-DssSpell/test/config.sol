@@ -100,9 +100,9 @@ contract Config {
         // Values for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0xf7122ca6b5DF4f5100D2F23F9b58E5B7dd9f9863), // populate with deployed spell if deployed
-            deployed_spell_created:         1686566208,                                          // use `make deploy-info tx=<deployment-tx>` to obtain the timestamp
-            deployed_spell_block:           9165733,                                             // use `make deploy-info tx=<deployment-tx>` to obtain the block number
+            deployed_spell:                 0x6BAD5cF751fDCE9063B8CC2366901AD0e35ce3d0,     // populate with deployed spell if deployed
+            deployed_spell_created:         1683638880,              // use `make deploy-info tx=<deployment-tx>` to obtain the timestamp
+            deployed_spell_block:           8969931,              // use `make deploy-info tx=<deployment-tx>` to obtain the block number
             previous_spells:                prevSpells,     // older spells to ensure are executed first
             office_hours_enabled:           false,          // true if officehours is expected to be enabled in the spell
             expiration_threshold:           30 days         // Amount of time before spell expires
@@ -112,7 +112,7 @@ contract Config {
         // Values for all system configuration changes
         //
         afterSpell.line_offset =           500 * MILLION;           // Offset between the global line against the sum of local lines
-        afterSpell.pot_dsr =               349;                     // In basis points
+        afterSpell.pot_dsr =               100;                     // In basis points
         afterSpell.pause_delay =           60 seconds;              // In seconds
         afterSpell.vow_wait =              156 hours;               // In seconds
         afterSpell.vow_dump =              250;                     // In whole Dai units
@@ -131,7 +131,7 @@ contract Config {
         afterSpell.osm_mom_authority =     chief;                   // OsmMom authority
         afterSpell.flipper_mom_authority = chief;                   // FlipperMom authority
         afterSpell.clipper_mom_authority = chief;                   // ClipperMom authority
-        afterSpell.ilk_count =             63;                      // Num expected in system
+        afterSpell.ilk_count =             61;                      // Num expected in system
 
         //
         // Values for all collateral
@@ -148,7 +148,7 @@ contract Config {
             aL_ttl:       6 hours,         // In seconds
             line:         0,               // In whole Dai units  // Not checked here as there is auto line
             dust:         7_500,           // In whole Dai units
-            pct:          3_74,            // In basis points
+            pct:          1_75,            // In basis points
             mat:          14500,           // In basis points
             liqType:      "clip",          // "" or "flip" or "clip"
             liqOn:        true,            // If liquidations are enabled
@@ -178,7 +178,7 @@ contract Config {
             aL_ttl:       6 hours,
             line:         0,
             dust:         25 * THOUSAND,
-            pct:          4_24,
+            pct:          3_25,
             mat:          13000,
             liqType:      "clip",
             liqOn:        true,
@@ -208,7 +208,7 @@ contract Config {
             aL_ttl:       8 hours,
             line:         0,
             dust:         3_500,
-            pct:          3_49,
+            pct:          1_00,
             mat:          17000,
             liqType:      "clip",
             liqOn:        true,
@@ -328,7 +328,7 @@ contract Config {
             aL_ttl:       24 hours,
             line:         0,
             dust:         7_500,
-            pct:          5_80,
+            pct:          4_90,
             mat:          14500,
             liqType:      "clip",
             liqOn:        true,
@@ -358,7 +358,7 @@ contract Config {
             aL_ttl:       24 hours,
             line:         0,
             dust:         25 * THOUSAND,
-            pct:          6_30,
+            pct:          4_90,
             mat:          13000,
             liqType:      "clip",
             liqOn:        true,
@@ -388,7 +388,7 @@ contract Config {
             aL_ttl:       24 hours,
             line:         0,
             dust:         3_500,
-            pct:          5_55,
+            pct:          4_90,
             mat:          17500,
             liqType:      "clip",
             liqOn:        true,
@@ -659,10 +659,10 @@ contract Config {
             line:         0,
             dust:         15 * THOUSAND,
             pct:          250,
-            mat:          10000_00,
+            mat:          16500,
             liqType:      "clip",
             liqOn:        true,
-            chop:         0,
+            chop:         1300,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -672,14 +672,14 @@ contract Config {
             clip_buf:     120_00,
             clip_tail:    140 minutes,
             clip_cusp:    40_00,
-            clip_chip:    0,
-            clip_tip:     0,
+            clip_chip:    10,
+            clip_tip:     250,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            offboarding:  true
+            offboarding:  false
         });
         afterSpell.collaterals["BAL-A"] = CollateralValues({
             aL_enabled:   false,
@@ -719,10 +719,10 @@ contract Config {
             line:         0,
             dust:         15 * THOUSAND,
             pct:          150,
-            mat:          10000_00,
+            mat:          16500,
             liqType:      "clip",
             liqOn:        true,
-            chop:         0,
+            chop:         1300,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -732,14 +732,14 @@ contract Config {
             clip_buf:     130_00,
             clip_tail:    140 minutes,
             clip_cusp:    40_00,
-            clip_chip:    0,
-            clip_tip:     0,
+            clip_chip:    10,
+            clip_tip:     250,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            offboarding:  true
+            offboarding:  false
         });
         afterSpell.collaterals["GUSD-A"] = CollateralValues({
             aL_enabled:   false,
@@ -959,10 +959,10 @@ contract Config {
             line:         0,
             dust:         60 * THOUSAND,
             pct:          150,
-            mat:          10000_00,
+            mat:          12000,
             liqType:      "clip",
             liqOn:        true,
-            chop:         0,
+            chop:         1300,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -972,14 +972,14 @@ contract Config {
             clip_buf:     115_00,
             clip_tail:    215 minutes,
             clip_cusp:    60_00,
-            clip_chip:    0,
-            clip_tip:     0,
+            clip_chip:    10,
+            clip_tip:     300,
             clipper_mom:  1,
             cm_tolerance: 7000,
             calc_tau:     0,
             calc_step:    125,
             calc_cut:     9950,
-            offboarding:  true
+            offboarding:  false
         });
         afterSpell.collaterals["UNIV2DAIUSDC-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1466,7 +1466,7 @@ contract Config {
             aL_line:      0,
             aL_gap:       0,
             aL_ttl:       0,
-            line:         0,
+            line:         20_000_000,
             dust:         0,
             pct:          4_00,
             mat:          100_00,
@@ -1496,7 +1496,7 @@ contract Config {
             aL_line:      0,
             aL_gap:       0,
             aL_ttl:       0,
-            line:         0,
+            line:         30_000_000,
             dust:         0,
             pct:          4_00,
             mat:          100_00,
@@ -1526,7 +1526,7 @@ contract Config {
             aL_line:      0,
             aL_gap:       0,
             aL_ttl:       0,
-            line:         80_000_000,
+            line:         30_000_000,
             dust:         0,
             pct:          4_00,
             mat:          100_00,
@@ -1581,66 +1581,6 @@ contract Config {
             calc_cut:     0,
             offboarding:  false
         });
-        afterSpell.collaterals["RWA014-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         500 * MILLION,
-            dust:         0,
-            pct:          0,
-            mat:          100_00,
-            liqType:      "",
-            liqOn:        false,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     0,
-            clip_tail:    0,
-            clip_cusp:    0,
-            clip_chip:    0,
-            clip_tip:     0,
-            clipper_mom:  0,
-            cm_tolerance: 0,
-            calc_tau:     0,
-            calc_step:    0,
-            calc_cut:     0,
-            offboarding:  false
-        });
-        afterSpell.collaterals["RWA015-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         2_500_000,
-            dust:         0,
-            pct:          0,
-            mat:          100_00,
-            liqType:      "",
-            liqOn:        false,
-            chop:         0,
-            cat_dunk:     0,
-            flip_beg:     0,
-            flip_ttl:     0,
-            flip_tau:     0,
-            flipper_mom:  0,
-            dog_hole:     0,
-            clip_buf:     0,
-            clip_tail:    0,
-            clip_cusp:    0,
-            clip_chip:    0,
-            clip_tip:     0,
-            clipper_mom:  0,
-            cm_tolerance: 0,
-            calc_tau:     0,
-            calc_step:    0,
-            calc_cut:     0,
-            offboarding:  false
-        });
         afterSpell.collaterals["MATIC-A"] = CollateralValues({
             aL_enabled:   false,
             aL_line:      0,
@@ -1649,10 +1589,10 @@ contract Config {
             line:         0,
             dust:         15 * THOUSAND,
             pct:          300,
-            mat:          10000_00,
+            mat:          17500,
             liqType:      "clip",
             liqOn:        true,
-            chop:         0,
+            chop:         1300,
             cat_dunk:     0,
             flip_beg:     0,
             flip_ttl:     0,
@@ -1662,20 +1602,20 @@ contract Config {
             clip_buf:     120_00,
             clip_tail:    140 minutes,
             clip_cusp:    40_00,
-            clip_chip:    0,
-            clip_tip:     0,
+            clip_chip:    10,
+            clip_tip:     250,
             clipper_mom:  1,
             cm_tolerance: 5000,
             calc_tau:     0,
             calc_step:    90,
             calc_cut:     9900,
-            offboarding:  true
+            offboarding:  false
         });
         afterSpell.collaterals["PSM-PAX-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
+            aL_enabled:   true,
+            aL_line:      500 * MILLION,
+            aL_gap:       50 * MILLION,
+            aL_ttl:       24 hours,
             line:         0,
             dust:         0,
             pct:          0,
@@ -1699,7 +1639,7 @@ contract Config {
             calc_tau:     0,
             calc_step:    120,
             calc_cut:     9990,
-            offboarding:  true
+            offboarding:  false
         });
         afterSpell.collaterals["GUNIV3DAIUSDC1-A"] = CollateralValues({
             aL_enabled:   false,
@@ -1738,7 +1678,7 @@ contract Config {
             aL_ttl:       12 hours,
             line:         0,
             dust:         7_500,
-            pct:          3_74,
+            pct:          1_75,
             mat:          16000,
             liqType:      "clip",
             liqOn:        true,
@@ -1768,7 +1708,7 @@ contract Config {
             aL_ttl:       16 hours,
             line:         0,
             dust:         3_500,
-            pct:          3_49,
+            pct:          1_00,
             mat:          18500,
             liqType:      "clip",
             liqOn:        true,
@@ -1972,12 +1912,12 @@ contract Config {
         });
         afterSpell.collaterals["RETH-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      50 * MILLION,
-            aL_gap:       5 * MILLION,
+            aL_line:      20 * MILLION,
+            aL_gap:       3 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
             dust:         7_500,
-            pct:          3_74,
+            pct:          75,
             mat:          170_00,
             liqType:      "clip",
             liqOn:        true,
@@ -2001,10 +1941,10 @@ contract Config {
             offboarding:  false
         });
         afterSpell.collaterals["GNO-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
+            aL_enabled:   true,
+            aL_line:      5 * MILLION,
+            aL_gap:       3 * MILLION,
+            aL_ttl:       8 hours,
             line:         0,
             dust:         100 * THOUSAND,
             pct:          4_90,
@@ -2032,8 +1972,8 @@ contract Config {
         });
         afterSpell.collaterals["DIRECT-SPARK-DAI"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      20 * MILLION,
-            aL_gap:       20 * MILLION,
+            aL_line:      5 * MILLION,
+            aL_gap:       5 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
             dust:         0,
