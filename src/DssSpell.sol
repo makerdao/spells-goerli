@@ -92,14 +92,14 @@ contract DssSpellAction is DssAction {
         // --- Activate Andromeda Autoline ---
         // Forum: https://forum.makerdao.com/t/rwa015-project-andromeda-technical-assessment/20974
 
-        // Activate autiline with line 1.26 billion DAI, gap 50 million DAI, ttl 86400
+        // Activate autoline with line 1.28 billion DAI, gap 50 million DAI, ttl 86400
         DssExecLib.setIlkAutoLineParameters("RWA015-A", 1_280 * MILLION, 50 * MILLION, 24 hours);
 
         // Bump Oracle Price to 1.28 billion DAI
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).bump(
                 "RWA015-A",
                  1_280 * MILLION * WAD
-            );
+        );
         DssExecLib.updateCollateralPrice("RWA015-A");
 
 

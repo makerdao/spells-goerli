@@ -79,7 +79,7 @@ contract DssSpellAction is DssAction {
 
         DssExecLib.setStairstepExponentialDecrease(MCD_CLIP_CALC_MATIC_A, 90 seconds, 9900);
 
-        https://forum.makerdao.com/t/rwa015-project-andromeda-technical-assessment/20974
+        DssExecLib.setIlkAutoLineParameters("MATIC-A", 10 * MILLION, 3 * MILLION, 8 hours);
 
         IlkRegistryAbstract(DssExecLib.reg()).update("MATIC-A");
 
