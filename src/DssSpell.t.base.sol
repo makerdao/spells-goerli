@@ -1773,6 +1773,8 @@ contract DssSpellTestBase is Config, DssTest {
             (bytes32 _key, address _val) = chainLog.get(i);
             assertEq(_val, addr.addr(_key), _concat("TestError/chainlog-addr-mismatch-", _key));
         }
+
+        _checkChainlogVersion(afterSpell.chainlog_version);
     }
 
     // Ensure version is updated if chainlog changes
