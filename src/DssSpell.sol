@@ -125,7 +125,7 @@ contract DssSpellAction is DssAction {
         // Poll: https://vote.makerdao.com/polling/QmaXg3JT#vote-breakdown
 
         // Reduce the line by 390 million DAI from 500 million DAI to 110 million DAI.
-        DssExecLib.setIlkAutoLineParameters("PSM-GUSD-A", 110 * MILLION, 10 * MILLION, 24 hours);
+        DssExecLib.setIlkAutoLineParameters("PSM-GUSD-A", 110 * MILLION, 50 * MILLION, 24 hours);
         // Reduce the tout by 0.01% from 0.01% to 0%.
         DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 0);
 
