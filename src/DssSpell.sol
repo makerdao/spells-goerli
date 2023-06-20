@@ -124,10 +124,8 @@ contract DssSpellAction is DssAction {
         // --- GUSD PSM Parameter Changes ---
         // Poll: https://vote.makerdao.com/polling/QmaXg3JT#vote-breakdown
 
-        // Decrease the line for autoline
-        DssExecLib.setIlkAutoLineParameters("PSM-GUSD-A", 110 * MILLION, 10 * MILLION, 24 hours);
         // Reduce the line by 390 million DAI from 500 million DAI to 110 million DAI.
-        DssExecLib.setIlkDebtCeiling("PSM-GUSD-A", 9 * MILLION);
+        DssExecLib.setIlkAutoLineParameters("PSM-GUSD-A", 110 * MILLION, 10 * MILLION, 24 hours);
         // Reduce the tout by 0.01% from 0.01% to 0%.
         DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 0);
 

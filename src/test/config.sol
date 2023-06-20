@@ -1825,7 +1825,7 @@ contract Config {
             aL_line:      110 * MILLION,
             aL_gap:       10 * MILLION,
             aL_ttl:       24 hours,
-            line:         9 * MILLION,
+            line:         0,
             dust:         0,
             pct:          0,
             mat:          10000,
