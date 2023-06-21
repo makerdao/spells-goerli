@@ -37,18 +37,7 @@ interface BridgeLike {
 }
 
 interface RwaUrnLike {
-    function vat() external view returns (address);
-    function jug() external view returns (address);
-    function daiJoin() external view returns (address);
     function outputConduit() external view returns (address);
-    function wards(address) external view returns (uint256);
-    function hope(address) external;
-    function can(address) external view returns (uint256);
-    function gemJoin() external view returns (address);
-    function lock(uint256) external;
-    function draw(uint256) external;
-    function wipe(uint256) external;
-    function free(uint256) external;
 }
 
 interface RwaOutputConduitLike {
