@@ -86,7 +86,6 @@ contract DssSpellAction is DssAction {
         );
     }
 
-    
     function actions() public override {
 
         // --- Activate Andromeda Autoline ---
@@ -97,6 +96,8 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkAutoLineParameters("RWA015-A", 1_280 * MILLION, 50 * MILLION, 24 hours);
 
         // Bump Oracle Price to 1.28 billion DAI
+        // Debt ceiling * [ (1 + RWA stability fee ) ^ (minimum deal duration in years) ] * liquidation ratio
+        // As we have SF 0 for this deal, this should be equeal to ilk DC
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).bump(
                 "RWA015-A",
                  1_280 * MILLION * WAD
@@ -122,6 +123,11 @@ contract DssSpellAction is DssAction {
 
         DssExecLib.setChangelogAddress("RWA015_A_OUTPUT_CONDUIT", RWA015_A_OUTPUT_CONDUIT);
 
+        // --- RWA007 doc parameter update ---
+        // Forum: https://forum.makerdao.com/t/consolidated-action-items-for-2023-06-28-executive/21187
+
+        _updateDoc("RWA007-A", "QmY185L4tuxFkpSQ33cPHUHSNpwy8V6TMXbXvtVraxXtb5");
+
         // --- GUSD PSM Parameter Changes ---
         // Poll: https://vote.makerdao.com/polling/QmaXg3JT#vote-breakdown
 
@@ -130,11 +136,6 @@ contract DssSpellAction is DssAction {
         // Reduce the tout by 0.01% from 0.01% to 0%.
         DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 0);
 
-
-        // --- RWA007 doc parameter update ---
-        // Forum: TODO: https://forum.makerdao.com/t/consolidated-action-items-for-2023-06-28-executive/21187
-
-        _updateDoc("RWA007-A", "QmY185L4tuxFkpSQ33cPHUHSNpwy8V6TMXbXvtVraxXtb5");
 
         // Skip for Goerli
         // --- Add Chainlink Keeper Network Treasury Address ---
