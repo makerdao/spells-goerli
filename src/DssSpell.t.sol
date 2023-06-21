@@ -526,11 +526,11 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
 
-    string RWA015_OLDDOC      = "QmdbPyQLDdGQhKGXBgod7TbQmrUJ7tiN9aX1zSL7bmtkTN";
-    string RWA015_NEWDOC      = "QmY185L4tuxFkpSQ33cPHUHSNpwy8V6TMXbXvtVraxXtb5";
+    string OLD_RWA015_DOC      = "QmdbPyQLDdGQhKGXBgod7TbQmrUJ7tiN9aX1zSL7bmtkTN";
+    string NEW_RWA015_DOC      = "QmY185L4tuxFkpSQ33cPHUHSNpwy8V6TMXbXvtVraxXtb5";
 
     function testRWA015DocChange() public {
-        _checkRWADocUpdate("RWA015-A", RWA015_OLDDOC, RWA015_NEWDOC);
+        _checkRWADocUpdate("RWA015-A", OLD_RWA015_DOC, NEW_RWA015_DOC);
     }
 
     // RWA tests

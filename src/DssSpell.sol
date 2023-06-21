@@ -104,7 +104,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.updateCollateralPrice("RWA015-A");
 
 
-        // --- Deploy New Andromeda OutputConduit ---
+        // --- Initialize New Andromeda OutputConduit ---
         // Poll: https://forum.makerdao.com/t/consolidated-action-items-for-2023-06-28-executive/21187
 
         // OPERATOR permission on RWA015_A_OUTPUT_CONDUIT
