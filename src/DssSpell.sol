@@ -136,7 +136,6 @@ contract DssSpellAction is DssAction {
         // Reduce the tout by 0.01% from 0.01% to 0%.
         DssExecLib.setValue(MCD_PSM_GUSD_A, "tout", 0);
 
-
         // Skip for Goerli
         // --- Add Chainlink Keeper Network Treasury Address ---
         // Forum: https://forum.makerdao.com/t/poll-notice-keeper-network-follow-up-updates/21056
@@ -145,7 +144,7 @@ contract DssSpellAction is DssAction {
 
         // Skip for Goerli
         // --- CU MKR Vesting Transfers ---
-        // Forum: https://mips.makerdao.com/mips/details/MIP40c3SP75#mkr-vesting        
+        // Forum: https://mips.makerdao.com/mips/details/MIP40c3SP75#mkr-vesting
         // ORA-001 - 297.3 MKR - 0x2d09B7b95f3F312ba6dDfB77bA6971786c5b50Cf
 
         // Skip for Goerli
