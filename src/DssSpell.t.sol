@@ -543,9 +543,9 @@ contract DssSpellTest is DssSpellTestBase {
     RwaLiquidationOracleLike oracle                 = RwaLiquidationOracleLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
     function testRWA015_OUTPUT_CONDUIT_DEPLOYMENT_SETUP() public {
-        assertEq(rwa015AOutputConduit.dai(), addr.addr("MCD_DAI"),        "output-conduit-dai-not-match");
-        assertEq(rwa015AOutputConduit.gem(), addr.addr("GUSD"),           "output-conduit-gem-not-match");
-        assertEq(rwa015AOutputConduit.psm(), addr.addr("MCD_PSM_GUSD_A"), "output-conduit-psm-not-match");
+        assertEq(rwa015AOutputConduit.dai(), addr.addr("MCD_DAI"),       "output-conduit-dai-not-match");
+        assertEq(rwa015AOutputConduit.gem(), addr.addr("PAXUSD"),        "output-conduit-gem-not-match");
+        assertEq(rwa015AOutputConduit.psm(), addr.addr("MCD_PSM_PAX_A"), "output-conduit-psm-not-match");
     }
 
     function testRWA015_INTEGRATION_CONDUITS_SETUP() public {

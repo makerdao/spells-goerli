@@ -69,7 +69,7 @@ contract DssSpellAction is DssAction {
     // Custody address
     address internal constant RWA015_A_CUSTODY           = 0x65729807485F6f7695AF863d97D62140B7d69d83;
 
-    address internal constant RWA015_A_OUTPUT_CONDUIT    = 0x0E28Dd2BC119c95b1063F9Eae3F6BA1db60C1F17;
+    address internal constant RWA015_A_OUTPUT_CONDUIT    = 0xe3B3EAB84039D486b06980aed70607d394DF3827;
 
 
     // Function from https://github.com/makerdao/spells-goerli/blob/7d783931a6799fe8278e416b5ac60d4bb9c20047/archive/2022-11-14-DssSpell/Goerli-DssSpell.sol#L59
