@@ -534,7 +534,7 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     string RWA015_OLDDOC      = "QmdbPyQLDdGQhKGXBgod7TbQmrUJ7tiN9aX1zSL7bmtkTN";
-    string RWA015_NEWDOC      = "TBD";
+    string RWA015_NEWDOC      = "QmY185L4tuxFkpSQ33cPHUHSNpwy8V6TMXbXvtVraxXtb5";
 
     function testRWA015DocChange() public {
         _checkRWADocUpdate("RWA015-A", RWA015_OLDDOC, RWA015_NEWDOC);

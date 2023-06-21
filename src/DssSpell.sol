@@ -90,6 +90,7 @@ contract DssSpellAction is DssAction {
     function actions() public override {
 
         // --- Activate Andromeda Autoline ---
+        // Forum: https://forum.makerdao.com/t/consolidated-action-items-for-2023-06-28-executive/21187
         // Forum: https://forum.makerdao.com/t/rwa015-project-andromeda-technical-assessment/20974
 
         // Activate autoline with line 1.28 billion DAI, gap 50 million DAI, ttl 86400
@@ -104,7 +105,7 @@ contract DssSpellAction is DssAction {
 
 
         // --- Deploy New Andromeda OutputConduit ---
-        // Poll: TODO: TBD
+        // Poll: https://forum.makerdao.com/t/consolidated-action-items-for-2023-06-28-executive/21187
 
         // OPERATOR permission on RWA015_A_OUTPUT_CONDUIT
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).hope(RWA015_A_OPERATOR);
@@ -131,9 +132,15 @@ contract DssSpellAction is DssAction {
 
 
         // --- RWA007 doc parameter update ---
-        // Forum: TODO: TBD
+        // Forum: TODO: https://forum.makerdao.com/t/consolidated-action-items-for-2023-06-28-executive/21187
 
-        _updateDoc("RWA007-A", "TODO");
+        _updateDoc("RWA007-A", "QmY185L4tuxFkpSQ33cPHUHSNpwy8V6TMXbXvtVraxXtb5");
+
+        // Skip for Goerli
+        // --- Add Chainlink Keeper Network Treasury Address ---
+        // Forum: https://forum.makerdao.com/t/poll-notice-keeper-network-follow-up-updates/21056
+        // Forum: https://forum.makerdao.com/t/consolidated-action-items-for-2023-06-28-executive/21187
+        // Poll: https://vote.makerdao.com/polling/QmZZJcCj#vote-breakdown
 
         // Skip for Goerli
         // --- CU MKR Vesting Transfers ---
@@ -153,11 +160,6 @@ contract DssSpellAction is DssAction {
         // Skip for Goerli
         // --- Delegate Compensation for May (including offboarded Delegates) ---
         // Forum: TBD
-
-        // Skip for Goerli
-        // --- Add Chainlink Keeper Network Treasury Address ---
-        // Forum: https://forum.makerdao.com/t/poll-notice-keeper-network-follow-up-updates/21056
-        // Poll: https://vote.makerdao.com/polling/QmZZJcCj#vote-breakdown
 
         // Skip for Goerli
         // --- BlockTower Legal Expenses DAI Transfer ---
