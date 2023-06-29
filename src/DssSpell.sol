@@ -39,7 +39,21 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
-    function actions() public override {}
+    function actions() public override {
+        // ----- Deploy Multiswap Conduit for RWA015-A -----
+
+        // ----- Deploy FlapperUniV2 -----
+
+        // ----- Scope Defined Parameter Changes -----
+
+        // ----- Delegate Compensation for June 2023 -----
+
+        // ----- CRVV1ETHSTETH-A 1st Stage Offboarding -----
+
+        // ----- Ecosystem Actor Dai Budget Stream -----
+
+        // ----- Ecosystem Actor MKR Budget Stream -----
+    }
 }
 
 
