@@ -49,7 +49,6 @@ contract Config {
         address flipper_mom_authority;
         address clipper_mom_authority;
         uint256 ilk_count;
-        string  chainlog_version;
         mapping (bytes32 => CollateralValues) collaterals;
     }
 
@@ -133,7 +132,6 @@ contract Config {
         afterSpell.flipper_mom_authority = chief;                   // FlipperMom authority
         afterSpell.clipper_mom_authority = chief;                   // ClipperMom authority
         afterSpell.ilk_count =             63;                      // Num expected in system
-        afterSpell.chainlog_version =      "1.14.13";               // String expected in system
 
         //
         // Values for all collateral
