@@ -77,6 +77,8 @@ contract DssSpellAction is DssAction {
         // DssExecLib.setChangelogAddress("CRON_ORACLE_JOB",      CRON_ORACLE_JOB);
 
         // ----- Deploy FlapperUniV2 -----
+        // https://vote.makerdao.com/polling/QmQmxEZp#poll-detail
+        // dss-flappers @ b10f68224c648166cd4f9b09595412bce9824301
 
         DssExecLib.setChangelogAddress("PIP_MKR", PIP_MKR);
 
