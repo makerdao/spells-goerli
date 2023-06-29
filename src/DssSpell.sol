@@ -64,6 +64,19 @@ contract DssSpellAction is DssAction {
     // uint256 internal constant X_PCT_RATE      = ;
 
     function actions() public override {
+        // ----- Deploy Multiswap Conduit for RWA015-A -----
+
+        // ----- Add previous CRON KEYS -----
+
+        // NOT FOR GOERLI
+        // DssExecLib.setChangelogAddress("CRON_SEQUENCER", CRON_SEQUENCER);
+        // DssExecLib.setChangelogAddress("CRON_AUTOLINE_JOB", CRON_AUTOLINE_JOB);
+        // DssExecLib.setChangelogAddress("CRON_LERP_JOB", CRON_LERP_JOB);
+        // DssExecLib.setChangelogAddress("CRON_D3M_JOB", CRON_D3M_JOB);
+        // DssExecLib.setChangelogAddress("CRON_CLIPPER_MOM_JOB", CRON_CLIPPER_MOM_JOB);
+        // DssExecLib.setChangelogAddress("CRON_ORACLE_JOB", CRON_ORACLE_JOB);
+
+        // ----- Deploy FlapperUniV2 -----
 
         DssExecLib.setChangelogAddress("PIP_MKR", PIP_MKR);
 
@@ -92,19 +105,22 @@ contract DssSpellAction is DssAction {
 
         // NOT FOR GOERLI:
         // DssCronSequencerLike(CRON_SEQUENCER).addJob(CRON_FLAP_JOB);
-
-        // DssExecLib.setChangelogAddress("CRON_SEQUENCER", CRON_SEQUENCER);
-        // DssExecLib.setChangelogAddress("CRON_AUTOLINE_JOB", CRON_AUTOLINE_JOB);
-        // DssExecLib.setChangelogAddress("CRON_LERP_JOB", CRON_LERP_JOB);
-        // DssExecLib.setChangelogAddress("CRON_D3M_JOB", CRON_D3M_JOB);
-        // DssExecLib.setChangelogAddress("CRON_CLIPPER_MOM_JOB", CRON_CLIPPER_MOM_JOB);
-        // DssExecLib.setChangelogAddress("CRON_ORACLE_JOB", CRON_ORACLE_JOB);
         // DssExecLib.setChangelogAddress("CRON_FLAP_JOB", CRON_FLAP_JOB);
+
+        // ----- Scope Defined Parameter Changes -----
+
+        // ----- Delegate Compensation for June 2023 -----
+
+        // ----- CRVV1ETHSTETH-A 1st Stage Offboarding -----
+
+        // ----- Ecosystem Actor Dai Budget Stream -----
+
+        // ----- Ecosystem Actor MKR Budget Stream -----
+
 
         DssExecLib.setChangelogVersion("1.15.0");
     }
 }
-
 
 contract DssSpell is DssExec {
     constructor() DssExec(block.timestamp + 30 days, address(new DssSpellAction())) {}
