@@ -543,7 +543,7 @@ contract DssSpellTest is DssSpellTestBase {
 
         GemAbstract mkr = GemAbstract(addr.addr("MCD_GOV"));
 
-        // Generate liquidity in the pool
+        // Set liquidity in the pool
         vm.store(
             pip,
             keccak256(abi.encode(address(this), uint256(4))),
@@ -551,14 +551,12 @@ contract DssSpellTest is DssSpellTestBase {
         );
         uint256 price = MedianAbstract(pip).read();
         uint256 daiAmt = 1_000_000 * WAD;
-        _giveTokens(address(dai), daiAmt);
-        dai.transfer(pair, daiAmt);
+        GodMode.setBalance(address(dai), address(pair), daiAmt);
         uint256 mkrAmt = 1_000_000 * WAD * WAD / price;
-        _giveTokens(address(mkr), mkrAmt);
-        mkr.transfer(pair, mkrAmt * 97 / 100); // 3% worse price (should fail)
+        GodMode.setBalance(address(mkr), address(pair), mkrAmt * 97 / 100); // 3% worse price (should fail)
         vm.expectRevert("FlapperUniV2/insufficient-buy-amount");
         vow.flap();
-        mkr.transfer(pair, mkrAmt * 2 / 100); // Leaves just 1% worse price
+        GodMode.setBalance(address(mkr), address(pair), mkrAmt * 99 / 100); // Leaves just 1% worse price
         //
 
         uint256 initialLp = GemAbstract(pair).balanceOf(pauseProxy);
