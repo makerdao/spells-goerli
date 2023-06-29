@@ -69,12 +69,12 @@ contract DssSpellAction is DssAction {
         // ----- Add previous CRON KEYS -----
 
         // NOT FOR GOERLI
-        // DssExecLib.setChangelogAddress("CRON_SEQUENCER", CRON_SEQUENCER);
-        // DssExecLib.setChangelogAddress("CRON_AUTOLINE_JOB", CRON_AUTOLINE_JOB);
-        // DssExecLib.setChangelogAddress("CRON_LERP_JOB", CRON_LERP_JOB);
-        // DssExecLib.setChangelogAddress("CRON_D3M_JOB", CRON_D3M_JOB);
+        // DssExecLib.setChangelogAddress("CRON_SEQUENCER",       CRON_SEQUENCER);
+        // DssExecLib.setChangelogAddress("CRON_AUTOLINE_JOB",    CRON_AUTOLINE_JOB);
+        // DssExecLib.setChangelogAddress("CRON_LERP_JOB",        CRON_LERP_JOB);
+        // DssExecLib.setChangelogAddress("CRON_D3M_JOB",         CRON_D3M_JOB);
         // DssExecLib.setChangelogAddress("CRON_CLIPPER_MOM_JOB", CRON_CLIPPER_MOM_JOB);
-        // DssExecLib.setChangelogAddress("CRON_ORACLE_JOB", CRON_ORACLE_JOB);
+        // DssExecLib.setChangelogAddress("CRON_ORACLE_JOB",      CRON_ORACLE_JOB);
 
         // ----- Deploy FlapperUniV2 -----
 
@@ -86,7 +86,7 @@ contract DssSpellAction is DssAction {
             mom:     FLAPPER_MOM
         });
         FlapperUniV2Config memory cfg = FlapperUniV2Config({
-            hop:  1577,
+            hop:  1577 seconds,
             want: 98 * WAD / 100,
             pip:  PIP_MKR,
             hump: 50 * MILLION * RAD,
