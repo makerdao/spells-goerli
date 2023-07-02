@@ -116,12 +116,16 @@ interface RwaLiquidationLike {
     function ilks(bytes32) external view returns (string memory, address, uint48, uint48);
 }
 
-// TODO: add full interface to dss-interfaces and remove from here
+// TODO: add full interfaces to dss-interfaces and remove from here
 interface FlapUniV2Abstract {
     function hop() external view returns (uint256);
     function pair() external view returns (address);
     function pip() external view returns (address);
     function want() external view returns (uint256);
+}
+
+interface FlapperMomAbstract {
+    function stop() external;
 }
 
 contract DssSpellTestBase is Config, DssTest {
@@ -153,6 +157,7 @@ contract DssSpellTestBase is Config, DssTest {
     OsmMomAbstract                osmMom = OsmMomAbstract(     addr.addr("OSM_MOM"));
     FlipperMomAbstract           flipMom = FlipperMomAbstract( addr.addr("FLIPPER_MOM"));
     ClipperMomAbstract           clipMom = ClipperMomAbstract( addr.addr("CLIPPER_MOM"));
+    FlapperMomAbstract           flapMom = FlapperMomAbstract( addr.addr("FLAPPER_MOM"));
     DssAutoLineAbstract         autoLine = DssAutoLineAbstract(addr.addr("MCD_IAM_AUTO_LINE"));
     LerpFactoryAbstract      lerpFactory = LerpFactoryAbstract(addr.addr("LERP_FAB"));
     VestAbstract                 vestDai = VestAbstract(       addr.addr("MCD_VEST_DAI"));
