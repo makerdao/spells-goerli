@@ -30,9 +30,9 @@ contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
-    address internal constant MCD_FLAP = 0x584491031764f94a97a0f98bBe536B004Ab9467b;
+    address internal constant MCD_FLAP    = 0x584491031764f94a97a0f98bBe536B004Ab9467b;
     address internal constant FLAPPER_MOM = 0x7316C080BFd1c8857605627a251A2F0ae511E4A1;
-    address internal constant PIP_MKR = 0x496C851B2A9567DfEeE0ACBf04365F3ba00Eb8dC;
+    address internal constant PIP_MKR     = 0x496C851B2A9567DfEeE0ACBf04365F3ba00Eb8dC;
     // NOT FOR GOERLI:
     // address internal constant CRON_SEQUENCER       = ;
     // address internal constant CRON_AUTOLINE_JOB    = ;

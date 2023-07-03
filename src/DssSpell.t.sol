@@ -17,7 +17,7 @@
 pragma solidity 0.8.16;
 
 import "./DssSpell.t.base.sol";
-import {ScriptTools} from "dss-test/DssTest.sol";
+import {ScriptTools, StdStorage, stdStorage} from "dss-test/DssTest.sol";
 
 import {RootDomain} from "dss-test/domains/RootDomain.sol";
 import {OptimismDomain} from "dss-test/domains/OptimismDomain.sol";
@@ -37,6 +37,8 @@ interface BridgeLike {
 }
 
 contract DssSpellTest is DssSpellTestBase {
+    using stdStorage for StdStorage;
+
     string         config;
     RootDomain     rootDomain;
     OptimismDomain optimismDomain;
@@ -261,7 +263,6 @@ contract DssSpellTest is DssSpellTestBase {
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // RWA015
         _checkChainlogKey("PIP_MKR");
         _checkChainlogKey("MCD_FLAP");
         _checkChainlogKey("FLAPPER_MOM");
@@ -500,27 +501,10 @@ contract DssSpellTest is DssSpellTestBase {
 
     function testFlapperUniV2() public {
         // Create surplus manipulating dai and sin (ONLY FOR GOERLI)
-        vm.store(
-            address(vat),
-            keccak256(abi.encode(address(vow), uint256(5))),
-            bytes32(60_000_000 * RAD)
-        );
-        vm.store(
-            address(vat),
-            keccak256(abi.encode(address(vow), uint256(6))),
-            bytes32(5_000_000 * RAD)
-        );
-        vm.store(
-            address(vow),
-            bytes32(uint256(5)),
-            bytes32(3_000_000 * RAD)
-        );
-        vm.store(
-            address(vow),
-            bytes32(uint256(6)),
-            bytes32(2_000_000 * RAD)
-        );
-        //
+        stdstore.target(address(vat)).sig("dai(address)").with_key(address(vow)).depth(0).checked_write(60_000_000 * RAD);
+        stdstore.target(address(vat)).sig("sin(address)").with_key(address(vow)).depth(0).checked_write(5_000_000 * RAD);
+        stdstore.target(address(vow)).sig("Sin()").checked_write(3_000_000 * RAD);
+        stdstore.target(address(vow)).sig("Ash()").checked_write(2_000_000 * RAD);
 
         address old_flap = chainLog.getAddress("MCD_FLAP");
 
@@ -544,11 +528,9 @@ contract DssSpellTest is DssSpellTestBase {
         GemAbstract mkr = GemAbstract(addr.addr("MCD_GOV"));
 
         // Set liquidity in the pool
-        vm.store(
-            pip,
-            keccak256(abi.encode(address(this), uint256(4))),
-            bytes32(uint256(1))
-        );
+        vm.prank(pauseProxy);
+        MedianAbstract(pip).kiss(address(this));
+
         uint256 price = MedianAbstract(pip).read();
         uint256 daiAmt = 1_000_000 * WAD;
         GodMode.setBalance(address(dai), address(pair), daiAmt);
@@ -573,5 +555,11 @@ contract DssSpellTest is DssSpellTestBase {
         assertLt(initialDaiVow - vat.dai(address(vow)), 2 * vow.bump() * 11 / 10);
         assertEq(dai.balanceOf(address(flap)), 0);
         assertEq(mkr.balanceOf(address(flap)), 0);
+
+        // Check Mom can increase hop
+        assertEq(flap.hop(), 1577 seconds);
+        vm.prank(chief.hat());
+        flapMom.stop();
+        assertEq(flap.hop(), type(uint256).max);
     }
 }
