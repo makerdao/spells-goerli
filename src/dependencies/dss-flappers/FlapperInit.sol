@@ -17,11 +17,7 @@
 pragma solidity >=0.8.0;
 
 import { DssInstance } from "dss-test/MCD.sol";
-
-struct FlapperInstance {
-    address flapper;
-    address mom;
-}
+import { FlapperInstance } from "./FlapperInstance.sol";
 
 interface FlapperUniV2Like {
     function vat() external view returns (address);
