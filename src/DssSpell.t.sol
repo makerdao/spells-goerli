@@ -17,7 +17,7 @@
 pragma solidity 0.8.16;
 
 import "./DssSpell.t.base.sol";
-import {ScriptTools} from "dss-test/DssTest.sol";
+import {ScriptTools, StdStorage, stdStorage} from "dss-test/DssTest.sol";
 
 import {RootDomain} from "dss-test/domains/RootDomain.sol";
 import {OptimismDomain} from "dss-test/domains/OptimismDomain.sol";
@@ -37,6 +37,8 @@ interface BridgeLike {
 }
 
 contract DssSpellTest is DssSpellTestBase {
+    using stdStorage for StdStorage;
+
     string         config;
     RootDomain     rootDomain;
     OptimismDomain optimismDomain;
@@ -256,15 +258,16 @@ contract DssSpellTest is DssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() private { // make private to disable
+    function testNewChainlogValues() public { // make private to disable
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // RWA015
-        _checkChainlogKey("RWA015_A_OUTPUT_CONDUIT");
+        _checkChainlogKey("PIP_MKR");
+        _checkChainlogKey("MCD_FLAP");
+        _checkChainlogKey("FLAPPER_MOM");
 
-        _checkChainlogVersion("1.14.14");
+        _checkChainlogVersion("1.15.0");
     }
 
     function testNewIlkRegistryValues() private { // make private to disable
@@ -495,5 +498,68 @@ contract DssSpellTest is DssSpellTestBase {
         // Validate post-spell state
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
-}
 
+    function testFlapperUniV2() public {
+        // Create surplus manipulating dai and sin (ONLY FOR GOERLI)
+        stdstore.target(address(vat)).sig("dai(address)").with_key(address(vow)).depth(0).checked_write(60_000_000 * RAD);
+        stdstore.target(address(vat)).sig("sin(address)").with_key(address(vow)).depth(0).checked_write(5_000_000 * RAD);
+        stdstore.target(address(vow)).sig("Sin()").checked_write(3_000_000 * RAD);
+        stdstore.target(address(vow)).sig("Ash()").checked_write(2_000_000 * RAD);
+
+        address old_flap = chainLog.getAddress("MCD_FLAP");
+
+        assertEq(vow.flapper(), old_flap);
+        assertEq(vat.can(address(vow), old_flap),      1);
+        assertEq(vat.can(address(vow), address(flap)), 0);
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(vow.flapper(), address(flap));
+        assertEq(vat.can(address(vow), old_flap),      0);
+        assertEq(vat.can(address(vow), address(flap)), 1);
+
+        address pip = flap.pip();
+        assertEq(pip, addr.addr("PIP_MKR"));
+
+        address pair = flap.pair();
+
+        GemAbstract mkr = GemAbstract(addr.addr("MCD_GOV"));
+
+        // Set liquidity in the pool
+        vm.prank(pauseProxy);
+        MedianAbstract(pip).kiss(address(this));
+
+        uint256 price = MedianAbstract(pip).read();
+        uint256 daiAmt = 1_000_000 * WAD;
+        GodMode.setBalance(address(dai), address(pair), daiAmt);
+        uint256 mkrAmt = 1_000_000 * WAD * WAD / price;
+        GodMode.setBalance(address(mkr), address(pair), mkrAmt * 97 / 100); // 3% worse price (should fail)
+        vm.expectRevert("FlapperUniV2/insufficient-buy-amount");
+        vow.flap();
+        GodMode.setBalance(address(mkr), address(pair), mkrAmt * 99 / 100); // Leaves just 1% worse price
+        //
+
+        uint256 initialLp = GemAbstract(pair).balanceOf(pauseProxy);
+        uint256 initialDaiVow = vat.dai(address(vow));
+        uint256 initialReserveDai = dai.balanceOf(pair);
+        uint256 initialReserveMkr = mkr.balanceOf(pair);
+
+        vow.flap();
+
+        assertGt(GemAbstract(pair).balanceOf(pauseProxy), initialLp);
+        assertGt(dai.balanceOf(pair), initialReserveDai);
+        assertEq(mkr.balanceOf(pair), initialReserveMkr);
+        assertGt(initialDaiVow - vat.dai(address(vow)), 2 * vow.bump() * 9 / 10);
+        assertLt(initialDaiVow - vat.dai(address(vow)), 2 * vow.bump() * 11 / 10);
+        assertEq(dai.balanceOf(address(flap)), 0);
+        assertEq(mkr.balanceOf(address(flap)), 0);
+
+        // Check Mom can increase hop
+        assertEq(flap.hop(), 1577 seconds);
+        vm.prank(chief.hat());
+        flapMom.stop();
+        assertEq(flap.hop(), type(uint256).max);
+    }
+}

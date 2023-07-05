@@ -42,7 +42,8 @@ contract Addresses {
         addr["MCD_DOG"]                         = 0x5cf85A37Dbd28A239698B4F9aA9a03D55C04F292;
         addr["MCD_VOW"]                         = 0x23f78612769b9013b3145E43896Fa1578cAa2c2a;
         addr["MCD_JOIN_DAI"]                    = 0x6a60b7070befb2bfc964F646efDF70388320f4E0;
-        addr["MCD_FLAP"]                        = 0x015bEd3a7EBbB0Be03A35E0572E8a7B0BA2AA0fB;
+        addr["MCD_FLAP"]                        = 0x584491031764f94a97a0f98bBe536B004Ab9467b;
+        addr["FLAPPER_MOM"]                     = 0x7316C080BFd1c8857605627a251A2F0ae511E4A1;
         addr["MCD_FLOP"]                        = 0x742D041dFBA61110Bd886509CB299DF6A521B352;
         addr["MCD_PAUSE"]                       = 0xefcd235B1f13e7fC5eab1d05C910d3c390b3439F;
         addr["MCD_PAUSE_PROXY"]                 = 0x5DCdbD3cCF9B09EAAD03bc5f50fA2B3d3ACA0121;
@@ -74,6 +75,7 @@ contract Addresses {
         addr["MCD_VEST_DAI_LEGACY"]             = 0x59B1a603cAC9e38EA2AC2C479FFE42Ce48123Fd4;
         addr["MCD_VEST_MKR"]                    = 0x183bE7a75B8b5F35236270b060e95C65D82f5fF9;
         addr["MCD_VEST_MKR_TREASURY"]           = 0xd1B8dFF41F3268fAC524869f4C7dA27232044916;
+        addr["PIP_MKR"]                         = 0x496C851B2A9567DfEeE0ACBf04365F3ba00Eb8dC;
         addr["ETH"]                             = 0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6;
         addr["PIP_ETH"]                         = 0x94588e35fF4d2E99ffb8D5095F35d1E37d6dDf12;
         addr["MCD_JOIN_ETH_A"]                  = 0x2372031bB0fC735722AA4009AeBf66E8BEAF4BA1;
