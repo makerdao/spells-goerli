@@ -47,6 +47,7 @@ contract Config {
         address flipper_mom_authority;
         address clipper_mom_authority;
         uint256 ilk_count;
+        string  chainlog_version;
         mapping (bytes32 => CollateralValues) collaterals;
     }
 
@@ -128,6 +129,7 @@ contract Config {
         afterSpell.flipper_mom_authority = chief;                   // FlipperMom authority
         afterSpell.clipper_mom_authority = chief;                   // ClipperMom authority
         afterSpell.ilk_count =             63;                      // Num expected in system
+        afterSpell.chainlog_version =      "1.14.13";               // String expected in system
 
         //
         // Values for all collateral
@@ -1369,9 +1371,9 @@ contract Config {
         });
         afterSpell.collaterals["RWA007-A"] = CollateralValues({
             aL_enabled:   false,
-            aL_line:      500 * MILLION,
-            aL_gap:       100 * MILLION,
-            aL_ttl:       604_800, // 1 week
+            aL_line:      0,
+            aL_gap:       0,
+            aL_ttl:       0,
             line:         1_250 * MILLION,
             dust:         0,
             pct:          0,

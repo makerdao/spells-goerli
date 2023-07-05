@@ -488,16 +488,23 @@ contract DssSpellTestBase is Config, DssTest {
             uint256 normalizedTestLine = values.collaterals[ilk].line * RAD;
             sums[0] += line;
             (uint256 aL_line, uint256 aL_gap, uint256 aL_ttl,,) = autoLine.ilks(ilk);
-            if (!values.collaterals[ilk].aL_enabled) {
-                assertTrue(aL_line == 0, _concat("TestError/al-Line-not-zero-", ilk));
-                assertEq(line, normalizedTestLine, _concat("TestError/vat-line-", ilk));
-                assertTrue((line >= RAD && line < 10 * BILLION * RAD) || line == 0, _concat("TestError/vat-line-range-", ilk));  // eq 0 or gt eq 1 RAD and lt 10B
-            } else {
-                assertTrue(aL_line > 0, _concat("TestError/al-Line-is-zero-", ilk));
+            if (values.collaterals[ilk].aL_enabled) {
+                assertTrue(aL_line > 0, _concat("TestError/al-line-is-zero-", ilk));
+                assertTrue(aL_line >= RAD && aL_line < 20 * BILLION * RAD, _concat("TestError/al-line-range-", ilk));
+
                 assertEq(aL_line, values.collaterals[ilk].aL_line * RAD, _concat("TestError/al-line-", ilk));
-                assertEq(aL_gap, values.collaterals[ilk].aL_gap * RAD, _concat("TestError/al-gap-", ilk));
-                assertEq(aL_ttl, values.collaterals[ilk].aL_ttl, _concat("TestError/al-ttl-", ilk));
-                assertTrue((aL_line >= RAD && aL_line < 20 * BILLION * RAD) || aL_line == 0, _concat("TestError/al-line-range-", ilk)); // eq 0 or gt eq 1 RAD and lt 10B
+                assertEq(aL_gap, values.collaterals[ilk].aL_gap * RAD,  _concat("TestError/al-gap-",  ilk));
+                assertEq(aL_ttl, values.collaterals[ilk].aL_ttl, _concat("TestError/al-ttl-",  ilk));
+            } else {
+                assertTrue(aL_line == 0, _concat("TestError/al-Line-not-zero-", ilk));
+
+                assertTrue((line >= RAD && line < 10 * BILLION * RAD) || line == 0, _concat("TestError/vat-line-range-", ilk));
+                assertEq(line, normalizedTestLine, _concat("TestError/vat-line-", ilk));
+
+                // Check if the config was properly cleaned up:
+                assertEq(values.collaterals[ilk].aL_line, 0, _concat("TestError/config-al-line-", ilk));
+                assertEq(values.collaterals[ilk].aL_gap, 0, _concat("TestError/config-al-gap-", ilk));
+                assertEq(values.collaterals[ilk].aL_ttl, 0, _concat("TestError/config-al-ttl-", ilk));
             }
             uint256 normalizedTestDust = values.collaterals[ilk].dust * RAD;
             assertEq(dust, normalizedTestDust, _concat("TestError/vat-dust-", ilk));
@@ -1778,6 +1785,8 @@ contract DssSpellTestBase is Config, DssTest {
             (bytes32 _key, address _val) = chainLog.get(i);
             assertEq(_val, addr.addr(_key), _concat("TestError/chainlog-addr-mismatch-", _key));
         }
+
+        _checkChainlogVersion(afterSpell.chainlog_version);
     }
 
     // Ensure version is updated if chainlog changes
