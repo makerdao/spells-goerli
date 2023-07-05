@@ -500,18 +500,13 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     function testFlapperUniV2() public {
-        // Create surplus manipulating dai and sin (ONLY FOR GOERLI)
-        stdstore.target(address(vat)).sig("dai(address)").with_key(address(vow)).depth(0).checked_write(60_000_000 * RAD);
-        stdstore.target(address(vat)).sig("sin(address)").with_key(address(vow)).depth(0).checked_write(5_000_000 * RAD);
-        stdstore.target(address(vow)).sig("Sin()").checked_write(3_000_000 * RAD);
-        stdstore.target(address(vow)).sig("Ash()").checked_write(2_000_000 * RAD);
-
         address old_flap = chainLog.getAddress("MCD_FLAP");
 
         assertEq(vow.flapper(), old_flap);
         assertEq(vat.can(address(vow), old_flap),      1);
         assertEq(vat.can(address(vow), address(flap)), 0);
 
+        // execute spell
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -519,6 +514,12 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(vow.flapper(), address(flap));
         assertEq(vat.can(address(vow), old_flap),      0);
         assertEq(vat.can(address(vow), address(flap)), 1);
+
+        // Create surplus manipulating dai and sin (ONLY FOR GOERLI)
+        stdstore.target(address(vat)).sig("dai(address)").with_key(address(vow)).depth(0).checked_write(60_000_000 * RAD);
+        stdstore.target(address(vat)).sig("sin(address)").with_key(address(vow)).depth(0).checked_write(5_000_000 * RAD);
+        stdstore.target(address(vow)).sig("Sin()").checked_write(3_000_000 * RAD);
+        stdstore.target(address(vow)).sig("Ash()").checked_write(2_000_000 * RAD);
 
         address pip = flap.pip();
         assertEq(pip, addr.addr("PIP_MKR"));
