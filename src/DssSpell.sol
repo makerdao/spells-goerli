@@ -74,6 +74,17 @@ contract DssSpellAction is DssAction {
     function actions() public override {
         // ----- Deploy Multiswap Conduit for RWA015-A -----
 
+        // ----- Add Cron Jobs to Chainlog -----
+        // Forum: https://forum.makerdao.com/t/dsscron-housekeeping-additions/21292
+        // NOTE: ignore in goerli
+
+        // DssExecLib.setChangelogAddress("CRON_SEQUENCER",       CRON_SEQUENCER);
+        // DssExecLib.setChangelogAddress("CRON_AUTOLINE_JOB",    CRON_AUTOLINE_JOB);
+        // DssExecLib.setChangelogAddress("CRON_LERP_JOB",        CRON_LERP_JOB);
+        // DssExecLib.setChangelogAddress("CRON_D3M_JOB",         CRON_D3M_JOB);
+        // DssExecLib.setChangelogAddress("CRON_CLIPPER_MOM_JOB", CRON_CLIPPER_MOM_JOB);
+        // DssExecLib.setChangelogAddress("CRON_ORACLE_JOB",      CRON_ORACLE_JOB);
+
         // ----- Deploy FlapperUniV2 -----
         // Poll: https://vote.makerdao.com/polling/QmQmxEZp#poll-detail
         // Forum: https://forum.makerdao.com/t/introduction-of-smart-burn-engine-and-initial-parameters/21201
@@ -106,18 +117,6 @@ contract DssSpellAction is DssAction {
         // NOTE: ignore in goerli
         // DssCronSequencerLike(CRON_SEQUENCER).addJob(CRON_FLAP_JOB);
         // DssExecLib.setChangelogAddress("CRON_FLAP_JOB", CRON_FLAP_JOB);
-        DssExecLib.setChangelogVersion("1.15.0");
-
-        // ----- Add Cron Jobs to Chainlog -----
-        // Forum: https://forum.makerdao.com/t/dsscron-housekeeping-additions/21292
-        // NOTE: ignore in goerli
-
-        // DssExecLib.setChangelogAddress("CRON_SEQUENCER",       CRON_SEQUENCER);
-        // DssExecLib.setChangelogAddress("CRON_AUTOLINE_JOB",    CRON_AUTOLINE_JOB);
-        // DssExecLib.setChangelogAddress("CRON_LERP_JOB",        CRON_LERP_JOB);
-        // DssExecLib.setChangelogAddress("CRON_D3M_JOB",         CRON_D3M_JOB);
-        // DssExecLib.setChangelogAddress("CRON_CLIPPER_MOM_JOB", CRON_CLIPPER_MOM_JOB);
-        // DssExecLib.setChangelogAddress("CRON_ORACLE_JOB",      CRON_ORACLE_JOB);
 
         // ----- Scope Defined Parameter Changes -----
         // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-3/21238/6
@@ -181,6 +180,11 @@ contract DssSpellAction is DssAction {
         // Mip: https://mips.makerdao.com/mips/details/MIP40c3SP36#mkr-vesting
         // NOTE: ignore in goerli
         // DECO-001 - 125 MKR - 0xF482D1031E5b172D42B2DAA1b6e5Cbf6519596f7
+
+        // ----- Update ChainLog version -----
+        // The MINOR version is updated as core MCD_FLAP
+        // contract is being replaced in the spell
+        DssExecLib.setChangelogVersion("1.15.0");
     }
 }
 
