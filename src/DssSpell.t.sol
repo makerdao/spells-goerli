@@ -44,6 +44,7 @@ interface RwaOutputConduitLike {
     function wards(address) external view returns (uint256);
     function can(address) external view returns (uint256);
     function may(address) external view returns (uint256);
+    function pal(address) external view returns (uint256);
     function dai() external view returns (address);
     function bud(address) external view returns (uint256);
     function quitTo() external view returns (address);
@@ -590,7 +591,6 @@ contract DssSpellTest is DssSpellTestBase {
 
     RwaUrnLike               rwa015AUrn             = RwaUrnLike(addr.addr("RWA015_A_URN"));
     RwaOutputConduitLike     rwa015AOutputConduit   = RwaOutputConduitLike(addr.addr("RWA015_A_OUTPUT_CONDUIT"));
-    RwaLiquidationOracleLike oracle                 = RwaLiquidationOracleLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
     function testRWA015_OUTPUT_CONDUIT_DEPLOYMENT_SETUP() public {
         assertEq(rwa015AOutputConduit.dai(), addr.addr("MCD_DAI"),       "output-conduit-dai-not-match");

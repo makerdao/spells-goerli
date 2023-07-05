@@ -136,7 +136,7 @@ contract DssSpellAction is DssAction {
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).nope(RWA015_A_OPERATOR);
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).hate(RWA015_A_OPERATOR);
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).deny(address(this));
-        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).deny(ESM);
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).deny(MCD_ESM);
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).diss(RWA015_A_CUSTODY);
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).file("quitTo", address(0));
 
