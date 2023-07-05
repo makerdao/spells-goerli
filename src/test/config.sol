@@ -129,7 +129,7 @@ contract Config {
         afterSpell.flipper_mom_authority = chief;                   // FlipperMom authority
         afterSpell.clipper_mom_authority = chief;                   // ClipperMom authority
         afterSpell.ilk_count =             63;                      // Num expected in system
-        afterSpell.chainlog_version =      "1.14.13";               // String expected in system
+        afterSpell.chainlog_version =      "1.15.0";                // String expected in system
 
         //
         // Values for all collateral
