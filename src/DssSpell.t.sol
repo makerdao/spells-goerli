@@ -521,7 +521,6 @@ contract DssSpellTest is DssSpellTestBase {
         stdstore.target(address(vow)).sig("Sin()").checked_write(3_000_000 * RAD);
         stdstore.target(address(vow)).sig("Ash()").checked_write(2_000_000 * RAD);
 
-        assertEq(flap.dai(), address(dai));
         assertEq(flap.gem(), address(gov));
         address pip = flap.pip();
         assertEq(pip, addr.addr("PIP_MKR"));
