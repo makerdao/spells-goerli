@@ -36,6 +36,19 @@ interface BridgeLike {
     function l2TeleportGateway() external view returns (address);
 }
 
+interface RwaUrnLike {
+    function outputConduit() external view returns (address);
+}
+
+interface RwaOutputConduitLike {
+    function wards(address) external view returns (uint256);
+    function can(address) external view returns (uint256);
+    function may(address) external view returns (uint256);
+    function dai() external view returns (address);
+    function bud(address) external view returns (uint256);
+    function quitTo() external view returns (address);
+}
+
 contract DssSpellTest is DssSpellTestBase {
     using stdStorage for StdStorage;
 
@@ -165,12 +178,13 @@ contract DssSpellTest is DssSpellTestBase {
         //assertEq(OsmAbstract(0xF15993A5C5BE496b8e1c9657Fd2233b579Cd3Bc6).wards(ORACLE_WALLET01), 1);
     }
 
+    // NOTE: not for goerli
     function testRemoveChainlogValues() private { // make private to disable
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // try chainLog.getAddress("RWA007_A_INPUT_CONDUIT_URN") {
+        // try chainLog.getAddress("RWA015_A_OUTPUT_CONDUIT_LEGACY") {
         //     assertTrue(false);
         // } catch Error(string memory errmsg) {
         //     assertTrue(cmpStr(errmsg, "dss-chain-log/invalid-key"));
@@ -266,6 +280,8 @@ contract DssSpellTest is DssSpellTestBase {
         _checkChainlogKey("PIP_MKR");
         _checkChainlogKey("MCD_FLAP");
         _checkChainlogKey("FLAPPER_MOM");
+
+        _checkChainlogKey("RWA015_A_OUTPUT_CONDUIT");
 
         _checkChainlogVersion("1.15.0");
     }
@@ -563,4 +579,66 @@ contract DssSpellTest is DssSpellTestBase {
         flapMom.stop();
         assertEq(flap.hop(), type(uint256).max);
     }
+
+    // RWA tests
+
+    address RWA015_A_OPERATOR = addr.addr("RWA015_A_OPERATOR");
+    address RWA015_A_CUSTODY  = addr.addr("RWA015_A_CUSTODY");
+    address MCD_PSM_PAX_A     = addr.addr("MCD_PSM_PAX_A");
+    address MCD_PSM_GUSD_A    = addr.addr("MCD_PSM_GUSD_A");
+    address MCD_PSM_USDC_A    = addr.addr("MCD_PSM_USDC_A");
+
+    RwaUrnLike               rwa015AUrn             = RwaUrnLike(addr.addr("RWA015_A_URN"));
+    RwaOutputConduitLike     rwa015AOutputConduit   = RwaOutputConduitLike(addr.addr("RWA015_A_OUTPUT_CONDUIT"));
+    RwaLiquidationOracleLike oracle                 = RwaLiquidationOracleLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
+
+    function testRWA015_OUTPUT_CONDUIT_DEPLOYMENT_SETUP() public {
+        assertEq(rwa015AOutputConduit.dai(), addr.addr("MCD_DAI"),       "output-conduit-dai-not-match");
+    }
+
+    function testRWA015_INTEGRATION_CONDUITS_SETUP() public {
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(rwa015AUrn.outputConduit(), address(rwa015AOutputConduit), "RwaUrn/urn-outputconduit-not-match");
+
+        assertEq(rwa015AOutputConduit.wards(pauseProxy),      1, "OutputConduit/ward-pause-proxy-not-set");
+        assertEq(rwa015AOutputConduit.wards(address(esm)),    1, "OutputConduit/ward-esm-not-set");
+        assertEq(rwa015AOutputConduit.can(pauseProxy),        0, "OutputConduit/pause-proxy-hoped");
+        assertEq(rwa015AOutputConduit.can(RWA015_A_OPERATOR), 1, "OutputConduit/operator-not-hope");
+        assertEq(rwa015AOutputConduit.may(pauseProxy),        0, "OutputConduit/pause-proxy-mated");
+        assertEq(rwa015AOutputConduit.may(RWA015_A_OPERATOR), 1, "OutputConduit/operator-not-mate");
+        assertEq(rwa015AOutputConduit.bud(RWA015_A_CUSTODY),  1, "OutputConduit/destination-address-not-whitelisted-for-pick");
+        assertEq(rwa015AOutputConduit.pal(MCD_PSM_PAX_A),     1, "OutputConduit/pax-psm-address-not-whitelisted-for-hook");
+        assertEq(rwa015AOutputConduit.pal(MCD_PSM_GUSD_A),    1, "OutputConduit/gusd-a-address-not-whitelisted-for-hook");
+        assertEq(rwa015AOutputConduit.pal(MCD_PSM_USDC_A),    1, "OutputConduit/usdc-psm-address-not-whitelisted-for-hook");
+        assertEq(rwa015AOutputConduit.quitTo(), address(rwa015AUrn), "OutputConduit/quit-to-not-urn");
+    }
+
+    function testRWA015_REVOKE_OLD_CONDUITS_PERMISSIONS() public {
+        address RWA015_OUTPUT_CONDUIT_PAX = chainLog.getAddress("RWA015_A_OUTPUT_CONDUIT");
+        // Not for goerli
+        // address RWA015_OUTPUT_CONDUIT_USDC = chainLog.getAddress("RWA015_A_OUTPUT_CONDUIT_LEGACY");
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_PAX).wards(pauseProxy),      0, "OutputConduit/ward-pause-proxy-relied");
+        assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_PAX).wards(address(esm)),    0, "OutputConduit/ward-esm-relied");
+        assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_PAX).can(RWA015_A_OPERATOR), 0, "OutputConduit/operator-hoped");
+        assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_PAX).may(RWA015_A_OPERATOR), 0, "OutputConduit/operator-mated");
+        assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_PAX).bud(RWA015_A_CUSTODY),  0, "OutputConduit/destination-address-whitelisted-for-pick");
+        assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_PAX).quitTo(), address(0),      "OutputConduit/quit-to-not-zero");
+
+        // Not for goerli
+        // assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).wards(pauseProxy),      0, "OutputConduit/ward-pause-proxy-relied");
+        // assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).wards(address(esm)),    0, "OutputConduit/ward-esm-relied");
+        // assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).can(RWA015_A_OPERATOR), 0, "OutputConduit/operator-hoped");
+        // assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).may(RWA015_A_OPERATOR), 0, "OutputConduit/operator-mated");
+        // assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).bud(RWA015_A_CUSTODY),  0, "OutputConduit/destination-address-whitelisted-for-pick");
+        // assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).quitTo(), address(0),      "OutputConduit/quit-to-not-zero");
+    }
+
 }
