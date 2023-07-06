@@ -164,15 +164,22 @@ contract DssSpellAction is DssAction {
         // NOTE: ignore in goerli
 
         // ----- CRVV1ETHSTETH-A 1st Stage Offboarding -----
+        // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-3/21238/6
         // NOTE: ignore in goerli
         // Set CRVV1ETHSTETH-A Debt Ceiling to 0
         // Remove CRVV1ETHSTETH-A from autoline
 
         // ----- Ecosystem Actor Dai Budget Stream -----
+        // Poll: https://vote.makerdao.com/polling/QmdnSKPu#poll-detail
+        // Forum: https://forum.makerdao.com/t/mip102c2-sp8-mip-amendment-subproposals/20761
+        // Mip: https://mips.makerdao.com/mips/details/MIP106#7-4-2-1a-
         // NOTE: ignore in goerli
         // Chronicle Labs Auditor Wallet | 2023-07-01 00:00:00 to 2024-06-30 23:59:59 | 3,721,800 DAI | 0x68D0ca2d5Ac777F6A9b0d1be44332BB3d5981C2f
 
         // ----- Ecosystem Actor MKR Budget Stream -----
+        // Poll: https://vote.makerdao.com/polling/QmdnSKPu#poll-detail
+        // Forum: https://forum.makerdao.com/t/mip102c2-sp8-mip-amendment-subproposals/20761
+        // Mip: https://mips.makerdao.com/mips/details/MIP106#7-4-2-1a-
         // NOTE: ignore in goerli
         // Chronicle Labs Auditor Wallet | 2023-07-01 00:00:00 to 2024-06-30 23:59:59 | 2,216.4 MKR | 0x68D0ca2d5Ac777F6A9b0d1be44332BB3d5981C2f
 
@@ -182,8 +189,8 @@ contract DssSpellAction is DssAction {
         // DECO-001 - 125 MKR - 0xF482D1031E5b172D42B2DAA1b6e5Cbf6519596f7
 
         // ----- Update ChainLog version -----
-        // The MINOR version is updated as core MCD_FLAP
-        // contract is being replaced in the spell
+        // Justification: The MINOR version is updated as core MCD_FLAP contract is being replaced in the spell
+        // See https://github.com/makerdao/pe-checklists/blob/492326ab00b4c400173b7d7d43a79df90c0c6c1d/spell/spell-crafter-goerli-workflow.md?plain=1#L80
         DssExecLib.setChangelogVersion("1.15.0");
     }
 }
