@@ -106,7 +106,7 @@ contract DssSpellAction is DssAction {
     // Custody address
     address internal constant RWA015_A_CUSTODY           = 0x65729807485F6f7695AF863d97D62140B7d69d83;
 
-    address internal constant RWA015_A_OUTPUT_CONDUIT    = address(0); // TODO
+    address internal constant RWA015_A_OUTPUT_CONDUIT    = 0xEff59711CbB16BCAdA3AA8B8f2Bbd26F5B38a8cA;
 
     function actions() public override {
         // ----- Deploy Multiswap Conduit for RWA015-A -----
@@ -124,31 +124,30 @@ contract DssSpellAction is DssAction {
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).file("quitTo", RWA015_A_URN);
         // Route URN to new conduit
         RwaUrnLike(RWA015_A_URN).file("outputConduit", RWA015_A_OUTPUT_CONDUIT);
-        
-        // ----- Additional ESM authorization -----
+        // Additional ESM authorization
         DssExecLib.authorize(RWA015_A_OUTPUT_CONDUIT, MCD_ESM);
 
         DssExecLib.setChangelogAddress("RWA015_A_OUTPUT_CONDUIT", RWA015_A_OUTPUT_CONDUIT);
 
-        // ----- Unwind Permissions from old Conduits and remove them from Chainlog -----
+        // Unwind Permissions from old Conduits and remove them from Chainlog
 
-        // Revoke OPERATOR permissions on RWA015_A_OUTPUT_CONDUIT_PAX
+        // Revoke permissions on RWA015_A_OUTPUT_CONDUIT_PAX
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).nope(RWA015_A_OPERATOR);
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).hate(RWA015_A_OPERATOR);
-        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).deny(address(this));
-        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).deny(MCD_ESM);
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).diss(RWA015_A_CUSTODY);
-        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).file("quitTo", address(0));
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).file("quitTo", address(0));
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).deny(MCD_ESM);
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).deny(address(this));
 
 
         // NOTE: ignore in goerli
         // Revoke permissions on RWA015_A_OUTPUT_CONDUIT_USDC
         // RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).nope(RWA015_A_OPERATOR);
         // RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).hate(RWA015_A_OPERATOR);
-        // RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).deny(address(this));
-        // RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).deny(ESM)
         // RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).diss(RWA015_A_CUSTODY);
         // RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).file("quitTo", address(0));;
+        // RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).deny(ESM)
+        // RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).deny(address(this));
         // Remove From Chainlog
         // ChainlogLike(DssExecLib.LOG).removeAddress("RWA015_A_OUTPUT_CONDUIT_LEGACY");
 
