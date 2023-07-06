@@ -118,6 +118,7 @@ interface RwaLiquidationLike {
 
 // TODO: add full interfaces to dss-interfaces and remove from here
 interface FlapUniV2Abstract {
+    function gem() external view returns (address);
     function hop() external view returns (uint256);
     function pair() external view returns (address);
     function pip() external view returns (address);
