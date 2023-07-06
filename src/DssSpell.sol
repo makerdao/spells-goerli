@@ -161,32 +161,69 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkStabilityFee("WBTC-C", FIVE_PT_FOUR_FOUR_PCT_RATE, /* doDrip = */ true);
 
         // ----- Delegate Compensation for June 2023 -----
+        // Forum: https://forum.makerdao.com/t/june-2023-aligned-delegate-compensation/21310
         // NOTE: ignore in goerli
+
+        // 0xDefensor  - 29.76 MKR - 0x9542b441d65B6BF4dDdd3d4D2a66D8dCB9EE07a9
+        // BONAPUBLICA - 29.76 MKR - 0x167c1a762B08D7e78dbF8f24e5C3f1Ab415021D3
+        // QGov        - 29.76 MKR - 0xB0524D8707F76c681901b782372EbeD2d4bA28a6
+        // TRUE NAME   - 29.76 MKR - 0x612f7924c367575a0edf21333d96b15f1b345a5d
+        // UPMaker     - 29.76 MKR - 0xbb819df169670dc71a16f58f55956fe642cc6bcd
+        // vigilant    - 29.76 MKR - 0x2474937cB55500601BCCE9f4cb0A0A72Dc226F61
+        // WBC         - 20.16 MKR - 0xeBcE83e491947aDB1396Ee7E55d3c81414fB0D47
+        // PBG         -  9.92 MKR - 0x8D4df847dB7FfE0B46AF084fE031F7691C6478c2
+        // Bandhar     -  7.68 MKR - 0xE83B6a503A94a5b764CCF00667689B3a522ABc21
+        // Libertas    -  7.04 MKR - 0xE1eBfFa01883EF2b4A9f59b587fFf1a5B44dbb2f
+        // PALC        -  2.24 MKR - 0x78Deac4F87BD8007b9cb56B8d53889ed5374e83A
+        // Harmony     -  1.92 MKR - 0xF4704Aa4Ad22cAA2A3Dd7A7C529B4C32f7A421F2
+        // VoteWizard  -  1.6  MKR - 0x9E72629dF4fcaA2c2F5813FbbDc55064345431b1
+        // Navigator   -  0.32 MKR - 0x11406a9CC2e37425F15f920F494A51133ac93072
 
         // ----- CRVV1ETHSTETH-A 1st Stage Offboarding -----
         // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-3/21238/6
         // NOTE: ignore in goerli
+
         // Set CRVV1ETHSTETH-A Debt Ceiling to 0
         // Remove CRVV1ETHSTETH-A from autoline
 
         // ----- Ecosystem Actor Dai Budget Stream -----
-        // Poll: https://vote.makerdao.com/polling/QmdnSKPu#poll-detail
-        // Forum: https://forum.makerdao.com/t/mip102c2-sp8-mip-amendment-subproposals/20761
-        // Mip: https://mips.makerdao.com/mips/details/MIP106#7-4-2-1a-
         // NOTE: ignore in goerli
+
         // Chronicle Labs Auditor Wallet | 2023-07-01 00:00:00 to 2024-06-30 23:59:59 | 3,721,800 DAI | 0x68D0ca2d5Ac777F6A9b0d1be44332BB3d5981C2f
+        // Poll: https://vote.makerdao.com/polling/QmdnSKPu#poll-detail
+
+        // Jetstream Auditor Wallet      | 2023-07-01 00:00:00 to 2024-12-31 23:59:59 | 2,964,006 DAI | 0xF478A08C41ad06E8D957d5e6B6Bcde7452cEE962
+        // Forum: https://forum.makerdao.com/t/mip39c3-sp9-removing-dux-001/21306
 
         // ----- Ecosystem Actor MKR Budget Stream -----
-        // Poll: https://vote.makerdao.com/polling/QmdnSKPu#poll-detail
-        // Forum: https://forum.makerdao.com/t/mip102c2-sp8-mip-amendment-subproposals/20761
-        // Mip: https://mips.makerdao.com/mips/details/MIP106#7-4-2-1a-
         // NOTE: ignore in goerli
-        // Chronicle Labs Auditor Wallet | 2023-07-01 00:00:00 to 2024-06-30 23:59:59 | 2,216.4 MKR | 0x68D0ca2d5Ac777F6A9b0d1be44332BB3d5981C2f
+
+        // Chronicle Labs Auditor Wallet | 2023-07-01 00:00:00 to 2024-06-30 23:59:59 | 2,216.4  MKR | 0x68D0ca2d5Ac777F6A9b0d1be44332BB3d5981C2f
+        // Poll: https://vote.makerdao.com/polling/QmdnSKPu
+
+        // Jetstream Auditor Wallet      | 2023-06-26 00:00:00 to 2024-12-31 23:59:59 | 1,619.93 MKR | 0xF478A08C41ad06E8D957d5e6B6Bcde7452cEE962
+        // Forum: https://forum.makerdao.com/t/mip39c3-sp9-removing-dux-001/21306
+
+        // ----- Ecosystem Actor Dai Transfer -----
+        // NOTE: ignore in goerli
+
+        // Jetstream - 494,001 DAI - 0xF478A08C41ad06E8D957d5e6B6Bcde7452cEE962
+        // Forum: https://forum.makerdao.com/t/mip39c3-sp9-removing-dux-001/21306
 
         // ----- Core Unit MKR Vesting Transfer -----
-        // Mip: https://mips.makerdao.com/mips/details/MIP40c3SP36#mkr-vesting
         // NOTE: ignore in goerli
-        // DECO-001 - 125 MKR - 0xF482D1031E5b172D42B2DAA1b6e5Cbf6519596f7
+
+        // DECO-001 - 125    MKR - 0xF482D1031E5b172D42B2DAA1b6e5Cbf6519596f7
+        // Mip: https://mips.makerdao.com/mips/details/MIP40c3SP36#mkr-vesting
+
+        // DUX-001  -  56.48 MKR - 0x5A994D8428CCEbCC153863CCdA9D2Be6352f89ad
+        // Forum: https://forum.makerdao.com/t/mip39c3-sp9-removing-dux-001/21306
+
+        // ----- Core Unit DAI Stream Cancel -----
+        // NOTE: ignore in goerli
+
+        // yank DAI stream ID 14 to DUX-001
+        // Forum: https://forum.makerdao.com/t/mip39c3-sp9-removing-dux-001/21306
 
         // ----- Update ChainLog version -----
         // Justification: The MINOR version is updated as core MCD_FLAP contract is being replaced in the spell
