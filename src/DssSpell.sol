@@ -26,9 +26,39 @@ import { FlapperInit, FlapperInstance, FlapperUniV2Config } from "src/dependenci
 //     function addJob(address) external;
 // }
 
+interface RwaOutputConduitLike {
+    function deny(address usr) external;
+    function hope(address usr) external;
+    function nope(address usr) external;
+    function mate(address usr) external;
+    function hate(address usr) external;
+    function kiss(address who) external;
+    function diss(address who) external;
+    function file(bytes32 what, address data) external;
+    function clap(address _psm) external;
+}
+
+interface RwaUrnLike {
+    function file(bytes32 what, address data) external;
+}
+
+interface ChainlogLike {
+    function removeAddress(bytes32) external;
+}
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
+
+    address internal immutable RWA015_A_URN                 = DssExecLib.getChangelogAddress("RWA015_A_URN");
+    address internal immutable RWA015_A_OUTPUT_CONDUIT_PAX  = DssExecLib.getChangelogAddress("RWA015_A_OUTPUT_CONDUIT");
+    // NOTE: ignore in goerli
+    // address internal immutable RWA015_A_OUTPUT_CONDUIT_USDC = DssExecLib.getChangelogAddress("RWA015_A_OUTPUT_CONDUIT_LEGACY");
+    address internal immutable MCD_PSM_PAX_A                = DssExecLib.getChangelogAddress("MCD_PSM_PAX_A");
+    address internal immutable MCD_PSM_GUSD_A               = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
+    address internal immutable MCD_PSM_USDC_A               = DssExecLib.getChangelogAddress("MCD_PSM_USDC_A");
+    address internal immutable MCD_ESM                      = DssExecLib.esm();
+
 
     // Always keep office hours off on goerli
     function officeHours() public pure override returns (bool) {
@@ -71,8 +101,58 @@ contract DssSpellAction is DssAction {
     uint256 internal constant SIX_PT_ONE_NINE_PCT_RATE    = 1000000001904482384730282575;
     uint256 internal constant FIVE_PT_FOUR_FOUR_PCT_RATE  = 1000000001679727448331902751;
 
+    // Operator address
+    address internal constant RWA015_A_OPERATOR            = 0x23a10f09Fac6CCDbfb6d9f0215C795F9591D7476;
+    // Custody address
+    address internal constant RWA015_A_CUSTODY             = 0x65729807485F6f7695AF863d97D62140B7d69d83;
+    address internal constant RWA015_A_OUTPUT_CONDUIT      = 0xEff59711CbB16BCAdA3AA8B8f2Bbd26F5B38a8cA;
+    // Old USDC Conduit which is not in Changelog on Goerli
+    address internal constant RWA015_A_OUTPUT_CONDUIT_USDC = 0xe80420B69106E6993A7df14C191e7813dE3Ed8Db;
+
+
     function actions() public override {
         // ----- Deploy Multiswap Conduit for RWA015-A -----
+
+        // OPERATOR permission on RWA015_A_OUTPUT_CONDUIT
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).hope(RWA015_A_OPERATOR);
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).mate(RWA015_A_OPERATOR);
+        // Custody whitelist for output conduit destination address
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).kiss(RWA015_A_CUSTODY);
+        // Whitelist PSM's
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).clap(MCD_PSM_PAX_A);
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).clap(MCD_PSM_GUSD_A);
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).clap(MCD_PSM_USDC_A);
+        // Set "quitTo" address for RWA015_A_OUTPUT_CONDUIT
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT).file("quitTo", RWA015_A_URN);
+        // Route URN to new conduit
+        RwaUrnLike(RWA015_A_URN).file("outputConduit", RWA015_A_OUTPUT_CONDUIT);
+        // Additional ESM authorization
+        DssExecLib.authorize(RWA015_A_OUTPUT_CONDUIT, MCD_ESM);
+
+        DssExecLib.setChangelogAddress("RWA015_A_OUTPUT_CONDUIT", RWA015_A_OUTPUT_CONDUIT);
+
+        // Unwind Permissions from old Conduits and remove them from Chainlog
+
+        // Revoke permissions on RWA015_A_OUTPUT_CONDUIT_PAX
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).nope(RWA015_A_OPERATOR);
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).hate(RWA015_A_OPERATOR);
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).diss(RWA015_A_CUSTODY);
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).file("quitTo", address(0));
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).deny(MCD_ESM);
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).deny(address(this));
+
+
+        // Revoke permissions on RWA015_A_OUTPUT_CONDUIT_USDC
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).nope(RWA015_A_OPERATOR);
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).hate(RWA015_A_OPERATOR);
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).diss(RWA015_A_CUSTODY);
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).file("quitTo", address(0));
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).deny(MCD_ESM);
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).deny(address(this));
+        // NOTE: ignore in goerli
+        // Remove From Chainlog
+        // ChainlogLike(DssExecLib.LOG).removeAddress("RWA015_A_OUTPUT_CONDUIT_LEGACY");
+
 
         // ----- Add Cron Jobs to Chainlog -----
         // Forum: https://forum.makerdao.com/t/dsscron-housekeeping-additions/21292
@@ -84,6 +164,7 @@ contract DssSpellAction is DssAction {
         // DssExecLib.setChangelogAddress("CRON_D3M_JOB",         CRON_D3M_JOB);
         // DssExecLib.setChangelogAddress("CRON_CLIPPER_MOM_JOB", CRON_CLIPPER_MOM_JOB);
         // DssExecLib.setChangelogAddress("CRON_ORACLE_JOB",      CRON_ORACLE_JOB);
+
 
         // ----- Deploy FlapperUniV2 -----
         // Poll: https://vote.makerdao.com/polling/QmQmxEZp#poll-detail
