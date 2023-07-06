@@ -106,7 +106,7 @@ contract DssSpellAction is DssAction {
     // Custody address
     address internal constant RWA015_A_CUSTODY             = 0x65729807485F6f7695AF863d97D62140B7d69d83;
     address internal constant RWA015_A_OUTPUT_CONDUIT      = 0xEff59711CbB16BCAdA3AA8B8f2Bbd26F5B38a8cA;
-    // Old USDC Conduit which is not in Changelog ion Goerli
+    // Old USDC Conduit which is not in Changelog on Goerli
     address internal constant RWA015_A_OUTPUT_CONDUIT_USDC = 0xe80420B69106E6993A7df14C191e7813dE3Ed8Db;
 
 
