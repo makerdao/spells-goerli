@@ -548,12 +548,10 @@ contract DssSpellTest is DssSpellTestBase {
         stdstore.target(address(vow)).sig("Sin()").checked_write(3_000_000 * RAD);
         stdstore.target(address(vow)).sig("Ash()").checked_write(2_000_000 * RAD);
 
+        assertEq(flap.gem(), address(gov));
         address pip = flap.pip();
         assertEq(pip, addr.addr("PIP_MKR"));
-
         address pair = flap.pair();
-
-        GemAbstract mkr = GemAbstract(addr.addr("MCD_GOV"));
 
         // Set liquidity in the pool
         vm.prank(pauseProxy);
@@ -563,26 +561,26 @@ contract DssSpellTest is DssSpellTestBase {
         uint256 daiAmt = 1_000_000 * WAD;
         GodMode.setBalance(address(dai), address(pair), daiAmt);
         uint256 mkrAmt = 1_000_000 * WAD * WAD / price;
-        GodMode.setBalance(address(mkr), address(pair), mkrAmt * 97 / 100); // 3% worse price (should fail)
+        GodMode.setBalance(address(gov), address(pair), mkrAmt * 97 / 100); // 3% worse price (should fail)
         vm.expectRevert("FlapperUniV2/insufficient-buy-amount");
         vow.flap();
-        GodMode.setBalance(address(mkr), address(pair), mkrAmt * 99 / 100); // Leaves just 1% worse price
+        GodMode.setBalance(address(gov), address(pair), mkrAmt * 99 / 100); // Leaves just 1% worse price
         //
 
         uint256 initialLp = GemAbstract(pair).balanceOf(pauseProxy);
         uint256 initialDaiVow = vat.dai(address(vow));
         uint256 initialReserveDai = dai.balanceOf(pair);
-        uint256 initialReserveMkr = mkr.balanceOf(pair);
+        uint256 initialReserveMkr = gov.balanceOf(pair);
 
         vow.flap();
 
         assertGt(GemAbstract(pair).balanceOf(pauseProxy), initialLp);
         assertGt(dai.balanceOf(pair), initialReserveDai);
-        assertEq(mkr.balanceOf(pair), initialReserveMkr);
+        assertEq(gov.balanceOf(pair), initialReserveMkr);
         assertGt(initialDaiVow - vat.dai(address(vow)), 2 * vow.bump() * 9 / 10);
         assertLt(initialDaiVow - vat.dai(address(vow)), 2 * vow.bump() * 11 / 10);
         assertEq(dai.balanceOf(address(flap)), 0);
-        assertEq(mkr.balanceOf(address(flap)), 0);
+        assertEq(gov.balanceOf(address(flap)), 0);
 
         // Check Mom can increase hop
         assertEq(flap.hop(), 1577 seconds);
