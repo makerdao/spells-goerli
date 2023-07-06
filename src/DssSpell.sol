@@ -102,11 +102,13 @@ contract DssSpellAction is DssAction {
     uint256 internal constant FIVE_PT_FOUR_FOUR_PCT_RATE  = 1000000001679727448331902751;
 
     // Operator address
-    address internal constant RWA015_A_OPERATOR          = 0x23a10f09Fac6CCDbfb6d9f0215C795F9591D7476;
+    address internal constant RWA015_A_OPERATOR            = 0x23a10f09Fac6CCDbfb6d9f0215C795F9591D7476;
     // Custody address
-    address internal constant RWA015_A_CUSTODY           = 0x65729807485F6f7695AF863d97D62140B7d69d83;
+    address internal constant RWA015_A_CUSTODY             = 0x65729807485F6f7695AF863d97D62140B7d69d83;
+    address internal constant RWA015_A_OUTPUT_CONDUIT      = 0xEff59711CbB16BCAdA3AA8B8f2Bbd26F5B38a8cA;
+    // Old USDC Conduit which is not in Changelog ion Goerli
+    address internal constant RWA015_A_OUTPUT_CONDUIT_USDC = 0xe80420B69106E6993A7df14C191e7813dE3Ed8Db;
 
-    address internal constant RWA015_A_OUTPUT_CONDUIT    = 0xEff59711CbB16BCAdA3AA8B8f2Bbd26F5B38a8cA;
 
     function actions() public override {
         // ----- Deploy Multiswap Conduit for RWA015-A -----
@@ -140,14 +142,14 @@ contract DssSpellAction is DssAction {
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_PAX).deny(address(this));
 
 
-        // NOTE: ignore in goerli
         // Revoke permissions on RWA015_A_OUTPUT_CONDUIT_USDC
-        // RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).nope(RWA015_A_OPERATOR);
-        // RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).hate(RWA015_A_OPERATOR);
-        // RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).diss(RWA015_A_CUSTODY);
-        // RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).file("quitTo", address(0));;
-        // RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).deny(ESM)
-        // RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).deny(address(this));
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).nope(RWA015_A_OPERATOR);
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).hate(RWA015_A_OPERATOR);
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).diss(RWA015_A_CUSTODY);
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).file("quitTo", address(0));;
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).deny(ESM)
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).deny(address(this));
+        // NOTE: ignore in goerli
         // Remove From Chainlog
         // ChainlogLike(DssExecLib.LOG).removeAddress("RWA015_A_OUTPUT_CONDUIT_LEGACY");
 

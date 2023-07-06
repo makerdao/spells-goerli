@@ -628,8 +628,7 @@ contract DssSpellTest is DssSpellTestBase {
 
     function testRWA015_REVOKE_OLD_CONDUITS_PERMISSIONS() public {
         address RWA015_OUTPUT_CONDUIT_PAX = chainLog.getAddress("RWA015_A_OUTPUT_CONDUIT");
-        // Not for goerli
-        // address RWA015_OUTPUT_CONDUIT_USDC = chainLog.getAddress("RWA015_A_OUTPUT_CONDUIT_LEGACY");
+        address RWA015_OUTPUT_CONDUIT_USDC = 0xe80420B69106E6993A7df14C191e7813dE3Ed8Db;
 
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
@@ -642,13 +641,12 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_PAX).bud(RWA015_A_CUSTODY),  0, "OutputConduit/destination-address-whitelisted-for-pick");
         assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_PAX).quitTo(), address(0),      "OutputConduit/quit-to-not-zero");
 
-        // Not for goerli
-        // assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).wards(pauseProxy),      0, "OutputConduit/ward-pause-proxy-relied");
-        // assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).wards(address(esm)),    0, "OutputConduit/ward-esm-relied");
-        // assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).can(RWA015_A_OPERATOR), 0, "OutputConduit/operator-hoped");
-        // assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).may(RWA015_A_OPERATOR), 0, "OutputConduit/operator-mated");
-        // assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).bud(RWA015_A_CUSTODY),  0, "OutputConduit/destination-address-whitelisted-for-pick");
-        // assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).quitTo(), address(0),      "OutputConduit/quit-to-not-zero");
+        assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).wards(pauseProxy),      0, "OutputConduit/ward-pause-proxy-relied");
+        assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).wards(address(esm)),    0, "OutputConduit/ward-esm-relied");
+        assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).can(RWA015_A_OPERATOR), 0, "OutputConduit/operator-hoped");
+        assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).may(RWA015_A_OPERATOR), 0, "OutputConduit/operator-mated");
+        assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).bud(RWA015_A_CUSTODY),  0, "OutputConduit/destination-address-whitelisted-for-pick");
+        assertEq(RwaOutputConduitLike(RWA015_OUTPUT_CONDUIT_USDC).quitTo(), address(0),      "OutputConduit/quit-to-not-zero");
     }
 
     function testRWA015_OPERATOR_DRAW_CONDUIT_PUSH() public {
