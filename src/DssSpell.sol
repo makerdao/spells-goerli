@@ -146,7 +146,7 @@ contract DssSpellAction is DssAction {
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).nope(RWA015_A_OPERATOR);
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).hate(RWA015_A_OPERATOR);
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).diss(RWA015_A_CUSTODY);
-        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).file("quitTo", address(0));;
+        RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).file("quitTo", address(0));
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).deny(ESM)
         RwaOutputConduitLike(RWA015_A_OUTPUT_CONDUIT_USDC).deny(address(this));
         // NOTE: ignore in goerli
