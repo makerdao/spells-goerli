@@ -42,6 +42,10 @@ interface RwaUrnLike {
     function file(bytes32 what, address data) external;
 }
 
+interface ProxyLike {
+    function exec(address target, bytes calldata args) external payable returns (bytes memory out);
+}
+
 interface ChainlogLike {
     function removeAddress(bytes32) external;
 }
@@ -73,6 +77,11 @@ contract DssSpellAction is DssAction {
     address internal immutable MCD_PSM_GUSD_A              = DssExecLib.getChangelogAddress("MCD_PSM_GUSD_A");
     address internal immutable MCD_PSM_USDC_A              = DssExecLib.getChangelogAddress("MCD_PSM_USDC_A");
     address internal immutable MCD_ESM                     = DssExecLib.esm();
+
+    // Spark
+    address internal immutable SUBPROXY_SPARK              = DssExecLib.getChangelogAddress("SUBPROXY_SPARK");
+    // NOTE: goerli spell address is originated from https://github.com/marsfoundation/spark-spells/pull/9
+    address internal immutable SPARK_SPELL                 = 0x2Ad00613A66D71Ff2B0607fB3C4632C47a50DADe;
 
     // CRON jobs
     // NOTE: ignore in goerli
@@ -298,6 +307,11 @@ contract DssSpellAction is DssAction {
 
         // yank DAI stream ID 14 to DUX-001
         // Forum: https://forum.makerdao.com/t/mip39c3-sp9-removing-dux-001/21306
+
+        // ----- Trigger Spark Proxy Spell -----
+        // Forum: https://forum.makerdao.com/t/freeze-the-sdai-market-on-spark/21322
+
+        ProxyLike(SUBPROXY_SPARK).exec(SPARK_SPELL, abi.encodeWithSignature("execute()"));
 
         // ----- Update ChainLog version -----
         // Justification: The MINOR version is updated as core MCD_FLAP contract is being replaced in the spell
