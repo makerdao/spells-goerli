@@ -103,9 +103,9 @@ contract DssSpellAction is DssAction {
     uint256 internal constant THREE_PT_ONE_NINE_PCT_RATE  = 1000000000995743377573746041;
     uint256 internal constant THREE_PT_FOUR_FOUR_PCT_RATE = 1000000001072474267302354182;
     uint256 internal constant THREE_PT_NINE_FOUR_PCT_RATE = 1000000001225381266358479708;
+    uint256 internal constant FIVE_PT_FOUR_FOUR_PCT_RATE  = 1000000001679727448331902751;
     uint256 internal constant FIVE_PT_SIX_NINE_PCT_RATE   = 1000000001754822903403114680;
     uint256 internal constant SIX_PT_ONE_NINE_PCT_RATE    = 1000000001904482384730282575;
-    uint256 internal constant FIVE_PT_FOUR_FOUR_PCT_RATE  = 1000000001679727448331902751;
 
     function actions() public override {
         // ----- Deploy Multiswap Conduit for RWA015-A -----

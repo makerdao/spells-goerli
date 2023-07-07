@@ -283,7 +283,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() private { // make private to disable
+    function testNewChainlogValues() public { // make private to disable
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -601,7 +601,7 @@ contract DssSpellTest is DssSpellTestBase {
     RwaOutputConduitLike     rwa015AOutputConduit   = RwaOutputConduitLike(addr.addr("RWA015_A_OUTPUT_CONDUIT"));
 
     function testRWA015_OUTPUT_CONDUIT_DEPLOYMENT_SETUP() public {
-        assertEq(rwa015AOutputConduit.dai(), addr.addr("MCD_DAI"),       "output-conduit-dai-not-match");
+        assertEq(rwa015AOutputConduit.dai(), addr.addr("MCD_DAI"), "output-conduit-dai-not-match");
     }
 
     function testRWA015_INTEGRATION_CONDUITS_SETUP() public {
