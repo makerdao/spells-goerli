@@ -46,6 +46,8 @@ contract Deployers {
     address public constant CENTRIFUGE_02   = 0x0A735602a357802f553113F5831FE2fbf2F0E2e0;
     address public constant SIDESTREAM_01   = 0x47f1aaC8c1BDD49B0c2438c1754518695E9f08d3;
     address public constant PHOENIX_LABS_01 = 0xd1236a6A111879d9862f8374BA15344b6B233Fbd;
+    address public constant ECO_DEPLOY_01   = 0x694047b514Ae125d528eDE99048a75592B830256;
+
 
     constructor() {
         addr = [
@@ -70,7 +72,8 @@ contract Deployers {
             CENTRIFUGE_01,
             CENTRIFUGE_02,
             SIDESTREAM_01,
-            PHOENIX_LABS_01
+            PHOENIX_LABS_01,
+            ECO_DEPLOY_01
         ];
     }
 
