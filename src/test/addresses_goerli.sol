@@ -31,6 +31,7 @@ contract Addresses {
         addr["CALC_FAB"]                        = 0x579f007Fb7151162e3095606232ef9029E090366;
         addr["LERP_FAB"]                        = 0xE7988B75a19D8690272D65882Ab0D07D492f7002;
         addr["MCD_GOV"]                         = 0xc5E4eaB513A7CD12b2335e8a0D57273e13D499f7;
+        addr["PIP_MKR"]                         = 0x496C851B2A9567DfEeE0ACBf04365F3ba00Eb8dC;
         addr["GOV_GUARD"]                       = 0xB9b861e8F9b29322815260B6883Bbe1DBC91dA8A;
         addr["MCD_IOU"]                         = 0x651D1B91e4F657392a51Dba7A6A1A1a72eC6aD1c;
         addr["MCD_ADM"]                         = 0x33Ed584fc655b08b2bca45E1C5b5f07c98053bC1;
@@ -75,7 +76,6 @@ contract Addresses {
         addr["MCD_VEST_DAI_LEGACY"]             = 0x59B1a603cAC9e38EA2AC2C479FFE42Ce48123Fd4;
         addr["MCD_VEST_MKR"]                    = 0x183bE7a75B8b5F35236270b060e95C65D82f5fF9;
         addr["MCD_VEST_MKR_TREASURY"]           = 0xd1B8dFF41F3268fAC524869f4C7dA27232044916;
-        addr["PIP_MKR"]                         = 0x496C851B2A9567DfEeE0ACBf04365F3ba00Eb8dC;
         addr["ETH"]                             = 0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6;
         addr["PIP_ETH"]                         = 0x94588e35fF4d2E99ffb8D5095F35d1E37d6dDf12;
         addr["MCD_JOIN_ETH_A"]                  = 0x2372031bB0fC735722AA4009AeBf66E8BEAF4BA1;

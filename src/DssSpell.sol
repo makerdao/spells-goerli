@@ -46,9 +46,10 @@ interface ProxyLike {
     function exec(address target, bytes calldata args) external payable returns (bytes memory out);
 }
 
-interface ChainlogLike {
-    function removeAddress(bytes32) external;
-}
+// NOTE: ignore in goerli
+// interface ChainlogLike {
+//     function removeAddress(bytes32 _key) external;
+// }
 
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
@@ -81,7 +82,7 @@ contract DssSpellAction is DssAction {
     // Spark
     address internal immutable SUBPROXY_SPARK              = DssExecLib.getChangelogAddress("SUBPROXY_SPARK");
     // NOTE: goerli spell address is originated from https://github.com/marsfoundation/spark-spells/pull/9
-    address internal immutable SPARK_SPELL                 = 0x2Ad00613A66D71Ff2B0607fB3C4632C47a50DADe;
+    address internal constant SPARK_SPELL                  = 0x2Ad00613A66D71Ff2B0607fB3C4632C47a50DADe;
 
     // CRON jobs
     // NOTE: ignore in goerli
