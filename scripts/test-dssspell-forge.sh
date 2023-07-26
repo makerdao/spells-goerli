@@ -9,8 +9,8 @@ do
     VALUE=$(echo "$ARGUMENT" | cut -f2 -d=)
 
     case "$KEY" in
-            no-match)   NO_MATCH="$VALUE" ;;
             match)      MATCH="$VALUE" ;;
+            no-match)   NO_MATCH="$VALUE" ;;
             block)      BLOCK="$VALUE" ;;
             *)
     esac
