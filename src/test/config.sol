@@ -111,7 +111,7 @@ contract Config {
         // Values for all system configuration changes
         //
         afterSpell.line_offset =           500 * MILLION;           // Offset between the global line against the sum of local lines
-        afterSpell.pot_dsr =               319;                     // In basis points
+        afterSpell.pot_dsr =               8_00;                    // In basis points
         afterSpell.pause_delay =           60 seconds;              // In seconds
         afterSpell.vow_wait =              156 hours;               // In seconds
         afterSpell.vow_dump =              250;                     // In whole Dai units
@@ -1284,7 +1284,7 @@ contract Config {
             aL_line:      0 * MILLION,
             aL_gap:       0 * MILLION,
             aL_ttl:       0,
-            line:         7 * MILLION,
+            line:         0,
             dust:         0,
             pct:          700,
             mat:          11000,
@@ -2030,7 +2030,7 @@ contract Config {
         });
         afterSpell.collaterals["DIRECT-SPARK-DAI"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      20 * MILLION,
+            aL_line:      200 * MILLION,
             aL_gap:       20 * MILLION,
             aL_ttl:       8 hours,
             line:         0,

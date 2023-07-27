@@ -36,6 +36,11 @@ interface BridgeLike {
     function l2TeleportGateway() external view returns (address);
 }
 
+interface RwaLiquidationOracleLike {
+    function ilks(bytes32 ilk) external view returns (string memory doc, address pip, uint48 tau, uint48 toc);
+    function good(bytes32 ilk) external view returns (bool);
+}
+
 contract DssSpellTest is DssSpellTestBase {
     using stdStorage for StdStorage;
 
@@ -500,5 +505,26 @@ contract DssSpellTest is DssSpellTestBase {
 
         // Validate post-spell state
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
+    }
+
+    string OLD_RWA002_DOC = "QmdfuQSLmNFHoxvMjXvv8qbJ2NWprrsvp5L3rGr3JHw18E";
+    string NEW_RWA002_DOC = "QmTrrwZpnSZ41rbrpx267R7vfDFktseQe2W5NJ5xB7kkn1";
+
+    RwaLiquidationOracleLike oracle = RwaLiquidationOracleLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
+
+    function testRWA002DocChange() public {
+        _checkRWADocUpdate("RWA002-A", OLD_RWA002_DOC, NEW_RWA002_DOC);
+    }
+
+    function testRWA004OracleTell() public {
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        (, , uint tau, uint toc) = oracle.ilks("RWA004-A");
+        assertGt(toc, 0, "RWA004-A: bad `toc` after `tell()`");
+
+        skip(tau);
+        assertEq(oracle.good("RWA004-A"), false, "RWA004-A: still `good` after `tell()` + `tau`");
     }
 }
