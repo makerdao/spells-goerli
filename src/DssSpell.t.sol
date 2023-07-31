@@ -533,12 +533,12 @@ contract DssSpellTest is DssSpellTestBase {
 
     // RWA Tests
 
-    string OLD_RWA002_DOC = "QmdfuQSLmNFHoxvMjXvv8qbJ2NWprrsvp5L3rGr3JHw18E";
-    string NEW_RWA002_DOC = "QmTrrwZpnSZ41rbrpx267R7vfDFktseQe2W5NJ5xB7kkn1";
-
     RwaLiquidationOracleLike oracle = RwaLiquidationOracleLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
 
     function testRWA002DocChange() public {
+        string memory OLD_RWA002_DOC = "QmdfuQSLmNFHoxvMjXvv8qbJ2NWprrsvp5L3rGr3JHw18E";
+        string memory NEW_RWA002_DOC = "QmTrrwZpnSZ41rbrpx267R7vfDFktseQe2W5NJ5xB7kkn1";
+
         _checkRWADocUpdate("RWA002-A", OLD_RWA002_DOC, NEW_RWA002_DOC);
     }
 

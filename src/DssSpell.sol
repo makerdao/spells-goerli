@@ -19,8 +19,8 @@ pragma solidity 0.8.16;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-interface RwaLiquidationLike {
-    function ilks(bytes32) external view returns (string memory doc, address pip, uint48 tau, uint48 toc);
+interface RwaLiquidationOracleLike {
+    function ilks(bytes32 ilk) external view returns (string memory doc, address pip, uint48 tau, uint48 toc);
     function init(bytes32 ilk, uint256 val, string memory doc, uint48 tau) external;
     function tell(bytes32 ilk) external;
 }
@@ -73,11 +73,11 @@ contract DssSpellAction is DssAction {
     uint256 internal constant MILLION = 10 ** 6;
 
     function _updateDoc(bytes32 ilk, string memory doc) internal {
-        ( , address pip, uint48 tau, ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
+        ( , address pip, uint48 tau, ) = RwaLiquidationOracleLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
         require(pip != address(0), "DssSpell/unexisting-rwa-ilk");
 
         // Init the RwaLiquidationOracle to reset the doc
-        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).init(
+        RwaLiquidationOracleLike(MIP21_LIQUIDATION_ORACLE).init(
             ilk, // ilk to update
             0,   // price ignored if init() has already been called
             doc, // new legal document
@@ -109,7 +109,7 @@ contract DssSpellAction is DssAction {
         // Note: it was agreed with GovAlpha that there will be no global DC reduction this time.
         DssExecLib.setIlkDebtCeiling("RWA004-A", 0);
         // Call tell() on RWALiquidationOracle
-        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).tell("RWA004-A");
+        RwaLiquidationOracleLike(MIP21_LIQUIDATION_ORACLE).tell("RWA004-A");
 
         // ----- New Silver (RWA002-A) Doc Update -----
         // Poll: https://vote.makerdao.com/polling/QmaU1eaD
