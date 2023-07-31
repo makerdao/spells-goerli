@@ -428,7 +428,6 @@ contract Addresses {
         addr["DIRECT_SPARK_DAI_POOL"]           = 0x8b6Ae79852bcae012CBc2244e4ef85c61BAeCE35;
         addr["DIRECT_SPARK_DAI_PLAN"]           = 0x1fB2cF94D896bB50A17dD1Abd901172F088dF309;
         addr["DIRECT_SPARK_DAI_ORACLE"]         = 0xa07C4eDB18E4B3cfB9B94D9CD348BbF6d5a7f4c2;
-        addr["SUBPROXY_SPARK"]                  = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
     }
 }
 

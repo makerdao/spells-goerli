@@ -29,6 +29,10 @@ interface ProxyLike {
     function exec(address target, bytes calldata args) external payable returns (bytes memory out);
 }
 
+interface ChainlogLike {
+    function removeAddress(bytes32 _key) external;
+}
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -142,6 +146,13 @@ contract DssSpellAction is DssAction {
 
         // Trigger Spark Proxy Spell at 0xEd3BF79737d3A469A29a7114cA1084e8340a2f20 (goerli)
         ProxyLike(SUBPROXY_SPARK).exec(SPARK_SPELL, abi.encodeWithSignature("execute()"));
+
+        // ----- House Keeping -----
+
+        // Remove SUBPROXY_SPARK from the chainlog on Goerli.
+        // Github Discussion: https://github.com/makerdao/spells-mainnet/pull/346#issuecomment-1591198793
+        // Since this was added by mistake, we should not bump the version in the Chainlog.
+        ChainlogLike(DssExecLib.LOG).removeAddress("SUBPROXY_SPARK");
     }
 }
 
