@@ -72,7 +72,6 @@ contract DssSpellAction is DssAction {
     // --- MATH ---
     uint256 internal constant MILLION = 10 ** 6;
 
-    // Function from https://github.com/makerdao/spells-goerli/blob/7d783931a6799fe8278e416b5ac60d4bb9c20047/archive/2022-11-14-DssSpell/Goerli-DssSpell.sol#L59
     function _updateDoc(bytes32 ilk, string memory doc) internal {
         ( , address pip, uint48 tau, ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
         require(pip != address(0), "DssSpell/unexisting-rwa-ilk");
@@ -147,7 +146,7 @@ contract DssSpellAction is DssAction {
         // Trigger Spark Proxy Spell at 0xEd3BF79737d3A469A29a7114cA1084e8340a2f20 (goerli)
         ProxyLike(SUBPROXY_SPARK).exec(SPARK_SPELL, abi.encodeWithSignature("execute()"));
 
-        // ----- House Keeping -----
+        // ----- Housekeeping -----
 
         // Remove SUBPROXY_SPARK from the chainlog on Goerli.
         // Github Discussion: https://github.com/makerdao/spells-mainnet/pull/346#issuecomment-1591198793
