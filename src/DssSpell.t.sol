@@ -41,6 +41,10 @@ interface RwaLiquidationOracleLike {
     function good(bytes32 ilk) external view returns (bool);
 }
 
+interface ProxyLike {
+    function exec(address target, bytes calldata args) external payable returns (bytes memory out);
+}
+
 contract DssSpellTest is DssSpellTestBase {
     using stdStorage for StdStorage;
 
@@ -506,6 +510,28 @@ contract DssSpellTest is DssSpellTestBase {
         // Validate post-spell state
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
+
+    // Spark Tests
+
+    function testSparkSpellIsExecuted() public { // make private to disable
+        address SUBPROXY_SPARK = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
+        address SPARK_SPELL    = 0xEd3BF79737d3A469A29a7114cA1084e8340a2f20;
+
+        vm.expectCall(
+            SUBPROXY_SPARK,
+            /* value = */ 0,
+            abi.encodeCall(
+                ProxyLike(SUBPROXY_SPARK).exec,
+                (SPARK_SPELL, abi.encodeWithSignature("execute()"))
+            )
+        );
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+    }
+
+    // RWA Tests
 
     string OLD_RWA002_DOC = "QmdfuQSLmNFHoxvMjXvv8qbJ2NWprrsvp5L3rGr3JHw18E";
     string NEW_RWA002_DOC = "QmTrrwZpnSZ41rbrpx267R7vfDFktseQe2W5NJ5xB7kkn1";

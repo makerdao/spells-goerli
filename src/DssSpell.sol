@@ -39,18 +39,19 @@ contract DssSpellAction is DssAction {
     }
 
     // ----- JAT1 DAO Resolution -----
-    // Poll: N/A
     // Forum: https://forum.makerdao.com/t/clydesdale-quarterly-return-of-surplus-fund/21291
-
+    // Poll: N/A
     // Approve DAO Resolution hash QmaGTVioBsCPfNoz9rbW7LU6YuzfgqHDZd92Hny5ACfL3p
-    string public constant JAT1_DAO_RESOLUTION = "QmaGTVioBsCPfNoz9rbW7LU6YuzfgqHDZd92Hny5ACfL3p";
+
+    // Comma-separated list of DAO resolutions IPFS hashes.
+    string public constant dao_resolutions = "QmaGTVioBsCPfNoz9rbW7LU6YuzfgqHDZd92Hny5ACfL3p";
 
     address internal immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
 
     // Spark
     address internal immutable SUBPROXY_SPARK = DssExecLib.getChangelogAddress("SUBPROXY_SPARK");
-    // NOTE: goerli spell address is originated from https://github.com/marsfoundation/spark-spells/TODO
-    // address internal constant SPARK_SPELL                  = address(0); // TODO
+    // NOTE: goerli spell address is originated from https://github.com/marsfoundation/spark-spells/blob/d41d58ccc974f8358b0df962ad1fb931fedb7e62/src/proposals/20230802/SparkGoerli_20230802.t.sol#L80
+    address internal constant SPARK_SPELL     = 0xEd3BF79737d3A469A29a7114cA1084e8340a2f20;
 
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -115,16 +116,32 @@ contract DssSpellAction is DssAction {
         _updateDoc("RWA002-A", "QmTrrwZpnSZ41rbrpx267R7vfDFktseQe2W5NJ5xB7kkn1");
 
         // ----- AVC Member Compensation -----
-        // TODO
+        // Forum: https://forum.makerdao.com/t/avc-member-participation-rewards-q2-2023/21459
+        // NOTE: ignore on Goerli
+
+        // IamMeeoh - 14.90 MKR - 0x47f7A5d8D27f259582097E1eE59a07a816982AE9
+        // ACRE DAOs - 14.90 MKR - 0xBF9226345F601150F64Ea4fEaAE7E40530763cbd
+        // Space Xponential - 11.92 MKR - 0xFF8eEB643C5bfDf6A925f2a5F9aDC9198AF07b78
+        // Res - 14.90 MKR - 0x8c5c8d76372954922400e4654AF7694e158AB784
+        // LDF - 11.92 MKR - 0xC322E8Ec33e9b0a34c7cD185C616087D9842ad50
+        // opensky - 14.90 MKR - 0x8e67ee3bbeb1743dc63093af493f67c3c23c6f04
+        // David Phelps - 8.94 MKR - 0xd56e3E325133EFEd6B1687C88571b8a91e517ab0
+        // seedlatam.eth - 11.92 MKR - 0x0087a081a9b430fd8f688c6ac5dd24421bfb060d
+        // StableLab - 14.9 MKR - 0xbDE65cf2352ed1Dde959f290E973d0fC5cEDFD08
+        // flipsidegov - 14.9 MKR - 0x300901243d6CB2E74c10f8aB4cc89a39cC222a29
 
         // ----- Launch Project Funding -----
-        // TODO
+        // Forum: https://forum.makerdao.com/t/utilization-of-the-launch-project-under-the-accessibility-scope/21468
+        // NOTE: ignore on Goerli
+
+        // Launch Project - 2,000,000 DAI - 0x3C5142F28567E6a0F172fd0BaaF1f2847f49D02F
 
         // ----- Trigger Spark Proxy Spell -----
         // Poll: https://vote.makerdao.com/polling/QmZyFH21
         // Forum: https://forum.makerdao.com/t/phoenix-labs-proposed-changes-for-spark/21422
 
-        // ProxyLike(SUBPROXY_SPARK).exec(SPARK_SPELL, abi.encodeWithSignature("execute()"));
+        // Trigger Spark Proxy Spell at 0xEd3BF79737d3A469A29a7114cA1084e8340a2f20 (goerli)
+        ProxyLike(SUBPROXY_SPARK).exec(SPARK_SPELL, abi.encodeWithSignature("execute()"));
     }
 }
 
