@@ -47,6 +47,7 @@ contract Deployers {
     address public constant SIDESTREAM_01   = 0x47f1aaC8c1BDD49B0c2438c1754518695E9f08d3;
     address public constant PHOENIX_LABS_01 = 0xd1236a6A111879d9862f8374BA15344b6B233Fbd;
     address public constant ECO_DEPLOY_01   = 0x694047b514Ae125d528eDE99048a75592B830256;
+    // address public constant SPARK_01        = 0x02416B99202081F6b90851e35682Ca90D547054c; // Deployer for Spark 2023-08-02
 
 
     constructor() {
