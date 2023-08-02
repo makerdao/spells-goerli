@@ -180,12 +180,12 @@ contract DssSpellTest is DssSpellTestBase {
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        try chainLog.getAddress("SUPROXY_SPARK") {
-            fail("Address still in the chainlog");
+        try chainLog.getAddress("SUBPROXY_SPARK") {
+            assertTrue(false);
         } catch Error(string memory errmsg) {
             assertTrue(_cmpStr(errmsg, "dss-chain-log/invalid-key"));
         } catch {
-            fail("Unknown error");
+            assertTrue(false);
         }
     }
 
