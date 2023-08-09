@@ -114,11 +114,9 @@ contract DssSpellTest is DssSpellTestBase {
         _testChainlogValues();
     }
 
-    // FIXME: This test was disabled for environment syncing purposes. Re-enable it in the next spell.
-    function testChainlogVersionBump() private {
+    function testChainlogVersionBump() public {
         _testChainlogVersionBump();
     }
-    // END OF TESTS THAT SHOULD BE RUN ON EVERY SPELL
 
     function testOsmAuth() private {  // make private to disable
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
