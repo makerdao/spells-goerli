@@ -175,12 +175,12 @@ contract DssSpellTest is DssSpellTestBase {
         //assertEq(OsmAbstract(0xF15993A5C5BE496b8e1c9657Fd2233b579Cd3Bc6).wards(ORACLE_WALLET01), 1);
     }
 
-    function testRemoveChainlogValues() public { // make private to disable
+    function testRemoveChainlogValues() private { // make private to disable
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        try chainLog.getAddress("SUBPROXY_SPARK") {
+        try chainLog.getAddress("INSERT_DELETED_CHAINLOG_KEY_HERE") {
             assertTrue(false);
         } catch Error(string memory errmsg) {
             assertTrue(_cmpStr(errmsg, "dss-chain-log/invalid-key"));
@@ -273,12 +273,7 @@ contract DssSpellTest is DssSpellTestBase {
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        _checkChainlogKey("PIP_MKR");
-        _checkChainlogKey("MCD_FLAP");
-        _checkChainlogKey("FLAPPER_MOM");
-
-        _checkChainlogKey("RWA015_A_OUTPUT_CONDUIT");
-
+        _checkChainlogKey("INSERT_NEW_CHAINLOG_KEY_HERE");
         _checkChainlogVersion("1.15.0");
     }
 
@@ -512,10 +507,9 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     // Spark Tests
-
-    function testSparkSpellIsExecuted() public { // make private to disable
+    function testSparkSpellIsExecuted() private { // make private to disable
         address SUBPROXY_SPARK = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
-        address SPARK_SPELL    = 0xEd3BF79737d3A469A29a7114cA1084e8340a2f20;
+        address SPARK_SPELL    = address(0); // Insert spell address here
 
         vm.expectCall(
             SUBPROXY_SPARK,
@@ -529,28 +523,5 @@ contract DssSpellTest is DssSpellTestBase {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
-    }
-
-    // RWA Tests
-
-    RwaLiquidationOracleLike oracle = RwaLiquidationOracleLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
-
-    function testRWA002DocChange() public {
-        string memory OLD_RWA002_DOC = "QmdfuQSLmNFHoxvMjXvv8qbJ2NWprrsvp5L3rGr3JHw18E";
-        string memory NEW_RWA002_DOC = "QmTrrwZpnSZ41rbrpx267R7vfDFktseQe2W5NJ5xB7kkn1";
-
-        _checkRWADocUpdate("RWA002-A", OLD_RWA002_DOC, NEW_RWA002_DOC);
-    }
-
-    function testRWA004OracleTell() public {
-        _vote(address(spell));
-        _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        (, , uint tau, uint toc) = oracle.ilks("RWA004-A");
-        assertGt(toc, 0, "RWA004-A: bad `toc` after `tell()`");
-
-        skip(tau);
-        assertEq(oracle.good("RWA004-A"), false, "RWA004-A: still `good` after `tell()` + `tau`");
     }
 }
