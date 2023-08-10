@@ -64,7 +64,11 @@ contract DssSpellAction is DssAction {
 
         // ---------- Old D3M Parameter Housekeeping ----------
 
-        // ---------- Remainder of Spark Admin Transfers ----------
+        // ---------- New Silver Parameter Changes ----------
+
+        // ---------- Transfer Spark Proxy Admin Controls ----------
+
+        // ---------- Trigger Spark Proxy Spell ----------
     }
 }
 
