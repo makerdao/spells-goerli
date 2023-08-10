@@ -41,6 +41,21 @@ interface RwaLiquidationOracleLike {
     function good(bytes32 ilk) external view returns (bool);
 }
 
+interface RwaUrnLike {
+    function vat() external view returns (address);
+    function jug() external view returns (address);
+    function daiJoin() external view returns (address);
+    function outputConduit() external view returns (address);
+    function wards(address) external view returns (uint256);
+    function hope(address) external;
+    function can(address) external view returns (uint256);
+    function gemJoin() external view returns (address);
+    function lock(uint256) external;
+    function draw(uint256) external;
+    function wipe(uint256) external;
+    function free(uint256) external;
+}
+
 interface ProxyLike {
     function exec(address target, bytes calldata args) external payable returns (bytes memory out);
 }
@@ -503,6 +518,40 @@ contract DssSpellTest is DssSpellTestBase {
         // Validate post-spell state
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
+
+    // RWA tests
+    // RwaLiquidationOracleLike oracle                 = RwaLiquidationOracleLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
+
+    // function test_RWA002_Update() public {
+    //     // Cast spell
+    //     _vote(address(spell));
+    //     _scheduleWaitAndCast(address(spell));
+    //     assertTrue(spell.done());
+
+    //     // Get collateral's parameters
+    //     (,address pip,,) = oracle.ilks("RWA002-A");
+    //     (uint256 Art, uint256 rate, uint256 spot, uint256 line,) = vat.ilks("RWA002-A");
+
+    //     // Check spot and pip values to be updated
+    //     assertEq(uint256(DSValueAbstract(pip).read()), 60_107_250 * WAD, "RWA002: Bad PIP value after bump()");
+    //     assertEq(spot, 60_107_250 * RAY, "RWA002: Bad spot value after bump()");
+
+    //     // Become operator
+    //     address urn = addr.addr("RWA002_A_URN");
+    //     GodMode.setWard(address(urn), address(this), 1);
+    //     RwaUrnLike(urn).hope(address(this));
+
+    //     uint256 room = line - Art * rate;
+    //     uint256 drawAmt = room / RAY;
+    //     if (drawAmt * RAY / rate > room) {
+    //         drawAmt = (room - rate) / RAY;
+    //     }
+
+    //     // Execute draw
+    //     RwaUrnLike(urn).draw(drawAmt - 1);
+    //     (Art, rate,, line,) = vat.ilks("RWA002-A");
+    //     assertTrue(line - Art * rate < 2 * rate, "RWA002: Did not get close to the line");  // got very close to line
+    // }
 
     // Spark Tests
     function testSparkSpellIsExecuted() private { // make private to disable
