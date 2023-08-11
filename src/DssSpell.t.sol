@@ -556,6 +556,16 @@ contract DssSpellTest is DssSpellTestBase {
             drawAmt = (room - rate) / RAY;
         }
 
+        // NOTE: only on goerli, remove on mainnet
+        // This fix is needed becuause RWA002 was never locked into RwaUrn on Goerli
+        GodMode.setBalance(addr.addr("RWA002"), address(this), 1 * WAD);
+        GemAbstract(addr.addr("RWA002")).approve(urn, 1 * WAD);
+        RwaUrnLike(urn).lock(1 * WAD);
+
+        // Check if RWA002 is locked into the RwaUrn
+        (uint256 ink,) = vat.urns("RWA002-A", urn);
+        assertEq(ink, 1 * WAD, "RWA002: bad ink in RwaUrn");
+
         // Perform draw()
         RwaUrnLike(urn).draw(drawAmt);
 
