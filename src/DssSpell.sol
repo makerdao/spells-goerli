@@ -166,6 +166,7 @@ contract DssSpellAction is DssAction {
         // vat.file("Line", vat.Line() - 100 * MILLION * RAD);
 
         // ---------- Aligned Delegate Compensation for July 2023 ----------
+        // Forum: https://forum.makerdao.com/t/july-2023-aligned-delegate-compensation/21632
         // NOTE: ignore on goerli
 
         // 0xDefensor - 29.76 MKR - 0x9542b441d65B6BF4dDdd3d4D2a66D8dCB9EE07a9
