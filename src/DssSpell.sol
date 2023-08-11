@@ -190,23 +190,23 @@ contract DssSpellAction is DssAction {
         // Poll: https://vote.makerdao.com/polling/QmaU1eaD#poll-detail
 
         // Increase RWA002-A Debt Ceiling by 30 million DAI from 20 million DAI to 50 million DAI
-        // DssExecLib.increaseIlkDebtCeiling(
-        //     "RWA002-A",
-        //     50 * MILLION,
-        //     true // Increase global Line
-        // );
+        DssExecLib.increaseIlkDebtCeiling(
+            "RWA002-A",
+            30 * MILLION,
+            true // Increase global Line
+        );
 
         // Increase RWA002-A Stability Fee by 3.5% from 3.5% to 7%
-        // DssExecLib.setIlkStabilityFee("RWA002-A", SEVEN_PT_PCT_RATE, /* doDrip = */ true);
+        DssExecLib.setIlkStabilityFee("RWA002-A", SEVEN_PT_PCT_RATE, /* doDrip = */ true);
 
         // Bump Oracle price to account for new DC and SF
         // NOTE: the formula is: Debt ceiling * [ (1 + RWA stability fee ) ^ (minimum deal duration in years) ] * liquidation ratio
         // 50_000_000 * (1.07 ^ 2) * 1.05
-        // RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).bump(
-        //     "RWA002-A",
-        //     60_107_250 * WAD
-        // );
-        // DssExecLib.updateCollateralPrice("RWA002-A");
+        RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).bump(
+            "RWA002-A",
+            60_107_250 * WAD
+        );
+        DssExecLib.updateCollateralPrice("RWA002-A");
 
         // ---------- Transfer Spark Proxy Admin Controls ----------
 

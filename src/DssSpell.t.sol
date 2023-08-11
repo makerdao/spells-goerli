@@ -520,38 +520,54 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     // RWA tests
-    // RwaLiquidationOracleLike oracle                 = RwaLiquidationOracleLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
+    function test_RWA002_Update() public {
+        // Read the pip address
+        (,address pip,,  ) = liquidationOracle.ilks("RWA002-A");
 
-    // function test_RWA002_Update() public {
-    //     // Cast spell
-    //     _vote(address(spell));
-    //     _scheduleWaitAndCast(address(spell));
-    //     assertTrue(spell.done());
+        // Load RWA002-A output conduit address
+        address conduit = addr.addr("RWA002_A_OUTPUT_CONDUIT");
 
-    //     // Get collateral's parameters
-    //     (,address pip,,) = oracle.ilks("RWA002-A");
-    //     (uint256 Art, uint256 rate, uint256 spot, uint256 line,) = vat.ilks("RWA002-A");
+        // Check the conduit balance is 0 before cast
+        assertEq(dai.balanceOf(address(conduit)), 0);
 
-    //     // Check spot and pip values to be updated
-    //     assertEq(uint256(DSValueAbstract(pip).read()), 60_107_250 * WAD, "RWA002: Bad PIP value after bump()");
-    //     assertEq(spot, 60_107_250 * RAY, "RWA002: Bad spot value after bump()");
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
 
-    //     // Become operator
-    //     address urn = addr.addr("RWA002_A_URN");
-    //     GodMode.setWard(address(urn), address(this), 1);
-    //     RwaUrnLike(urn).hope(address(this));
+        // Read the pip address and spot value after cast, as well as Art and rate
+        (uint256 Art, uint256 rate, uint256 spotAfter, uint256 line,) = vat.ilks("RWA002-A");
 
-    //     uint256 room = line - Art * rate;
-    //     uint256 drawAmt = room / RAY;
-    //     if (drawAmt * RAY / rate > room) {
-    //         drawAmt = (room - rate) / RAY;
-    //     }
+        // Check the pip and spot values after cast
+        assertEq(uint256(DSValueAbstract(pip).read()), 60_107_250 * WAD, "RWA002: Bad PIP value after bump()");
+        assertEq(spotAfter, 60_107_250 * RAY, "RWA002: Bad spot value after bump()");
 
-    //     // Execute draw
-    //     RwaUrnLike(urn).draw(drawAmt - 1);
-    //     (Art, rate,, line,) = vat.ilks("RWA002-A");
-    //     assertTrue(line - Art * rate < 2 * rate, "RWA002: Did not get close to the line");  // got very close to line
-    // }
+        // Test that a draw() can be performed
+        address urn = addr.addr("RWA002_A_URN");
+        // Give ourselves operator status, noting that setWard() has replaced giveAuth()
+        GodMode.setWard(urn, address(this), 1);
+        RwaUrnLike(urn).hope(address(this));
+
+        // Calculate how much 'room' we can draw to get close to line
+        uint256 room = line - (Art * rate);
+        uint256 drawAmt = room / RAY;
+
+        // Correct our draw amount if it is too large
+        if ((_divup((drawAmt * RAY), rate) * rate) > room) {
+            drawAmt = (room - rate) / RAY;
+        }
+
+        // Perform draw()
+        RwaUrnLike(urn).draw(drawAmt);
+
+        // Check the conduit balance after cast
+        assertEq(dai.balanceOf(address(conduit)), drawAmt);
+
+        // Read new Art
+        (Art,,,,) = vat.ilks("RWA002-A");
+
+        // Assert that we are within 2 `rate` of line
+        assertTrue(line - (Art * rate) < (2 * rate));
+    }
 
     // Spark Tests
     function testSparkSpellIsExecuted() private { // make private to disable
