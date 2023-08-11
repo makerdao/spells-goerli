@@ -189,6 +189,9 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/rwa-002-new-silver-restructuring-risk-and-legal-assessment/21417
         // Poll: https://vote.makerdao.com/polling/QmaU1eaD#poll-detail
 
+        // Reduce Liquidation Ratio by 5% from 105% to 100%
+        DssExecLib.setIlkLiquidationRatio("RWA002-A", 100_00);
+
         // Increase RWA002-A Debt Ceiling by 30 million DAI from 20 million DAI to 50 million DAI
         DssExecLib.increaseIlkDebtCeiling(
             "RWA002-A",
@@ -200,11 +203,12 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkStabilityFee("RWA002-A", SEVEN_PT_PCT_RATE, /* doDrip = */ true);
 
         // Bump Oracle price to account for new DC and SF
-        // NOTE: the formula is: Debt ceiling * [ (1 + RWA stability fee ) ^ (minimum deal duration in years) ] * liquidation ratio
-        // 50_000_000 * (1.07 ^ 2) * 1.05
+        // NOTE: the formula is `Debt ceiling * [ (1 + RWA stability fee ) ^ (minimum deal duration in years) ] * liquidation ratio`
+        // Since RWA002-A Termination Date is `October 11, 2032`, and spell execution time is `2023-08-18`, the distance is `3342` days
+        // bc -l <<< 'scale=18; 50000000 * e(l(1.07) * (3342/365)) * 1.00' | cast --to-wei
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).bump(
             "RWA002-A",
-            60_107_250 * WAD
+            92_899_356 * WAD
         );
         DssExecLib.updateCollateralPrice("RWA002-A");
 
