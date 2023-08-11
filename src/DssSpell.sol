@@ -168,6 +168,23 @@ contract DssSpellAction is DssAction {
         // ---------- Aligned Delegate Compensation for July 2023 ----------
         // NOTE: ignore on goerli
 
+        // 0xDefensor - 29.76 MKR - 0x9542b441d65B6BF4dDdd3d4D2a66D8dCB9EE07a9
+        // BONAPUBLICA - 29.76 MKR - 0x167c1a762B08D7e78dbF8f24e5C3f1Ab415021D3
+        // QGov - 29.76 MKR - 0xB0524D8707F76c681901b782372EbeD2d4bA28a6
+        // TRUE NAME - 29.76 MKR - 0x612f7924c367575a0edf21333d96b15f1b345a5d
+        // UPMaker - 29.76 MKR - 0xbb819df169670dc71a16f58f55956fe642cc6bcd
+        // vigilant - 29.76 MKR - 0x2474937cB55500601BCCE9f4cb0A0A72Dc226F61
+        // PALC - 13.89 MKR - 0x78Deac4F87BD8007b9cb56B8d53889ed5374e83A
+        // Navigator - 11.24 MKR - 0x11406a9CC2e37425F15f920F494A51133ac93072
+        // PBG - 9.92 MKR - 0x8D4df847dB7FfE0B46AF084fE031F7691C6478c2
+        // VoteWizard - 9.92 MKR - 0x9E72629dF4fcaA2c2F5813FbbDc55064345431b1
+        // Libertas - 9.92 MKR - 0xE1eBfFa01883EF2b4A9f59b587fFf1a5B44dbb2f
+        // WBC - 8.14 MKR - 0xeBcE83e491947aDB1396Ee7E55d3c81414fB0D47
+        // Harmony - 8.93 MKR - 0xF4704Aa4Ad22cAA2A3Dd7A7C529B4C32f7A421F2
+        // JAG - 7.61 MKR - 0x58d1ec57e4294e4fe650d1cb12b96ae34349556f
+        // Cloaky - 4.30 MKR - 0x869b6d5d8FA7f4FFdaCA4D23FFE0735c5eD1F818
+        // Skynet - 3.64 MKR - 0xd4d1A446cD5976a11bd32D3e815A9F85FED2F9F3
+
         // ---------- Old D3M Parameter Housekeeping ----------
         // Forum: https://forum.makerdao.com/t/notice-of-executive-vote-date-change-and-housekeeping-changes/21613
         // NOTE: ignore on goerli
@@ -215,6 +232,12 @@ contract DssSpellAction is DssAction {
 
         // NOTE: Update collateral price to propagate the changes
         DssExecLib.updateCollateralPrice("RWA002-A");
+
+        // ---------- DAO Resolution for BlockTower Andromeda ----------
+        // Forum: https://forum.makerdao.com/t/dao-resolution-to-facilitate-onboarding-of-taco-with-additional-third-parties/21572
+        // Forum: https://forum.makerdao.com/t/dao-resolution-to-facilitate-onboarding-of-taco-with-additional-third-parties/21572/2
+
+        // Include IPFS hash QmUNrCwKK2iK2ki5Spn97jrTCDKqFjDZWKk3wxQ2psgMP5 (not a `doc` update)
 
         // ---------- Transfer Spark Proxy Admin Controls ----------
 
