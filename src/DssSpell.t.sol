@@ -538,8 +538,8 @@ contract DssSpellTest is DssSpellTestBase {
         (uint256 Art, uint256 rate, uint256 spotAfter, uint256 line,) = vat.ilks("RWA002-A");
 
         // Check the pip and spot values after cast
-        assertEq(uint256(DSValueAbstract(pip).read()), 92_899_356 * WAD, "RWA002: Bad PIP value after bump()");
-        assertEq(spotAfter, 92_899_356 * RAY, "RWA002: Bad spot value after bump()");
+        assertEq(uint256(DSValueAbstract(pip).read()), 92_899_355_926924134500000000, "RWA002: Bad PIP value after bump()");
+        assertEq(spotAfter, 92_899_355_926924134500000000 * (RAY / WAD), "RWA002: Bad spot value after bump()");
 
         // Test that a draw() can be performed
         address urn = addr.addr("RWA002_A_URN");

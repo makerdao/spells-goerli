@@ -19,15 +19,13 @@ pragma solidity 0.8.16;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-interface VatLike {
-    function Line() external view returns (uint256);
-    function file(bytes32 what, uint256 data) external;
-    function ilks(bytes32 ilk) external view returns (uint256 Art, uint256 rate, uint256 spot, uint256 line, uint256 dust);
-}
+// NOTE: ignore on goerli (since there is no CRVV1ETHSTETH-A)
+// interface VatLike {
+//     function Line() external view returns (uint256);
+//     function file(bytes32 what, uint256 data) external;
+// }
 
 interface RwaLiquidationLike {
-    function ilks(bytes32) external view returns (string memory doc, address pip, uint48 tau, uint48 toc);
-    function init(bytes32 ilk, uint256 val, string memory doc, uint48 tau) external;
     function bump(bytes32 ilk, uint256 val) external;
 }
 
@@ -54,12 +52,12 @@ contract DssSpellAction is DssAction {
     uint256 internal constant THREE_PT_THREE_THREE_PCT_RATE = 1000000001038735548426731741;
     uint256 internal constant THREE_PT_FIVE_EIGHT_PCT_RATE  = 1000000001115362602336059074;
     uint256 internal constant FOUR_PT_ZERO_EIGHT_PCT_RATE   = 1000000001268063427242299977;
-    uint256 internal constant FIVE_PT_PCT_RATE              = 1000000001547125957863212448;
+    uint256 internal constant FIVE_PCT_RATE                 = 1000000001547125957863212448;
     uint256 internal constant FIVE_PT_TWO_FIVE_PCT_RATE     = 1000000001622535724756171269;
     uint256 internal constant FIVE_PT_FIVE_FIVE_PCT_RATE    = 1000000001712791360746325100;
-    uint256 internal constant FIVE_PT_EIGHT_ZERO_PCT_RATE   = 1000000001787808646832390371;
-    uint256 internal constant SIX_PT_THREE_ZERO_PCT_RATE    = 1000000001937312893803622469;
-    uint256 internal constant SEVEN_PT_PCT_RATE             = 1000000002145441671308778766;
+    uint256 internal constant FIVE_PT_EIGHT_PCT_RATE        = 1000000001787808646832390371;
+    uint256 internal constant SIX_PT_THREE_PCT_RATE         = 1000000001937312893803622469;
+    uint256 internal constant SEVEN_PCT_RATE                = 1000000002145441671308778766;
 
     // ---------- Math ----------
     uint256 internal constant THOUSAND = 10 ** 3;
@@ -73,6 +71,7 @@ contract DssSpellAction is DssAction {
     address internal immutable MCD_FLAP           = DssExecLib.flap();
 
     // ---------- CRVV1ETHSTETH-A 2nd Stage Offboarding ----------
+    // NOTE: ignore on goerli (since there is no CRVV1ETHSTETH-A)
     // VatLike internal immutable vat = VatLike(DssExecLib.vat());
 
     // ---------- New Silver Parameter Changes ----------
@@ -83,7 +82,7 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/request-for-gov12-1-2-edit-to-the-stability-scope-to-quickly-modify-enhanced-dsr-based-on-observed-data/21581
 
         // Reduce DSR by 3% from 8% to 5%
-        DssExecLib.setDSR(FIVE_PT_PCT_RATE, /* doDrip = */ true);
+        DssExecLib.setDSR(FIVE_PCT_RATE, /* doDrip = */ true);
 
         // ---------- DSR-based Stability Fee Updates ----------
         // Forum: https://forum.makerdao.com/t/request-for-gov12-1-2-edit-to-the-stability-scope-to-quickly-modify-enhanced-dsr-based-on-observed-data/21581
@@ -101,16 +100,16 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkStabilityFee("WSTETH-A", FIVE_PT_TWO_FIVE_PCT_RATE, /* doDrip = */ true);
 
         // Increase WSTETH-B SF by 1.81% from 3.19% to 5.00%
-        DssExecLib.setIlkStabilityFee("WSTETH-B", FIVE_PT_PCT_RATE, /* doDrip = */ true);
+        DssExecLib.setIlkStabilityFee("WSTETH-B", FIVE_PCT_RATE, /* doDrip = */ true);
 
         // Increase RETH-A SF by 1.81% from 3.44% to 5.25%
         DssExecLib.setIlkStabilityFee("RETH-A", FIVE_PT_TWO_FIVE_PCT_RATE, /* doDrip = */ true);
 
         // Increase WBTC-A SF by 0.11% from 5.69% to 5.80%
-        DssExecLib.setIlkStabilityFee("WBTC-A", FIVE_PT_EIGHT_ZERO_PCT_RATE, /* doDrip = */ true);
+        DssExecLib.setIlkStabilityFee("WBTC-A", FIVE_PT_EIGHT_PCT_RATE, /* doDrip = */ true);
 
         // Increase WBTC-B SF by 0.11% from 6.19% to 6.30%
-        DssExecLib.setIlkStabilityFee("WBTC-B", SIX_PT_THREE_ZERO_PCT_RATE, /* doDrip = */ true);
+        DssExecLib.setIlkStabilityFee("WBTC-B", SIX_PT_THREE_PCT_RATE, /* doDrip = */ true);
 
         // Increase WBTC-C SF by 0.11% from 5.44% to 5.55%
         DssExecLib.setIlkStabilityFee("WBTC-C", FIVE_PT_FIVE_FIVE_PCT_RATE, /* doDrip = */ true);
@@ -135,6 +134,8 @@ contract DssSpellAction is DssAction {
         // Increase WSTETH-B line by 500 million DAi from 500 million DAI to 1 billion DAI
         // Increase WSTETH-B gap by 15 million DAI from 30 million DAI to 45 million DAI
         // Reduce WSTETH-B ttl by 14,400 seconds from 57,600 seconds to 43,200 seconds
+        // Forum: https://forum.makerdao.com/t/non-scope-defined-parameter-changes-wsteth-b-dc-iam/21568
+        // Poll: https://vote.makerdao.com/polling/QmPxbrBZ#poll-detail
         DssExecLib.setIlkAutoLineParameters("WSTETH-B", 1 * BILLION, 45 * MILLION, 12 hours);
 
         // Increase RETH-A line by 25 million DAI from 50 million DAI to 75 million DAI
@@ -143,7 +144,7 @@ contract DssSpellAction is DssAction {
         // ---------- CRVV1ETHSTETH-A 2nd Stage Offboarding ----------
         // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-4/21567#crvv1ethsteth-a-offboarding-parameters-13
         // Mip: https://mips.makerdao.com/mips/details/MIP104#14-3-native-vault-engine
-        // NOTE: ignore on goerli (since there is no CRVV1ETHSTETH-A there)
+        // NOTE: ignore on goerli (since there is no CRVV1ETHSTETH-A)
 
         // Set chop to 0%
         // DssExecLib.setIlkLiquidationPenalty("CRVV1ETHSTETH-A", 0);
@@ -158,7 +159,7 @@ contract DssSpellAction is DssAction {
         // NOTE: We are using low level methods because DssExecLib only allows setting `mat < 1000%`: https://github.com/makerdao/dss-exec-lib/blob/69b658f35d8618272cd139dfc18c5713caf6b96b/src/DssExecLib.sol#L717
         // DssExecLib.setValue(MCD_SPOT, "CRVV1ETHSTETH-A", "mat", 100 * RAY);
 
-        // NOTE: Update spotter price
+        // NOTE: Update collateral price to propagate the changes
         // DssExecLib.updateCollateralPrice("CRVV1ETHSTETH-A");
 
         // Reduce Global Debt Ceiling by 100 million DAI to account for offboarded collateral
@@ -189,9 +190,6 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/rwa-002-new-silver-restructuring-risk-and-legal-assessment/21417
         // Poll: https://vote.makerdao.com/polling/QmaU1eaD#poll-detail
 
-        // Reduce Liquidation Ratio by 5% from 105% to 100%
-        DssExecLib.setIlkLiquidationRatio("RWA002-A", 100_00);
-
         // Increase RWA002-A Debt Ceiling by 30 million DAI from 20 million DAI to 50 million DAI
         DssExecLib.increaseIlkDebtCeiling(
             "RWA002-A",
@@ -200,7 +198,11 @@ contract DssSpellAction is DssAction {
         );
 
         // Increase RWA002-A Stability Fee by 3.5% from 3.5% to 7%
-        DssExecLib.setIlkStabilityFee("RWA002-A", SEVEN_PT_PCT_RATE, /* doDrip = */ true);
+        DssExecLib.setIlkStabilityFee("RWA002-A", SEVEN_PCT_RATE, /* doDrip = */ true);
+
+        // Reduce Liquidation Ratio by 5% from 105% to 100%
+        // Forum: https://forum.makerdao.com/t/notice-of-executive-vote-date-change-and-housekeeping-changes/21613
+        DssExecLib.setIlkLiquidationRatio("RWA002-A", 100_00);
 
         // Bump Oracle price to account for new DC and SF
         // NOTE: the formula is `Debt ceiling * [ (1 + RWA stability fee ) ^ (minimum deal duration in years) ] * liquidation ratio`
@@ -208,8 +210,10 @@ contract DssSpellAction is DssAction {
         // bc -l <<< 'scale=18; 50000000 * e(l(1.07) * (3342/365)) * 1.00' | cast --to-wei
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).bump(
             "RWA002-A",
-            92_899_356 * WAD
+            92_899_355_926924134500000000
         );
+
+        // NOTE: Update collateral price to propagate the changes
         DssExecLib.updateCollateralPrice("RWA002-A");
 
         // ---------- Transfer Spark Proxy Admin Controls ----------

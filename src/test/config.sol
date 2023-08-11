@@ -1227,7 +1227,7 @@ contract Config {
             line:         50 * MILLION,
             dust:         0,
             pct:          7_00,
-            mat:          10500,
+            mat:          100_00,
             liqType:      "",
             liqOn:        false,
             chop:         0,
