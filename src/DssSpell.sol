@@ -137,23 +137,10 @@ contract DssSpellAction is DssAction {
         // NOTE: ignore on goerli (since there is no CRVV1ETHSTETH-A)
 
         // Set chop to 0%
-        // DssExecLib.setIlkLiquidationPenalty("CRVV1ETHSTETH-A", 0);
-
         // Set tip to 0%
-        // DssExecLib.setKeeperIncentiveFlatRate("CRVV1ETHSTETH-A", 0);
-
         // Set chip to 0%
-        // DssExecLib.setKeeperIncentivePercent("CRVV1ETHSTETH-A", 0);
-
         // Set Liquidation Ratio to 10,000%
-        // NOTE: We are using low level methods because DssExecLib only allows setting `mat < 1000%`: https://github.com/makerdao/dss-exec-lib/blob/69b658f35d8618272cd139dfc18c5713caf6b96b/src/DssExecLib.sol#L717
-        // DssExecLib.setValue(MCD_SPOT, "CRVV1ETHSTETH-A", "mat", 100 * RAY);
-
-        // NOTE: Update collateral price to propagate the changes
-        // DssExecLib.updateCollateralPrice("CRVV1ETHSTETH-A");
-
         // Reduce Global Debt Ceiling by 100 million DAI to account for offboarded collateral
-        // vat.file("Line", vat.Line() - 100 * MILLION * RAD);
 
         // ---------- Aligned Delegate Compensation for July 2023 ----------
         // Forum: https://forum.makerdao.com/t/july-2023-aligned-delegate-compensation/21632
