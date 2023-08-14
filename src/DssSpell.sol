@@ -44,6 +44,10 @@ interface RwaLiquidationLike {
     function bump(bytes32 ilk, uint256 val) external;
 }
 
+interface ProxyLike {
+    function exec(address target, bytes calldata args) external payable returns (bytes memory out);
+}
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -95,6 +99,7 @@ contract DssSpellAction is DssAction {
     // ---------- New Silver Parameter Changes ----------
     address internal immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
 
+    // ---------- Transfer Spark Proxy Admin Controls ----------
     // Contracts pulled from Spark official deployment repository
     // https://github.com/marsfoundation/sparklend/blob/ca2b72af7c5fb790cc91eaca5d8d4c83fa37e74b/script/output/5/primary-latest.json
     // Spark Proxy: https://github.com/marsfoundation/sparklend/blob/ca2b72af7c5fb790cc91eaca5d8d4c83fa37e74b/script/output/5/primary-sce-latest.json#L2
@@ -108,6 +113,9 @@ contract DssSpellAction is DssAction {
     address internal constant SPARK_POOL_ADDRESS_PROVIDER          = 0x026a5B6114431d8F3eF2fA0E1B2EDdDccA9c540E;
     address internal constant SPARK_POOL_ADDRESS_PROVIDER_REGISTRY = 0x1ad570fDEA255a3c1d8Cf56ec76ebA2b7bFDFfea;
     address internal constant SPARK_EMISSION_MANAGER               = 0xA7F8A757C4f7696c015B595F51B2901AC0121B18;
+
+    // ---------- Trigger Spark Proxy Spell ----------
+    address internal constant SPARK_SPELL    = 0x13176Ad78eC3d2b6E32908B019D0F772EC0b4dFd;
 
     function actions() public override {
         // ---------- EDSR Update ----------
@@ -246,6 +254,9 @@ contract DssSpellAction is DssAction {
         DssExecLib.updateCollateralPrice("RWA002-A");
 
         // ---------- Transfer Spark Proxy Admin Controls ----------
+        // Forum: https://forum.makerdao.com/t/phoenix-labs-proposed-changes-for-spark-for-august-18th-spell/21612
+        // Poll: https://vote.makerdao.com/polling/Qmc9fd3j
+
         TransferOwnershipLike(SPARK_TREASURY_CONTROLLER).transferOwnership(SPARK_PROXY);
         ChangeAdminLike(SPARK_TREASURY).changeAdmin(SPARK_PROXY);
         ChangeAdminLike(SPARK_TREASURY_DAI).changeAdmin(SPARK_PROXY);
@@ -263,6 +274,10 @@ contract DssSpellAction is DssAction {
         TransferOwnershipLike(SPARK_EMISSION_MANAGER).transferOwnership(SPARK_PROXY);
 
         // ---------- Trigger Spark Proxy Spell ----------
+        // Forum: https://forum.makerdao.com/t/phoenix-labs-proposed-changes-for-spark-for-august-18th-spell/21612
+
+        // Goerli - 0x13176ad78ec3d2b6e32908b019d0f772ec0b4dfd
+        ProxyLike(SPARK_PROXY).exec(SPARK_SPELL, abi.encodeWithSignature("execute()"));
     }
 }
 

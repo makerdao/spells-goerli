@@ -599,15 +599,15 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     // Spark Tests
-    function testSparkSpellIsExecuted() private { // make private to disable
-        address SUBPROXY_SPARK = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
-        address SPARK_SPELL    = address(0); // Insert spell address here
+    function testSparkSpellIsExecuted() public { // make private to disable
+        address SPARK_PROXY    = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
+        address SPARK_SPELL    = 0x13176Ad78eC3d2b6E32908B019D0F772EC0b4dFd;
 
         vm.expectCall(
-            SUBPROXY_SPARK,
+            SPARK_PROXY,
             /* value = */ 0,
             abi.encodeCall(
-                ProxyLike(SUBPROXY_SPARK).exec,
+                ProxyLike(SPARK_PROXY).exec,
                 (SPARK_SPELL, abi.encodeWithSignature("execute()"))
             )
         );
