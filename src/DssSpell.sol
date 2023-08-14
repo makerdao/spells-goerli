@@ -32,6 +32,13 @@ contract DssSpellAction is DssAction {
         return false;
     }
 
+    // ---------- DAO Resolution for BlockTower Andromeda ----------
+    // Forum: https://forum.makerdao.com/t/dao-resolution-to-facilitate-onboarding-of-taco-with-additional-third-parties/21572
+    // Forum: https://forum.makerdao.com/t/dao-resolution-to-facilitate-onboarding-of-taco-with-additional-third-parties/21572/2
+
+    // Include IPFS hash QmUNrCwKK2iK2ki5Spn97jrTCDKqFjDZWKk3wxQ2psgMP5 (not a `doc` update)
+    string public constant dao_resolution_for_blocktower_andromeda = "QmUNrCwKK2iK2ki5Spn97jrTCDKqFjDZWKk3wxQ2psgMP5";
+
     // ---------- Rates ----------
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -201,12 +208,6 @@ contract DssSpellAction is DssAction {
 
         // NOTE: Update collateral price to propagate the changes
         DssExecLib.updateCollateralPrice("RWA002-A");
-
-        // ---------- DAO Resolution for BlockTower Andromeda ----------
-        // Forum: https://forum.makerdao.com/t/dao-resolution-to-facilitate-onboarding-of-taco-with-additional-third-parties/21572
-        // Forum: https://forum.makerdao.com/t/dao-resolution-to-facilitate-onboarding-of-taco-with-additional-third-parties/21572/2
-
-        // Include IPFS hash QmUNrCwKK2iK2ki5Spn97jrTCDKqFjDZWKk3wxQ2psgMP5 (not a `doc` update)
 
         // ---------- Transfer Spark Proxy Admin Controls ----------
 
