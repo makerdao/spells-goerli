@@ -19,12 +19,6 @@ pragma solidity 0.8.16;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-// NOTE: ignore on goerli (since there is no CRVV1ETHSTETH-A)
-// interface VatLike {
-//     function Line() external view returns (uint256);
-//     function file(bytes32 what, uint256 data) external;
-// }
-
 interface RwaLiquidationLike {
     function bump(bytes32 ilk, uint256 val) external;
 }
@@ -69,10 +63,6 @@ contract DssSpellAction is DssAction {
     // ---------- Smart Burn Engine Parameter Updates ----------
     address internal immutable MCD_VOW            = DssExecLib.vow();
     address internal immutable MCD_FLAP           = DssExecLib.flap();
-
-    // ---------- CRVV1ETHSTETH-A 2nd Stage Offboarding ----------
-    // NOTE: ignore on goerli (since there is no CRVV1ETHSTETH-A)
-    // VatLike internal immutable vat = VatLike(DssExecLib.vat());
 
     // ---------- New Silver Parameter Changes ----------
     address internal immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
@@ -175,14 +165,14 @@ contract DssSpellAction is DssAction {
         // TRUE NAME - 29.76 MKR - 0x612f7924c367575a0edf21333d96b15f1b345a5d
         // UPMaker - 29.76 MKR - 0xbb819df169670dc71a16f58f55956fe642cc6bcd
         // vigilant - 29.76 MKR - 0x2474937cB55500601BCCE9f4cb0A0A72Dc226F61
+        // WBC - 14.82 MKR - 0xeBcE83e491947aDB1396Ee7E55d3c81414fB0D47
         // PALC - 13.89 MKR - 0x78Deac4F87BD8007b9cb56B8d53889ed5374e83A
         // Navigator - 11.24 MKR - 0x11406a9CC2e37425F15f920F494A51133ac93072
         // PBG - 9.92 MKR - 0x8D4df847dB7FfE0B46AF084fE031F7691C6478c2
         // VoteWizard - 9.92 MKR - 0x9E72629dF4fcaA2c2F5813FbbDc55064345431b1
         // Libertas - 9.92 MKR - 0xE1eBfFa01883EF2b4A9f59b587fFf1a5B44dbb2f
-        // WBC - 8.14 MKR - 0xeBcE83e491947aDB1396Ee7E55d3c81414fB0D47
         // Harmony - 8.93 MKR - 0xF4704Aa4Ad22cAA2A3Dd7A7C529B4C32f7A421F2
-        // JAG - 7.61 MKR - 0x58d1ec57e4294e4fe650d1cb12b96ae34349556f
+        // JAG - 7.61 MKR - 0x58D1ec57E4294E4fe650D1CB12b96AE34349556f
         // Cloaky - 4.30 MKR - 0x869b6d5d8FA7f4FFdaCA4D23FFE0735c5eD1F818
         // Skynet - 3.64 MKR - 0xd4d1A446cD5976a11bd32D3e815A9F85FED2F9F3
 
@@ -191,17 +181,9 @@ contract DssSpellAction is DssAction {
         // NOTE: ignore on goerli
 
         // Remove DIRECT-AAVEV2-DAI from autoline
-        // DssExecLib.removeIlkFromAutoLine("DIRECT-AAVEV2-DAI");
-
         // Set DIRECT-AAVEV2-DAI Debt Ceiling to 0
-        // DssExecLib.setIlkDebtCeiling("DIRECT-AAVEV2-DAI", 0);
-
         // Remove DIRECT-COMPV2-DAI from autoline
-        // DssExecLib.removeIlkFromAutoLine("DIRECT-COMPV2-DAI");
-
         // Set DIRECT-COMPV2-DAI Debt Ceiling to 0
-        // DssExecLib.setIlkDebtCeiling("DIRECT-COMPV2-DAI", 0);
-
         // Reduce Global Debt Ceiling? Yes
 
         // ---------- New Silver Parameter Changes ----------
