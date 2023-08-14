@@ -60,6 +60,25 @@ interface ProxyLike {
     function exec(address target, bytes calldata args) external payable returns (bytes memory out);
 }
 
+interface TransferOwnershipLike {
+    function owner() external view returns (address);
+}
+
+interface ChangeAdminLike {
+    function admin() external view returns (address);
+}
+
+interface ACLManagerLike {
+    function DEFAULT_ADMIN_ROLE() external view returns (bytes32);
+    function isEmergencyAdmin(address admin) external view returns (bool);
+    function isPoolAdmin(address admin) external view returns (bool);
+    function hasRole(bytes32 role, address account) external view returns (bool);
+}
+
+interface PoolAddressProviderLike {
+    function getACLAdmin() external view returns (address);
+}
+
 contract DssSpellTest is DssSpellTestBase {
     using stdStorage for StdStorage;
 
@@ -596,5 +615,72 @@ contract DssSpellTest is DssSpellTestBase {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
+    }
+
+    function testSparkAdminTransfer() public {
+        address SPARK_PROXY                          = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
+        address SPARK_TREASURY_CONTROLLER            = 0x98e6BcBA7d5daFbfa4a92dAF08d3d7512820c30C;
+        address SPARK_TREASURY                       = 0x0D56700c90a690D8795D6C148aCD94b12932f4E3;
+        address SPARK_TREASURY_DAI                   = 0x44816381990B6613c7A96ca1937f3902D8eA3F5b;
+        address SPARK_INCENTIVES                     = 0xF028c2F4b19898718fD0F77b9b881CbfdAa5e8Bb;
+        address SPARK_WETH_GATEWAY                   = 0xe6fC577E87F7c977c4393300417dCC592D90acF8;
+        address SPARK_ACL_MANAGER                    = 0xb137E7d16564c81ae2b0C8ee6B55De81dd46ECe5;
+        address SPARK_POOL_ADDRESS_PROVIDER          = 0x026a5B6114431d8F3eF2fA0E1B2EDdDccA9c540E;
+        address SPARK_POOL_ADDRESS_PROVIDER_REGISTRY = 0x1ad570fDEA255a3c1d8Cf56ec76ebA2b7bFDFfea;
+        address SPARK_EMISSION_MANAGER               = 0xA7F8A757C4f7696c015B595F51B2901AC0121B18;
+
+        bytes32 defaultAdminRole = ACLManagerLike(SPARK_ACL_MANAGER).DEFAULT_ADMIN_ROLE();
+
+        assertEq(TransferOwnershipLike(SPARK_TREASURY_CONTROLLER).owner(), pauseProxy);
+
+        // Transparent proxy dictates that admin() function is only exposed to the admin
+        vm.startPrank(pauseProxy);
+
+        assertEq(ChangeAdminLike(SPARK_TREASURY).admin(),     pauseProxy);
+        assertEq(ChangeAdminLike(SPARK_TREASURY_DAI).admin(), pauseProxy);
+        assertEq(ChangeAdminLike(SPARK_INCENTIVES).admin(),   pauseProxy);
+
+        vm.stopPrank();
+
+        assertTrue(ACLManagerLike(SPARK_ACL_MANAGER).isEmergencyAdmin(pauseProxy));
+        assertTrue(!ACLManagerLike(SPARK_ACL_MANAGER).isEmergencyAdmin(SPARK_PROXY));
+        assertTrue(ACLManagerLike(SPARK_ACL_MANAGER).isPoolAdmin(pauseProxy));
+        assertTrue(ACLManagerLike(SPARK_ACL_MANAGER).isPoolAdmin(SPARK_PROXY));     // Already added from previous spell
+        assertTrue(ACLManagerLike(SPARK_ACL_MANAGER).hasRole(defaultAdminRole, pauseProxy));
+        assertTrue(!ACLManagerLike(SPARK_ACL_MANAGER).hasRole(defaultAdminRole, SPARK_PROXY));
+
+        assertEq(TransferOwnershipLike(SPARK_WETH_GATEWAY).owner(),                   pauseProxy);
+        assertEq(PoolAddressProviderLike(SPARK_POOL_ADDRESS_PROVIDER).getACLAdmin(),  pauseProxy);
+        assertEq(TransferOwnershipLike(SPARK_POOL_ADDRESS_PROVIDER).owner(),          pauseProxy);
+        assertEq(TransferOwnershipLike(SPARK_POOL_ADDRESS_PROVIDER_REGISTRY).owner(), pauseProxy);
+        assertEq(TransferOwnershipLike(SPARK_EMISSION_MANAGER).owner(),               pauseProxy);
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(TransferOwnershipLike(SPARK_TREASURY_CONTROLLER).owner(), SPARK_PROXY);
+
+        // Transparent proxy dictates that admin() function is only exposed to the admin
+        vm.startPrank(SPARK_PROXY);
+
+        assertEq(ChangeAdminLike(SPARK_TREASURY).admin(), SPARK_PROXY);
+        assertEq(ChangeAdminLike(SPARK_TREASURY_DAI).admin(), SPARK_PROXY);
+        assertEq(ChangeAdminLike(SPARK_INCENTIVES).admin(), SPARK_PROXY);
+
+        vm.stopPrank();
+
+        assertTrue(!ACLManagerLike(SPARK_ACL_MANAGER).isEmergencyAdmin(pauseProxy));
+        assertTrue(ACLManagerLike(SPARK_ACL_MANAGER).isEmergencyAdmin(SPARK_PROXY));
+        assertTrue(!ACLManagerLike(SPARK_ACL_MANAGER).isPoolAdmin(pauseProxy));
+        assertTrue(ACLManagerLike(SPARK_ACL_MANAGER).isPoolAdmin(SPARK_PROXY));
+        assertTrue(!ACLManagerLike(SPARK_ACL_MANAGER).hasRole(defaultAdminRole, pauseProxy));
+        assertTrue(ACLManagerLike(SPARK_ACL_MANAGER).hasRole(defaultAdminRole, SPARK_PROXY));
+
+        assertEq(TransferOwnershipLike(SPARK_WETH_GATEWAY).owner(),                   SPARK_PROXY);
+        assertEq(PoolAddressProviderLike(SPARK_POOL_ADDRESS_PROVIDER).getACLAdmin(),  SPARK_PROXY);
+        assertEq(TransferOwnershipLike(SPARK_POOL_ADDRESS_PROVIDER).owner(),          SPARK_PROXY);
+        assertEq(TransferOwnershipLike(SPARK_POOL_ADDRESS_PROVIDER_REGISTRY).owner(), SPARK_PROXY);
+        assertEq(TransferOwnershipLike(SPARK_EMISSION_MANAGER).owner(),               SPARK_PROXY);
     }
 }
