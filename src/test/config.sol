@@ -111,15 +111,15 @@ contract Config {
         // Values for all system configuration changes
         //
         afterSpell.line_offset =           500 * MILLION;           // Offset between the global line against the sum of local lines
-        afterSpell.pot_dsr =               8_00;                    // In basis points
+        afterSpell.pot_dsr =               5_00;                    // In basis points
         afterSpell.pause_delay =           60 seconds;              // In seconds
         afterSpell.vow_wait =              156 hours;               // In seconds
         afterSpell.vow_dump =              250;                     // In whole Dai units
         afterSpell.vow_sump =              50 * THOUSAND;           // In whole Dai units
-        afterSpell.vow_bump =              5 * THOUSAND;            // In whole Dai units
+        afterSpell.vow_bump =              20 * THOUSAND;            // In whole Dai units
         afterSpell.vow_hump_min =          50 * MILLION;            // In whole Dai units
         afterSpell.vow_hump_max =          50 * MILLION;            // In whole Dai units
-        afterSpell.flap_hop =              1577 seconds;            // In seconds
+        afterSpell.flap_hop =              6308 seconds;            // In seconds
         afterSpell.flap_want =             9800;                    // In basis points
         afterSpell.cat_box =               20 * MILLION;            // In whole Dai units
         afterSpell.dog_Hole =              70 * MILLION;            // In whole Dai units
@@ -146,7 +146,7 @@ contract Config {
             aL_ttl:       6 hours,         // In seconds
             line:         0,               // In whole Dai units  // Not checked here as there is auto line
             dust:         7_500,           // In whole Dai units
-            pct:          3_44,            // In basis points
+            pct:          3_58,            // In basis points
             mat:          14500,           // In basis points
             liqType:      "clip",          // "" or "flip" or "clip"
             liqOn:        true,            // If liquidations are enabled
@@ -176,7 +176,7 @@ contract Config {
             aL_ttl:       6 hours,
             line:         0,
             dust:         25 * THOUSAND,
-            pct:          3_94,
+            pct:          4_08,
             mat:          13000,
             liqType:      "clip",
             liqOn:        true,
@@ -206,7 +206,7 @@ contract Config {
             aL_ttl:       8 hours,
             line:         0,
             dust:         3_500,
-            pct:          3_19,
+            pct:          3_33,
             mat:          17000,
             liqType:      "clip",
             liqOn:        true,
@@ -326,7 +326,7 @@ contract Config {
             aL_ttl:       24 hours,
             line:         0,
             dust:         7_500,
-            pct:          5_69,
+            pct:          5_80,
             mat:          14500,
             liqType:      "clip",
             liqOn:        true,
@@ -356,7 +356,7 @@ contract Config {
             aL_ttl:       24 hours,
             line:         0,
             dust:         25 * THOUSAND,
-            pct:          6_19,
+            pct:          6_30,
             mat:          13000,
             liqType:      "clip",
             liqOn:        true,
@@ -386,7 +386,7 @@ contract Config {
             aL_ttl:       24 hours,
             line:         0,
             dust:         3_500,
-            pct:          5_44,
+            pct:          5_55,
             mat:          17500,
             liqType:      "clip",
             liqOn:        true,
@@ -1224,10 +1224,10 @@ contract Config {
             aL_line:      0,
             aL_gap:       0,
             aL_ttl:       0,
-            line:         20 * MILLION,
+            line:         50 * MILLION,
             dust:         0,
-            pct:          350,
-            mat:          10500,
+            pct:          7_00,
+            mat:          100_00,
             liqType:      "",
             liqOn:        false,
             chop:         0,
@@ -1731,12 +1731,12 @@ contract Config {
         });
         afterSpell.collaterals["WSTETH-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      500 * MILLION,
+            aL_line:      750 * MILLION,
             aL_gap:       30 * MILLION,
             aL_ttl:       12 hours,
             line:         0,
             dust:         7_500,
-            pct:          3_44,
+            pct:          5_25,
             mat:          150_00,
             liqType:      "clip",
             liqOn:        true,
@@ -1761,12 +1761,12 @@ contract Config {
         });
         afterSpell.collaterals["WSTETH-B"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      500 * MILLION,
-            aL_gap:       30 * MILLION,
-            aL_ttl:       16 hours,
+            aL_line:      1 * BILLION,
+            aL_gap:       45 * MILLION,
+            aL_ttl:       12 hours,
             line:         0,
             dust:         3_500,
-            pct:          3_19,
+            pct:          5_00,
             mat:          175_00,
             liqType:      "clip",
             liqOn:        true,
@@ -1970,12 +1970,12 @@ contract Config {
         });
         afterSpell.collaterals["RETH-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      50 * MILLION,
+            aL_line:      75 * MILLION,
             aL_gap:       5 * MILLION,
             aL_ttl:       8 hours,
             line:         0,
             dust:         7_500,
-            pct:          3_44,
+            pct:          5_25,
             mat:          150_00,
             liqType:      "clip",
             liqOn:        true,
