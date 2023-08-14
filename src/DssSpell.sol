@@ -37,7 +37,8 @@ contract DssSpellAction is DssAction {
     // Forum: https://forum.makerdao.com/t/dao-resolution-to-facilitate-onboarding-of-taco-with-additional-third-parties/21572/2
 
     // Include IPFS hash QmUNrCwKK2iK2ki5Spn97jrTCDKqFjDZWKk3wxQ2psgMP5 (not a `doc` update)
-    string public constant dao_resolution_for_blocktower_andromeda = "QmUNrCwKK2iK2ki5Spn97jrTCDKqFjDZWKk3wxQ2psgMP5";
+    // NOTE: by the previous convention it should be a comma-separated list of DAO resolutions IPFS hashes
+    string public constant dao_resolutions = "QmUNrCwKK2iK2ki5Spn97jrTCDKqFjDZWKk3wxQ2psgMP5";
 
     // ---------- Rates ----------
     // Many of the settings that change weekly rely on the rate accumulator
