@@ -97,6 +97,7 @@ contract DssSpellAction is DssAction {
 
     // Contracts pulled from Spark official deployment repository
     // https://github.com/marsfoundation/sparklend/blob/ca2b72af7c5fb790cc91eaca5d8d4c83fa37e74b/script/output/5/primary-latest.json
+    // Spark Proxy: https://github.com/marsfoundation/sparklend/blob/ca2b72af7c5fb790cc91eaca5d8d4c83fa37e74b/script/output/5/primary-sce-latest.json#L2
     address internal constant SPARK_PROXY                          = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
     address internal constant SPARK_TREASURY_CONTROLLER            = 0x98e6BcBA7d5daFbfa4a92dAF08d3d7512820c30C;
     address internal constant SPARK_TREASURY                       = 0x0D56700c90a690D8795D6C148aCD94b12932f4E3;
