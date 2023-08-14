@@ -57,7 +57,6 @@ contract DssSpellAction is DssAction {
     uint256 internal constant THOUSAND = 10 ** 3;
     uint256 internal constant MILLION  = 10 ** 6;
     uint256 internal constant BILLION  = 10 ** 9;
-    uint256 internal constant WAD      = 10 ** 18;
     uint256 internal constant RAD      = 10 ** 45;
 
     // ---------- Smart Burn Engine Parameter Updates ----------
