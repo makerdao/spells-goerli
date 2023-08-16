@@ -4,6 +4,7 @@ import { Contract, ethers } from 'ethers';
 
 const NETWORK_ID = 5;
 const CHIEF_ADDRESS = '0x33Ed584fc655b08b2bca45E1C5b5f07c98053bC1';
+const CHIEF_HAT_SLOT = 12;
 const DEFAULT_TRANSACTION_PARAMETERS = { gasLimit: 1000000000 };
 
 // check env vars
@@ -23,11 +24,7 @@ const makeTenderlyApiRequest = async function (path) {
     return await axios.post(
         `${API_BASE}${path}`,
         { network_id: NETWORK_ID },
-        {
-            headers: {
-                'X-Access-Key': process.env.TENDERLY_ACCESS_KEY,
-            },
-        }
+        { headers: { 'X-Access-Key': process.env.TENDERLY_ACCESS_KEY } }
     );
 };
 
@@ -54,7 +51,7 @@ const runSpell = async function () {
     console.info('getting the hat...');
     await provider.send('tenderly_setStorageAt', [
         CHIEF_ADDRESS,
-        ethers.utils.hexZeroPad(ethers.utils.hexValue(12), 32),
+        ethers.utils.hexZeroPad(ethers.utils.hexValue(CHIEF_HAT_SLOT), 32),
         ethers.utils.hexZeroPad(SPELL_ADDRESS, 32),
     ]);
 
@@ -79,7 +76,7 @@ const runSpell = async function () {
 
     console.info('casting spell on a fork...');
     const castTx = await spell.cast(DEFAULT_TRANSACTION_PARAMETERS);
-    const receipt = await castTx.wait();
+    await castTx.wait();
     console.info('successfully casted');
 
     const lastTransactionId = await provider.send('evm_snapshot', []);
