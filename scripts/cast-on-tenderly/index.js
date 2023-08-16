@@ -69,7 +69,7 @@ const runSpell = async function () {
     const castTx = await spell.cast(DEFAULT_TRANSACTION_PARAMETERS);
     await castTx.wait();
 
-    console.info('sucessfully casted');
+    console.info('successfully casted');
 };
 
 runSpell();
