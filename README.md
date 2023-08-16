@@ -60,6 +60,6 @@ $ make deploy
 2. Create Tenderly access token https://dashboard.tenderly.co/account/authorization
     - Note down `TENDERLY_ACCESS_KEY` values
 3. Export env vars specified above or create `scripts/cast-on-tenderly/.env` file with them
-4. Execute `make cast-on-tenderly spell=0x...`, with the address of the actual spell that hasn't yet casted
+4. Execute `make cast-on-tenderly spell=0x...`, with the address of the spell that hasn't been casted yet
     - The execution should finish with `successfully casted`
 5. Open the `publicly sharable url` printed into the console (it should require no credentials)
