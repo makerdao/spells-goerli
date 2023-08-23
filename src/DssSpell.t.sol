@@ -48,6 +48,10 @@ interface RwaInputConduitLike {
     function push() external;
 }
 
+interface ProxyLike {
+    function exec(address target, bytes calldata args) external payable returns (bytes memory out);
+}
+
 contract DssSpellTest is DssSpellTestBase {
     using stdStorage for StdStorage;
 
@@ -536,6 +540,25 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
 
+     // Spark Tests
+    function testSparkSpellIsExecuted() public { // make private to disable
+        address SPARK_PROXY    = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
+        address SPARK_SPELL    = 0xFBdB6C5596Fc958B432Bf1c99268C72B1515DFf0;
+
+        vm.expectCall(
+            SPARK_PROXY,
+            /* value = */ 0,
+            abi.encodeCall(
+                ProxyLike(SPARK_PROXY).exec,
+                (SPARK_SPELL, abi.encodeWithSignature("execute()"))
+            )
+        );
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+    }
+
     // RWA tests
 
     address RWA015_A_OPERATOR = addr.addr("RWA015_A_OPERATOR");
@@ -661,5 +684,4 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(dai.balanceOf(address(rwa015AUrn)), urnBalanceBefore + 1000 * 10**18, "PAX-Input-Conduit/Balance of the URN doesnt match");
         assertEq(dai.balanceOf(address(rwa015AJar)), jarBalanceBefore + 1000 * 10**18, "PAX-Input-Conduit/Balance of the JAR doesnt match");
     }
-
 }

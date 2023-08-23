@@ -28,6 +28,10 @@ interface RwaInputConduitLike {
     function file(bytes32 what, address data) external;
 }
 
+interface ProxyLike {
+    function exec(address target, bytes calldata args) external payable returns (bytes memory out);
+}
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -61,6 +65,13 @@ contract DssSpellAction is DssAction {
     address internal constant RWA015_A_INPUT_CONDUIT_JAR_GUSD = 0x0AaA36F5F87C767e9cE131cB5321446b2d9EF721;
     address internal constant RWA015_A_INPUT_CONDUIT_URN_PAX  = 0xd70d035F723fE739EaDD9D529987D0Aaa291a8FF;
     address internal constant RWA015_A_INPUT_CONDUIT_JAR_PAX  = 0xAd235C744C66d0850C04EDde69C83f977D6207d8;
+
+    // ---------- Spark Proxy ----------
+    // Spark Proxy: https://github.com/marsfoundation/sparklend/blob/d42587ba36523dcff24a4c827dc29ab71cd0808b/script/output/5/primary-sce-latest.json#L2
+    address internal constant SPARK_PROXY    = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
+
+    // ---------- Trigger Spark Proxy Spell ----------
+    address internal constant SPARK_SPELL    = 0xFBdB6C5596Fc958B432Bf1c99268C72B1515DFf0;
 
     function actions() public override {
         // ---------- Auth ESM on the Vow ----------
@@ -132,6 +143,10 @@ contract DssSpellAction is DssAction {
 
 
         // ---------- Trigger Spark Proxy Spell - Poll ongoing, can cofirm on 2023-08-24 ----------
+        // Forum: https://forum.makerdao.com/t/phoenix-labs-proposed-changes-for-spark-for-august-18th-spell/21612
+
+        // Goerli - 0x13176ad78ec3d2b6e32908b019d0f772ec0b4dfd
+        ProxyLike(SPARK_PROXY).exec(SPARK_SPELL, abi.encodeWithSignature("execute()"));
 
         // Bump Changelog
         DssExecLib.setChangelogVersion("1.16.0");
