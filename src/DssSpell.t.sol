@@ -640,8 +640,8 @@ contract DssSpellTest is DssSpellTestBase {
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        uint256 gusdAmt = 1000 * 10**2; 
-        uint256 paxAmt  = 1000 * 10**18; 
+        uint256 gusdAmt = 1000 * 10**2;
+        uint256 paxAmt  = 1000 * 10**18;
         uint256 urnBalanceBefore = dai.balanceOf(rwa015AUrn);
         uint256 jarBalanceBefore = dai.balanceOf(rwa015AJar);
 
