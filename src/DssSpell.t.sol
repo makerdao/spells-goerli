@@ -573,7 +573,6 @@ contract DssSpellTest is DssSpellTestBase {
     GemAbstract              gusd                       = GemAbstract(rwa015AInputConduitUrnGUSD.gem());
     GemAbstract              pax                        = GemAbstract(rwa015AInputConduitUrnPAX.gem());
 
-    // Note: This is an exception because of exceeding the `action` size in the spell. Main pattern is to have this checks in the spell itself
     function testRWA015_CONTRACT_DEPLOYMENT_SETUP() public {
         assertEq(rwa015AInputConduitUrnGUSD.psm(), addr.addr("MCD_PSM_GUSD_A"), "input-conduit-gusd-urn-psm-not-match");
         assertEq(rwa015AInputConduitUrnGUSD.to(),  address(rwa015AUrn),         "input-conduit-urn-gusd-to-not-match");

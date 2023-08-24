@@ -68,10 +68,10 @@ contract DssSpellAction is DssAction {
 
     // ---------- Spark Proxy ----------
     // Spark Proxy: https://github.com/marsfoundation/sparklend/blob/d42587ba36523dcff24a4c827dc29ab71cd0808b/script/output/5/primary-sce-latest.json#L2
-    address internal constant SPARK_PROXY    = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
+    address internal constant SPARK_PROXY = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
 
     // ---------- Trigger Spark Proxy Spell ----------
-    address internal constant SPARK_SPELL    = 0xFBdB6C5596Fc958B432Bf1c99268C72B1515DFf0;
+    address internal constant SPARK_SPELL = 0xFBdB6C5596Fc958B432Bf1c99268C72B1515DFf0;
 
     function actions() public override {
         // ---------- Auth ESM on the Vow ----------
