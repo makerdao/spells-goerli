@@ -559,6 +559,14 @@ contract DssSpellTest is DssSpellTestBase {
         assertTrue(spell.done());
     }
 
+    function testVowOsmRely() public {
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(vow.wards(address(esm)),      1, "VOW/ward-esm-not-set");
+    } 
+
     // RWA tests
 
     address RWA015_A_OPERATOR = addr.addr("RWA015_A_OPERATOR");
