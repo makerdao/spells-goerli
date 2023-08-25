@@ -135,7 +135,6 @@ contract DssSpellAction is DssAction {
         DssExecLib.setChangelogAddress("RWA015_A_INPUT_CONDUIT_JAR_USDC",  RWA015_A_INPUT_CONDUIT_JAR_USDC);
 
 
-
         // ---------- Chainlog Cleanup ----------
         // Discussion: https://github.com/makerdao/spells-mainnet/issues/354
 
@@ -146,16 +145,13 @@ contract DssSpellAction is DssAction {
         // Discussion: https://github.com/makerdao/spells-mainnet/issues/354
         // NOTE: Skip for goerli
 
-
         // ---------- Launch Project MKR Transfer ----------
         // Discussion: https://github.com/makerdao/spells-mainnet/issues/354
         // NOTE: Skip for goerli
 
-
         // ---------- Yank GovAlpha Budget Streams ----------
         // Forum: http://forum.makerdao.com/t/overlooked-vectors-for-post-shutdown-governance-attacks-postmortem/20696/5
         // NOTE: Skip for goerli
-
 
         // ---------- Trigger Spark Proxy Spell - Poll ongoing, can cofirm on 2023-08-24 ----------
         // Forum: https://forum.makerdao.com/t/phoenix-labs-proposed-changes-for-spark-for-august-18th-spell/21612

@@ -569,7 +569,7 @@ contract DssSpellTest is DssSpellTestBase {
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        assertEq(vow.wards(address(esm)),      1, "VOW/ward-esm-not-set");
+        assertEq(vow.wards(address(esm)), 1, "VOW/ward-esm-not-set");
     }
 
     // RWA tests
