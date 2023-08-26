@@ -99,9 +99,9 @@ contract Config {
         // Values for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:                 address(0x60115cd5AE6d08908f675b36062a8EFc01c73116),     // populate with deployed spell if deployed
-            deployed_spell_created:         1692969336,              // use `make deploy-info tx=<deployment-tx>` to obtain the timestamp
-            deployed_spell_block:           9578447,              // use `make deploy-info tx=<deployment-tx>` to obtain the block number
+            deployed_spell:                 address(0x914fcA0a40035d258aE89D53daD0D49a5135f90f),     // populate with deployed spell if deployed
+            deployed_spell_created:         1693046244,              // use `make deploy-info tx=<deployment-tx>` to obtain the timestamp
+            deployed_spell_block:           9583558,              // use `make deploy-info tx=<deployment-tx>` to obtain the block number
             previous_spells:                prevSpells,     // older spells to ensure are executed first
             office_hours_enabled:           false,          // true if officehours is expected to be enabled in the spell
             expiration_threshold:           30 days         // Amount of time before spell expires
@@ -116,7 +116,7 @@ contract Config {
         afterSpell.vow_wait =              156 hours;               // In seconds
         afterSpell.vow_dump =              250;                     // In whole Dai units
         afterSpell.vow_sump =              50 * THOUSAND;           // In whole Dai units
-        afterSpell.vow_bump =              20 * THOUSAND;            // In whole Dai units
+        afterSpell.vow_bump =              20 * THOUSAND;           // In whole Dai units
         afterSpell.vow_hump_min =          50 * MILLION;            // In whole Dai units
         afterSpell.vow_hump_max =          50 * MILLION;            // In whole Dai units
         afterSpell.flap_hop =              6308 seconds;            // In seconds
@@ -124,10 +124,10 @@ contract Config {
         afterSpell.cat_box =               20 * MILLION;            // In whole Dai units
         afterSpell.dog_Hole =              70 * MILLION;            // In whole Dai units
         afterSpell.esm_min =               150 * THOUSAND;          // In whole MKR units
-        afterSpell.pause_authority =       chief;                   // Pause authority
-        afterSpell.osm_mom_authority =     chief;                   // OsmMom authority
-        afterSpell.flipper_mom_authority = chief;                   // FlipperMom authority
-        afterSpell.clipper_mom_authority = chief;                   // ClipperMom authority
+        afterSpell.pause_authority =       chief;                 // Pause authority
+        afterSpell.osm_mom_authority =     chief;                 // OsmMom authority
+        afterSpell.flipper_mom_authority = address(0);              // FlipperMom authority
+        afterSpell.clipper_mom_authority = chief;                 // ClipperMom authority
         afterSpell.ilk_count =             63;                      // Num expected in system
         afterSpell.chainlog_version =      "1.16.0";                // String expected in system
 

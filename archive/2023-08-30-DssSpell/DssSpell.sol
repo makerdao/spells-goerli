@@ -36,13 +36,18 @@ interface ProxyLike {
     function exec(address target, bytes calldata args) external payable returns (bytes memory out);
 }
 
+interface FlliperMomLike {
+    function setOwner(address owner_) external;
+}
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
-    address internal immutable MCD_ESM  = DssExecLib.esm();
-    address internal immutable MCD_VOW  = DssExecLib.vow();
-    address internal immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
+    address internal immutable MCD_ESM                         = DssExecLib.esm();
+    address internal immutable MCD_VOW                         = DssExecLib.vow();
+    address internal immutable MCD_FLIPPER_MOM                 = DssExecLib.flipperMom();
+    address internal immutable MIP21_LIQUIDATION_ORACLE        = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
     address internal immutable RWA015_A_INPUT_CONDUIT_URN_USDC = DssExecLib.getChangelogAddress("RWA015_A_INPUT_CONDUIT_URN");
     address internal immutable RWA015_A_INPUT_CONDUIT_JAR_USDC = DssExecLib.getChangelogAddress("RWA015_A_INPUT_CONDUIT_JAR");
 
@@ -138,6 +143,10 @@ contract DssSpellAction is DssAction {
         // ---------- Chainlog Cleanup ----------
         // Discussion: https://github.com/makerdao/spells-mainnet/issues/354
 
+        // Deauth FlliperMom
+        DssExecLib.setAuthority(MCD_FLIPPER_MOM, address(0));
+        FlliperMomLike(MCD_FLIPPER_MOM).setOwner(address(0));
+
         ChainlogLike(DssExecLib.LOG).removeAddress("FLIPPER_MOM");
         ChainlogLike(DssExecLib.LOG).removeAddress("FLIP_FAB");
 
@@ -153,11 +162,10 @@ contract DssSpellAction is DssAction {
         // Forum: http://forum.makerdao.com/t/overlooked-vectors-for-post-shutdown-governance-attacks-postmortem/20696/5
         // NOTE: Skip for goerli
 
-        // ---------- Trigger Spark Proxy Spell - Poll ongoing, can cofirm on 2023-08-24 ----------
+        // ---------- Trigger Spark Proxy Spell ----------
         // Forum: https://forum.makerdao.com/t/phoenix-labs-proposed-changes-for-spark-for-august-18th-spell/21612
         // Vote: https://vote.makerdao.com/polling/QmbMR8PU
 
-        // Goerli - 0x13176ad78ec3d2b6e32908b019d0f772ec0b4dfd
         ProxyLike(SPARK_PROXY).exec(SPARK_SPELL, abi.encodeWithSignature("execute()"));
 
         // Bump Changelog

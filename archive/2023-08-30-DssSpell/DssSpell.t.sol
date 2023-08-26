@@ -572,6 +572,15 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(vow.wards(address(esm)), 1, "VOW/ward-esm-not-set");
     }
 
+    function testFlliperMomDeauth() public {
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(flipMom.authority(), address(0), "FlliperMom/authority-is-not-zero");
+        assertEq(flipMom.owner(), address(0), "FlliperMom/owner-is-not-zero");
+    }
+
     // RWA tests
 
     address RWA015_A_OPERATOR = addr.addr("RWA015_A_OPERATOR");
