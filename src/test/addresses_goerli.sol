@@ -63,7 +63,6 @@ contract Addresses {
         addr["GET_CDPS"]                        = 0x7843fd599F5382328DeBB45255deB3E2e0DEC876;
         addr["ILK_REGISTRY"]                    = 0x525FaC4CEc48a4eF2FBb0A72355B6255f8D5f79e;
         addr["OSM_MOM"]                         = 0xEdB6b497D2e18A33130CB0D2b70343E6Dcd9EE86;
-        addr["FLIPPER_MOM"]                     = 0x7ceCdf6b214a3eBA1589eB8B844fB6Cb12B67Bd7;
         addr["CLIPPER_MOM"]                     = 0xC67fFD490903521F778b2A3B2A13D0FC0Be96F98;
         addr["LINE_MOM"]                        = 0x5D54E2d56BA83C42f63a10642DcFa073EBD9D92E;
         addr["MCD_IAM_AUTO_LINE"]               = 0x21DaD87779D9FfA8Ed3E1036cBEA8784cec4fB83;
