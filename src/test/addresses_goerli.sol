@@ -26,7 +26,6 @@ contract Addresses {
         addr["FAUCET"]                          = 0xa473CdDD6E4FAc72481dc36f39A409D86980D187;
         addr["MCD_DEPLOY"]                      = 0xc09880a0D6d06fa18C8bDC9dF2E203F0d0124fa1;
         addr["JOIN_FAB"]                        = 0x0aaA1E0f026c194E0F951a7763F9edc796c6eDeE;
-        addr["FLIP_FAB"]                        = 0x333Ec4d92b546d6107Dc931156139A76dFAfD938;
         addr["CLIP_FAB"]                        = 0xcfAab43101A01548A95F0f7dBB0CeF6f6490A389;
         addr["CALC_FAB"]                        = 0x579f007Fb7151162e3095606232ef9029E090366;
         addr["LERP_FAB"]                        = 0xE7988B75a19D8690272D65882Ab0D07D492f7002;

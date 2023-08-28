@@ -573,6 +573,8 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     function testFlipperMomDeauth() public {
+        FlipperMomAbstract flipMom = FlipperMomAbstract(chainLog.getAddress("FLIPPER_MOM"));
+
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
