@@ -124,10 +124,10 @@ contract Config {
         afterSpell.cat_box =               20 * MILLION;            // In whole Dai units
         afterSpell.dog_Hole =              70 * MILLION;            // In whole Dai units
         afterSpell.esm_min =               150 * THOUSAND;          // In whole MKR units
-        afterSpell.pause_authority =       chief;                 // Pause authority
-        afterSpell.osm_mom_authority =     chief;                 // OsmMom authority
+        afterSpell.pause_authority =       chief;                   // Pause authority
+        afterSpell.osm_mom_authority =     chief;                   // OsmMom authority
         afterSpell.flipper_mom_authority = address(0);              // FlipperMom authority
-        afterSpell.clipper_mom_authority = chief;                 // ClipperMom authority
+        afterSpell.clipper_mom_authority = chief;                   // ClipperMom authority
         afterSpell.ilk_count =             63;                      // Num expected in system
         afterSpell.chainlog_version =      "1.16.0";                // String expected in system
 
