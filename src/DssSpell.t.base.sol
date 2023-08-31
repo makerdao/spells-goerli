@@ -282,6 +282,7 @@ contract DssSpellTestBase is Config, DssTest {
 
     function setUp() public {
         setValues(address(chief));
+        _castPreviousSpell();
 
         spellValues.deployed_spell_created = spellValues.deployed_spell != address(0)
             ? spellValues.deployed_spell_created
@@ -289,8 +290,6 @@ contract DssSpellTestBase is Config, DssTest {
         spell = spellValues.deployed_spell != address(0)
             ?  DssSpell(spellValues.deployed_spell)
             : new DssSpell();
-
-        _castPreviousSpell();
 
         if (spellValues.deployed_spell_block != 0 && spell.eta() != 0) {
             // if we have a deployed spell in the config
