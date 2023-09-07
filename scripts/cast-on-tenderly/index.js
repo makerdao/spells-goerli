@@ -70,7 +70,11 @@ const runSpell = async function () {
         throw new Error('spell does not have the hat');
     }
 
-    const spell = new Contract(SPELL_ADDRESS, ['function schedule() external', 'function cast() external'], signer);
+    const spell = new Contract(
+        SPELL_ADDRESS,
+        ['function schedule() external', 'function cast() external', 'function eta() external view returns (uint256)'],
+        signer
+    );
     console.info('scheduling spell on a fork...');
     try {
         const scheduleTx = await spell.schedule(DEFAULT_TRANSACTION_PARAMETERS);
@@ -79,8 +83,15 @@ const runSpell = async function () {
         console.warn('scheduling failed', error);
     }
 
-    console.info('warping the time...');
-    await provider.send('evm_increaseTime', [ethers.utils.hexValue(60)]);
+    console.info('fetching timestamp when the spell will be castable...');
+    const eta = await spell.eta();
+
+    console.info(`warping the time to "${eta}"...`);
+    const currentUnixTimestamp = Date.now() / 1000;
+    if (currentUnixTimestamp < eta) {
+        const timestampDifference = eta - currentUnixTimestamp + 1;
+        await provider.send('evm_increaseTime', [ethers.utils.hexValue(timestampDifference)]);
+    }
 
     console.info('casting spell on a fork...');
     try {
