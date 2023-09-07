@@ -5,7 +5,7 @@ import { Contract, ethers } from 'ethers';
 const NETWORK_ID = 5;
 const CHAINLOG_ADDRESS = '0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F';
 const CHIEF_HAT_SLOT = 12;
-const DEFAULT_TRANSACTION_PARAMETERS = { gasLimit: 1000000000 };
+const DEFAULT_TRANSACTION_PARAMETERS = { gasLimit: 1_000_000_000 };
 
 // check env vars
 const REQUIRED_ENV_VARS = ['TENDERLY_USER', 'TENDERLY_PROJECT', 'TENDERLY_ACCESS_KEY'];
