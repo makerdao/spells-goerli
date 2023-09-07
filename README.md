@@ -62,4 +62,4 @@ $ make deploy
 3. Export env vars specified above or create `scripts/cast-on-tenderly/.env` file with them
 4. Execute `make cast-on-tenderly spell=0x...`, with the address of the spell that hasn't been casted yet
     - The execution should finish with `successfully casted`
-5. Open the `publicly sharable url` printed into the console (it should require no credentials)
+5. Open the `publicly sharable transaction url` printed into the console (it should require no credentials)

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Contract, ethers } from 'ethers';
 
 const NETWORK_ID = 5;
-const CHIEF_ADDRESS = '0x33Ed584fc655b08b2bca45E1C5b5f07c98053bC1';
+const CHAINLOG_ADDRESS = '0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F';
 const CHIEF_HAT_SLOT = 12;
 const DEFAULT_TRANSACTION_PARAMETERS = { gasLimit: 1000000000 };
 
@@ -48,17 +48,25 @@ const runSpell = async function () {
     const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
     const signer = provider.getSigner();
 
-    console.info('getting the hat...');
+    console.info('fetching the chief address from chainlog...');
+    const chainlog = new Contract(
+        CHAINLOG_ADDRESS,
+        ['function getAddress(bytes32) external view returns (address)'],
+        signer
+    );
+    const chiefAddress = await chainlog.getAddress(ethers.utils.formatBytes32String('MCD_ADM'));
+
+    console.info('overwriting the hat...');
     await provider.send('tenderly_setStorageAt', [
-        CHIEF_ADDRESS,
+        chiefAddress,
         ethers.utils.hexZeroPad(ethers.utils.hexValue(CHIEF_HAT_SLOT), 32),
         ethers.utils.hexZeroPad(SPELL_ADDRESS, 32),
     ]);
 
     console.info('checking the hat...');
-    const chief = new Contract(CHIEF_ADDRESS, ['function hat() external view returns (address)'], signer);
-    const hat = await chief.hat();
-    if (hat !== SPELL_ADDRESS) {
+    const chief = new Contract(chiefAddress, ['function hat() external view returns (address)'], signer);
+    const hatAddress = await chief.hat();
+    if (hatAddress !== SPELL_ADDRESS) {
         throw new Error('spell does not have the hat');
     }
 
@@ -75,13 +83,17 @@ const runSpell = async function () {
     await provider.send('evm_increaseTime', [ethers.utils.hexValue(60)]);
 
     console.info('casting spell on a fork...');
-    const castTx = await spell.cast(DEFAULT_TRANSACTION_PARAMETERS);
-    await castTx.wait();
-    console.info('successfully casted');
+    try {
+        const castTx = await spell.cast(DEFAULT_TRANSACTION_PARAMETERS);
+        await castTx.wait();
+        console.info('successfully casted');
+    } catch (error) {
+        console.error('casting failed', error);
+    }
 
-    const lastTransactionId = await provider.send('evm_snapshot', []);
+    const lastTransactionId = await provider.send('evm_getLatest', []);
     const publicTransactionUrl = await publishTenderlyTransaction(forkId, lastTransactionId);
-    console.info('publicly sharable url', publicTransactionUrl);
+    console.info('publicly sharable transaction url', publicTransactionUrl);
 };
 
 runSpell();
