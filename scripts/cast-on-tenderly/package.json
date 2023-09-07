@@ -5,7 +5,7 @@
   "description": "A script to execute spell on a fork",
   "main": "index.js",
   "scripts": {
-    "do": "node ."
+    "start": "node ."
   },
   "dependencies": {
     "axios": "^1.4.0",

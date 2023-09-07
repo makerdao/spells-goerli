@@ -13,7 +13,7 @@ flatten              :; hevm flatten --source-file "src/DssSpell.sol" > out/flat
 diff-deployed-spell  :; ./scripts/diff-deployed-dssspell.sh $(spell)
 check-deployed-spell :; ./scripts/check-deployed-dssspell.sh
 cast-spell           :; ./scripts/cast-dssspell.sh $(spell)
-cast-on-tenderly     :; cd ./scripts/cast-on-tenderly/ && npm i && node index.js $(spell)
+cast-on-tenderly     :; cd ./scripts/cast-on-tenderly/ && npm i && npm start -- $(spell); cd -
 archive-spell        :; ./scripts/archive-dssspell.sh "$(if $(date),$(date),$(shell date +'%Y-%m-%d'))"
 diff-archive-spell   :; ./scripts/diff-archive-dssspell.sh "$(if $(date),$(date),$(shell date +'%Y-%m-%d'))"
 wards                :; ./scripts/wards.sh $(target)
