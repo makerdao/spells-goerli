@@ -38,7 +38,6 @@ contract Addresses {
         addr["VOTE_DELEGATE_PROXY_FACTORY"]     = 0xE2d249AE3c156b132C40D07bd4d34e73c1712947;
         addr["MCD_VAT"]                         = 0xB966002DDAa2Baf48369f5015329750019736031;
         addr["MCD_JUG"]                         = 0xC90C99FE9B5d5207A03b9F28A6E8A19C0e558916;
-        addr["MCD_CAT"]                         = 0xd744377001FD3411d7d0018F66E2271CB215f6fd;
         addr["MCD_DOG"]                         = 0x5cf85A37Dbd28A239698B4F9aA9a03D55C04F292;
         addr["MCD_VOW"]                         = 0x23f78612769b9013b3145E43896Fa1578cAa2c2a;
         addr["MCD_JOIN_DAI"]                    = 0x6a60b7070befb2bfc964F646efDF70388320f4E0;

@@ -36,6 +36,14 @@ interface BridgeLike {
     function l2TeleportGateway() external view returns (address);
 }
 
+interface VatLike {
+    function wards(address) external view returns (uint256);
+}
+
+interface CatLike {
+    function wards(address) external view returns (uint256);
+}
+
 interface RwaInputConduitLike {
     function dai() external view returns (address);
     function gem() external view returns (address);
@@ -185,20 +193,18 @@ contract DssSpellTest is DssSpellTestBase {
         //assertEq(OsmAbstract(0xF15993A5C5BE496b8e1c9657Fd2233b579Cd3Bc6).wards(ORACLE_WALLET01), 1);
     }
 
-    function testRemoveChainlogValues() private { // make private to disable
+    function testRemoveChainlogValues() public { // make private to disable
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        /*
-        try chainLog.getAddress("CHAINLOG_KEY") {
+        try chainLog.getAddress("MCD_CAT") {
             assertTrue(false);
         } catch Error(string memory errmsg) {
             assertTrue(_cmpStr(errmsg, "dss-chain-log/invalid-key"));
         } catch {
             assertTrue(false);
         }
-        */
     }
 
     function testCollateralIntegrations() private { // make public to enable
@@ -285,8 +291,10 @@ contract DssSpellTest is DssSpellTestBase {
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
+        // NOTE: no new keys in the chainlog
         // _checkChainlogKey("YOUR KEY HERE");
-        // _checkChainlogVersion("1.16.0");
+
+        _checkChainlogVersion("1.17.0");
     }
 
     function testNewIlkRegistryValues() private { // make private to disable
@@ -518,4 +526,38 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
 
+    // Spark Tests
+    function testSparkSpellIsExecuted() private { // make private to disable
+        address SPARK_PROXY    = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
+        address SPARK_SPELL    = address(0); // Insert spell address here
+
+        vm.expectCall(
+            SPARK_PROXY,
+            /* value = */ 0,
+            abi.encodeCall(
+                ProxyLike(SPARK_PROXY).exec,
+                (SPARK_SPELL, abi.encodeWithSignature("execute()"))
+            )
+        );
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+    }
+
+    // Scuttle MCD_CAT
+    function testScuttleMcdCat() public {
+        // MCD_CAT is being removed, so is not present in addresses_goerli file
+        CatLike cat = CatLike(chainLog.getAddress("MCD_CAT"));
+        VatLike vat = VatLike(addr.addr("MCD_VAT"));
+        assertEq(vat.wards(address(cat)), 1, "cat-not-warded-on-vat");
+        assertEq(cat.wards(addr.addr("MCD_PAUSE_PROXY")), 1, "pause-proxy-not-warded-on-cat");
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        assertEq(vat.wards(address(cat)), 0, "cat-not-warded-on-vat");
+        assertEq(cat.wards(addr.addr("MCD_PAUSE_PROXY")), 0, "pause-proxy-not-warded-on-cat");
+    }
 }

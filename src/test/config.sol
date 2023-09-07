@@ -128,7 +128,7 @@ contract Config {
         afterSpell.osm_mom_authority =     chief;                   // OsmMom authority
         afterSpell.clipper_mom_authority = chief;                   // ClipperMom authority
         afterSpell.ilk_count =             63;                      // Num expected in system
-        afterSpell.chainlog_version =      "1.16.0";                // String expected in system
+        afterSpell.chainlog_version =      "1.17.0";                // String expected in system
 
         //
         // Values for all collateral
@@ -1310,10 +1310,10 @@ contract Config {
         });
         afterSpell.collaterals["RWA005-A"] = CollateralValues({
             aL_enabled:   false,
-            aL_line:      0 * MILLION,
-            aL_gap:       0 * MILLION,
+            aL_line:      0,
+            aL_gap:       0,
             aL_ttl:       0,
-            line:         15 * MILLION,
+            line:         0,
             dust:         0,
             pct:          450,
             mat:          10500,
@@ -2029,9 +2029,9 @@ contract Config {
         });
         afterSpell.collaterals["DIRECT-SPARK-DAI"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      200 * MILLION,
+            aL_line:      400 * MILLION,
             aL_gap:       20 * MILLION,
-            aL_ttl:       8 hours,
+            aL_ttl:       12 hours,
             line:         0,
             dust:         0,
             pct:          0,
