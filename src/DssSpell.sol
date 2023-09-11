@@ -39,7 +39,8 @@ contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
 
-    // NOTE: Skip on goerli
+    // NOTE: Skip payments on goerli
+
     address internal immutable MCD_VAT         = DssExecLib.getChangelogAddress("MCD_VAT");
     address internal immutable MCD_CAT         = DssExecLib.getChangelogAddress("MCD_CAT");
     address internal immutable MCD_PAUSE_PROXY = DssExecLib.getChangelogAddress("MCD_PAUSE_PROXY");
