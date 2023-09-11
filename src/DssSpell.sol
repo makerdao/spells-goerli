@@ -97,8 +97,11 @@ contract DssSpellAction is DssAction {
         // Increase the ETH-C Stability Fee (SF) by 0.12% from 3.33% to 3.45%.
         DssExecLib.setIlkStabilityFee("ETH-C", THREE_PT_FOUR_FIVE_PCT_RATE, /* doDrip = */ true);
 
-        // Increase the Debt Ceiling from 0 (zero) to 120 million.
-        DssExecLib.increaseIlkDebtCeiling("PSM-PAX-A", 120 * MILLION, true);
+        // Activate DC-IAM for PSM-PAX-A
+        // Maximum Debt Ceiling (line): 120M
+        // Target Available Debt (gap): 50 million DAI
+        // Ceiling Increase Cooldown (ttl): 24 hours
+        DssExecLib.setIlkAutoLineParameters("PSM-PAX-A", 120 * MILLION, 50 * MILLION, 24 hours);
 
         // ---------- Spark Protocol DC-IAM changes ----------
         // Forum: http://forum.makerdao.com/t/upcoming-spell-proposed-changes/21801
