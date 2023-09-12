@@ -97,7 +97,7 @@ contract DssSpellAction is DssAction {
         // Maximum Debt Ceiling (line): 120M
         // Target Available Debt (gap): 50 million DAI
         // Ceiling Increase Cooldown (ttl): 24 hours
-        DssExecLib.setIlkAutoLineParameters("PSM-PAX-A", 120 * MILLION, 50 * MILLION, 24 hours);
+        DssExecLib.setIlkAutoLineParameters("PSM-PAX-A", /* line */ 120 * MILLION, /* gap */ 50 * MILLION, /* ttl */ 24 hours);
 
         // ---------- Spark Protocol DC-IAM changes ----------
         // Forum: http://forum.makerdao.com/t/upcoming-spell-proposed-changes/21801
