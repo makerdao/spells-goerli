@@ -19,11 +19,7 @@ pragma solidity 0.8.16;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-interface VatLike {
-    function deny(address usr) external;
-}
-
-interface CatLike {
+interface DenyLike {
     function deny(address usr) external;
 }
 
@@ -168,10 +164,10 @@ contract DssSpellAction is DssAction {
         ChainlogLike(DssExecLib.LOG).removeAddress("MCD_CAT");
 
         // Revoke MCD_CAT access to MCD_VAT: vat.deny(cat)
-        VatLike(MCD_VAT).deny(MCD_CAT);
+        DenyLike(MCD_VAT).deny(MCD_CAT);
 
         // Yield ownership of MCD_CAT: cat.deny(pauseProxy)
-        CatLike(MCD_CAT).deny(MCD_PAUSE_PROXY);
+        DenyLike(MCD_CAT).deny(MCD_PAUSE_PROXY);
 
         // Bump chainlog version
         // Justification: The MINOR version is updated as core MCD_CAT contract is being removed in this spell

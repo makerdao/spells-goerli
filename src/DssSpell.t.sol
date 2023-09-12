@@ -36,29 +36,8 @@ interface BridgeLike {
     function l2TeleportGateway() external view returns (address);
 }
 
-interface VatLike {
+interface WardsLike {
     function wards(address) external view returns (uint256);
-}
-
-interface CatLike {
-    function wards(address) external view returns (uint256);
-}
-
-interface RwaInputConduitLike {
-    function dai() external view returns (address);
-    function gem() external view returns (address);
-    function psm() external view returns (address);
-    function to() external view returns (address);
-    function wards(address) external view returns (uint256);
-    function may(address) external view returns (uint256);
-    function quitTo() external view returns (address);
-    function mate(address) external;
-    function push() external;
-}
-
-interface RwaLiquidationOracleLike {
-    function ilks(bytes32 ilk) external view returns (string memory doc, address pip, uint48 tau, uint48 toc);
-    function good(bytes32 ilk) external view returns (bool);
 }
 
 interface ProxyLike {
@@ -548,8 +527,8 @@ contract DssSpellTest is DssSpellTestBase {
     // Scuttle MCD_CAT
     function testScuttleMcdCat() public {
         // MCD_CAT is being removed, so is not present in addresses_goerli file
-        CatLike cat = CatLike(chainLog.getAddress("MCD_CAT"));
-        VatLike vat = VatLike(addr.addr("MCD_VAT"));
+        WardsLike cat = WardsLike(chainLog.getAddress("MCD_CAT"));
+        WardsLike vat = WardsLike(addr.addr("MCD_VAT"));
         assertEq(vat.wards(address(cat)), 1, "cat-not-warded-on-vat");
         assertEq(cat.wards(addr.addr("MCD_PAUSE_PROXY")), 1, "pause-proxy-not-warded-on-cat");
 
