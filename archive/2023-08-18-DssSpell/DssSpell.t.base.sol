@@ -156,6 +156,7 @@ contract DssSpellTestBase is Config, DssTest {
     FlapUniV2Abstract               flap = FlapUniV2Abstract(  addr.addr("MCD_FLAP"));
 
     OsmMomAbstract                osmMom = OsmMomAbstract(     addr.addr("OSM_MOM"));
+    FlipperMomAbstract           flipMom = FlipperMomAbstract( addr.addr("FLIPPER_MOM"));
     ClipperMomAbstract           clipMom = ClipperMomAbstract( addr.addr("CLIPPER_MOM"));
     FlapperMomAbstract           flapMom = FlapperMomAbstract( addr.addr("FLAPPER_MOM"));
     DssAutoLineAbstract         autoLine = DssAutoLineAbstract(addr.addr("MCD_IAM_AUTO_LINE"));
@@ -282,33 +283,22 @@ contract DssSpellTestBase is Config, DssTest {
 
     function setUp() public {
         setValues(address(chief));
-        _castPreviousSpell();
 
-        spellValues.deployed_spell_created = spellValues.deployed_spell != address(0)
-            ? spellValues.deployed_spell_created
-            : block.timestamp;
-        spell = spellValues.deployed_spell != address(0)
-            ?  DssSpell(spellValues.deployed_spell)
-            : new DssSpell();
+        spellValues.deployed_spell_created = spellValues.deployed_spell != address(0) ? spellValues.deployed_spell_created : block.timestamp;
+        _castPreviousSpell();
+        spell = spellValues.deployed_spell != address(0) ?
+            DssSpell(spellValues.deployed_spell) : new DssSpell();
 
         if (spellValues.deployed_spell_block != 0 && spell.eta() != 0) {
             // if we have a deployed spell in the config
             // we want to roll our fork to the block where it was deployed
             // this means the test suite will continue to accurately pass/fail
             // even if mainnet has already scheduled/cast the spell
+            vm.makePersistent(address(this));
             vm.makePersistent(address(rates));
             vm.makePersistent(address(addr));
             vm.makePersistent(address(deployers));
             vm.rollFork(spellValues.deployed_spell_block);
-
-            // Reset `eta` to `0`, otherwise the tests will fail with "This spell has already been scheduled".
-            // This is a workaround for the issue described here:
-            // @see { https://github.com/foundry-rs/foundry/issues/5739 }
-            vm.store(
-                address(spell),
-                bytes32(0),
-                bytes32(0)
-            );
         }
     }
 
@@ -443,6 +433,9 @@ contract DssSpellTestBase is Config, DssTest {
         // check OsmMom authority
         assertEq(osmMom.authority(), values.osm_mom_authority, "TestError/osmMom-authority");
 
+        // check FlipperMom authority
+        assertEq(flipMom.authority(), values.flipper_mom_authority, "TestError/flipperMom-authority");
+
         // check ClipperMom authority
         assertEq(clipMom.authority(), values.clipper_mom_authority, "TestError/clipperMom-authority");
 
@@ -565,6 +558,8 @@ contract DssSpellTestBase is Config, DssTest {
                 assertTrue(flip.ttl() >= 600 && flip.ttl() < 10 hours, _concat("TestError/flip-ttl-range-", ilk));         // gt eq 10 minutes and lt 10 hours
                 assertEq(uint256(flip.tau()), values.collaterals[ilk].flip_tau, _concat("TestError/flip-tau-", ilk));
                 assertTrue(flip.tau() >= 600 && flip.tau() <= 3 days, _concat("TestError/flip-tau-range-", ilk));          // gt eq 10 minutes and lt eq 3 days
+
+                assertEq(flip.wards(address(flipMom)), values.collaterals[ilk].flipper_mom, _concat("TestError/flip-flipperMom-auth-", ilk));
 
                 assertEq(flip.wards(address(cat)), values.collaterals[ilk].liqOn ? 1 : 0, _concat("TestError/flip-liqOn-", ilk));
                 assertEq(flip.wards(address(end)), 1, _concat("TestError/flip-end-auth-", ilk));

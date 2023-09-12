@@ -26,6 +26,7 @@ contract Addresses {
         addr["FAUCET"]                          = 0xa473CdDD6E4FAc72481dc36f39A409D86980D187;
         addr["MCD_DEPLOY"]                      = 0xc09880a0D6d06fa18C8bDC9dF2E203F0d0124fa1;
         addr["JOIN_FAB"]                        = 0x0aaA1E0f026c194E0F951a7763F9edc796c6eDeE;
+        addr["FLIP_FAB"]                        = 0x333Ec4d92b546d6107Dc931156139A76dFAfD938;
         addr["CLIP_FAB"]                        = 0xcfAab43101A01548A95F0f7dBB0CeF6f6490A389;
         addr["CALC_FAB"]                        = 0x579f007Fb7151162e3095606232ef9029E090366;
         addr["LERP_FAB"]                        = 0xE7988B75a19D8690272D65882Ab0D07D492f7002;
@@ -62,6 +63,7 @@ contract Addresses {
         addr["GET_CDPS"]                        = 0x7843fd599F5382328DeBB45255deB3E2e0DEC876;
         addr["ILK_REGISTRY"]                    = 0x525FaC4CEc48a4eF2FBb0A72355B6255f8D5f79e;
         addr["OSM_MOM"]                         = 0xEdB6b497D2e18A33130CB0D2b70343E6Dcd9EE86;
+        addr["FLIPPER_MOM"]                     = 0x7ceCdf6b214a3eBA1589eB8B844fB6Cb12B67Bd7;
         addr["CLIPPER_MOM"]                     = 0xC67fFD490903521F778b2A3B2A13D0FC0Be96F98;
         addr["LINE_MOM"]                        = 0x5D54E2d56BA83C42f63a10642DcFa073EBD9D92E;
         addr["MCD_IAM_AUTO_LINE"]               = 0x21DaD87779D9FfA8Ed3E1036cBEA8784cec4fB83;
@@ -361,12 +363,8 @@ contract Addresses {
         addr["MCD_JOIN_RWA015_A"]               = 0x59ea019366FC8E8fBaf20EeA7F68F6557521FD20;
         addr["RWA015_A_URN"]                    = 0xf24456f7132479cdABBD67511D2e985cE69BFd0D;
         addr["RWA015_A_JAR"]                    = 0x3799FF53c20042BB9b0d2580Bc66257397e69CAE;
-        addr["RWA015_A_INPUT_CONDUIT_URN_USDC"] = 0xa737C5EB4aD00d30f92CFcdf3f92B8B1AE79383F;
-        addr["RWA015_A_INPUT_CONDUIT_JAR_USDC"] = 0xe7Bcb3E53db0E502B3E9127A703c44461ab2b09f;
-        addr["RWA015_A_INPUT_CONDUIT_URN_GUSD"] = 0x850e4E039B8ab0682045aCe945Ebc94E9f5A63DD;
-        addr["RWA015_A_INPUT_CONDUIT_JAR_GUSD"] = 0x0AaA36F5F87C767e9cE131cB5321446b2d9EF721;
-        addr["RWA015_A_INPUT_CONDUIT_URN_PAX"]  = 0xd70d035F723fE739EaDD9D529987D0Aaa291a8FF;
-        addr["RWA015_A_INPUT_CONDUIT_JAR_PAX"]  = 0xAd235C744C66d0850C04EDde69C83f977D6207d8;
+        addr["RWA015_A_INPUT_CONDUIT_URN"]      = 0xa737C5EB4aD00d30f92CFcdf3f92B8B1AE79383F;
+        addr["RWA015_A_INPUT_CONDUIT_JAR"]      = 0xe7Bcb3E53db0E502B3E9127A703c44461ab2b09f;
         addr["RWA015_A_OUTPUT_CONDUIT"]         = 0xEff59711CbB16BCAdA3AA8B8f2Bbd26F5B38a8cA;
         addr["RWA015_A_OPERATOR"]               = 0x23a10f09Fac6CCDbfb6d9f0215C795F9591D7476;
         addr["RWA015_A_CUSTODY"]                = 0x65729807485F6f7695AF863d97D62140B7d69d83;
