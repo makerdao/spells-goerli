@@ -286,7 +286,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() private { // make private to disable
+    function testNewChainlogValues() public { // make private to disable
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -529,7 +529,7 @@ contract DssSpellTest is DssSpellTestBase {
     // Spark Tests
     function testSparkSpellIsExecuted() public { // make private to disable
         address SPARK_PROXY    = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
-        address SPARK_SPELL    = 0x95bcf659653d2E0b44851232d61F6F9d2e933fB1; // Insert spell address here
+        address SPARK_SPELL    = 0x95bcf659653d2E0b44851232d61F6F9d2e933fB1;
 
         vm.expectCall(
             SPARK_PROXY,

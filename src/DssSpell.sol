@@ -41,9 +41,9 @@ contract DssSpellAction is DssAction {
 
     // NOTE: Skip payments on goerli
 
-    address internal immutable MCD_VAT         = DssExecLib.getChangelogAddress("MCD_VAT");
-    address internal immutable MCD_CAT         = DssExecLib.getChangelogAddress("MCD_CAT");
-    address internal immutable MCD_PAUSE_PROXY = DssExecLib.getChangelogAddress("MCD_PAUSE_PROXY");
+    address internal immutable MCD_VAT         = DssExecLib.vat();
+    address internal immutable MCD_CAT         = DssExecLib.cat();
+    address internal immutable MCD_PAUSE_PROXY = DssExecLib.pauseProxy();
 
     // Always keep office hours off on goerli
     function officeHours() public pure override returns (bool) {
@@ -69,12 +69,12 @@ contract DssSpellAction is DssAction {
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
     // uint256 internal constant X_PCT_RATE      = ;
-
-    uint256 internal constant MILLION = 10 ** 6;
-
+    uint256 internal constant THREE_PT_FOUR_FIVE_PCT_RATE   = 1000000001075539644270067964;
     uint256 internal constant THREE_PT_SEVEN_ZERO_PCT_RATE  = 1000000001152077919467240095;
     uint256 internal constant FOUR_PT_TWO_ZERO_PCT_RATE     = 1000000001304602465690389263;
-    uint256 internal constant THREE_PT_FOUR_FIVE_PCT_RATE   = 1000000001075539644270067964;
+
+    //  ---------- Math ----------
+    uint256 internal constant MILLION = 10 ** 6;
 
     // ---------- Spark Proxy ----------
     // Spark Proxy: https://github.com/marsfoundation/sparklend/blob/d42587ba36523dcff24a4c827dc29ab71cd0808b/script/output/5/primary-sce-latest.json#L2
@@ -85,7 +85,7 @@ contract DssSpellAction is DssAction {
 
 
     function actions() public override {
-        // ---------- Scope-Defined Parameter Changes ----------
+        // ---------- Stability Scope Parameter Changes ----------
         // MIP: https://mips.makerdao.com/mips/details/MIP104#0-the-stability-scope
         // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-5/21969
         // Increase the ETH-A Stability Fee (SF) by 0.12% from 3.58% to 3.70%.
@@ -148,7 +148,7 @@ contract DssSpellAction is DssAction {
 
         // ---------- Trigger Spark Proxy Spell ----------
         // Poll: https://vote.makerdao.com/polling/QmQrkxud
-
+        // Poll 2: https://vote.makerdao.com/polling/QmbCDKof
         ProxyLike(SPARK_PROXY).exec(SPARK_SPELL, abi.encodeWithSignature("execute()"));
 
 
