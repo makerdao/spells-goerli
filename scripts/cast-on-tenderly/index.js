@@ -87,7 +87,7 @@ const runSpell = async function () {
     const eta = await spell.eta();
 
     console.info(`warping the time to "${eta}"...`);
-    const currentUnixTimestamp = Date.now() / 1000;
+    const currentUnixTimestamp = Math.floor(Date.now() / 1000);
     if (currentUnixTimestamp < eta) {
         const timestampDifference = eta - currentUnixTimestamp + 1;
         await provider.send('evm_increaseTime', [ethers.utils.hexValue(timestampDifference)]);
