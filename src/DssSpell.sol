@@ -19,6 +19,12 @@ pragma solidity 0.8.16;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
+interface RwaLiquidationOracleLike {
+    function ilks(bytes32) external view returns (string memory doc, address pip, uint48 tau, uint48 toc);
+    function init(bytes32 ilk, uint256 val, string memory doc, uint48 tau) external;
+    function tell(bytes32 ilk) external;
+}
+
 interface ProxyLike {
     function exec(address target, bytes calldata args) external payable returns (bytes memory out);
 }
@@ -46,6 +52,8 @@ contract DssSpellAction is DssAction {
 
     //  ---------- Math ----------
 
+    address internal immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
+
     // ---------- Spark Proxy ----------
     // Spark Proxy: https://github.com/marsfoundation/sparklend/blob/d42587ba36523dcff24a4c827dc29ab71cd0808b/script/output/5/primary-sce-latest.json#L2
     address internal constant SPARK_PROXY = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
@@ -53,11 +61,40 @@ contract DssSpellAction is DssAction {
     // ---------- Trigger Spark Proxy Spell ----------
     address internal constant SPARK_SPELL = address(0); // TODO
 
+    function _updateDoc(bytes32 ilk, string memory doc) internal {
+        ( , address pip, uint48 tau, ) = RwaLiquidationOracleLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
+        require(pip != address(0), "DssSpell/unexisting-rwa-ilk");
+
+        // Init the RwaLiquidationOracle to reset the doc
+        RwaLiquidationOracleLike(MIP21_LIQUIDATION_ORACLE).init(
+            ilk, // ilk to update
+            0,   // price ignored if init() has already been called
+            doc, // new legal document
+            tau  // old tau value
+        );
+    }
 
     function actions() public override {
-        // ---------- TODO ----------
-        // Poll: TODO
-        // Forum: TODO
+        // ----- RWA007-A (Clydesdale) DAO Resolution -----
+        // Poll: https://vote.makerdao.com/polling/Qmb45PDU
+        // Forum: https://forum.makerdao.com/t/proposal-to-revise-asset-allocation-of-jat1-and-jat2/21718
+
+        // Update the Doc variable for RWA007-A (Clydesdale) to TODO
+        _updateDoc("RWA007-A", "TODO");
+
+        // ----- RWA009-A (HV Bank) DAO Resolution -----
+        // Executive Vote: https://forum.makerdao.com/t/proposal-to-revise-asset-allocation-of-jat1-and-jat2/21718
+        // Forum: https://forum.makerdao.com/t/rwa009-hvbank-mip21-token-ces-domain-team-assessment/15861/13
+
+        // Update the Doc variable for RWA009-A (HV Bank) to QmYjvAZEeGCs8kMuLQz6kU8PWgsbG1i8QWd2jrwkSipcRx
+        _updateDoc("RWA009-A", "QmYjvAZEeGCs8kMuLQz6kU8PWgsbG1i8QWd2jrwkSipcRx");
+
+        // ----- Place the RWA005-A (Fortunafi) vault into "Soft Liquidation" -----
+        // Executive Vote: https://vote.makerdao.com/executive/template-executive-vote-stability-scope-parameter-changes-spark-protocol-d3m-parameter-changes-set-fortunafi-debt-ceiling-to-zero-dai-dao-resolution-for-hv-bank-delegate-compensation-and-other-actions-september-13-2023
+        // Forum: https://forum.makerdao.com/t/request-to-poll-offboarding-legacy-legal-recourse-assets/21582/12
+
+        // Call tell() from RWA005-A (Fortunafi)
+        RwaLiquidationOracleLike(MIP21_LIQUIDATION_ORACLE).tell("RWA005-A");
 
         // ---------- Trigger Spark Proxy Spell ----------
         // Poll: TODO

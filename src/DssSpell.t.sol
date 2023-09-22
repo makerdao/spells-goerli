@@ -36,12 +36,24 @@ interface BridgeLike {
     function l2TeleportGateway() external view returns (address);
 }
 
-interface WardsLike {
-    function wards(address) external view returns (uint256);
-}
-
 interface ProxyLike {
     function exec(address target, bytes calldata args) external payable returns (bytes memory out);
+}
+
+interface RwaLiquidationOracleLike {
+    function bump(bytes32 ilk, uint256 val) external;
+    function cull(bytes32 ilk, address urn) external;
+    function cure(bytes32 ilk) external;
+    function deny(address usr) external;
+    function file(bytes32 what, address data) external;
+    function good(bytes32 ilk) external view returns (bool);
+    function ilks(bytes32) external view returns (string memory doc, address pip, uint48 tau, uint48 toc);
+    function init(bytes32 ilk, uint256 val, string memory doc, uint48 tau) external;
+    function rely(address usr) external;
+    function tell(bytes32 ilk) external;
+    function vat() external view returns (address);
+    function vow() external view returns (address);
+    function wards(address) external view returns (uint256);
 }
 
 contract DssSpellTest is DssSpellTestBase {
@@ -527,4 +539,22 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     // SPELL-SPECIFIC TESTS GO BELOW
+
+    // RWA Tests
+
+    RwaLiquidationOracleLike oracle = RwaLiquidationOracleLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
+
+    function testRWA007DocChange() public {
+        string memory OLD_RWA007_DOC = "QmY185L4tuxFkpSQ33cPHUHSNpwy8V6TMXbXvtVraxXtb5";
+        string memory NEW_RWA007_DOC = "TODO";
+
+        _checkRWADocUpdate("RWA007-A", OLD_RWA007_DOC, NEW_RWA007_DOC);
+    }
+
+    function testRWA009DocChange() public {
+        string memory OLD_RWA009_DOC = "QmeRrbDF8MVPQfNe83gWf2qV48jApVigm1WyjEtDXCZ5rT";
+        string memory NEW_RWA009_DOC = "QmYjvAZEeGCs8kMuLQz6kU8PWgsbG1i8QWd2jrwkSipcRx";
+
+        _checkRWADocUpdate("RWA009-A", OLD_RWA009_DOC, NEW_RWA009_DOC);
+    }
 }
