@@ -25,9 +25,10 @@ interface RwaLiquidationOracleLike {
     function tell(bytes32 ilk) external;
 }
 
-interface ProxyLike {
-    function exec(address target, bytes calldata args) external payable returns (bytes memory out);
-}
+// Note: ignored on Goerli
+// interface ProxyLike {
+//     function exec(address target, bytes calldata args) external payable returns (bytes memory out);
+// }
 
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
@@ -55,11 +56,12 @@ contract DssSpellAction is DssAction {
     address internal immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
 
     // ---------- Spark Proxy ----------
+    // Note: ignored on Goerli
     // Spark Proxy: https://github.com/marsfoundation/sparklend/blob/d42587ba36523dcff24a4c827dc29ab71cd0808b/script/output/5/primary-sce-latest.json#L2
-    address internal constant SPARK_PROXY = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
+    // address internal constant SPARK_PROXY = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
 
     // ---------- Trigger Spark Proxy Spell ----------
-    address internal constant SPARK_SPELL = address(0); // TODO
+    // address internal constant SPARK_SPELL = address(0);
 
     function _updateDoc(bytes32 ilk, string memory doc) internal {
         ( , address pip, uint48 tau, ) = RwaLiquidationOracleLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
@@ -79,8 +81,8 @@ contract DssSpellAction is DssAction {
         // Poll: https://vote.makerdao.com/polling/Qmb45PDU
         // Forum: https://forum.makerdao.com/t/proposal-to-revise-asset-allocation-of-jat1-and-jat2/21718
 
-        // Update the Doc variable for RWA007-A (Clydesdale) to TODO
-        _updateDoc("RWA007-A", "TODO");
+        // Update the Doc variable for RWA007-A (Clydesdale) to QmWo3UVtEDKVwS5k34uLt1J6u9px3rjHYkTLK2rYQ31E3G
+        _updateDoc("RWA007-A", "QmWo3UVtEDKVwS5k34uLt1J6u9px3rjHYkTLK2rYQ31E3G");
 
         // ----- RWA009-A (HV Bank) DAO Resolution -----
         // Executive Vote: https://forum.makerdao.com/t/proposal-to-revise-asset-allocation-of-jat1-and-jat2/21718
@@ -97,7 +99,9 @@ contract DssSpellAction is DssAction {
         RwaLiquidationOracleLike(MIP21_LIQUIDATION_ORACLE).tell("RWA005-A");
 
         // ---------- Trigger Spark Proxy Spell ----------
-        // Poll: TODO
+        // Note: ignored on Goerli
+        // Poll: https://vote.makerdao.com/polling/QmVcxd7J
+        // Forum: https://forum.makerdao.com/t/proposal-for-activation-of-gnosis-chain-instance/22098/8
         // ProxyLike(SPARK_PROXY).exec(SPARK_SPELL, abi.encodeWithSignature("execute()"));
     }
 }
