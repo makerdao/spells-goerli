@@ -41,19 +41,8 @@ interface ProxyLike {
 }
 
 interface RwaLiquidationOracleLike {
-    function bump(bytes32 ilk, uint256 val) external;
-    function cull(bytes32 ilk, address urn) external;
-    function cure(bytes32 ilk) external;
-    function deny(address usr) external;
-    function file(bytes32 what, address data) external;
     function good(bytes32 ilk) external view returns (bool);
     function ilks(bytes32) external view returns (string memory doc, address pip, uint48 tau, uint48 toc);
-    function init(bytes32 ilk, uint256 val, string memory doc, uint48 tau) external;
-    function rely(address usr) external;
-    function tell(bytes32 ilk) external;
-    function vat() external view returns (address);
-    function vow() external view returns (address);
-    function wards(address) external view returns (uint256);
 }
 
 contract DssSpellTest is DssSpellTestBase {
