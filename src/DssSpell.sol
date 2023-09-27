@@ -39,6 +39,14 @@ contract DssSpellAction is DssAction {
         return false;
     }
 
+    // -----  RWA007-A (Clydesdale) DAO Resolution -----
+    // Poll: https://vote.makerdao.com/polling/Qmb45PDU
+    // Forum: https://forum.makerdao.com/t/proposal-to-revise-asset-allocation-of-jat1-and-jat2/21718
+    // Approve the DAO Resolution with hash QmZ94FG8YXK4seyBHBi2FfTfW5URtBqbCb7JZAB1HGkTNF
+
+    // Comma-separated list of DAO resolutions IPFS hashes.
+    string public constant dao_resolutions = "QmZ94FG8YXK4seyBHBi2FfTfW5URtBqbCb7JZAB1HGkTNF";
+
     // ---------- Rates ----------
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
