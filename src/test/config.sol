@@ -137,7 +137,7 @@ contract Config {
             aL_ttl:       6 hours,         // In seconds
             line:         0,               // In whole Dai units  // Not checked here as there is auto line
             dust:         7_500,           // In whole Dai units
-            pct:          3_70,            // In basis points
+            pct:          5_25,            // In basis points
             mat:          14500,           // In basis points
             liqType:      "clip",          // "" or "flip" or "clip"
             liqOn:        true,            // If liquidations are enabled
@@ -162,7 +162,7 @@ contract Config {
             aL_ttl:       6 hours,
             line:         0,
             dust:         25 * THOUSAND,
-            pct:          4_20,
+            pct:          5_75,
             mat:          13000,
             liqType:      "clip",
             liqOn:        true,
@@ -187,7 +187,7 @@ contract Config {
             aL_ttl:       8 hours,
             line:         0,
             dust:         3_500,
-            pct:          3_45,
+            pct:          5_00,
             mat:          17000,
             liqType:      "clip",
             liqOn:        true,
@@ -283,11 +283,11 @@ contract Config {
         afterSpell.collaterals["WBTC-A"] = CollateralValues({
             aL_enabled:   true,
             aL_line:      500 * MILLION,
-            aL_gap:       10 * MILLION,
+            aL_gap:       2 * MILLION,
             aL_ttl:       24 hours,
             line:         0,
             dust:         7_500,
-            pct:          5_80,
+            pct:          5_83,
             mat:          14500,
             liqType:      "clip",
             liqOn:        true,
@@ -308,11 +308,11 @@ contract Config {
         afterSpell.collaterals["WBTC-B"] = CollateralValues({
             aL_enabled:   true,
             aL_line:      250 * MILLION,
-            aL_gap:       5 * MILLION,
+            aL_gap:       2 * MILLION,
             aL_ttl:       24 hours,
             line:         0,
             dust:         25 * THOUSAND,
-            pct:          6_30,
+            pct:          6_33,
             mat:          13000,
             liqType:      "clip",
             liqOn:        true,
@@ -333,11 +333,11 @@ contract Config {
         afterSpell.collaterals["WBTC-C"] = CollateralValues({
             aL_enabled:   true,
             aL_line:      500 * MILLION,
-            aL_gap:       10 * MILLION,
+            aL_gap:       2 * MILLION,
             aL_ttl:       24 hours,
             line:         0,
             dust:         3_500,
-            pct:          5_55,
+            pct:          5_58,
             mat:          17500,
             liqType:      "clip",
             liqOn:        true,
@@ -1156,11 +1156,11 @@ contract Config {
             offboarding:  false
         });
         afterSpell.collaterals["RWA007-A"] = CollateralValues({
-            aL_enabled:   false,
-            aL_line:      0,
-            aL_gap:       0,
-            aL_ttl:       0,
-            line:         1_250 * MILLION,
+            aL_enabled:   true,
+            aL_line:      3 * BILLION,
+            aL_gap:       50 * MILLION,
+            aL_ttl:       24 hours,
+            line:         0,
             dust:         0,
             pct:          0,
             mat:          10000,
@@ -1357,7 +1357,7 @@ contract Config {
         });
         afterSpell.collaterals["RWA015-A"] = CollateralValues({
             aL_enabled:   true,
-            aL_line:      1_280_000_000,
+            aL_line:      3_000_000_000,
             aL_gap:       50_000_000,
             aL_ttl:       24 hours,
             line:         0,
