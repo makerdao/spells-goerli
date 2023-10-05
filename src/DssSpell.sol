@@ -19,6 +19,10 @@ pragma solidity 0.8.16;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
+interface VatLike {
+    function ilks(bytes32 ilk) external view returns (uint256 Art, uint256 rate, uint256 spot, uint256 line, uint256 dust);
+}
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -47,9 +51,11 @@ contract DssSpellAction is DssAction {
     uint256 internal constant FIVE_PT_FIVE_EIGHT_PCT_RATE  = 1000000001721802811203852608;
 
     //  ---------- Math ----------
+    uint256 internal constant RAD      = 10 ** 45;
     uint256 internal constant MILLION  = 10 ** 6;
     uint256 internal constant BILLION  = 10 ** 9;
 
+    address internal immutable MCD_VAT = DssExecLib.vat();
 
     function actions() public override {
         // ---------- Non-Scope Defined Parameter Changes - WBTC DC-IAM Changes ----------
@@ -92,7 +98,9 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-6/22231
         
         // Set DC-IAM Line (max DC) to 0 (zero). 
-        DssExecLib.setIlkAutoLineDebtCeiling("RETH-A", 0);
+        (,,,uint256 line,) = VatLike(MCD_VAT).ilks("RETH-A");
+        DssExecLib.removeIlkFromAutoLine("RETH-A");
+        DssExecLib.decreaseIlkDebtCeiling("RETH-A", line / RAD, true);
 
 
         // ---------- Reconfiguring Andromeda RWA015-A  ----------
