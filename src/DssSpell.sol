@@ -32,6 +32,13 @@ contract DssSpellAction is DssAction {
         return false;
     }
 
+    // ----- USDP-PSM Facilitation Incentives -----
+    // Forum: https://forum.makerdao.com/t/usdp-psm-facilitation-incentives/22331
+    // Approve DAO Resolution hash QmWg43PNNGfEyXnTv1qN8dRXFJz5ZchrmZU8qH57Ki6D62
+
+    // Comma-separated list of DAO resolutions IPFS hashes.
+    string public constant dao_resolutions = "QmWg43PNNGfEyXnTv1qN8dRXFJz5ZchrmZU8qH57Ki6D62";
+
     // ---------- Rates ----------
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -43,12 +50,12 @@ contract DssSpellAction is DssAction {
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
     // uint256 internal constant X_PCT_RATE      = ;
-    uint256 internal constant FIVE_PT_TWO_FIVE_PCT_RATE    = 1000000001622535724756171269;
-    uint256 internal constant FIVE_PT_SEVEN_FIVE_PCT_RATE  = 1000000001772819380639683201;
     uint256 internal constant FIVE_PCT_RATE                = 1000000001547125957863212448;
-    uint256 internal constant FIVE_PT_EIGHT_THREE_PCT_RATE = 1000000001796798806711330296;
-    uint256 internal constant SIX_PT_THREE_THREE_PCT_RATE  = 1000000001946260772914495212;
-    uint256 internal constant FIVE_PT_FIVE_EIGHT_PCT_RATE  = 1000000001721802811203852608;
+    uint256 internal constant FIVE_PT_TWO_FIVE_PCT_RATE    = 1000000001622535724756171269;
+    uint256 internal constant FIVE_PT_SIX_ONE_PCT_RATE     = 1000000001721802811203852608;
+    uint256 internal constant FIVE_PT_SEVEN_FIVE_PCT_RATE  = 1000000001772819380639683201;
+    uint256 internal constant FIVE_PT_EIGHT_SIX_PCT_RATE   = 1000000001805786418479434295;
+    uint256 internal constant SIX_PT_THREE_SIX_PCT_RATE    = 1000000001946260772914495212;
 
     //  ---------- Math ----------
     uint256 internal constant RAD      = 10 ** 45;
@@ -84,14 +91,14 @@ contract DssSpellAction is DssAction {
         // Increase the ETH-C Stability Fee (SF) by 1.55%, from 3.45% to 5.00%.
         DssExecLib.setIlkStabilityFee("ETH-C", FIVE_PCT_RATE, /* doDrip = */ true);
 
-        // Increase WBTC-A Stability Fee (SF) by 0.03%, from 5.8% to 5.83%
-        DssExecLib.setIlkStabilityFee("WBTC-A", FIVE_PT_EIGHT_THREE_PCT_RATE, /* doDrip = */ true);
+        // Increase WBTC-A Stability Fee (SF) by 0.03%, from 5.8% to 5.86%
+        DssExecLib.setIlkStabilityFee("WBTC-A", FIVE_PT_EIGHT_SIX_PCT_RATE, /* doDrip = */ true);
 
-        // Increase WBTC-B Stability Fee (SF) by 0.03%, from 5.8% to 6.33%
-        DssExecLib.setIlkStabilityFee("WBTC-B", SIX_PT_THREE_THREE_PCT_RATE, /* doDrip = */ true);
+        // Increase WBTC-B Stability Fee (SF) by 0.03%, from 5.8% to 6.36%
+        DssExecLib.setIlkStabilityFee("WBTC-B", SIX_PT_THREE_SIX_PCT_RATE, /* doDrip = */ true);
 
-        // Increase WBTC-C Stability Fee (SF) by 0.03%, from 5.8% to 5.58%
-        DssExecLib.setIlkStabilityFee("WBTC-C", FIVE_PT_FIVE_EIGHT_PCT_RATE, /* doDrip = */ true);
+        // Increase WBTC-C Stability Fee (SF) by 0.03%, from 5.8% to 5.61%
+        DssExecLib.setIlkStabilityFee("WBTC-C", FIVE_PT_SIX_ONE_PCT_RATE, /* doDrip = */ true);
 
 
         // ---------- Initial RETH-A Offboarding  ----------
@@ -138,6 +145,19 @@ contract DssSpellAction is DssAction {
         // NOTE: Skip on goerli
         
         // BA Labs - 175 MKR - 0x5d67d5B1fC7EF4bfF31967bE2D2d7b9323c1521c
+
+        // ---------- AVC Member Compensation  ----------
+        // Forum: https://forum.makerdao.com/t/avc-member-participation-rewards-q3-2023/22349
+        // Poll: https://vote.makerdao.com/polling/QmSovaxn#poll-detail
+        // NOTE: Skip on goerli
+        
+        // opensky - 20.85 MKR - 0x8e67ee3bbeb1743dc63093af493f67c3c23c6f04
+        // DAI-Vinci - 12.51 MKR - 0x9ee47F0f82F1A6F45C4E1D25Ce95C321D8C8356a
+        // IamMeeoh - 20.85 MKR - 0x47f7A5d8D27f259582097E1eE59a07a816982AE9
+        // ACRE DAOs - 20.85 MKR - 0xBF9226345F601150F64Ea4fEaAE7E40530763cbd
+        // Harmony - 20.85 MKR - 0xE20A2e231215e9b7Aa308463F1A7490b2ECE55D3
+        // Res - 20.85 MKR - 0x8c5c8d76372954922400e4654AF7694e158AB784
+        // seedlatam.eth - 20.85 MKR - 0x0087a081a9b430fd8f688c6ac5dd24421bfb060d
     }
 }
 
