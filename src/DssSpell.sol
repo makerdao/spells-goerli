@@ -52,10 +52,10 @@ contract DssSpellAction is DssAction {
     // uint256 internal constant X_PCT_RATE      = ;
     uint256 internal constant FIVE_PCT_RATE                = 1000000001547125957863212448;
     uint256 internal constant FIVE_PT_TWO_FIVE_PCT_RATE    = 1000000001622535724756171269;
-    uint256 internal constant FIVE_PT_SIX_ONE_PCT_RATE     = 1000000001721802811203852608;
+    uint256 internal constant FIVE_PT_SIX_ONE_PCT_RATE     = 1000000001730811701469052906;
     uint256 internal constant FIVE_PT_SEVEN_FIVE_PCT_RATE  = 1000000001772819380639683201;
     uint256 internal constant FIVE_PT_EIGHT_SIX_PCT_RATE   = 1000000001805786418479434295;
-    uint256 internal constant SIX_PT_THREE_SIX_PCT_RATE    = 1000000001946260772914495212;
+    uint256 internal constant SIX_PT_THREE_SIX_PCT_RATE    = 1000000001955206127822364746;
 
     //  ---------- Math ----------
     uint256 internal constant RAD      = 10 ** 45;
