@@ -20,6 +20,7 @@ import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
 interface VatLike {
+    function Line() external view returns (uint256);
     function ilks(bytes32 ilk) external view returns (uint256 Art, uint256 rate, uint256 spot, uint256 line, uint256 dust);
 }
 
