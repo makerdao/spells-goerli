@@ -110,10 +110,12 @@ contract DssSpellAction is DssAction {
         // ---------- Initial RETH-A Offboarding  ----------
         // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-6/22231
 
-        // Set DC-IAM Line (max DC) to 0 (zero). 
+        // Set DC to 0.
         (,,,uint256 line,) = VatLike(MCD_VAT).ilks("RETH-A");
         DssExecLib.removeIlkFromAutoLine("RETH-A");
-        DssExecLib.decreaseIlkDebtCeiling("RETH-A", line / RAD, /* global = */ true);
+        DssExecLib.setValue(MCD_VAT, "RETH-A", "line", 0);
+        // NOTE: decreasing globalline suniglow level API because of precision loss when using DssExec
+        DssExecLib.setValue(MCD_VAT, "Line", VatLike(MCD_VAT).Line() - line);
 
 
         // ---------- Reconfiguring Andromeda RWA015-A  ----------
