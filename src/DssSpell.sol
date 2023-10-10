@@ -114,7 +114,7 @@ contract DssSpellAction is DssAction {
         (,,,uint256 line,) = VatLike(MCD_VAT).ilks("RETH-A");
         DssExecLib.removeIlkFromAutoLine("RETH-A");
         DssExecLib.setValue(MCD_VAT, "RETH-A", "line", 0);
-        // NOTE: decreasing globalline suniglow level API because of precision loss when using DssExec
+        // NOTE: decreasing global line using the low level API because of precision loss when using DssExecLib
         DssExecLib.setValue(MCD_VAT, "Line", VatLike(MCD_VAT).Line() - line);
 
 
