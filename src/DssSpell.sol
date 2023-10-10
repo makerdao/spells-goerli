@@ -64,7 +64,6 @@ contract DssSpellAction is DssAction {
 
     //  ---------- Math ----------
     uint256 internal constant WAD      = 10 ** 18;
-    uint256 internal constant RAD      = 10 ** 45;
     uint256 internal constant MILLION  = 10 ** 6;
     uint256 internal constant BILLION  = 10 ** 9;
 
@@ -128,11 +127,10 @@ contract DssSpellAction is DssAction {
 
         // Bump Oracle price to account for new DC and SF
         // NOTE: the formula is `Debt ceiling * [ (1 + RWA stability fee ) ^ (minimum deal duration in years) ] * liquidation ratio`
-        // NOTE: `minimum deal duration in year` is not used is that formula as stability fee is 0
-        // bc -l <<< 'scale=18; 3000000000 * e(l(0) * (1)) * 1.00' | cast --to-wei
+        // NOTE: As we have SF 0 for this deal, this should be equal to ilk DC
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).bump(
             "RWA015-A",
-            3_000_000_000 * WAD
+            3 * BILLION * WAD
         );
 
         // NOTE: Update collateral price to propagate the changes
@@ -151,11 +149,10 @@ contract DssSpellAction is DssAction {
 
         // Bump Oracle price to account for new DC and SF
         // NOTE: the formula is `Debt ceiling * [ (1 + RWA stability fee ) ^ (minimum deal duration in years) ] * liquidation ratio`
-        // NOTE: `minimum deal duration in year` is not used is that formula as stability fee is 0
-        // bc -l <<< 'scale=18; 3000000000 * e(l(0) * (1)) * 1.00' | cast --to-wei
+        // NOTE: As we have SF 0 for this deal, this should be equal to ilk DC
         RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).bump(
             "RWA007-A",
-            3_000_000_000 * WAD
+            3 * BILLION * WAD
         );
 
         // NOTE: Update collateral price to propagate the changes
