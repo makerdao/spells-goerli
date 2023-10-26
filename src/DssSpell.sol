@@ -28,6 +28,14 @@ contract DssSpellAction is DssAction {
         return false;
     }
 
+    // ---------- HV Bank (RWA009-A) - Approve DAO Resolutions ----------
+    // Forum: https://forum.makerdao.com/t/dao-resolution-to-facilitate-onboarding-of-rwa-foundation-with-exchange-agent/22456
+    // Poll: https://vote.makerdao.com/executive/template-executive-vote-stability-scope-parameter-changes-spark-protocol-d3m-parameter-changes-set-fortunafi-debt-ceiling-to-zero-dai-dao-resolution-for-hv-bank-delegate-compensation-and-other-actions-september-13-2023
+    // Approve DAO Resolution hash QmbrCPtpKsCaQ2pKc8qLnkL8TywRYcKHYaX6LEzhhKQqAw
+
+    // Comma-separated list of DAO resolutions IPFS hashes.
+    string public constant dao_resolutions = "QmbrCPtpKsCaQ2pKc8qLnkL8TywRYcKHYaX6LEzhhKQqAw";
+
     // ---------- Rates ----------
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -41,6 +49,35 @@ contract DssSpellAction is DssAction {
     // uint256 internal constant X_PCT_RATE      = ;
 
     function actions() public override {
+
+        // ---------- Spark - AAVE Revenue Share Payment ----------
+        // Forum: https://forum.makerdao.com/t/spark-aave-revenue-share-calculation-payment-1-q3-2023/22486
+        // MIP: https://mips.makerdao.com/mips/details/MIP106#9-4-1-spark-protocol-aave-revenue-share
+
+        // Send 2889 DAI from Surplus Buffer to 0x464C71f6c2F760DdA6093dCB91C24c39e5d6e18c
+        // Skip on goerli
+
+        // ---------- Immunefi CU MKR Vesting Transfer ----------
+        // Immunefi CU - 6.34 MKR - 0xd1F2eEf8576736C1EbA36920B957cd2aF07280F4
+        // Forum: https://forum.makerdao.com/t/mip39c3-sp13-removing-is-001/22392
+        // MIP: https://mips.makerdao.com/mips/details/MIP40c3SP41#sentence-summary
+        // Skip on goerli
+
+        // ---------- Housekeeping - GUSD & USDP - Add Jar & Conduit Contracts to Chainlog ----------
+        // Forum: https://forum.makerdao.com/t/proposed-housekeeping-items-upcoming-executive-spell-2023-11-01/22477
+
+        // Add `RwaJar` at 0xf2E7a5B83525c3017383dEEd19Bb05Fe34a62C27 as MCD_PSM_GUSD_A_JAR
+        // Skip on goerli
+
+        // Add `RwaSwapInputOutputConduit2` at 0x6934218d8B3E9ffCABEE8cd80F4c1C4167Afa638 as MCD_PSM_GUSD_A_INPUT_CONDUIT_JAR
+        // Skip on goerli
+
+        // Add `RwaJar` at 0x8bF8b5C58bb57Ee9C97D0FEA773eeE042B10a787 as MCD_PSM_PAX_A_JAR
+        // Skip on goerli
+
+        // Add `RwaSwapInputConduit2` at 0xDa276Ab5F1505965e0B6cD1B6da2A18CcBB29515 as MCD_PSM_PAX_A_INPUT_CONDUIT_JAR
+        // Skip on goerli
+
     }
 }
 
