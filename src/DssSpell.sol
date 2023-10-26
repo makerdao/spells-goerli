@@ -78,6 +78,8 @@ contract DssSpellAction is DssAction {
         // Add `RwaSwapInputConduit2` at 0xDa276Ab5F1505965e0B6cD1B6da2A18CcBB29515 as MCD_PSM_PAX_A_INPUT_CONDUIT_JAR
         // Skip on goerli
 
+        // Bump chainlog as it has been modified.
+        DssExecLib.setChangelogVersion("1.17.1");
     }
 }
 
