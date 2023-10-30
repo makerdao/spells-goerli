@@ -28,7 +28,7 @@ contract DssSpellAction is DssAction {
         return false;
     }
 
-    // ---------- HV Bank (RWA009-A) - Approve DAO Resolutions ----------
+    // ---------- HV Bank (RWA009-A) - Approve DAO Resolution ----------
     // Forum: https://forum.makerdao.com/t/dao-resolution-to-facilitate-onboarding-of-rwa-foundation-with-exchange-agent/22456
     // Poll: https://vote.makerdao.com/executive/template-executive-vote-stability-scope-parameter-changes-spark-protocol-d3m-parameter-changes-set-fortunafi-debt-ceiling-to-zero-dai-dao-resolution-for-hv-bank-delegate-compensation-and-other-actions-september-13-2023
     // Approve DAO Resolution hash QmbrCPtpKsCaQ2pKc8qLnkL8TywRYcKHYaX6LEzhhKQqAw
@@ -78,7 +78,10 @@ contract DssSpellAction is DssAction {
         // Add `RwaSwapInputConduit2` at 0xDa276Ab5F1505965e0B6cD1B6da2A18CcBB29515 as MCD_PSM_PAX_A_INPUT_CONDUIT_JAR
         // Skip on goerli
 
-        // Bump chainlog as it has been modified.
+        // Call `<conduit>.rely(MCD_ESM)` to allow ESM module to `deny` the pause proxy in SwapInputConduit contracts
+        // Skip on goerli
+
+        // Bump chainlog version for consistency, as it will be modified on mainnet
         DssExecLib.setChangelogVersion("1.17.1");
     }
 }
