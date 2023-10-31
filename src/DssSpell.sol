@@ -29,7 +29,7 @@ contract DssSpellAction is DssAction {
     }
 
     // ---------- HV Bank (RWA009-A) - Approve DAO Resolution ----------
-    // Forum: http://forum.makerdao.com/t/huntingdon-valley-bank-transaction-documents-on-permaweb/16264/17
+    // Forum: https://forum.makerdao.com/t/huntingdon-valley-bank-transaction-documents-on-permaweb/16264/17
     // Poll: https://vote.makerdao.com/executive/template-executive-vote-stability-scope-parameter-changes-spark-protocol-d3m-parameter-changes-set-fortunafi-debt-ceiling-to-zero-dai-dao-resolution-for-hv-bank-delegate-compensation-and-other-actions-september-13-2023
     // Approve DAO Resolution hash QmbrCPtpKsCaQ2pKc8qLnkL8TywRYcKHYaX6LEzhhKQqAw
 
