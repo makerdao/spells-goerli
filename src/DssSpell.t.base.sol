@@ -213,7 +213,7 @@ contract DssSpellTestBase is Config, DssTest {
             b = tmp;
         }
         if (a - b > _tolerance) {
-            emit log_bytes32("Error: Wrong `uint' value");
+            emit log_bytes32("Error: Wrong 'uint' value");
             emit log_named_uint("  Expected", _b);
             emit log_named_uint("    Actual", _a);
             fail();
@@ -234,8 +234,11 @@ contract DssSpellTestBase is Config, DssTest {
 
     function _bytes32ToStr(bytes32 _bytes32) internal pure returns (string memory) {
         bytes memory bytesArray = new bytes(32);
-        for (uint256 i; i < 32; i++) {
+        for (uint256 i; i < 32;) {
             bytesArray[i] = _bytes32[i];
+            unchecked {
+                ++i;
+            }
         }
         return string(bytesArray);
     }
@@ -263,7 +266,7 @@ contract DssSpellTestBase is Config, DssTest {
         address[] memory prevSpells = spellValues.previous_spells;
 
         // warp and cast previous spells so values are up-to-date to test against
-        for (uint256 i; i < prevSpells.length; i++) {
+        for (uint256 i; i < prevSpells.length;) {
             DssSpell prevSpell = DssSpell(prevSpells[i]);
             if (prevSpell != DssSpell(address(0)) && !prevSpell.done()) {
                 if (prevSpell.eta() == 0) {
@@ -275,6 +278,10 @@ contract DssSpellTestBase is Config, DssTest {
                     vm.warp(prevSpell.nextCastTime());
                     prevSpell.cast();
                 }
+            }
+
+            unchecked {
+                ++i;
             }
         }
     }
@@ -459,7 +466,7 @@ contract DssSpellTestBase is Config, DssTest {
         // sums[1] : sum over ilks of (line - Art * rate)--i.e. debt that could be drawn at any time
         uint256[] memory sums = new uint256[](2);
         bytes32[] memory ilks = reg.list();
-        for(uint256 i = 0; i < ilks.length; i++) {
+        for(uint256 i; i < ilks.length;) {
             bytes32 ilk = ilks[i];
             (uint256 duty,)  = jug.ilks(ilk);
 
@@ -615,6 +622,10 @@ contract DssSpellTestBase is Config, DssTest {
                 GemJoinAbstract join = GemJoinAbstract(reg.join(ilk));
                 assertEq(join.wards(address(pauseProxy)), 1, _concat("TestError/join-pause-proxy-auth-", ilk)); // Check pause_proxy ward
                 }
+            }
+
+            unchecked {
+                ++i;
             }
         }
         // Require that debt + (debt that could be drawn) does not exceed Line.
@@ -833,7 +844,7 @@ contract DssSpellTestBase is Config, DssTest {
             bytes32(type(uint256).max)
         );
 
-        // Initially this test assume that's we are using freshly deployed Cliiper contract without any past auctions
+        // Initially this test assumes that we are using freshly deployed Clipper contract without any past auctions
         if (clipper.kicks() > 0) {
             // Cleanup clipper auction counter
             vm.store(
@@ -1140,11 +1151,15 @@ contract DssSpellTestBase is Config, DssTest {
         uint8[30] memory seeds = [8,10,6,2,9,15,14,20,7,29,24,13,12,25,16,26,21,22,0,18,17,27,3,28,23,19,4,5,1,11];
         uint256 numSigners = seeds.length;
         signers = new address[](numSigners);
-        for(uint256 i; i < numSigners; i++) {
+        for(uint256 i; i < numSigners;) {
             uint256 sk = uint256(keccak256(abi.encode(seeds[i])));
             signers[i] = vm.addr(sk);
             (uint8 v, bytes32 r, bytes32 s) = vm.sign(sk, signHash);
             signatures = abi.encodePacked(signatures, r, s, v);
+
+            unchecked {
+                ++i;
+            }
         }
         assertEq(signatures.length, numSigners * 65);
     }
@@ -1411,7 +1426,7 @@ contract DssSpellTestBase is Config, DssTest {
     }
 
     function _checkWards(address _addr, string memory contractName) internal {
-        for (uint256 i = 0; i < deployers.count(); i ++) {
+        for (uint256 i; i < deployers.count();) {
             address deployer = deployers.addr(i);
             (bool ok, bytes memory data) = _addr.call(
                 abi.encodeWithSignature("wards(address)", deployer)
@@ -1424,6 +1439,10 @@ contract DssSpellTestBase is Config, DssTest {
                 emit log_named_address("   Deployer Address", deployer);
                 emit log_named_string("  Affected Contract", contractName);
                 fail();
+            }
+
+            unchecked {
+                ++i;
             }
         }
     }
@@ -1445,13 +1464,17 @@ contract DssSpellTestBase is Config, DssTest {
         assertTrue(spell.done(), "TestError/spell-not-done");
 
         bytes32[] memory contractNames = chainLog.list();
-        for(uint256 i = 0; i < contractNames.length; i++) {
+        for(uint256 i; i < contractNames.length;) {
             address _addr = chainLog.getAddress(contractNames[i]);
             string memory contractName = string(
                 abi.encodePacked(contractNames[i])
             );
             if (onlySource) _checkSource(_addr, contractName);
             else _checkWards(_addr, contractName);
+
+            unchecked {
+                ++i;
+            }
         }
     }
 
@@ -1659,7 +1682,7 @@ contract DssSpellTestBase is Config, DssTest {
             // Time tests
             uint256 castTime;
 
-            for(uint256 i = 0; i < 5; i++) {
+            for(uint256 i; i < 5;) {
                 castTime = monday_1400_UTC + i * 1 days; // Next day at 14:00 UTC
                 vm.warp(castTime - 1 seconds); // 13:59:59 UTC
                 assertEq(spell.nextCastTime(), castTime);
@@ -1669,6 +1692,10 @@ contract DssSpellTestBase is Config, DssTest {
                     assertEq(spell.nextCastTime(), monday_1400_UTC + (i + 1) * 1 days); // Next day at 14:00 UTC
                 } else {
                     assertEq(spell.nextCastTime(), monday_1400_UTC + 7 days); // Next monday at 14:00 UTC (friday case)
+                }
+
+                unchecked {
+                    ++i;
                 }
             }
         }
@@ -1706,7 +1733,7 @@ contract DssSpellTestBase is Config, DssTest {
         DssSpell expectedSpell = new DssSpell();
         assertEq(_getExtcodesize(address(spell)), _getExtcodesize(address(expectedSpell)), "TestError/spell-codesize");
 
-        // The SpellAction bytecode can be compared after chopping off the metada
+        // The SpellAction bytecode can be compared after chopping off the metadata
         address expectedAction = expectedSpell.action();
         address actualAction   = spell.action();
         uint256 expectedBytecodeSize;
@@ -1746,9 +1773,12 @@ contract DssSpellTestBase is Config, DssTest {
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        for(uint256 i = 0; i < chainLog.count(); i++) {
+        for(uint256 i; i < chainLog.count();) {
             (bytes32 _key, address _val) = chainLog.get(i);
             assertEq(_val, addr.addr(_key), _concat("TestError/chainlog-addr-mismatch-", _key));
+            unchecked {
+                ++i;
+            }
         }
 
         _checkChainlogVersion(afterSpell.chainlog_version);
@@ -1760,9 +1790,12 @@ contract DssSpellTestBase is Config, DssTest {
         string    memory        _version = chainLog.version();
         address[] memory _chainlog_addrs = new address[](_count);
 
-        for(uint256 i = 0; i < _count; i++) {
+        for(uint256 i; i < _count;) {
             (, address _val) = chainLog.get(i);
             _chainlog_addrs[i] = _val;
+            unchecked {
+                ++i;
+            }
         }
 
         _vote(address(spell));
@@ -1777,12 +1810,16 @@ contract DssSpellTestBase is Config, DssTest {
                 return;
             }
             // Fail if the chainlog is the same size but local keys don't match the chainlog.
-            for(uint256 i = 0; i < _count; i++) {
+            for(uint256 i; i < _count;) {
                 (, address _val) = chainLog.get(i);
                 if (_chainlog_addrs[i] != _val) {
                     emit log_named_string("Error", _concat("TestError/chainlog-version-not-updated-address-change-", _version));
                     fail();
                     return;
+                }
+
+                unchecked {
+                    ++i;
                 }
             }
         }
