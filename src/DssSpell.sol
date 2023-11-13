@@ -19,6 +19,11 @@ pragma solidity 0.8.16;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
+// Note: ignored on Goerli
+// interface ProxyLike {
+//     function exec(address target, bytes calldata args) external payable returns (bytes memory out);
+// }
+
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -28,13 +33,14 @@ contract DssSpellAction is DssAction {
         return false;
     }
 
-    // ---------- HV Bank (RWA009-A) - Approve DAO Resolution ----------
-    // Forum: https://forum.makerdao.com/t/huntingdon-valley-bank-transaction-documents-on-permaweb/16264/17
-    // Poll: https://vote.makerdao.com/executive/template-executive-vote-stability-scope-parameter-changes-spark-protocol-d3m-parameter-changes-set-fortunafi-debt-ceiling-to-zero-dai-dao-resolution-for-hv-bank-delegate-compensation-and-other-actions-september-13-2023
-    // Approve DAO Resolution hash QmbrCPtpKsCaQ2pKc8qLnkL8TywRYcKHYaX6LEzhhKQqAw
+    // ---------- Pass HVB Resolutions ----------
+    // Forum: https://forum.makerdao.com/t/huntingdon-valley-bank-transaction-documents-on-permaweb/16264/19
+    // Poll: https://vote.makerdao.com/polling/QmNgKzcG
+    // Updated Standing Instructions to Escrow Agent - QmWVWXckY482WLTtCFv3x45DFioV1K8mfRM3FVrodqUDud
+    // Approval of New Payment Instructions to Galaxy Digital Trading Cayman LLC - QmSbwqULr66CiCvNips93vwTrvoTe4i2rJVmho7QfmyqZG
 
     // Comma-separated list of DAO resolutions IPFS hashes.
-    string public constant dao_resolutions = "QmbrCPtpKsCaQ2pKc8qLnkL8TywRYcKHYaX6LEzhhKQqAw";
+    string public constant dao_resolutions = "QmWVWXckY482WLTtCFv3x45DFioV1K8mfRM3FVrodqUDud,QmSbwqULr66CiCvNips93vwTrvoTe4i2rJVmho7QfmyqZG";
 
     // ---------- Rates ----------
     // Many of the settings that change weekly rely on the rate accumulator
@@ -48,41 +54,51 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE      = ;
 
+    // --- MATH ---
+    uint256 internal constant MILLION = 10 ** 6;
+
+    // ---------- Spark Proxy ----------
+    // Note: ignored on Goerli
+    // Spark Proxy: https://github.com/marsfoundation/sparklend/blob/d42587ba36523dcff24a4c827dc29ab71cd0808b/script/output/5/primary-sce-latest.json#L2
+    // address internal constant SPARK_PROXY = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
+
+    // ---------- Trigger Spark Proxy Spell ----------
+    // address internal constant SPARK_SPELL = address(0);
+
     function actions() public override {
+        // ---------- Trigger Spark Proxy Spell ----------
+        // Note: ignored on Goerli
+        // Forum: https://forum.makerdao.com/t/proposal-to-adjust-sparklend-parameters/22542
+        // Poll: https://vote.makerdao.com/polling/QmaBLbxP
+        // Poll: https://vote.makerdao.com/polling/QmZwRgr5
+        // Poll: https://vote.makerdao.com/polling/QmQPrHsm
+        // Poll: https://vote.makerdao.com/polling/QmRG9qUp
+        // Poll: https://vote.makerdao.com/polling/QmQjKpbU
+        // ProxyLike(SPARK_PROXY).exec(SPARK_SPELL, abi.encodeWithSignature("execute()"));
 
-        // ---------- Spark - AAVE Revenue Share Payment ----------
-        // Forum: https://forum.makerdao.com/t/spark-aave-revenue-share-calculation-payment-1-q3-2023/22486
-        // MIP: https://mips.makerdao.com/mips/details/MIP106#9-4-1-spark-protocol-aave-revenue-share
 
-        // Send 2889 DAI from Surplus Buffer to 0x464C71f6c2F760DdA6093dCB91C24c39e5d6e18c
-        // Skip on goerli
+        // ----- Spark D3M DC Increase -----
+        // Forum: https://forum.makerdao.com/t/proposal-to-adjust-sparklend-parameters/22542
+        // Poll: https://vote.makerdao.com/polling/QmVbrypf#poll-detail
 
-        // ---------- Immunefi CU MKR Vesting Transfer ----------
-        // Immunefi CU - 6.34 MKR - 0xd1F2eEf8576736C1EbA36920B957cd2aF07280F4
-        // Forum: https://forum.makerdao.com/t/mip39c3-sp13-removing-is-001/22392
-        // MIP: https://mips.makerdao.com/mips/details/MIP40c3SP41#sentence-summary
-        // Skip on goerli
+        // Increase the DIRECT-SPARK-DAI Maximum Debt Ceiling from 400 million DAI to 800 million DAI.
+        // Keep gap and ttl at current settings (20 million and  hours respectively)
+        DssExecLib.setIlkAutoLineDebtCeiling("DIRECT-SPARK-DAI", 800 * MILLION);
 
-        // ---------- Housekeeping - GUSD & USDP - Add Jar & Conduit Contracts to Chainlog ----------
-        // Forum: https://forum.makerdao.com/t/proposed-housekeeping-items-upcoming-executive-spell-2023-11-01/22477
 
-        // Add `RwaJar` at 0xf2E7a5B83525c3017383dEEd19Bb05Fe34a62C27 as MCD_PSM_GUSD_A_JAR
-        // Skip on goerli
+        // ---------- Launch Project Funds Transfer ----------
+        // Forum: https://forum.makerdao.com/t/utilization-of-the-launch-project-under-the-accessibility-scope/21468/6
 
-        // Add `RwaSwapInputOutputConduit2` at 0x6934218d8B3E9ffCABEE8cd80F4c1C4167Afa638 as MCD_PSM_GUSD_A_INPUT_CONDUIT_JAR
-        // Skip on goerli
+        // Launch Project - 2200000.00 DAI - 0x3C5142F28567E6a0F172fd0BaaF1f2847f49D02F
+        // Launch Project - 500.00 MKR - 0x3C5142F28567E6a0F172fd0BaaF1f2847f49D02F
+        // Note: ignored on Goerli
 
-        // Add `RwaJar` at 0x8bF8b5C58bb57Ee9C97D0FEA773eeE042B10a787 as MCD_PSM_PAX_A_JAR
-        // Skip on goerli
 
-        // Add `RwaSwapInputConduit2` at 0xDa276Ab5F1505965e0B6cD1B6da2A18CcBB29515 as MCD_PSM_PAX_A_INPUT_CONDUIT_JAR
-        // Skip on goerli
-
-        // Call `<conduit>.rely(MCD_ESM)` to allow ESM module to `deny` the pause proxy in SwapInputConduit contracts
-        // Skip on goerli
-
-        // Bump chainlog version for consistency, as it will be modified on mainnet
-        DssExecLib.setChangelogVersion("1.17.1");
+        // ---------- Whistleblower Bounty ----------
+        // VeniceTree - 27.78 MKR - 0xCDDd2A697d472d1e8a0B1B188646c756d097b058
+        // Forum: https://forum.makerdao.com/t/ads-derecognition-due-to-operational-security-breach/22532
+        // MIP: https://mips.makerdao.com/mips/details/MIP101#2-6-6-aligned-delegate-operational-security
+        // Note: ignored on Goerli
     }
 }
 
