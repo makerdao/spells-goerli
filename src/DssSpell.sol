@@ -19,11 +19,6 @@ pragma solidity 0.8.16;
 import "dss-exec-lib/DssExec.sol";
 import "dss-exec-lib/DssAction.sol";
 
-// Note: ignored on Goerli
-// interface ProxyLike {
-//     function exec(address target, bytes calldata args) external payable returns (bytes memory out);
-// }
-
 contract DssSpellAction is DssAction {
     // Provides a descriptive tag for bot consumption
     string public constant override description = "Goerli Spell";
@@ -66,7 +61,7 @@ contract DssSpellAction is DssAction {
     // address internal constant SPARK_SPELL = address(0);
 
     function actions() public override {
-        // ---------- Trigger Spark Proxy Spell ----------
+        // ---------- Spark Proxy-Spell ----------
         // Note: ignored on Goerli
         // Forum: https://forum.makerdao.com/t/proposal-to-adjust-sparklend-parameters/22542
         // Poll: https://vote.makerdao.com/polling/QmaBLbxP
@@ -74,10 +69,16 @@ contract DssSpellAction is DssAction {
         // Poll: https://vote.makerdao.com/polling/QmQPrHsm
         // Poll: https://vote.makerdao.com/polling/QmRG9qUp
         // Poll: https://vote.makerdao.com/polling/QmQjKpbU
+
+        // Gnosis Chain - Increase wstETH Supply Cap to 10,000 wstETH
+        // Ethereum - Set DAI Market Maximum Loan-to-Value to Zero Percent
+        // Ethereum - Reactivate WBTC and Optimize Parameters for Current Market Conditions
+        // Ethereum - Increase rETH & wstETH Supply Caps
+        // Ethereum & Gnosis Chain - Adjust ETH Market Interest Rate Models
         // ProxyLike(SPARK_PROXY).exec(SPARK_SPELL, abi.encodeWithSignature("execute()"));
 
 
-        // ----- Spark D3M DC Increase -----
+        // ----- Adjust Spark Protocol D3M Maximum Debt Ceiling -----
         // Forum: https://forum.makerdao.com/t/proposal-to-adjust-sparklend-parameters/22542
         // Poll: https://vote.makerdao.com/polling/QmVbrypf#poll-detail
 
