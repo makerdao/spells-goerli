@@ -62,13 +62,13 @@ contract DssSpellAction is DssAction {
 
     function actions() public override {
         // ---------- Spark Proxy-Spell ----------
-        // Note: ignored on Goerli
         // Forum: https://forum.makerdao.com/t/proposal-to-adjust-sparklend-parameters/22542
         // Poll: https://vote.makerdao.com/polling/QmaBLbxP
         // Poll: https://vote.makerdao.com/polling/QmZwRgr5
         // Poll: https://vote.makerdao.com/polling/QmQPrHsm
         // Poll: https://vote.makerdao.com/polling/QmRG9qUp
         // Poll: https://vote.makerdao.com/polling/QmQjKpbU
+        // Note: ignored on Goerli
 
         // Gnosis Chain - Increase wstETH Supply Cap to 10,000 wstETH
         // Ethereum - Set DAI Market Maximum Loan-to-Value to Zero Percent
@@ -89,17 +89,35 @@ contract DssSpellAction is DssAction {
 
         // ---------- Launch Project Funds Transfer ----------
         // Forum: https://forum.makerdao.com/t/utilization-of-the-launch-project-under-the-accessibility-scope/21468/6
+        // Note: ignored on Goerli
 
         // Launch Project - 2200000.00 DAI - 0x3C5142F28567E6a0F172fd0BaaF1f2847f49D02F
         // Launch Project - 500.00 MKR - 0x3C5142F28567E6a0F172fd0BaaF1f2847f49D02F
-        // Note: ignored on Goerli
 
 
         // ---------- Whistleblower Bounty ----------
-        // VeniceTree - 27.78 MKR - 0xCDDd2A697d472d1e8a0B1B188646c756d097b058
         // Forum: https://forum.makerdao.com/t/ads-derecognition-due-to-operational-security-breach/22532
         // MIP: https://mips.makerdao.com/mips/details/MIP101#2-6-6-aligned-delegate-operational-security
         // Note: ignored on Goerli
+
+        // VeniceTree - 27.78 MKR - 0xCDDd2A697d472d1e8a0B1B188646c756d097b058
+
+
+        // ---------- October Delegate Compensation  ----------
+        // Forum: https://forum.makerdao.com/t/october-2023-aligned-delegate-compensation/22732
+        // Note: ignored on Goerli
+
+        // 0xDefensor - 41.67 MKR - 0x9542b441d65B6BF4dDdd3d4D2a66D8dCB9EE07a9
+        // TRUE NAME - 41.67 MKR - 0x612F7924c367575a0Edf21333D96b15F1B345A5d
+        // BONAPUBLICA - 41.67 MKR - 0x167c1a762B08D7e78dbF8f24e5C3f1Ab415021D3
+        // Cloaky - 41.67 MKR - 0x869b6d5d8FA7f4FFdaCA4D23FFE0735c5eD1F818
+        // Navigator - 40.33 MKR - 0x11406a9CC2e37425F15f920F494A51133ac93072
+        // vigilant - 13.89 MKR - 0x2474937cB55500601BCCE9f4cb0A0A72Dc226F61
+        // UPMaker - 13.89 MKR - 0xbB819DF169670DC71A16F58F55956FE642cc6BcD
+        // PBG - 13.89 MKR - 0x8D4df847dB7FfE0B46AF084fE031F7691C6478c2
+        // PALC - 13.44 MKR - 0x78Deac4F87BD8007b9cb56B8d53889ed5374e83A
+        // BLUE - 12.97 MKR - 0xb6C09680D822F162449cdFB8248a7D3FC26Ec9Bf
+        // JAG - 4.45 MKR - 0x58D1ec57E4294E4fe650D1CB12b96AE34349556f
     }
 }
 
