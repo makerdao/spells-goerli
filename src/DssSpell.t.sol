@@ -40,6 +40,10 @@ interface ProxyLike {
     function exec(address target, bytes calldata args) external payable returns (bytes memory out);
 }
 
+interface SpellActionLike {
+    function dao_resolutions() external view returns (string memory);
+}
+
 contract DssSpellTest is DssSpellTestBase {
     using stdStorage for StdStorage;
 
@@ -501,6 +505,24 @@ contract DssSpellTest is DssSpellTestBase {
 
         // Validate post-spell state
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
+    }
+
+    function testDaoResolutions() public { // make private to disable
+        // For each resolution, add IPFS hash as item to the resolutions array
+        // Initialize the array with the number of resolutions
+        string[1] memory resolutions = [
+            "QmPiEHtt8rkVtSibBXMrhEzHUmSriXWz4AL2bjscq8dUvU"
+        ];
+
+        string memory comma_separated_resolutions = "";
+        for (uint256 i = 0; i < resolutions.length; i++) {
+            comma_separated_resolutions = string.concat(comma_separated_resolutions, resolutions[i]);
+            if (i + 1 < resolutions.length) {
+                comma_separated_resolutions = string.concat(comma_separated_resolutions, ",");
+            }
+        }
+
+        assertEq(SpellActionLike(spell.action()).dao_resolutions(), comma_separated_resolutions, "dao_resolutions/invalid-format");
     }
 
     // SPARK TESTS
