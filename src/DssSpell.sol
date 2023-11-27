@@ -111,7 +111,7 @@ contract DssSpellAction is DssAction {
         // Note: as stability fee is 0 for this deal, this should be equal to ilk DC
         RwaLiquidationOracleLike(MIP21_LIQUIDATION_ORACLE).bump(
             "RWA014-A",
-            1500 * MILLION * WAD
+            1_500 * MILLION * WAD
         );
 
         // Note: we have to update collateral price to propagate the changes
