@@ -101,14 +101,6 @@ contract DssSpellTest is DssSpellTestBase {
         _testUseEta();
     }
 
-    function testAuth() public {
-        _checkAuth(false);
-    }
-
-    function testAuthInSources() public {
-        _checkAuth(true);
-    }
-
     function testBytecodeMatches() public {
         _testBytecodeMatches();
     }
@@ -233,6 +225,23 @@ contract DssSpellTest is DssSpellTestBase {
         //assertTrue(spell.done());
 
         //assertEq(OsmAbstract(0xF15993A5C5BE496b8e1c9657Fd2233b579Cd3Bc6).wards(ORACLE_WALLET01), 1);
+    }
+
+    function testAuth() private {  // make private to disable
+        bytes32[] memory keys = new bytes32[](2);
+        keys[0] = "MCD_JOIN_TOKEN_X";
+        keys[1] = "MCD_CLIP_TOKEN_X";
+
+        _checkAuth(keys);
+    }
+
+    function testOsmAuth() private {  // make private to disable
+        bytes32[] memory keys = new bytes32[](3);
+        keys[0] = "PIP_XXX";
+        keys[1] = "PIP_YYY";
+        keys[2] = "PIP_ZZZ";
+
+        _checkOsmAuth(keys);
     }
 
     function testRemoveChainlogValues() private { // make private to disable
