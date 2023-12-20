@@ -250,6 +250,17 @@ contract DssSpellTestBase is Config, DssTest {
         }
     }
 
+    /**
+     * @dev Add this modifier to a test to skip it.
+     *      It will still show in the test report, but with a `[SKIP]` label added to it.
+     *      This is meant to be used for tests that need to be enabled/disabled on-demand.
+     */
+    modifier skipTest() {
+        (bool success, ) = address(vm).call(abi.encodeWithSignature("skip(bool)", true));
+        require(success, "Failed to skip test");
+        _;
+    }
+
     // 10^-5 (tenth of a basis point) as a RAY
     uint256 TOLERANCE = 10 ** 22;
 
