@@ -172,7 +172,7 @@ contract DssSpellTest is DssSpellTestBase {
 
     // TESTS BELOW CAN BE ENABLED/DISABLED ON DEMAND
 
-    function testOsmAuth() private {  // make private to disable
+    // function testOsmAuth() private {  // make private to disable
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
 
         // validate the spell does what we told it to
@@ -213,7 +213,7 @@ contract DssSpellTest is DssSpellTestBase {
 
         //    assertEq(OsmAbstract(pip).wards(ORACLE_WALLET01), 1);
         //}
-    }
+    // }
 
     function testOracleList() private {  // make private to disable
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
