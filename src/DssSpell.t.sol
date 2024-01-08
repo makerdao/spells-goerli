@@ -550,4 +550,12 @@ contract DssSpellTest is DssSpellTestBase {
 
     // SPELL-SPECIFIC TESTS GO BELOW
 
+    string RWA009_OLDDOC      = "QmYjvAZEeGCs8kMuLQz6kU8PWgsbG1i8QWd2jrwkSipcRx";
+    string RWA009_NEWDOC      = "QmfEgZuiw6wsTRUYerdPZNUrqDXSGM6Nm4fM3nG7nNbEjT";
+
+    function testRWA009DocChange() public {
+        _checkRWADocUpdate("RWA009-A", RWA009_OLDDOC, RWA009_NEWDOC);
+    }
+
+
 }

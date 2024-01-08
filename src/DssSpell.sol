@@ -50,7 +50,7 @@ contract DssSpellAction is DssAction {
     uint256 constant internal MILLION  = 10 **  6;
 
     address immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
-    
+
     // Function from https://github.com/makerdao/spells-goerli/blob/7d783931a6799fe8278e416b5ac60d4bb9c20047/archive/2022-11-14-DssSpell/Goerli-DssSpell.sol#L59
     function _updateDoc(bytes32 ilk, string memory doc) internal {
         ( , address pip, uint48 tau, ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
@@ -123,10 +123,6 @@ contract DssSpellAction is DssAction {
         // SES - 508.55 MKR - 0x87AcDD9208f73bFc9207e1f6F0fDE906bcA95cc6
 
         // Note: payments are skipped on goerli
-        
-        // checksums
-        // 4,500,000.00 DAI
-        // 2025.00 MKR
 
         // ---------- Launch Project Funding ----------
         // Forum: https://forum.makerdao.com/t/utilization-of-the-launch-project-under-the-accessibility-scope/21468/9
@@ -135,13 +131,17 @@ contract DssSpellAction is DssAction {
         // Launch Project - 820.00 MKR - 0x3C5142F28567E6a0F172fd0BaaF1f2847f49D02F
 
         // Note: payments are skipped on goerli
-        
+
+        // checksums
+        // 4,500,000.00 DAI
+        // 2025.00 MKR
+                
         // ---------- Update doc parameter ----------
         // Forum: https://forum.makerdao.com/t/rwa009-hvbank-mip21-token-ces-domain-team-assessment/15861/14
 
         // Update HVBank (RWA009-A) doc to QmfEgZuiw6wsTRUYerdPZNUrqDXSGM6Nm4fM3nG7nNbEjT
         _updateDoc("RWA009-A", "QmfEgZuiw6wsTRUYerdPZNUrqDXSGM6Nm4fM3nG7nNbEjT");
-        
+                            
         // ---------- Spark D3M line increase ----------
         // Forum: https://forum.makerdao.com/t/spark-spell-proposed-changes/23298
         
