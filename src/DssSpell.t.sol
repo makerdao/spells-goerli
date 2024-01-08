@@ -511,7 +511,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
 
-    function testDaoResolutions() public { // make private to disable
+    function testDaoResolutions() private { // make private to disable
         // For each resolution, add IPFS hash as item to the resolutions array
         // Initialize the array with the number of resolutions
         string[1] memory resolutions = [
@@ -550,19 +550,4 @@ contract DssSpellTest is DssSpellTestBase {
 
     // SPELL-SPECIFIC TESTS GO BELOW
 
-    // RWA tests
-    RwaLiquidationOracleLike oracle = RwaLiquidationOracleLike(addr.addr("MIP21_LIQUIDATION_ORACLE"));
-    function testRWApriceBump() public {
-        _vote(address(spell));
-        _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        // Get the oracle address
-        (,address pip,,  ) = oracle.ilks("RWA014-A");
-        assertEq(uint256(DSValueAbstract(pip).read()), 1_500_000_000 * WAD, "RWA014: Bad pip value after bump()");
-
-        // Get collateral's parameters
-        (,, uint256 spot,,) = vat.ilks("RWA014-A");
-        assertEq(spot, 1_500_000_000 * RAY, "RWA014: Bad spot value after bump()");
-    }
 }
