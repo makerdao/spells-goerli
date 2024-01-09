@@ -135,7 +135,7 @@ contract DssSpellAction is DssAction {
         // checksums
         // 4,500,000.00 DAI
         // 2025.00 MKR
-                
+
         // ---------- Update doc parameter ----------
         // Forum: https://forum.makerdao.com/t/rwa009-hvbank-mip21-token-ces-domain-team-assessment/15861/14
 
@@ -144,7 +144,8 @@ contract DssSpellAction is DssAction {
                             
         // ---------- Spark D3M line increase ----------
         // Forum: https://forum.makerdao.com/t/spark-spell-proposed-changes/23298
-        
+        // Poll: https://vote.makerdao.com/polling/QmdQSuAc
+
         // Increase the line by 400 million from 800 million to 1.2 billion Dai
         DssExecLib.setIlkAutoLineDebtCeiling("DIRECT-SPARK-DAI", 1200 * MILLION);
 
