@@ -144,7 +144,7 @@ contract DssSpellAction is DssAction {
                             
         // ---------- Spark D3M line increase ----------
         // Forum: https://forum.makerdao.com/t/spark-spell-proposed-changes/23298
-        // Poll: https://vote.makerdao.com/polling/QmdQSuAc
+        // Poll: https://vote.makerdao.com/polling/QmdQSuAc#poll-detail
 
         // Increase the line by 400 million from 800 million to 1.2 billion Dai
         DssExecLib.setIlkAutoLineDebtCeiling("DIRECT-SPARK-DAI", 1200 * MILLION);
