@@ -110,7 +110,7 @@ contract DssSpellAction is DssAction {
 
         // yank Dai stream 15 - SES
         // Forum: https://forum.makerdao.com/t/mip39c3-sp11-core-unit-offboarding-ses/22332
-        
+
         // ---------- CU MKR payments ----------
         // MIP: https://mips.makerdao.com/mips/details/MIP40c3SP25
         // Note: payments are skipped on goerli
@@ -121,7 +121,7 @@ contract DssSpellAction is DssAction {
         // ---------- Launch Project Funding ----------
         // Forum: https://forum.makerdao.com/t/utilization-of-the-launch-project-under-the-accessibility-scope/21468/9
         // Note: payments are skipped on goerli
-        
+
         // Launch Project - 4,500,000.00 DAI - 0x3C5142F28567E6a0F172fd0BaaF1f2847f49D02F
         // Launch Project - 820.00 MKR - 0x3C5142F28567E6a0F172fd0BaaF1f2847f49D02F
 
@@ -130,7 +130,7 @@ contract DssSpellAction is DssAction {
 
         // Update HVBank (RWA009-A) doc to QmfEgZuiw6wsTRUYerdPZNUrqDXSGM6Nm4fM3nG7nNbEjT
         _updateDoc("RWA009-A", "QmfEgZuiw6wsTRUYerdPZNUrqDXSGM6Nm4fM3nG7nNbEjT");
-                            
+
         // ---------- Spark D3M line increase ----------
         // Forum: https://forum.makerdao.com/t/spark-spell-proposed-changes/23298
         // TODO: add url to the poll if poll is included in the exec doc
