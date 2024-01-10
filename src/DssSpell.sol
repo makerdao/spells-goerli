@@ -44,13 +44,13 @@ contract DssSpellAction is DssAction {
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
     // uint256 internal constant X_PCT_RATE = ;
-    
+
     // ---------- Math ----------
-    uint256 constant internal MILLION  = 10 **  6;
+    uint256 internal constant MILLION  = 10 **  6;
 
-    address immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
+    address internal immutable MIP21_LIQUIDATION_ORACLE = DssExecLib.getChangelogAddress("MIP21_LIQUIDATION_ORACLE");
 
-    // Function from https://github.com/makerdao/spells-goerli/blob/7d783931a6799fe8278e416b5ac60d4bb9c20047/archive/2022-11-14-DssSpell/Goerli-DssSpell.sol#L59
+    // Note: Function from https://github.com/makerdao/spells-goerli/blob/7d783931a6799fe8278e416b5ac60d4bb9c20047/archive/2022-11-14-DssSpell/Goerli-DssSpell.sol#L59
     function _updateDoc(bytes32 ilk, string memory doc) internal {
         ( , address pip, uint48 tau, ) = RwaLiquidationLike(MIP21_LIQUIDATION_ORACLE).ilks(ilk);
         require(pip != address(0), "DssSpell/unexisting-rwa-ilk");
@@ -104,7 +104,7 @@ contract DssSpellAction is DssAction {
 
         // ---------- yank Dai streams ----------
         // Note: payments are skipped on goerli
-        
+
         // yank Dai stream 21 - DECO
         // Forum: https://forum.makerdao.com/t/mip39c3-sp12-core-unit-offboarding-deco/22333
 
@@ -133,12 +133,13 @@ contract DssSpellAction is DssAction {
                             
         // ---------- Spark D3M line increase ----------
         // Forum: https://forum.makerdao.com/t/spark-spell-proposed-changes/23298
-        // Poll: https://vote.makerdao.com/polling/QmdQSuAc#poll-detail
+        // TODO: add url to the poll if poll is included in the exec doc
 
         // Increase the line by 400 million from 800 million to 1.2 billion Dai
         DssExecLib.setIlkAutoLineDebtCeiling("DIRECT-SPARK-DAI", 1200 * MILLION);
 
         // ---------- Trigger Spark Proxy Spell ----------
+        // Address - 0x7E73CCAA4977A5429fD1815130804769EcAad4a7
         // Note: skipped on goerli as spark spell is only deployed to mainnet
     }
 }
