@@ -22,7 +22,6 @@ import "dss-exec-lib/DssAction.sol";
 interface RwaLiquidationLike {
     function ilks(bytes32) external view returns (string memory, address, uint48, uint48);
     function init(bytes32, uint256, string calldata, uint48) external;
-    function bump(bytes32 ilk, uint256 val) external;
 }
 
 contract DssSpellAction is DssAction {
@@ -67,9 +66,9 @@ contract DssSpellAction is DssAction {
 
     function actions() public override {
 
-
         // ---------- November Delegate Compensation ----------
         // Forum: https://forum.makerdao.com/t/november-2023-aligned-delegate-compensation/23351
+        // Note: payments are skipped on goerli
 
         // 0xDefensor - 41.67 MKR - 0x9542b441d65B6BF4dDdd3d4D2a66D8dCB9EE07a9
         // BONAPUBLICA - 41.67 MKR - 0x167c1a762B08D7e78dbF8f24e5C3f1Ab415021D3
@@ -81,10 +80,9 @@ contract DssSpellAction is DssAction {
         // JAG - 13.02 MKR - 0x58D1ec57E4294E4fe650D1CB12b96AE34349556f
         // PBG - 0.45 MKR - 0x8D4df847dB7FfE0B46AF084fE031F7691C6478c2
 
-        // Note: payments are skipped on goerli
-
         // ---------- December Delegate Compensation ----------
         // Forum: https://forum.makerdao.com/t/december-2023-aligned-delegate-compensation/23352
+        // Note: payments are skipped on goerli
 
         // 0xDefensor - 41.67 MKR - 0x9542b441d65B6BF4dDdd3d4D2a66D8dCB9EE07a9
         // BONAPUBLICA - 41.67 MKR - 0x167c1a762B08D7e78dbF8f24e5C3f1Ab415021D3
@@ -97,44 +95,35 @@ contract DssSpellAction is DssAction {
         // JAG - 12.95 MKR - 0x58D1ec57E4294E4fe650D1CB12b96AE34349556f
         // WBC - 11.28 MKR - 0xeBcE83e491947aDB1396Ee7E55d3c81414fB0D47
 
-        // Note: payments are skipped on goerli
-
         // ---------- Offboarded Delegate Buffer Payments ----------
         // Forum: https://forum.makerdao.com/t/october-2023-aligned-delegate-compensation/22732#october-compensation-2
+        // Note: payments are skipped on goerli
 
         // Navigator - 20.84 MKR - 0x11406a9CC2e37425F15f920F494A51133ac93072
         // PALC - 6.95 MKR - 0x78Deac4F87BD8007b9cb56B8d53889ed5374e83A
 
-        // Note: payments are skipped on goerli
-
         // ---------- yank Dai streams ----------
-        // Forum: https://forum.makerdao.com/t/mip39c3-sp11-core-unit-offboarding-ses/22332
+        // Note: payments are skipped on goerli
+        
+        // yank Dai stream 21 - DECO
         // Forum: https://forum.makerdao.com/t/mip39c3-sp12-core-unit-offboarding-deco/22333
 
-        // yank Dai stream 21 - DECO
         // yank Dai stream 15 - SES
+        // Forum: https://forum.makerdao.com/t/mip39c3-sp11-core-unit-offboarding-ses/22332
         
-        // Note: payments are skipped on goerli
-
         // ---------- CU MKR payments ----------
         // MIP: https://mips.makerdao.com/mips/details/MIP40c3SP25
+        // Note: payments are skipped on goerli
 
         // BA Labs - 175.00 MKR - 0x5d67d5B1fC7EF4bfF31967bE2D2d7b9323c1521c
         // SES - 508.55 MKR - 0x87AcDD9208f73bFc9207e1f6F0fDE906bcA95cc6
 
-        // Note: payments are skipped on goerli
-
         // ---------- Launch Project Funding ----------
         // Forum: https://forum.makerdao.com/t/utilization-of-the-launch-project-under-the-accessibility-scope/21468/9
-
+        // Note: payments are skipped on goerli
+        
         // Launch Project - 4,500,000.00 DAI - 0x3C5142F28567E6a0F172fd0BaaF1f2847f49D02F
         // Launch Project - 820.00 MKR - 0x3C5142F28567E6a0F172fd0BaaF1f2847f49D02F
-
-        // Note: payments are skipped on goerli
-
-        // checksums
-        // 4,500,000.00 DAI
-        // 2025.00 MKR
 
         // ---------- Update doc parameter ----------
         // Forum: https://forum.makerdao.com/t/rwa009-hvbank-mip21-token-ces-domain-team-assessment/15861/14
@@ -150,7 +139,6 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkAutoLineDebtCeiling("DIRECT-SPARK-DAI", 1200 * MILLION);
 
         // ---------- Trigger Spark Proxy Spell ----------
-
         // Note: skipped on goerli as spark spell is only deployed to mainnet
     }
 }
