@@ -44,10 +44,6 @@ interface ProxyLike {
     function exec(address target, bytes calldata args) external payable returns (bytes memory out);
 }
 
-interface RwaLiquidationOracleLike {
-    function ilks(bytes32) external view returns (string memory, address, uint48 toc, uint48 tau);
-}
-
 contract DssSpellTest is DssSpellTestBase {
     using stdStorage for StdStorage;
 
