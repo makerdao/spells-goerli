@@ -47,7 +47,7 @@ contract Deployers {
     address public constant SIDESTREAM_01   = 0x47f1aaC8c1BDD49B0c2438c1754518695E9f08d3;
     address public constant PHOENIX_LABS_01 = 0xd1236a6A111879d9862f8374BA15344b6B233Fbd;
     address public constant ECO_DEPLOY_01   = 0x694047b514Ae125d528eDE99048a75592B830256;
-    address public constant DEWIZ_01        = 0x63A5a87296FF286bBD6aB46186bFa03762Fa16C8; // Deployer for Goerli Spell 2024-01-12
+    address public constant DEWIZ_01        = 0x0d5DdFB82E18dC44bC63200fF91E72c408d4C35f; // Deployer for Goerli Spell 2024-01-12
     // address public constant SPARK_01        = 0x02416B99202081F6b90851e35682Ca90D547054c; // Deployer for Spark 2023-08-02
     // address public constant SPARK_02        = 0x4953BAe71F6F06b717F7A99DdBe08Cb991412d4D; // Deployer for Spark 2023-08-02
     // address public constant SPARK_03        = 0x04a733f946C0aD8E2773d9A3891A8CCeD900a0F8; // Deployer for Spark 2023-09-13
