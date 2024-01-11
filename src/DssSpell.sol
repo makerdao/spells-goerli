@@ -133,13 +133,20 @@ contract DssSpellAction is DssAction {
 
         // ---------- Spark D3M line increase ----------
         // Forum: https://forum.makerdao.com/t/spark-spell-proposed-changes/23298
-        // TODO: add url to the poll if poll is included in the exec doc
+        // Poll: https://vote.makerdao.com/polling/QmdQSuAc
 
         // Increase the line by 400 million from 800 million to 1.2 billion Dai
         DssExecLib.setIlkAutoLineDebtCeiling("DIRECT-SPARK-DAI", 1200 * MILLION);
 
         // ---------- Trigger Spark Proxy Spell ----------
-        // Address - 0x7E73CCAA4977A5429fD1815130804769EcAad4a7
+        // Activate Spark Proxy Spell - 0x2f2c514137173bc98B3699A0d291f7593637c596
+        // Forum: https://forum.makerdao.com/t/spark-spell-proposed-changes/23298
+        // Forum: https://forum.makerdao.com/t/jan-11th-2024-expedited-inclusion-of-a-patch-to-spark-pool-implementation/23393
+        // Poll: https://vote.makerdao.com/polling/QmdVy1Uk
+        // Poll: https://vote.makerdao.com/polling/QmeWioX1
+        // Poll: https://vote.makerdao.com/polling/QmRdew4b
+        // Poll: https://vote.makerdao.com/polling/QmXtvu32
+        // Poll: https://vote.makerdao.com/polling/QmRKkMnx
         // Note: skipped on goerli as spark spell is only deployed to mainnet
     }
 }
