@@ -1902,6 +1902,6 @@ contract DssSpellTestBase is Config, DssTest {
             assertEq(_val, addr.addr(_key), _concat("TestError/chainlog-addr-mismatch-", _key));
         }
 
-        assertEq(chainLog.version(), key, _concat("TestError/Chainlog-version-mismatch-", key));
+        assertEq(chainLog.version(), afterSpell.chainlog_version, "TestError/chainlog-version-mismatch");
     }
 }
