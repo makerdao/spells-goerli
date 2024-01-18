@@ -229,15 +229,25 @@ contract DssSpellTestBase is Config, DssTest {
     }
 
     function _concat(string memory a, bytes32 b) internal pure returns (string memory) {
-        return string.concat(a, _bytes32ToStr(b));
+        return string.concat(a, _bytes32ToString(b));
     }
 
-    function _bytes32ToStr(bytes32 _bytes32) internal pure returns (string memory) {
-        bytes memory bytesArray = new bytes(32);
-        for (uint256 i; i < 32; i++) {
+    function _bytes32ToString(bytes32 _bytes32) internal pure returns (string memory) {
+        uint256 charCount = 0;
+        while(charCount < 32 && _bytes32[charCount] != 0) {
+            charCount++;
+        }
+        bytes memory bytesArray = new bytes(charCount);
+        for (uint256 i = 0; i < charCount; i++) {
             bytesArray[i] = _bytes32[i];
         }
         return string(bytesArray);
+    }
+
+    function _stringToBytes32(string memory source) internal pure returns (bytes32 result) {
+        assembly {
+            result := mload(add(source, 32))
+        }
     }
 
     // 10^-5 (tenth of a basis point) as a RAY
@@ -335,12 +345,6 @@ contract DssSpellTestBase is Config, DssTest {
         vm.warp(DssSpell(spell_).nextCastTime());
 
         DssSpell(spell_).cast();
-    }
-
-    function _stringToBytes32(string memory source) internal pure returns (bytes32 result) {
-        assembly {
-            result := mload(add(source, 32))
-        }
     }
 
     function _checkSystemValues(SystemValues storage values) internal {
@@ -1446,36 +1450,15 @@ contract DssSpellTestBase is Config, DssTest {
     }
 
     /**
-     * @notice Checks if the deployer of contracts being added to the chainlog has not kept `wards` access to it.
-     * @dev Reverts if any non-existent keys are present the list.
-     * @param keys A list of chainlog keys.
+     * @notice Checks if the the deployer of a contract the chainlog has not kept `wards` access to it.
+     * @dev Reverts if `key` is not in the chainlog.
      */
-    function _checkAuth(bytes32[] memory keys) internal {
-        _vote(address(spell));
-        _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done(), "TestError/spell-not-done");
+    function _checkAuth(bytes32 key) internal {
+        address _addr = chainLog.getAddress(key);
+        string memory contractName = _bytes32ToString(key);
 
-        for(uint256 i = 0; i < keys.length; i++) {
-            _checkWards(chainLog.getAddress(keys[i]), string(abi.encodePacked(keys[i])));
-        }
-    }
-
-    /**
-     * @notice Same as `_checkAuth`, but specific for OSMs.
-     * @dev Reverts if any non-existent keys are present the list.
-     * @param keys A list of chainlog keys for OSMs.
-     */
-    function _checkOsmAuth(bytes32[] memory keys) internal {
-        _vote(address(spell));
-        _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done(), "TestError/spell-not-done");
-
-        for(uint256 i = 0; i < keys.length; i++) {
-            address _addr = chainLog.getAddress(keys[i]);
-            string memory _key = string(abi.encodePacked(keys[i]));
-            _checkWards(_addr, _key);
-            _checkOsmSrcWards(_addr, _key);
-        }
+        _checkWards(_addr, contractName);
+        _checkOsmSrcWards(_addr, contractName);
     }
 
     function _checkChainlogKey(bytes32 key) internal {
@@ -1763,6 +1746,159 @@ contract DssSpellTestBase is Config, DssTest {
         assertEq(actualHash, expectedHash);
     }
 
+    struct ChainlogCache {
+        bytes32 versionHash;
+        bytes32 contentHash;
+        uint256 count;
+        bytes32[] keys;
+        address[] values;
+    }
+
+    /**
+     * @dev Checks the integrity of the chainlog.
+     *      This test case is able to catch the following spell issues:
+
+     *      1. Modifications without version bumping:
+     *        a. Removing a key.
+     *        b. Updating a key.
+     *        c. Adding a key.
+     *        d. Removing a key and adding it back (this can change the order of the list).
+     *      2. Version bumping without modifications.
+     *      3. Dangling wards on new or updated keys.
+     *
+     *      When adding or updating a key, the test will automatically check for dangling wards if applicable.
+     *      Notice that when a key is removed, if it is not the last one, there is a side-effect of moving
+     *      the last key to the position of the removed one (well-known Solidity iterability pattern).
+     *      This will generate a false-positive that will cause the test to re-check wards for the moved key.
+     */
+    function _testChainlogIntegrity() internal {
+        ChainlogCache memory cacheBefore = ChainlogCache({
+            count: chainLog.count(),
+            keys: chainLog.list(),
+            versionHash: keccak256(abi.encodePacked("")),
+            contentHash: keccak256(abi.encode(new bytes32[](0), new address[](0))),
+            values: new address[](0)
+        });
+
+        cacheBefore.values = new address[](cacheBefore.count);
+        for(uint256 i = 0; i < cacheBefore.count; i++) {
+            cacheBefore.values[i] = chainLog.getAddress(cacheBefore.keys[i]);
+        }
+
+        cacheBefore.versionHash = keccak256(abi.encodePacked(chainLog.version()));
+        // Using `abi.encode` to prevent ambiguous encoding
+        cacheBefore.contentHash = keccak256(abi.encode(cacheBefore.keys, cacheBefore.values));
+
+        //////////////////////////////////////////
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        //////////////////////////////////////////
+
+        ChainlogCache memory cacheAfter = ChainlogCache({
+            count: chainLog.count(),
+            keys: chainLog.list(),
+            versionHash: keccak256(abi.encodePacked("")),
+            contentHash: keccak256(abi.encode(new bytes32[](0), new address[](0))),
+            values: new address[](0)
+        });
+
+        cacheAfter.values = new address[](cacheAfter.count);
+        for(uint256 i = 0; i < cacheAfter.count; i++) {
+            cacheAfter.values[i] = chainLog.getAddress(cacheAfter.keys[i]);
+        }
+
+        cacheAfter.versionHash = keccak256(abi.encodePacked(chainLog.version()));
+        // Using `abi.encode` to prevent ambiguous encoding
+        cacheAfter.contentHash = keccak256(abi.encode(cacheAfter.keys, cacheAfter.values));
+
+        //////////////////////////////////////////
+
+        // If the version is the same, the content should not have changed
+        if (cacheAfter.versionHash == cacheBefore.versionHash) {
+            assertEq(cacheBefore.count, cacheAfter.count, "TestError/chainlog-version-not-updated-length-change");
+
+            // Add explicit check otherwise this would fail with an array-out-of-bounds error,
+            // since Foundry does not halt the execution when an assertion fails.
+            if (cacheBefore.count == cacheAfter.count) {
+                // Fail if the chainlog is the same size, but EITHER:
+                //   1. The value for a specific key changed
+                //   2. The order of keys changed
+                for (uint256 i = 0; i < cacheAfter.count; i++) {
+                    assertEq(
+                        cacheBefore.values[i],
+                        cacheAfter.values[i],
+                        _concat(
+                            "TestError/chainlog-version-not-updated-value-change: ",
+                            _concat(
+                                _concat("+ ", cacheAfter.keys[i]),
+                                _concat(" | - ", cacheBefore.keys[i])
+                            )
+                        )
+                    );
+                }
+            }
+        } else {
+            // If the version changed, the content should have changed
+            assertTrue(cacheAfter.contentHash != cacheBefore.contentHash, "TestError/chainlog-version-updated-no-content-change");
+        }
+
+        // If the content has changed, we look into the diff
+        if (cacheAfter.contentHash != cacheBefore.contentHash) {
+            // If the content changed, the version should have changed
+            assertTrue(cacheAfter.versionHash != cacheBefore.versionHash, "TestError/chainlog-content-updated-no-version-change");
+
+            uint256 diffCount;
+            // Iteration must stop at the shorter array length
+            uint256 maxIters = cacheAfter.count > cacheBefore.count ? cacheBefore.count : cacheAfter.count;
+
+            // Look for changes in existing keys
+            for (uint256 i = 0; i < maxIters; i++) {
+                if (cacheAfter.keys[i] != cacheBefore.keys[i]) {
+                    // Change in order
+                    diffCount += 1;
+                } else if (cacheAfter.values[i] != cacheBefore.values[i]) {
+                    // Change in value
+                    diffCount += 1;
+                }
+            }
+
+            // Account for new keys
+            // Notice: we don't care about removed keys
+            if (cacheAfter.count > cacheBefore.count) {
+                diffCount += (cacheAfter.count - cacheBefore.count);
+            }
+
+            ////////////////////////////////////////
+
+            bytes32[] memory diffKeys = new bytes32[](diffCount);
+            uint256 j = 0;
+
+            for (uint256 i = 0; i < maxIters; i++) {
+                if (cacheAfter.keys[i] != cacheBefore.keys[i]) {
+                    // Mark keys whose order has changed
+                    diffKeys[j++] = cacheAfter.keys[i];
+                } else if (cacheAfter.values[i] != cacheBefore.values[i]) {
+                    // Mark changed values
+                    diffKeys[j++] = cacheAfter.keys[i];
+                }
+            }
+
+            // Mark new keys
+            if (cacheAfter.count > cacheBefore.count) {
+                for (uint256 i = cacheBefore.count; i < cacheAfter.count; i++) {
+                    diffKeys[j++] = cacheAfter.keys[i];
+                }
+            }
+
+            for (uint256 i = 0; i < diffKeys.length; i++) {
+                _checkAuth(diffKeys[i]);
+            }
+        }
+    }
+
     // Validate addresses in test harness match chainlog
     function _testChainlogValues() internal {
         _vote(address(spell));
@@ -1775,39 +1911,5 @@ contract DssSpellTestBase is Config, DssTest {
         }
 
         _checkChainlogVersion(afterSpell.chainlog_version);
-    }
-
-    // Ensure version is updated if chainlog changes
-    function _testChainlogVersionBump() internal {
-        uint256                   _count = chainLog.count();
-        string    memory        _version = chainLog.version();
-        address[] memory _chainlog_addrs = new address[](_count);
-
-        for(uint256 i = 0; i < _count; i++) {
-            (, address _val) = chainLog.get(i);
-            _chainlog_addrs[i] = _val;
-        }
-
-        _vote(address(spell));
-        _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        if (keccak256(abi.encodePacked(_version)) == keccak256(abi.encodePacked(chainLog.version()))) {
-            // Fail if the version is not updated and the chainlog count has changed
-            if (_count != chainLog.count()) {
-                emit log_named_string("Error", _concat("TestError/chainlog-version-not-updated-count-change-", _version));
-                fail();
-                return;
-            }
-            // Fail if the chainlog is the same size but local keys don't match the chainlog.
-            for(uint256 i = 0; i < _count; i++) {
-                (, address _val) = chainLog.get(i);
-                if (_chainlog_addrs[i] != _val) {
-                    emit log_named_string("Error", _concat("TestError/chainlog-version-not-updated-address-change-", _version));
-                    fail();
-                    return;
-                }
-            }
-        }
     }
 }

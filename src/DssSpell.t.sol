@@ -105,12 +105,12 @@ contract DssSpellTest is DssSpellTestBase {
         _testBytecodeMatches();
     }
 
-    function testChainlogValues() public {
-        _testChainlogValues();
+    function testChainlogIntegrity() public {
+        _testChainlogIntegrity();
     }
 
-    function testChainlogVersionBump() public {
-        _testChainlogVersionBump();
+    function testChainlogValues() public {
+        _testChainlogValues();
     }
 
     // Leave this test public (for now) as this is acting like a config test
@@ -172,7 +172,7 @@ contract DssSpellTest is DssSpellTestBase {
 
     // TESTS BELOW CAN BE ENABLED/DISABLED ON DEMAND
 
-    // function testOsmAuth() private {  // make private to disable
+    function testOsmAuth() private {  // make private to disable
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
 
         // validate the spell does what we told it to
@@ -213,7 +213,7 @@ contract DssSpellTest is DssSpellTestBase {
 
         //    assertEq(OsmAbstract(pip).wards(ORACLE_WALLET01), 1);
         //}
-    // }
+    }
 
     function testOracleList() private {  // make private to disable
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
@@ -225,23 +225,6 @@ contract DssSpellTest is DssSpellTestBase {
         //assertTrue(spell.done());
 
         //assertEq(OsmAbstract(0xF15993A5C5BE496b8e1c9657Fd2233b579Cd3Bc6).wards(ORACLE_WALLET01), 1);
-    }
-
-    function testAuth() private {  // make private to disable
-        bytes32[] memory keys = new bytes32[](2);
-        keys[0] = "MCD_JOIN_TOKEN_X";
-        keys[1] = "MCD_CLIP_TOKEN_X";
-
-        _checkAuth(keys);
-    }
-
-    function testOsmAuth() private {  // make private to disable
-        bytes32[] memory keys = new bytes32[](3);
-        keys[0] = "PIP_XXX";
-        keys[1] = "PIP_YYY";
-        keys[2] = "PIP_ZZZ";
-
-        _checkOsmAuth(keys);
     }
 
     function testRemoveChainlogValues() private { // make private to disable
@@ -335,17 +318,6 @@ contract DssSpellTest is DssSpellTestBase {
         lerp.tick();
         assertEq(vow.hump(), 90 * MILLION * RAD);
         assertTrue(lerp.done());
-    }
-
-    function testNewChainlogValues() private { // make private to disable
-        _vote(address(spell));
-        _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-
-        // NOTE: no new keys in the chainlog
-        // _checkChainlogKey("YOUR KEY HERE");
-
-        _checkChainlogVersion("1.17.0");
     }
 
     function testNewIlkRegistryValues() private { // make private to disable
