@@ -262,46 +262,19 @@ contract DssSpellTest is DssSpellTestBase {
         );
     }
 
-    function testIlkClipper() private { // make public to enable
+    function testIlkClipper() public { // make private to disable
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // _checkIlkClipper(
-        //     "LINK-A",
-        //     GemJoinAbstract(addr.addr("MCD_JOIN_LINK_A")),
-        //     ClipAbstract(addr.addr("MCD_CLIP_LINK_A")),
-        //     addr.addr("MCD_CLIP_CALC_LINK_A"),
-        //     OsmAbstract(addr.addr("PIP_LINK")),
-        //     1_000_000 * WAD
-        // );
-
-        // _checkIlkClipper(
-        //     "MATIC-A",
-        //     GemJoinAbstract(addr.addr("MCD_JOIN_MATIC_A")),
-        //     ClipAbstract(addr.addr("MCD_CLIP_MATIC_A")),
-        //     addr.addr("MCD_CLIP_CALC_MATIC_A"),
-        //     OsmAbstract(addr.addr("PIP_MATIC")),
-        //     10_000_000 * WAD
-        // );
-
-        // _checkIlkClipper(
-        //     "YFI-A",
-        //     GemJoinAbstract(addr.addr("MCD_JOIN_YFI_A")),
-        //     ClipAbstract(addr.addr("MCD_CLIP_YFI_A")),
-        //     addr.addr("MCD_CLIP_CALC_YFI_A"),
-        //     OsmAbstract(addr.addr("PIP_YFI")),
-        //     1_000 * WAD
-        // );
-
-        // _checkIlkClipper(
-        //     "UNIV2USDCETH-A",
-        //     GemJoinAbstract(addr.addr("MCD_JOIN_UNIV2USDCETH_A")),
-        //     ClipAbstract(addr.addr("MCD_CLIP_UNIV2USDCETH_A")),
-        //     addr.addr("MCD_CLIP_CALC_UNIV2USDCETH_A"),
-        //     OsmAbstract(addr.addr("PIP_UNIV2USDCETH")),
-        //     1 * WAD
-        // );
+        _checkIlkClipper(
+            "RETH-A",
+            GemJoinAbstract(addr.addr("MCD_JOIN_RETH_A")),
+            ClipAbstract(addr.addr("MCD_CLIP_RETH_A")),
+            addr.addr("MCD_CLIP_CALC_RETH_A"),
+            OsmAbstract(addr.addr("PIP_RETH")),
+            1_000 * WAD
+        );
     }
 
     function testLerpSurplusBuffer() private { // make private to disable
@@ -324,15 +297,14 @@ contract DssSpellTest is DssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewChainlogValues() private { // make private to disable
+    function testNewChainlogValues() public { // make private to disable
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        // NOTE: no new keys in the chainlog
-        // _checkChainlogKey("YOUR KEY HERE");
+        _checkChainlogKey("RWA009_A_INPUT_CONDUIT_URN_USDC");
 
-        _checkChainlogVersion("1.17.0");
+        _checkChainlogVersion("1.17.2");
     }
 
     function testNewIlkRegistryValues() private { // make private to disable
@@ -507,11 +479,11 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
 
-    function testDaoResolutions() private { // make private to disable
+    function testDaoResolutions() public { // make private to disable
         // For each resolution, add IPFS hash as item to the resolutions array
         // Initialize the array with the number of resolutions
         string[1] memory resolutions = [
-            "QmPiEHtt8rkVtSibBXMrhEzHUmSriXWz4AL2bjscq8dUvU"
+            "QmVtqkYtx61wEeM5Hb92dGA3TMZ9F1Z5WDSNwcszqxiF1w"
         ];
 
         string memory comma_separated_resolutions = "";

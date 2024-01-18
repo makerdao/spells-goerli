@@ -321,6 +321,7 @@ contract Addresses {
         addr["RWA009_A_URN"]                    = 0xd334bbA9172a6F615Be93d194d1322148fb5222e;
         addr["RWA009_A_JAR"]                    = 0xad4e1696d008A656F810498A974C5D3dC4A6150d;
         addr["RWA009_A_OUTPUT_CONDUIT"]         = 0x5DCdbD3cCF9B09EAAD03bc5f50fA2B3d3ACA0121;
+        addr["RWA009_A_INPUT_CONDUIT_URN_USDC"] = 0xddd021b7e3Bfbad19c7D455EB7976DCe51180141;
         addr["RWA010"]                          = 0x003DD0D987a315C7AEe2611B9b753b383B7a35bF;
         addr["PIP_RWA010"]                      = 0x1C5f15c960B5e1F87041E5a0A8C9Aa9AB18a81B8;
         addr["MCD_JOIN_RWA010_A"]               = 0xeBAfcf1E0B1A6D0F91f41cD77d760AC56B431F05;
