@@ -1461,14 +1461,6 @@ contract DssSpellTestBase is Config, DssTest {
         _checkOsmSrcWards(_addr, contractName);
     }
 
-    function _checkChainlogKey(bytes32 key) internal {
-        assertEq(chainLog.getAddress(key), addr.addr(key), _concat("TestError/Chainlog-key-mismatch-", key));
-    }
-
-    function _checkChainlogVersion(string memory key) internal {
-        assertEq(chainLog.version(), key, _concat("TestError/Chainlog-version-mismatch-", key));
-    }
-
     function _checkRWADocUpdate(bytes32 ilk, string memory currentDoc, string memory newDoc) internal {
         (string memory doc, address pip, uint48 tau, uint48 toc) = liquidationOracle.ilks(ilk);
 
@@ -1910,6 +1902,6 @@ contract DssSpellTestBase is Config, DssTest {
             assertEq(_val, addr.addr(_key), _concat("TestError/chainlog-addr-mismatch-", _key));
         }
 
-        _checkChainlogVersion(afterSpell.chainlog_version);
+        assertEq(chainLog.version(), key, _concat("TestError/Chainlog-version-mismatch-", key));
     }
 }
