@@ -97,16 +97,24 @@ contract DssSpellTest is DssSpellTestBase {
         _testUseEta();
     }
 
+    function testAuth() public {
+        _checkAuth(false);
+    }
+
+    function testAuthInSources() public {
+        _checkAuth(true);
+    }
+
     function testBytecodeMatches() public {
         _testBytecodeMatches();
     }
 
-    function testChainlogIntegrity() public {
-        _testChainlogIntegrity();
-    }
-
     function testChainlogValues() public {
         _testChainlogValues();
+    }
+
+    function testChainlogVersionBump() public {
+        _testChainlogVersionBump();
     }
 
     // Leave this test public (for now) as this is acting like a config test
@@ -314,6 +322,17 @@ contract DssSpellTest is DssSpellTestBase {
         lerp.tick();
         assertEq(vow.hump(), 90 * MILLION * RAD);
         assertTrue(lerp.done());
+    }
+
+    function testNewChainlogValues() private { // make private to disable
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done());
+
+        // NOTE: no new keys in the chainlog
+        // _checkChainlogKey("YOUR KEY HERE");
+
+        _checkChainlogVersion("1.17.0");
     }
 
     function testNewIlkRegistryValues() private { // make private to disable
