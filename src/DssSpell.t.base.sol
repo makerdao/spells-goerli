@@ -1445,7 +1445,7 @@ contract DssSpellTestBase is Config, DssTest {
         if (!ok || data.length != 32) return;
 
         address source = abi.decode(data, (address));
-        string memory sourceName = string(abi.encodePacked("src of ", contractName));
+        string memory sourceName = _concat("src of ", contractName);
         _checkWards(source, sourceName);
     }
 
@@ -1897,9 +1897,13 @@ contract DssSpellTestBase is Config, DssTest {
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
 
-        for(uint256 i = 0; i < chainLog.count(); i++) {
-            (bytes32 _key, address _val) = chainLog.get(i);
-            assertEq(_val, addr.addr(_key), _concat("TestError/chainlog-addr-mismatch-", _key));
+        bytes32[] memory keys = chainLog.list();
+        for (uint256 i = 0; i < keys.length; i++) {
+            assertEq(
+                chainLog.getAddress(keys[i]),
+                addr.addr(keys[i]),
+                _concat("TestError/chainlog-vs-harness-key-mismatch: ", keys[i])
+            );
         }
 
         assertEq(chainLog.version(), afterSpell.chainlog_version, "TestError/chainlog-version-mismatch");
