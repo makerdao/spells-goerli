@@ -179,7 +179,7 @@ contract DssSpellAction is DssAction {
         // Poll: https://vote.makerdao.com/polling/QmTauEqL
         // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-8/23445
 
-        // Activate Spark Proxy Spell - TBD
+        // Activate Spark Proxy Spell - 0xa3836fEF1D314d4c081C2707a7664c3375F29b61
         // Note: skipped on goerli as spark spell is only deployed to mainnet
     }
 }
