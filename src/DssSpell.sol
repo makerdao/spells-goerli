@@ -151,6 +151,9 @@ contract DssSpellAction is DssAction {
         // Mainnet - Add RWA009_A_INPUT_CONDUIT_URN_USDC deployed at 0x08012Ec53A7fAbf6F33318dfb93C1289886eBBE1 to the chainlog
         // Note: skipped on goerli as instructed
 
+        // Call <conduit>.rely(MCD_ESM) to allow ESM module to deny the pause proxy in SwapInputConduit contracts
+        // Note: this instruction is intended for mainnet, see relevant goerli instruction and action below
+
         // Goerli - Add RWA009_A_INPUT_CONDUIT_URN_USDC deployed at 0xddd021b7e3Bfbad19c7D455EB7976DCe51180141  to the chainlog
         // Forum: https://forum.makerdao.com/t/rwa009-hvbank-mip21-token-ces-domain-team-assessment/15861/15
         DssExecLib.setChangelogAddress("RWA009_A_INPUT_CONDUIT_URN_USDC", RWA009_A_INPUT_CONDUIT_URN_USDC);
