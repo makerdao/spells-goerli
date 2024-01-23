@@ -72,6 +72,7 @@ contract DssSpellAction is DssAction {
     string public constant dao_resolutions = "QmVtqkYtx61wEeM5Hb92dGA3TMZ9F1Z5WDSNwcszqxiF1w";
 
     address internal constant RWA009_A_INPUT_CONDUIT_URN_USDC = 0xddd021b7e3Bfbad19c7D455EB7976DCe51180141;
+    address internal immutable MCD_ESM                        = DssExecLib.esm();
 
     function actions() public override {
         // ---------- Stability Fee Changes ----------
@@ -153,6 +154,9 @@ contract DssSpellAction is DssAction {
         // Goerli - Add RWA009_A_INPUT_CONDUIT_URN_USDC deployed at 0xddd021b7e3Bfbad19c7D455EB7976DCe51180141  to the chainlog
         // Forum: https://forum.makerdao.com/t/rwa009-hvbank-mip21-token-ces-domain-team-assessment/15861/15
         DssExecLib.setChangelogAddress("RWA009_A_INPUT_CONDUIT_URN_USDC", RWA009_A_INPUT_CONDUIT_URN_USDC);
+
+        // Goerli - Call <conduit>.rely(MCD_ESM) to allow ESM module to deny the pause proxy in SwapInputConduit contracts
+        DssExecLib.authorize(RWA009_A_INPUT_CONDUIT_URN_USDC, MCD_ESM);
 
         // Note: bump chainlog version, due to the added key
         DssExecLib.setChangelogVersion("1.17.2");
