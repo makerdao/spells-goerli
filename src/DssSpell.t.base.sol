@@ -363,7 +363,7 @@ contract DssSpellTestBase is Config, DssTest {
 
             address[] memory slate = new address[](1);
 
-            assertFalse(DssSpell(spell_).done());
+            assertFalse(DssSpell(spell_).done(), "TestError/spell-done-before-vote");
 
             slate[0] = spell_;
 
