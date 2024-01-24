@@ -256,8 +256,7 @@ contract DssSpellTestBase is Config, DssTest {
      *      This is meant to be used for tests that should be skipped under dynamic conditions.
      */
     function _skipTest() internal {
-        (bool success, ) = address(vm).call(abi.encodeWithSignature("skip(bool)", true));
-        require(success, "Failed to skip test");
+        vm.skip(true);
     }
 
     /**
