@@ -53,52 +53,45 @@ contract DssSpellTest is DssSpellTestBase {
     ArbitrumDomain arbitrumDomain;
 
     // DO NOT TOUCH THE FOLLOWING TESTS, THEY SHOULD BE RUN ON EVERY SPELL
+
     function testGeneral() public {
         _testGeneral();
     }
 
-    function testFailWrongDay() public {
-        _testFailWrongDay();
+    function testOfficeHours() public {
+        _testOfficeHours();
     }
 
-    function testFailTooEarly() public {
-        _testFailTooEarly();
-    }
-
-    function testFailTooLate() public {
-        _testFailTooLate();
-    }
-
-    function testOnTime() public {
-        _testOnTime();
-    }
-
-    function testCastCost() public {
-        _testCastCost();
-    }
-
-    function testDeployCost() public {
-        _testDeployCost();
-    }
-
-    function testContractSize() public {
-        _testContractSize();
+    function testCastOnTime() public {
+        _testCastOnTime();
     }
 
     function testNextCastTime() public {
         _testNextCastTime();
     }
 
-    function testFailNotScheduled() public view {
-        _testFailNotScheduled();
+    function testRevertIfNotScheduled() public {
+        _testRevertIfNotScheduled();
     }
 
     function testUseEta() public {
         _testUseEta();
     }
 
-    function testBytecodeMatches() public {
+    function testContractSize() public skipWhenDeployed {
+        _testContractSize();
+    }
+
+    function testDeployCost() public skipWhenDeployed {
+        _testDeployCost();
+    }
+
+    function testBytecodeMatches() public skipWhenNotDeployed {
         _testBytecodeMatches();
+    }
+
+    function testCastCost() public {
+        _testCastCost();
     }
 
     function testChainlogIntegrity() public {
@@ -168,7 +161,7 @@ contract DssSpellTest is DssSpellTestBase {
 
     // TESTS BELOW CAN BE ENABLED/DISABLED ON DEMAND
 
-    function testOracleList() private {  // make private to disable
+    function testOracleList() private {  // add `skipTest` modifier to skip
         // address ORACLE_WALLET01 = 0x4D6fbF888c374D7964D56144dE0C0cFBd49750D3;
 
         //assertEq(OsmAbstract(0xF15993A5C5BE496b8e1c9657Fd2233b579Cd3Bc6).wards(ORACLE_WALLET01), 0);
@@ -180,7 +173,7 @@ contract DssSpellTest is DssSpellTestBase {
         //assertEq(OsmAbstract(0xF15993A5C5BE496b8e1c9657Fd2233b579Cd3Bc6).wards(ORACLE_WALLET01), 1);
     }
 
-    function testRemoveChainlogValues() private { // make private to disable
+    function testRemoveChainlogValues() public skipTest { // add `skipTest` modifier to skip
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -194,7 +187,7 @@ contract DssSpellTest is DssSpellTestBase {
         }
     }
 
-    function testCollateralIntegrations() private { // make public to enable
+    function testCollateralIntegrations() public skipTest { // add `skipTest` modifier to skip
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -211,7 +204,7 @@ contract DssSpellTest is DssSpellTestBase {
         );
     }
 
-    function testIlkClipper() public { // make private to disable
+    function testIlkClipper() public { // add `skipTest` modifier to skip
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -226,7 +219,7 @@ contract DssSpellTest is DssSpellTestBase {
         );
     }
 
-    function testLerpSurplusBuffer() private { // make private to disable
+    function testLerpSurplusBuffer() public skipTest { // add `skipTest` modifier to skip
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -246,7 +239,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertTrue(lerp.done());
     }
 
-    function testNewIlkRegistryValues() private { // make private to disable
+    function testNewIlkRegistryValues() public skipTest { // add `skipTest` modifier to skip
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -265,7 +258,7 @@ contract DssSpellTest is DssSpellTestBase {
         // assertEq(reg.symbol("RWA015-A"), GemAbstract(addr.addr("RWA015")).symbol());
     }
 
-    function testOSMs() private { // make private to disable
+    function testOSMs() public skipTest { // add `skipTest` modifier to skip
         address READER = address(0);
 
         // Track OSM authorizations here
@@ -278,7 +271,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(OsmAbstract(addr.addr("PIP_TOKEN")).bud(READER), 1);
     }
 
-    function testMedianizers() private { // make private to disable
+    function testMedianizers() public skipTest { // add `skipTest` modifier to skip
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done());
@@ -291,7 +284,7 @@ contract DssSpellTest is DssSpellTestBase {
 
     // @dev when testing new vest contracts, use the explicit id when testing to assist in
     //      identifying streams later for modification or removal
-    function testVestDAI() private { // make private to disable
+    function testVestDAI() public skipTest { // add `skipTest` modifier to skip
         // VestAbstract vest = VestAbstract(addr.addr("MCD_VEST_DAI"));
 
         // All times in GMT
@@ -418,7 +411,7 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
 
-    function testDaoResolutions() public { // make private to disable
+    function testDaoResolutions() public { // add `skipTest` modifier to skip
         // For each resolution, add IPFS hash as item to the resolutions array
         // Initialize the array with the number of resolutions
         string[1] memory resolutions = [
@@ -436,26 +429,8 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(SpellActionLike(spell.action()).dao_resolutions(), comma_separated_resolutions, "dao_resolutions/invalid-format");
     }
 
-    // SPARK TESTS
-    function testSparkSpellIsExecuted() private { // make private to disable
-        address SPARK_PROXY = 0x4e847915D8a9f2Ab0cDf2FC2FD0A30428F25665d;
-        address SPARK_SPELL = address(0);
-
-        vm.expectCall(
-            SPARK_PROXY,
-            /* value = */ 0,
-            abi.encodeCall(
-                ProxyLike(SPARK_PROXY).exec,
-                (SPARK_SPELL, abi.encodeWithSignature("execute()"))
-            )
-        );
-
-        _vote(address(spell));
-        _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
-    }
-
     // SPELL-SPECIFIC TESTS GO BELOW
+
     function testEsmAuth() public {
         string[1] memory esmAuthorisedContractKeys = [
             "RWA009_A_INPUT_CONDUIT_URN_USDC"
