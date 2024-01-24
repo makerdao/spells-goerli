@@ -1848,7 +1848,7 @@ contract DssSpellTestBase is Config, DssTest {
 
         // If neither the version or the content have changed, there is nothing to test
         if (cacheAfter.versionHash == cacheBefore.versionHash && cacheAfter.contentHash == cacheBefore.contentHash) {
-            _skipTest();
+            vm.skip(true);
         }
 
         // If the version is the same, the content should not have changed
