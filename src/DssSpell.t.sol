@@ -106,7 +106,7 @@ contract DssSpellTest is DssSpellTestBase {
     function testPSMs() public {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
 
         bytes32 _ilk;
 
@@ -176,7 +176,7 @@ contract DssSpellTest is DssSpellTestBase {
     function testRemoveChainlogValues() public skipTest { // add the `skipTest` modifier to skip
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
 
         try chainLog.getAddress("MCD_CAT") {
             assertTrue(false);
@@ -190,7 +190,7 @@ contract DssSpellTest is DssSpellTestBase {
     function testCollateralIntegrations() public skipTest { // add the `skipTest` modifier to skip
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
 
         // Insert new collateral tests here
         _checkIlkIntegration(
@@ -207,7 +207,7 @@ contract DssSpellTest is DssSpellTestBase {
     function testIlkClipper() public { // add the `skipTest` modifier to skip
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
 
         _checkIlkClipper(
             "RETH-A",
@@ -222,7 +222,7 @@ contract DssSpellTest is DssSpellTestBase {
     function testLerpSurplusBuffer() public skipTest { // add the `skipTest` modifier to skip
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
 
         // Insert new SB lerp tests here
 
@@ -242,7 +242,7 @@ contract DssSpellTest is DssSpellTestBase {
     function testNewIlkRegistryValues() public skipTest { // add the `skipTest` modifier to skip
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
 
         // Insert new ilk registry values tests here
         // RWA015
@@ -266,7 +266,7 @@ contract DssSpellTest is DssSpellTestBase {
 
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
 
         assertEq(OsmAbstract(addr.addr("PIP_TOKEN")).bud(READER), 1);
     }
@@ -274,7 +274,7 @@ contract DssSpellTest is DssSpellTestBase {
     function testMedianizers() public skipTest { // add the `skipTest` modifier to skip
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
 
         // Track Median authorizations here
         address SET_TOKEN    = address(0);
@@ -295,7 +295,7 @@ contract DssSpellTest is DssSpellTestBase {
 
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
 
         // assertEq(vest.ids(), 9 + 1);
 
@@ -361,7 +361,7 @@ contract DssSpellTest is DssSpellTestBase {
 
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
 
         // switch to Optimism domain and relay the spell from L1
         // the `true` keeps us on Optimism rather than `rootDomain.selectFork()
@@ -401,7 +401,7 @@ contract DssSpellTest is DssSpellTestBase {
 
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
 
         // switch to Arbitrum domain and relay the spell from L1
         // the `true` keeps us on Arbitrum rather than `rootDomain.selectFork()
@@ -445,7 +445,7 @@ contract DssSpellTest is DssSpellTestBase {
         }
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
         for (uint256 i = 0; i < esmAuthorisedContractKeys.length; i++) {
             assertEq(
                 WardsAbstract(addr.addr(_stringToBytes32(esmAuthorisedContractKeys[i]))).wards(address(esm)),
