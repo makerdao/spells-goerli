@@ -251,35 +251,25 @@ contract DssSpellTestBase is Config, DssTest {
     }
 
     /**
-     * @dev Call this funciton from within a test to skip it.
-     *      It will still show in the test report, but with a `[SKIP]` label added to it.
-     *      This is meant to be used for tests that should be skipped under dynamic conditions.
-     */
-    function _skipTest() internal {
-        (bool success, ) = address(vm).call(abi.encodeWithSignature("skip(bool)", true));
-        require(success, "Failed to skip test");
-    }
-
-    /**
      * @dev Add this modifier to a test to skip it.
      *      It will still show in the test report, but with a `[SKIP]` label added to it.
      *      This is meant to be used for tests that need to be enabled/disabled on-demand.
      */
     modifier skipTest() {
-        _skipTest();
+        vm.skip(true);
         _;
     }
 
     modifier skipWhenDeployed() {
         if (spellValues.deployed_spell != address(0)) {
-            _skipTest();
+            vm.skip(true);
         }
         _;
     }
 
     modifier skipWhenNotDeployed() {
         if (spellValues.deployed_spell == address(0)) {
-            _skipTest();
+            vm.skip(true);
         }
         _;
     }
@@ -363,7 +353,7 @@ contract DssSpellTestBase is Config, DssTest {
 
             address[] memory slate = new address[](1);
 
-            assertFalse(DssSpell(spell_).done());
+            assertFalse(DssSpell(spell_).done(), "TestError/spell-done-before-vote");
 
             slate[0] = spell_;
 
@@ -1858,7 +1848,7 @@ contract DssSpellTestBase is Config, DssTest {
 
         // If neither the version or the content have changed, there is nothing to test
         if (cacheAfter.versionHash == cacheBefore.versionHash && cacheAfter.contentHash == cacheBefore.contentHash) {
-            _skipTest();
+            vm.skip(true);
         }
 
         // If the version is the same, the content should not have changed
