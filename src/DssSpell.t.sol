@@ -259,6 +259,32 @@ contract DssSpellTest is DssSpellTestBase {
         assertTrue(lerp.done());
     }
 
+    function testEsmAuth() public { // add the `skipTest` modifier to skip
+        string[1] memory esmAuthorisedContractKeys = [
+            "RWA009_A_INPUT_CONDUIT_URN_USDC"
+        ];
+
+        for (uint256 i = 0; i < esmAuthorisedContractKeys.length; i++) {
+            assertEq(
+                WardsAbstract(addr.addr(_stringToBytes32(esmAuthorisedContractKeys[i]))).wards(address(esm)),
+                0,
+                _concat("TestError/esm-is-ward-before-spell: ", esmAuthorisedContractKeys[i])
+            );
+        }
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done(), "TestError/spell-not-done");
+
+        for (uint256 i = 0; i < esmAuthorisedContractKeys.length; i++) {
+            assertEq(
+                WardsAbstract(addr.addr(_stringToBytes32(esmAuthorisedContractKeys[i]))).wards(address(esm)),
+                1,
+                _concat("TestError/esm-is-not-ward-after-spell: ", esmAuthorisedContractKeys[i])
+            );
+        }
+    }
+
     function testNewIlkRegistryValues() public skipTest { // add the `skipTest` modifier to skip
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
@@ -450,27 +476,5 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     // SPELL-SPECIFIC TESTS GO BELOW
-    function testEsmAuth() public {
-        string[1] memory esmAuthorisedContractKeys = [
-            "RWA009_A_INPUT_CONDUIT_URN_USDC"
-        ];
 
-        for (uint256 i = 0; i < esmAuthorisedContractKeys.length; i++) {
-            assertEq(
-                WardsAbstract(addr.addr(_stringToBytes32(esmAuthorisedContractKeys[i]))).wards(address(esm)),
-                0,
-                _concat("testEsmAuth/ward-esm-not-0/", esmAuthorisedContractKeys[i])
-            );
-        }
-        _vote(address(spell));
-        _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done(), "TestError/spell-not-done");
-        for (uint256 i = 0; i < esmAuthorisedContractKeys.length; i++) {
-            assertEq(
-                WardsAbstract(addr.addr(_stringToBytes32(esmAuthorisedContractKeys[i]))).wards(address(esm)),
-                1,
-                _concat("testEsmAuth/ward-esm-not-1/", esmAuthorisedContractKeys[i])
-            );
-        }
-    }
 }
