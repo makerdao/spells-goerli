@@ -72,19 +72,19 @@ contract DssSpellAction is DssAction {
         // ---------- Auction Parameter Updates ----------
         // Forum: https://forum.makerdao.com/t/stability-scope-auction-parameters-changes-1-liquidation-throughput-limit/23508
 
-        // // Increase the WSTETH-A Local Liquidation Limit (ilk.hole) by 15 million DAI from 15 million DAI to 30 million DAI.
+        // Increase the WSTETH-A Local Liquidation Limit (ilk.hole) by 15 million DAI from 15 million DAI to 30 million DAI.
         DssExecLib.setIlkMaxLiquidationAmount("WSTETH-A", 30 * MILLION);
 
-        // // Increase the WSTETH-B Local Liquidation Limit (ilk.hole) by 10 million DAI from 10 million DAI to 20 million DAI.
+        // Increase the WSTETH-B Local Liquidation Limit (ilk.hole) by 10 million DAI from 10 million DAI to 20 million DAI.
         DssExecLib.setIlkMaxLiquidationAmount("WSTETH-B", 20 * MILLION);
 
-        // // Decrease the WBTC-A Local Liquidation Limit (ilk.hole) by 20 million DAI from 30 million DAI to 10 million DAI.
+        // Decrease the WBTC-A Local Liquidation Limit (ilk.hole) by 20 million DAI from 30 million DAI to 10 million DAI.
         DssExecLib.setIlkMaxLiquidationAmount("WBTC-A",   10 * MILLION);
 
-        // // Decrease the WBTC-B Local Liquidation Limit (ilk.hole) by 5 million DAI from 10 million DAI to 5 million DAI.
+        // Decrease the WBTC-B Local Liquidation Limit (ilk.hole) by 5 million DAI from 10 million DAI to 5 million DAI.
         DssExecLib.setIlkMaxLiquidationAmount("WBTC-B",   5  * MILLION);
 
-        // // Decrease the WBTC-C Local Liquidation Limit (ilk.hole) by 10 million DAI from 20 million DAI to 10 million DAI.
+        // Decrease the WBTC-C Local Liquidation Limit (ilk.hole) by 10 million DAI from 20 million DAI to 10 million DAI.
         DssExecLib.setIlkMaxLiquidationAmount("WBTC-C",   10 * MILLION);
 
         // Increase the Global Liquidation Limit (Hole) by 50 million DAI from 100 million DAI to 150 million DAI.
