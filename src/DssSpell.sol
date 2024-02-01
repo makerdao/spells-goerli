@@ -33,10 +33,6 @@ contract DssSpellAction is DssAction {
         return false;
     }
 
-    // Approve DAO resolution hash QmVtqkYtx61wEeM5Hb92dGA3TMZ9F1Z5WDSNwcszqxiF1w
-    // Note: by the previous convention it should be a comma-separated list of DAO resolutions IPFS hashes
-    string public constant dao_resolutions = "QmVtqkYtx61wEeM5Hb92dGA3TMZ9F1Z5WDSNwcszqxiF1w"; // TODO: update  
-
     // ---------- Rates ----------
     // Many of the settings that change weekly rely on the rate accumulator
     // described at https://docs.makerdao.com/smart-contract-modules/rates-module
@@ -91,7 +87,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.setMaxTotalDAILiquidationAmount(150 * MILLION);
 
         // ---------- Push GUSD out of input conduit ----------
-        // Forum: TODO
+        // Forum: https://forum.makerdao.com/t/executive-spell-gusd-input-conduit-management/23597
         // Note: Skipping since there is no Jar for GUSD on Goerli
 
         // ---------- January Delegate Compensation ----------
@@ -99,11 +95,11 @@ contract DssSpellAction is DssAction {
         // Note: Skipping since payments are not to be performed on Goerli
 
         // ---------- Spark - AAVE Revenue Share Payment ----------
-        // Forum: TODO
+        // Forum: https://forum.makerdao.com/t/spark-aave-revenue-share-calculation-payment-2-q4-2023/23593
         // Note: Skipping since payments are not to be performed on Goerli
 
         // ---------- Update Doc Parameter ----------
-        // Forum: TODO
+        // Forum: https://forum.makerdao.com/t/rwa009-hvbank-mip21-token-ces-domain-team-assessment/15861/16
 
         // Update HVBank (RWA009-A) doc to QmPzuLuJ5Xq6k6Hbop1W5s4V9ksvafYoqcW9sU5QRwz5h1
         _updateDoc("RWA009-A", "QmPzuLuJ5Xq6k6Hbop1W5s4V9ksvafYoqcW9sU5QRwz5h1");
