@@ -90,19 +90,19 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/executive-spell-gusd-input-conduit-management/23597
         // Note: Skipping since there is no Jar for GUSD on Goerli
 
-        // ---------- January Delegate Compensation ----------
-        // Forum: TODO
-        // Note: Skipping since payments are not to be performed on Goerli
-
-        // ---------- Spark - AAVE Revenue Share Payment ----------
+        // ---------- Spark - AAVE Revenue Share ----------
         // Forum: https://forum.makerdao.com/t/spark-aave-revenue-share-calculation-payment-2-q4-2023/23593
         // Note: Skipping since payments are not to be performed on Goerli
 
-        // ---------- Update Doc Parameter ----------
+        // ---------- RWA009 doc Update ----------
         // Forum: https://forum.makerdao.com/t/rwa009-hvbank-mip21-token-ces-domain-team-assessment/15861/16
 
         // Update HVBank (RWA009-A) doc to QmPzuLuJ5Xq6k6Hbop1W5s4V9ksvafYoqcW9sU5QRwz5h1
         _updateDoc("RWA009-A", "QmPzuLuJ5Xq6k6Hbop1W5s4V9ksvafYoqcW9sU5QRwz5h1");
+
+        // ---------- Delegate Compensation ----------
+        // Forum: https://forum.makerdao.com/t/january-2024-aligned-delegate-compensation/23604
+        // Note: Skipping since payments are not to be performed on Goerli
     }
 }
 
