@@ -90,7 +90,7 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/executive-spell-gusd-input-conduit-management/23597
         // Note: Skipping since there is no Jar for GUSD on Goerli
 
-        // ---------- Spark - AAVE Revenue Share ----------
+        // ---------- Aave SparkLend Revenue Share ----------
         // Forum: https://forum.makerdao.com/t/spark-aave-revenue-share-calculation-payment-2-q4-2023/23593
         // Note: Skipping since payments are not to be performed on Goerli
 
