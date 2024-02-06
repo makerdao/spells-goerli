@@ -12,8 +12,8 @@ MCD_IOU=$(cast call "$CHANGELOG" 'getAddress(bytes32)(address)' "$(cast --to-byt
 ### Data
 DESIRED_HAT_APPROVALS=$(cast --to-wei 100000 ETH)
 hat=$(cast call "$MCD_ADM" 'hat()(address)')
-approvals=$(cast call "$MCD_ADM" 'approvals(address)(uint256)' "$hat")
-deposits=$(cast call "$MCD_ADM" 'deposits(address)(uint256)' "$ETH_FROM")
+approvals=$(cast call "$MCD_ADM" 'approvals(address)' "$hat" | cast --to-dec)
+deposits=$(cast call "$MCD_ADM" 'deposits(address)' "$ETH_FROM" | cast --to-dec)
 
 ETH_NONCE=$(cast nonce "$ETH_FROM")
 
@@ -39,12 +39,12 @@ else
 
     if [[ "$(echo "$deposits < $target" | bc)" == 1 ]]; then
         lockAmt=$(echo "$target - $deposits" | bc)
-        [[ "$(echo "$(cast call "$MCD_GOV" 'balanceOf(address)(uint256)' "$ETH_FROM") >= $lockAmt" | bc)" == 1 ]] || { echo "$ETH_FROM: Insufficient MKR Balance"; exit 1; }
+        [[ "$(echo "$(cast call "$MCD_GOV" 'balanceOf(address)' "$ETH_FROM" | cast --to-dec) >= $lockAmt" | bc)" == 1 ]] || { echo "$ETH_FROM: Insufficient MKR Balance"; exit 1; }
 
         castSend "$MCD_GOV" 'approve(address,uint256)' "$MCD_ADM" "$lockAmt"
         castSend "$MCD_ADM" 'lock(uint256)' "$lockAmt"
 
-        deposits=$(cast call "$MCD_ADM" 'deposits(address)(uint256)' "$ETH_FROM")
+        deposits=$(cast call "$MCD_ADM" 'deposits(address)' "$ETH_FROM" | cast --to-dec)
     fi
 
     castSend "$MCD_ADM" 'vote(address[] memory)' ["$1"]
@@ -59,7 +59,7 @@ else
 
     if [[ "$(echo "$deposits > $DESIRED_HAT_APPROVALS" | bc)" == 1 ]]; then
         freeAmt=$(echo "$deposits - $DESIRED_HAT_APPROVALS" | bc)
-        [[ "$(echo "$(cast call "$MCD_IOU" 'balanceOf(address)(uint256)' "$ETH_FROM") >= $freeAmt" | bc)" == 1 ]] || { echo "$ETH_FROM: Insufficient IOU Balance"; exit 1; }
+        [[ "$(echo "$(cast call "$MCD_IOU" 'balanceOf(address)' "$ETH_FROM" | cast --to-dec) >= $freeAmt" | bc)" == 1 ]] || { echo "$ETH_FROM: Insufficient IOU Balance"; exit 1; }
         castSend "$MCD_IOU" 'approve(address,uint256)' "$MCD_ADM" "$freeAmt"
         castSend "$MCD_ADM" 'free(uint256)' "$freeAmt"
     fi
