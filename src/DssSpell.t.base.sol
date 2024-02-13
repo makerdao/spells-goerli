@@ -250,6 +250,30 @@ contract DssSpellTestBase is Config, DssTest {
         }
     }
 
+    /**
+     * @dev Add this modifier to a test to skip it.
+     *      It will still show in the test report, but with a `[SKIP]` label added to it.
+     *      This is meant to be used for tests that need to be enabled/disabled on-demand.
+     */
+    modifier skipped() {
+        vm.skip(true);
+        _;
+    }
+
+    modifier skippedWhenDeployed() {
+        if (spellValues.deployed_spell != address(0)) {
+            vm.skip(true);
+        }
+        _;
+    }
+
+    modifier skippedWhenNotDeployed() {
+        if (spellValues.deployed_spell == address(0)) {
+            vm.skip(true);
+        }
+        _;
+    }
+
     // 10^-5 (tenth of a basis point) as a RAY
     uint256 TOLERANCE = 10 ** 22;
 
@@ -329,7 +353,7 @@ contract DssSpellTestBase is Config, DssTest {
 
             address[] memory slate = new address[](1);
 
-            assertTrue(!DssSpell(spell_).done());
+            assertFalse(DssSpell(spell_).done(), "TestError/spell-done-before-vote");
 
             slate[0] = spell_;
 
@@ -1341,7 +1365,7 @@ contract DssSpellTestBase is Config, DssTest {
     function _checkIlkLerpOffboarding(bytes32 _ilk, bytes32 _lerp, uint256 _startMat, uint256 _endMat) internal {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
 
         LerpAbstract lerp = LerpAbstract(lerpFactory.lerps(_lerp));
 
@@ -1358,7 +1382,7 @@ contract DssSpellTestBase is Config, DssTest {
     function _checkIlkLerpIncreaseMatOffboarding(bytes32 _ilk, bytes32 _oldLerp, bytes32 _newLerp, uint256 _newEndMat) internal {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
 
         LerpFactoryAbstract OLD_LERP_FAB = LerpFactoryAbstract(0xbBD821c291c492c40Db2577D9b6E5B1bdAEBD207);
         LerpAbstract oldLerp = LerpAbstract(OLD_LERP_FAB.lerps(_oldLerp));
@@ -1468,7 +1492,7 @@ contract DssSpellTestBase is Config, DssTest {
 
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
 
         (string memory docNew, address pipNew, uint48 tauNew, uint48 tocNew) = liquidationOracle.ilks(ilk);
 
@@ -1502,66 +1526,71 @@ contract DssSpellTestBase is Config, DssTest {
         _checkCollateralValues(afterSpell);
     }
 
-    function _testFailWrongDay() internal {
-        require(spell.officeHours() == spellValues.office_hours_enabled);
+    function _testOfficeHours() internal {
+        assertEq(spell.officeHours(), spellValues.office_hours_enabled, "TestError/office-hours-mismatch");
+
+        // Only relevant if office hours are enabled
         if (spell.officeHours()) {
+
             _vote(address(spell));
             spell.schedule();
 
-            uint256 castTime = block.timestamp + pause.delay();
-            uint256 day = (castTime / 1 days + 3) % 7;
-            if (day < 5) {
-                castTime += 5 days - day * 86400;
+            uint256 afterSchedule = vm.snapshot();
+
+            // Cast in the wrong day
+            {
+                uint256 castTime = block.timestamp + pause.delay();
+                uint256 day = (castTime / 1 days + 3) % 7;
+                if (day < 5) {
+                    castTime += 5 days - day * 86400;
+                }
+
+                // Original revert reason is swallowed and "ds-pause-delegatecall-error" reason is given,
+                // so it's not worth bothering to check the revert reason.
+                vm.expectRevert();
+                vm.warp(castTime);
+                spell.cast();
             }
 
-            vm.warp(castTime);
-            spell.cast();
-        } else {
-            revert("Office Hours Disabled");
+            vm.revertTo(afterSchedule);
+
+            // Cast too early in the day
+
+            {
+                uint256 castTime = block.timestamp + pause.delay() + 24 hours;
+                uint256 hour = castTime / 1 hours % 24;
+                if (hour >= 14) {
+                    castTime -= hour * 3600 - 13 hours;
+                }
+
+                vm.expectRevert();
+                vm.warp(castTime);
+                spell.cast();
+            }
+
+            vm.revertTo(afterSchedule);
+
+            // Cast too late in the day
+
+            {
+                uint256 castTime = block.timestamp + pause.delay();
+                uint256 hour = castTime / 1 hours % 24;
+                if (hour < 21) {
+                    castTime += 21 hours - hour * 3600;
+                }
+
+                vm.expectRevert();
+                vm.warp(castTime);
+                spell.cast();
+            }
+
         }
     }
 
-    function _testFailTooEarly() internal {
-        require(spell.officeHours() == spellValues.office_hours_enabled);
-        if (spell.officeHours()) {
-            _vote(address(spell));
-            spell.schedule();
-
-            uint256 castTime = block.timestamp + pause.delay() + 24 hours;
-            uint256 hour = castTime / 1 hours % 24;
-            if (hour >= 14) {
-                castTime -= hour * 3600 - 13 hours;
-            }
-
-            vm.warp(castTime);
-            spell.cast();
-        } else {
-            revert("Office Hours Disabled");
-        }
-    }
-
-    function _testFailTooLate() internal {
-        require(spell.officeHours() == spellValues.office_hours_enabled);
-        if (spell.officeHours()) {
-            _vote(address(spell));
-            spell.schedule();
-
-            uint256 castTime = block.timestamp + pause.delay();
-            uint256 hour = castTime / 1 hours % 24;
-            if (hour < 21) {
-                castTime += 21 hours - hour * 3600;
-            }
-
-            vm.warp(castTime);
-            spell.cast();
-        } else {
-            revert("Office Hours Disabled");
-        }
-    }
-
-    function _testOnTime() internal {
+    function _testCastOnTime() internal {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done(), "TestError/spell-not-done");
     }
 
     function _testCastCost() internal {
@@ -1575,9 +1604,9 @@ contract DssSpellTestBase is Config, DssTest {
         uint256 endGas = gasleft();
         uint256 totalGas = startGas - endGas;
 
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
         // Fail if cast is too expensive
-        assertLe(totalGas, 15 * MILLION);
+        assertLe(totalGas, 15 * MILLION, "TestError/spell-cast-cost-too-high");
     }
 
     function _testDeployCost() internal {
@@ -1594,7 +1623,7 @@ contract DssSpellTestBase is Config, DssTest {
         }
 
         // Fail if deploy is too expensive
-        assertLe(totalGas, 30 * MILLION, "testDeployCost/DssSpell-exceeds-max-block-size");
+        assertLe(totalGas, 30 * MILLION, "TestError/spell-deploy-cost-too-high");
     }
 
     // Fail when contract code size exceeds 24576 bytes (a limit introduced in Spurious Dragon).
@@ -1660,19 +1689,28 @@ contract DssSpellTestBase is Config, DssTest {
             for(uint256 i = 0; i < 5; i++) {
                 castTime = monday_1400_UTC + i * 1 days; // Next day at 14:00 UTC
                 vm.warp(castTime - 1 seconds); // 13:59:59 UTC
-                assertEq(spell.nextCastTime(), castTime);
+                assertEq(spell.nextCastTime(), castTime, "TestError/cast-time-mismatch");
 
                 vm.warp(castTime + 7 hours + 1 seconds); // 21:00:01 UTC
                 if (i < 4) {
-                    assertEq(spell.nextCastTime(), monday_1400_UTC + (i + 1) * 1 days); // Next day at 14:00 UTC
+                    assertEq(
+                        spell.nextCastTime(),
+                        monday_1400_UTC + (i + 1) * 1 days,
+                        "TestError/cast-time-mismatch-next-day"
+                    ); // Next day at 14:00 UTC
                 } else {
-                    assertEq(spell.nextCastTime(), monday_1400_UTC + 7 days); // Next monday at 14:00 UTC (friday case)
+                    assertEq(
+                        spell.nextCastTime(),
+                        monday_1400_UTC + 7 days,
+                        "TestError/cast-time-mismatch-next-monday"
+                    ); // Next monday at 14:00 UTC (friday case)
                 }
             }
         }
     }
 
-    function _testFailNotScheduled() internal view {
+    function _testRevertIfNotScheduled() internal {
+        vm.expectRevert();
         spell.nextCastTime();
     }
 
@@ -1683,7 +1721,7 @@ contract DssSpellTestBase is Config, DssTest {
         spell.schedule();
 
         uint256 castTime = spell.nextCastTime();
-        assertEq(castTime, spell.eta());
+        assertEq(castTime, spell.eta(), "TestError/eta-cast-time-mismatch");
     }
 
     // Verifies that the bytecode of the action of the spell used for testing
@@ -1715,14 +1753,14 @@ contract DssSpellTestBase is Config, DssTest {
         }
 
         uint256 metadataLength = _getBytecodeMetadataLength(expectedAction);
-        assertTrue(metadataLength <= expectedBytecodeSize);
+        assertTrue(metadataLength <= expectedBytecodeSize, "TestError/metadata-length-gt-expected-bytecode-size");
         expectedBytecodeSize -= metadataLength;
 
         metadataLength = _getBytecodeMetadataLength(actualAction);
-        assertTrue(metadataLength <= actualBytecodeSize);
+        assertTrue(metadataLength <= actualBytecodeSize, "TestError/metadata-length-gt-actual-bytecode-size");
         actualBytecodeSize -= metadataLength;
 
-        assertEq(actualBytecodeSize, expectedBytecodeSize);
+        assertEq(actualBytecodeSize, expectedBytecodeSize, "TestError/bytecode-size-mismatch");
         uint256 size = actualBytecodeSize;
         uint256 expectedHash;
         uint256 actualHash;
@@ -1735,7 +1773,7 @@ contract DssSpellTestBase is Config, DssTest {
             extcodecopy(actualAction, ptr, 0, size)
             actualHash := keccak256(ptr, size)
         }
-        assertEq(actualHash, expectedHash);
+        assertEq(actualHash, expectedHash, "TestError/bytecode-hash-mismatch");
     }
 
     struct ChainlogCache {
@@ -1785,7 +1823,7 @@ contract DssSpellTestBase is Config, DssTest {
 
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
 
         //////////////////////////////////////////
 
@@ -1807,6 +1845,11 @@ contract DssSpellTestBase is Config, DssTest {
         cacheAfter.contentHash = keccak256(abi.encode(cacheAfter.keys, cacheAfter.values));
 
         //////////////////////////////////////////
+
+        // If neither the version or the content have changed, there is nothing to test
+        if (cacheAfter.versionHash == cacheBefore.versionHash && cacheAfter.contentHash == cacheBefore.contentHash) {
+            vm.skip(true);
+        }
 
         // If the version is the same, the content should not have changed
         if (cacheAfter.versionHash == cacheBefore.versionHash) {
@@ -1895,7 +1938,7 @@ contract DssSpellTestBase is Config, DssTest {
     function _testChainlogValues() internal {
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done());
+        assertTrue(spell.done(), "TestError/spell-not-done");
 
         bytes32[] memory keys = chainLog.list();
         for (uint256 i = 0; i < keys.length; i++) {
