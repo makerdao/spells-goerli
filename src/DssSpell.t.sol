@@ -40,10 +40,6 @@ interface SpellActionLike {
     function dao_resolutions() external view returns (string memory);
 }
 
-interface ProxyLike {
-    function exec(address target, bytes calldata args) external payable returns (bytes memory out);
-}
-
 contract DssSpellTest is DssSpellTestBase {
     using stdStorage for StdStorage;
 
@@ -457,10 +453,4 @@ contract DssSpellTest is DssSpellTestBase {
 
     // SPELL-SPECIFIC TESTS GO BELOW
 
-    string RWA009_OLDDOC = "QmfEgZuiw6wsTRUYerdPZNUrqDXSGM6Nm4fM3nG7nNbEjT";
-    string RWA009_NEWDOC = "QmPzuLuJ5Xq6k6Hbop1W5s4V9ksvafYoqcW9sU5QRwz5h1";
-
-    function testRWA009DocChange() public {
-        _checkRWADocUpdate("RWA009-A", RWA009_OLDDOC, RWA009_NEWDOC);
-    }
 }
