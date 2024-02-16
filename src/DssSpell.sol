@@ -103,7 +103,7 @@ contract DssSpellAction is DssAction {
 
         // ---------- Trigger Spark Proxy Spell ----------
         // Forum: https://forum.makerdao.com/t/feb-14-2024-proposed-changes-to-sparklend-for-upcoming-spell/23684
-        // NOTE: skipped on goerli as spark spell is only deployed to mainnet
+        // Note: skipped on goerli as spark spell is only deployed to mainnet
     }
 }
 
