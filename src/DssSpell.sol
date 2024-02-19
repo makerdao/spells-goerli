@@ -96,9 +96,11 @@ contract DssSpellAction is DssAction {
         DssExecLib.setValue(DIRECT_SPARK_DAI_PLAN, "buffer", 50 * MILLION * WAD); // NOTE: adjusting DIRECT_SPARK_DAI_PLAN.buffer value to WAD
 
         // ---------- Push USDP out of input conduit ----------
+        // Forum: https://forum.makerdao.com/t/proposed-housekeeping-items-upcoming-executive-spell-2024-02-22/23697
         // Note: skipping since there is no Jar for USDP on Goerli
 
         // ---------- yank vest streams ----------
+        // Forum: https://forum.makerdao.com/t/proposed-housekeeping-items-upcoming-executive-spell-2024-02-22/23697
         // Note: payments are skipped on goerli
 
         // ---------- Trigger Spark Proxy Spell ----------
