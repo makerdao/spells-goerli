@@ -40,10 +40,6 @@ interface SpellActionLike {
     function dao_resolutions() external view returns (string memory);
 }
 
-interface DirectSparkDaiPlanLike {
-    function buffer() external view returns (uint256);
-}
-
 contract DssSpellTest is DssSpellTestBase {
     using stdStorage for StdStorage;
 
@@ -437,11 +433,11 @@ contract DssSpellTest is DssSpellTestBase {
         assertEq(arbitrumGateway.validDomains(arbDstDomain), 0, "l2-arbitrum-invalid-dst-domain");
     }
 
-    function testDaoResolutions() public skipped { // add the `skipped` modifier to skip
+    function testDaoResolutions() public { // add the `skipped` modifier to skip
         // For each resolution, add IPFS hash as item to the resolutions array
         // Initialize the array with the number of resolutions
         string[1] memory resolutions = [
-            "QmVtqkYtx61wEeM5Hb92dGA3TMZ9F1Z5WDSNwcszqxiF1w"
+            "TODO"
         ];
 
         string memory comma_separated_resolutions = "";
@@ -456,15 +452,4 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     // SPELL-SPECIFIC TESTS GO BELOW
-    function testDIRECTSPARKDAIBuffer() public {
-        DirectSparkDaiPlanLike DIRECT_SPARK_DAI_PLAN = DirectSparkDaiPlanLike(addr.addr("DIRECT_SPARK_DAI_PLAN"));
-
-        assertEq(DIRECT_SPARK_DAI_PLAN.buffer(), 30 * MILLION * WAD);
-
-        _vote(address(spell));
-        _scheduleWaitAndCast(address(spell));
-        assertTrue(spell.done(), "TestError/spell-not-done");
-
-        assertEq(DIRECT_SPARK_DAI_PLAN.buffer(), 50 * MILLION * WAD);
-    }
 }
