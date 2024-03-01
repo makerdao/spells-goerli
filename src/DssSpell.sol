@@ -43,12 +43,6 @@ contract DssSpellAction is DssAction {
     // ---------- SBE parameter changes ----------
     address internal immutable MCD_FLAP = DssExecLib.flap();
 
-    // ---------- DAO Resolution Pertaining to HVBank (RWA009-A) ----------
-    // Forum: TODO
-
-    // Approve DAO Resolution hash TBD
-    string public constant dao_resolutions = "TODO";
-
     function actions() public override {
         // ---------- Delegate Compensation for February 2024 ----------
         // Note: skipped on goerli as spark spell is only deployed to mainnet
