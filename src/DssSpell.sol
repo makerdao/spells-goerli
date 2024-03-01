@@ -40,12 +40,30 @@ contract DssSpellAction is DssAction {
     //
     // uint256 internal constant X_PCT_RATE = ;
 
+    //  ---------- Math ----------
+    uint256 internal constant MILLION   = 10 ** 6;
+
     // ---------- SBE parameter changes ----------
     address internal immutable MCD_FLAP = DssExecLib.flap();
 
     function actions() public override {
         // ---------- Delegate Compensation for February 2024 ----------
+        // Forum: https://forum.makerdao.com/t/february-2024-aligned-delegate-compensation/23766
         // Note: skipped on goerli as spark spell is only deployed to mainnet
+
+        // BLUE - 41.67 MKR - 0xb6C09680D822F162449cdFB8248a7D3FC26Ec9Bf
+        // BONAPUBLICA - 41.67 MKR - 0x167c1a762B08D7e78dbF8f24e5C3f1Ab415021D3
+        // Cloaky - 41.67 MKR - 0x869b6d5d8FA7f4FFdaCA4D23FFE0735c5eD1F818
+        // TRUE NAME - 41.67 MKR - 0x612F7924c367575a0Edf21333D96b15F1B345A5d
+        // 0xDefensor - 23.705 MKR - 0x9542b441d65B6BF4dDdd3d4D2a66D8dCB9EE07a9
+        // JAG - 13.89 MKR - 0x58D1ec57E4294E4fe650D1CB12b96AE34349556f
+        // UPMaker - 13.89 MKR - 0xbB819DF169670DC71A16F58F55956FE642cc6BcD
+        // vigilant - 13.89 MKR - 0x2474937cB55500601BCCE9f4cb0A0A72Dc226F61
+        // PBG - 13.44 MKR - 0x8D4df847dB7FfE0B46AF084fE031F7691C6478c2
+        // Pipkin - 5.82 MKR - 0x0E661eFE390aE39f90a58b04CF891044e56DEDB7
+        // QGov - 4.48 MKR - 0xB0524D8707F76c681901b782372EbeD2d4bA28a6
+        // WBC - 4.03 MKR - 0xeBcE83e491947aDB1396Ee7E55d3c81414fB0D47
+
 
         // ---------- Smart Burn Engine `hop` Update ----------
         // Forum: https://forum.makerdao.com/t/smart-burn-engine-the-rate-of-mkr-accumulation-reconfiguration-and-transaction-analysis-parameter-reconfiguration-update-5/23737
@@ -53,6 +71,7 @@ contract DssSpellAction is DssAction {
 
         // Decrease the hop by 6,570 seconds from 26,280 seconds to 19,710 seconds.
         DssExecLib.setValue(MCD_FLAP, "hop", 19_710);
+
 
         // ---------- Launch Project Funding ----------
         // Forum: http://forum.makerdao.com/t/utilization-of-the-launch-project-under-the-accessibility-scope/21468/12
@@ -62,11 +81,24 @@ contract DssSpellAction is DssAction {
         // Transfer 3,000,000 DAI to the Launch Project at 0x3C5142F28567E6a0F172fd0BaaF1f2847f49D02F
         // Transfer 500 MKR to the Launch Project at 0x3C5142F28567E6a0F172fd0BaaF1f2847f49D02F
 
+
         // ---------- Whistleblower Bounty Payment ----------
         // Forum: http://forum.makerdao.com/t/ad-derecognition-due-to-operational-security-breach-02-02-2024/23619/10
         // Note: skipped on goerli as spark spell is only deployed to mainnet
 
         // Transfer 20.835 MKR to whistelblower at 0xCDDd2A697d472d1e8a0B1B188646c756d097b058
+
+
+        // ---------- WBTC vault gap Changes ----------
+        // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-10-wbtc-a-c-dc-iam-gap/23765
+        // Forum: http://forum.makerdao.com/t/stability-scope-parameter-changes-10-wbtc-a-c-dc-iam-gap/23765/2
+
+        // Increase the WBTC-A gap by 2 million DAI from 2 million DAI to 4 million DAI
+        DssExecLib.setIlkAutoLineParameters("WBTC-A", /* line = */ 500 * MILLION, /* gap = */ 4 * MILLION, /* ttl = */ 24 hours);
+
+        // Increase the WBTC-C gap by 6 million DAI from 2 million DAI to 8 million DAI
+        DssExecLib.setIlkAutoLineParameters("WBTC-C", /* line = */ 500 * MILLION, /* gap = */ 8 * MILLION, /* ttl = */ 24 hours);
+
 
         // ---------- Trigger Spark Proxy Spell ----------
         // Forum: TODO

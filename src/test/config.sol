@@ -283,7 +283,7 @@ contract Config {
         afterSpell.collaterals["WBTC-A"] = CollateralValues({
             aL_enabled:   true,
             aL_line:      500 * MILLION,
-            aL_gap:       2 * MILLION,
+            aL_gap:       4 * MILLION,
             aL_ttl:       24 hours,
             line:         0,
             dust:         7_500,
@@ -333,7 +333,7 @@ contract Config {
         afterSpell.collaterals["WBTC-C"] = CollateralValues({
             aL_enabled:   true,
             aL_line:      500 * MILLION,
-            aL_gap:       2 * MILLION,
+            aL_gap:       8 * MILLION,
             aL_ttl:       24 hours,
             line:         0,
             dust:         3_500,
