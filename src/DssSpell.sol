@@ -74,7 +74,7 @@ contract DssSpellAction is DssAction {
 
 
         // ---------- Launch Project Funding ----------
-        // Forum: http://forum.makerdao.com/t/utilization-of-the-launch-project-under-the-accessibility-scope/21468/12
+        // Forum: https://forum.makerdao.com/t/utilization-of-the-launch-project-under-the-accessibility-scope/21468/12
         // MIP: https://mips.makerdao.com/mips/details/MIP108#9-launch-project
         // Note: payments are skipped on goerli
 
@@ -83,7 +83,7 @@ contract DssSpellAction is DssAction {
 
 
         // ---------- Whistleblower Bounty Payment ----------
-        // Forum: http://forum.makerdao.com/t/ad-derecognition-due-to-operational-security-breach-02-02-2024/23619/10
+        // Forum: https://forum.makerdao.com/t/ad-derecognition-due-to-operational-security-breach-02-02-2024/23619/10
         // Note: payments are skipped on goerli
 
         // Transfer 20.84 MKR to whistelblower at 0xCDDd2A697d472d1e8a0B1B188646c756d097b058
@@ -91,7 +91,6 @@ contract DssSpellAction is DssAction {
 
         // ---------- WBTC vault gap Changes ----------
         // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-10-wbtc-a-c-dc-iam-gap/23765
-        // Forum: http://forum.makerdao.com/t/stability-scope-parameter-changes-10-wbtc-a-c-dc-iam-gap/23765/2
 
         // Increase the WBTC-A gap by 2 million DAI from 2 million DAI to 4 million DAI
         DssExecLib.setIlkAutoLineParameters("WBTC-A", /* line = */ 500 * MILLION, /* gap = */ 4 * MILLION, /* ttl = */ 24 hours);
@@ -100,7 +99,7 @@ contract DssSpellAction is DssAction {
         DssExecLib.setIlkAutoLineParameters("WBTC-C", /* line = */ 500 * MILLION, /* gap = */ 8 * MILLION, /* ttl = */ 24 hours);
 
 
-        // ---------- Trigger Spark Proxy Spell ----------
+        // ---------- Spark Proxy Spell ----------
         // Note: skipped on goerli as spark spell is only deployed to mainnet
     }
 }
