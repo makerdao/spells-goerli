@@ -101,7 +101,6 @@ contract DssSpellAction is DssAction {
 
 
         // ---------- Trigger Spark Proxy Spell ----------
-        // Forum: TODO
         // Note: skipped on goerli as spark spell is only deployed to mainnet
     }
 }
