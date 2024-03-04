@@ -86,7 +86,7 @@ contract DssSpellAction is DssAction {
         // Forum: https://forum.makerdao.com/t/ad-derecognition-due-to-operational-security-breach-02-02-2024/23619/10
         // Note: payments are skipped on goerli
 
-        // Transfer 20.84 MKR to whistelblower at 0xCDDd2A697d472d1e8a0B1B188646c756d097b058
+        // Transfer 20.84 MKR to whistleblower at 0xCDDd2A697d472d1e8a0B1B188646c756d097b058
 
 
         // ---------- WBTC vault gap Changes ----------
@@ -100,6 +100,9 @@ contract DssSpellAction is DssAction {
 
 
         // ---------- Spark Proxy Spell ----------
+        // Forum: https://forum.makerdao.com/t/feb-22-2024-proposed-changes-to-sparklend-for-upcoming-spell/23739
+        // Poll: https://vote.makerdao.com/polling/QmUE5xr8
+        // Poll: https://vote.makerdao.com/polling/QmRU6mmi
         // Note: skipped on goerli as spark spell is only deployed to mainnet
     }
 }
