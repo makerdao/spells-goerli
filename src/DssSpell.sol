@@ -86,7 +86,7 @@ contract DssSpellAction is DssAction {
         // Forum: http://forum.makerdao.com/t/ad-derecognition-due-to-operational-security-breach-02-02-2024/23619/10
         // Note: payments are skipped on goerli
 
-        // Transfer 20.835 MKR to whistelblower at 0xCDDd2A697d472d1e8a0B1B188646c756d097b058
+        // Transfer 20.84 MKR to whistelblower at 0xCDDd2A697d472d1e8a0B1B188646c756d097b058
 
 
         // ---------- WBTC vault gap Changes ----------
