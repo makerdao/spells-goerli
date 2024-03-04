@@ -49,13 +49,13 @@ contract DssSpellAction is DssAction {
     function actions() public override {
         // ---------- Delegate Compensation for February 2024 ----------
         // Forum: https://forum.makerdao.com/t/february-2024-aligned-delegate-compensation/23766
-        // Note: skipped on goerli as spark spell is only deployed to mainnet
+        // Note: payments are skipped on goerli
 
         // BLUE - 41.67 MKR - 0xb6C09680D822F162449cdFB8248a7D3FC26Ec9Bf
         // BONAPUBLICA - 41.67 MKR - 0x167c1a762B08D7e78dbF8f24e5C3f1Ab415021D3
         // Cloaky - 41.67 MKR - 0x869b6d5d8FA7f4FFdaCA4D23FFE0735c5eD1F818
         // TRUE NAME - 41.67 MKR - 0x612F7924c367575a0Edf21333D96b15F1B345A5d
-        // 0xDefensor - 23.705 MKR - 0x9542b441d65B6BF4dDdd3d4D2a66D8dCB9EE07a9
+        // 0xDefensor - 23.71 MKR - 0x9542b441d65B6BF4dDdd3d4D2a66D8dCB9EE07a9
         // JAG - 13.89 MKR - 0x58D1ec57E4294E4fe650D1CB12b96AE34349556f
         // UPMaker - 13.89 MKR - 0xbB819DF169670DC71A16F58F55956FE642cc6BcD
         // vigilant - 13.89 MKR - 0x2474937cB55500601BCCE9f4cb0A0A72Dc226F61
@@ -76,7 +76,7 @@ contract DssSpellAction is DssAction {
         // ---------- Launch Project Funding ----------
         // Forum: http://forum.makerdao.com/t/utilization-of-the-launch-project-under-the-accessibility-scope/21468/12
         // MIP: https://mips.makerdao.com/mips/details/MIP108#9-launch-project
-        // Note: skipped on goerli as spark spell is only deployed to mainnet
+        // Note: payments are skipped on goerli
 
         // Transfer 3,000,000 DAI to the Launch Project at 0x3C5142F28567E6a0F172fd0BaaF1f2847f49D02F
         // Transfer 500 MKR to the Launch Project at 0x3C5142F28567E6a0F172fd0BaaF1f2847f49D02F
@@ -84,7 +84,7 @@ contract DssSpellAction is DssAction {
 
         // ---------- Whistleblower Bounty Payment ----------
         // Forum: http://forum.makerdao.com/t/ad-derecognition-due-to-operational-security-breach-02-02-2024/23619/10
-        // Note: skipped on goerli as spark spell is only deployed to mainnet
+        // Note: payments are skipped on goerli
 
         // Transfer 20.835 MKR to whistelblower at 0xCDDd2A697d472d1e8a0B1B188646c756d097b058
 
