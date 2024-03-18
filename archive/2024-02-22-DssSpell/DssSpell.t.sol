@@ -40,6 +40,10 @@ interface SpellActionLike {
     function dao_resolutions() external view returns (string memory);
 }
 
+interface DirectSparkDaiPlanLike {
+    function buffer() external view returns (uint256);
+}
+
 contract DssSpellTest is DssSpellTestBase {
     using stdStorage for StdStorage;
 
@@ -169,37 +173,17 @@ contract DssSpellTest is DssSpellTestBase {
         //assertEq(OsmAbstract(0xF15993A5C5BE496b8e1c9657Fd2233b579Cd3Bc6).wards(ORACLE_WALLET01), 1);
     }
 
-    function testRemoveChainlogValues() public skipped { // add the `skipTest` modifier to skip
-        string[1] memory removedKeys = [
-            "MCD_CAT"
-        ];
-
-        for (uint256 i = 0; i < removedKeys.length; i++) {
-            try chainLog.getAddress(_stringToBytes32(removedKeys[i])) {
-            } catch Error(string memory errmsg) {
-                if (_cmpStr(errmsg, "dss-chain-log/invalid-key")) {
-                    fail(_concat("TestError/key-to-remove-does-not-exist: ", removedKeys[i]));
-                } else {
-                    fail(errmsg);
-                }
-            }
-        }
-
+    function testRemoveChainlogValues() public skipped { // add the `skipped` modifier to skip
         _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done(), "TestError/spell-not-done");
 
-        for (uint256 i = 0; i < removedKeys.length; i++) {
-            try chainLog.getAddress(_stringToBytes32(removedKeys[i])) {
-                fail(_concat("TestError/key-not-removed: ", removedKeys[i]));
-            } catch Error(string memory errmsg) {
-                assertTrue(
-                    _cmpStr(errmsg, "dss-chain-log/invalid-key"),
-                    _concat("TestError/key-not-removed: ", removedKeys[i])
-                );
-            } catch {
-                fail(_concat("TestError/unknown-reason: ", removedKeys[i]));
-            }
+        try chainLog.getAddress("MCD_CAT") {
+            assertTrue(false);
+        } catch Error(string memory errmsg) {
+            assertTrue(_cmpStr(errmsg, "dss-chain-log/invalid-key"));
+        } catch {
+            assertTrue(false);
         }
     }
 
@@ -314,6 +298,7 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     function testMedianizers() public skipped { // add the `skipped` modifier to skip
+        _vote(address(spell));
         _scheduleWaitAndCast(address(spell));
         assertTrue(spell.done(), "TestError/spell-not-done");
 
@@ -471,4 +456,15 @@ contract DssSpellTest is DssSpellTestBase {
     }
 
     // SPELL-SPECIFIC TESTS GO BELOW
+    function testDIRECTSPARKDAIBuffer() public {
+        DirectSparkDaiPlanLike DIRECT_SPARK_DAI_PLAN = DirectSparkDaiPlanLike(addr.addr("DIRECT_SPARK_DAI_PLAN"));
+
+        assertEq(DIRECT_SPARK_DAI_PLAN.buffer(), 30 * MILLION * WAD);
+
+        _vote(address(spell));
+        _scheduleWaitAndCast(address(spell));
+        assertTrue(spell.done(), "TestError/spell-not-done");
+
+        assertEq(DIRECT_SPARK_DAI_PLAN.buffer(), 50 * MILLION * WAD);
+    }
 }

@@ -92,9 +92,9 @@ contract Config {
         // Values for spell-specific parameters
         //
         spellValues = SpellValues({
-            deployed_spell:         address(0xc9F93a2b473B17cF6f1A7169AbAad5f61E3f8879), // populate with deployed spell if deployed
-            deployed_spell_created: 1709589792, // use `make deploy-info tx=<deployment-tx>` to obtain the timestamp
-            deployed_spell_block:   10635510,   // use `make deploy-info tx=<deployment-tx>` to obtain the block number
+            deployed_spell:         address(0xd85fd1454c23F407A8d5ecE1b5C3c51C3F69e042), // populate with deployed spell if deployed
+            deployed_spell_created: 1708361520, // use `make deploy-info tx=<deployment-tx>` to obtain the timestamp
+            deployed_spell_block:   10563398,   // use `make deploy-info tx=<deployment-tx>` to obtain the block number
             previous_spells:        prevSpells, // older spells to ensure are executed first
             office_hours_enabled:   false,      // true if officehours is expected to be enabled in the spell
             expiration_threshold:   30 days     // Amount of time before spell expires
@@ -112,7 +112,7 @@ contract Config {
         afterSpell.vow_bump              = 50 * THOUSAND;  // In whole Dai units
         afterSpell.vow_hump_min          = 50 * MILLION;   // In whole Dai units
         afterSpell.vow_hump_max          = 50 * MILLION;   // In whole Dai units
-        afterSpell.flap_hop              = 19_710 seconds; // In seconds
+        afterSpell.flap_hop              = 26_280 seconds; // In seconds
         afterSpell.flap_want             = 9800;           // In basis points
         afterSpell.dog_Hole              = 150 * MILLION;  // In whole Dai units
         afterSpell.esm_min               = 150 * THOUSAND; // In whole MKR units
@@ -283,7 +283,7 @@ contract Config {
         afterSpell.collaterals["WBTC-A"] = CollateralValues({
             aL_enabled:   true,
             aL_line:      500 * MILLION,
-            aL_gap:       4 * MILLION,
+            aL_gap:       2 * MILLION,
             aL_ttl:       24 hours,
             line:         0,
             dust:         7_500,
@@ -333,7 +333,7 @@ contract Config {
         afterSpell.collaterals["WBTC-C"] = CollateralValues({
             aL_enabled:   true,
             aL_line:      500 * MILLION,
-            aL_gap:       8 * MILLION,
+            aL_gap:       2 * MILLION,
             aL_ttl:       24 hours,
             line:         0,
             dust:         3_500,
