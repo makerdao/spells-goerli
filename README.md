@@ -1,3 +1,7 @@
+**:warning: THIS REPO IS NOW CONSIDERED DEPRECATED! :warning:**
+
+Read more about it in this [post](https://forum.makerdao.com/t/public-announcement-goerli-testnet-deprecation-and-upcoming-changes/23962/2).
+
 # spells-goerli
 
 ![Build Status](https://github.com/makerdao/spells-goerli/actions/workflows/.github/workflows/tests.yaml/badge.svg?branch=master)
