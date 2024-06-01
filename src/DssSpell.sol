@@ -39,70 +39,65 @@ contract DssSpellAction is DssAction {
     //    https://ipfs.io/ipfs/QmVp4mhhbwWGTfbh2BzwQB9eiBrQBKiqcPRZCaAxNUaar6
     //
     // uint256 internal constant X_PCT_RATE = ;
+    uint256 internal constant FIFTEEN_PCT_RATE               = 1000000004431822129783699001;
+    uint256 internal constant FIFTEEN_PT_TWO_FIVE_PCT_RATE   = 1000000004500681640286189459;
+    uint256 internal constant FIFTEEN_PT_SEVEN_FIVE_PCT_RATE = 1000000004637953682059597074;
+    uint256 internal constant SIXTEEN_PCT_RATE               = 1000000004706367499604668374;
+    uint256 internal constant SIXTEEN_PT_TWO_FIVE_PCT_RATE   = 1000000004774634032180348552;
+    uint256 internal constant SIXTEEN_PT_FIVE_PCT_RATE       = 1000000004842753912590664903;
+    uint256 internal constant SIXTEEN_PT_SEVEN_FIVE_PCT_RATE = 1000000004910727769570159235;
+    uint256 internal constant SEVENTEEN_PT_TWO_FIVE_PCT_RATE = 1000000005046239908035965222;
 
-    //  ---------- Math ----------
-    uint256 internal constant MILLION   = 10 ** 6;
-
-    // ---------- SBE parameter changes ----------
-    address internal immutable MCD_FLAP = DssExecLib.flap();
+    // ---------- Math ----------
+    uint256 internal constant MILLION = 10 ** 6;
+    uint256 internal constant BILLION = 10 ** 9;
 
     function actions() public override {
-        // ---------- Delegate Compensation for February 2024 ----------
-        // Forum: https://forum.makerdao.com/t/february-2024-aligned-delegate-compensation/23766
-        // Note: payments are skipped on goerli
+        // ---------- DSR Change ----------
+        // Forum: https://forum.makerdao.com/t/accelerated-proposal-rate-system-gsm-delay-psm-usdc-a-ttl-changes/23824
 
-        // BLUE - 41.67 MKR - 0xb6C09680D822F162449cdFB8248a7D3FC26Ec9Bf
-        // BONAPUBLICA - 41.67 MKR - 0x167c1a762B08D7e78dbF8f24e5C3f1Ab415021D3
-        // Cloaky - 41.67 MKR - 0x869b6d5d8FA7f4FFdaCA4D23FFE0735c5eD1F818
-        // TRUE NAME - 41.67 MKR - 0x612F7924c367575a0Edf21333D96b15F1B345A5d
-        // 0xDefensor - 23.71 MKR - 0x9542b441d65B6BF4dDdd3d4D2a66D8dCB9EE07a9
-        // JAG - 13.89 MKR - 0x58D1ec57E4294E4fe650D1CB12b96AE34349556f
-        // UPMaker - 13.89 MKR - 0xbB819DF169670DC71A16F58F55956FE642cc6BcD
-        // vigilant - 13.89 MKR - 0x2474937cB55500601BCCE9f4cb0A0A72Dc226F61
-        // PBG - 13.44 MKR - 0x8D4df847dB7FfE0B46AF084fE031F7691C6478c2
-        // Pipkin - 5.82 MKR - 0x0E661eFE390aE39f90a58b04CF891044e56DEDB7
-        // QGov - 4.48 MKR - 0xB0524D8707F76c681901b782372EbeD2d4bA28a6
-        // WBC - 4.03 MKR - 0xeBcE83e491947aDB1396Ee7E55d3c81414fB0D47
+        // Increase the DSR by 10% from 5% to 15%
+        DssExecLib.setDSR(FIFTEEN_PCT_RATE, /* doDrip = */ true);
 
+        // ---------- Stability Fee Changes ----------
+        // Forum: https://forum.makerdao.com/t/accelerated-proposal-rate-system-gsm-delay-psm-usdc-a-ttl-changes/23824
 
-        // ---------- Smart Burn Engine `hop` Update ----------
-        // Forum: https://forum.makerdao.com/t/smart-burn-engine-the-rate-of-mkr-accumulation-reconfiguration-and-transaction-analysis-parameter-reconfiguration-update-5/23737
-        // Poll: https://vote.makerdao.com/polling/Qmat6oFs
+        // Increase the ETH-A Stability Fee by 8.84% from 6.41% to 15.25%
+        DssExecLib.setIlkStabilityFee("ETH-A", FIFTEEN_PT_TWO_FIVE_PCT_RATE, /* doDrip = */ true);
 
-        // Decrease the hop by 6,570 seconds from 26,280 seconds to 19,710 seconds.
-        DssExecLib.setValue(MCD_FLAP, "hop", 19_710);
+        // Increase the ETH-B Stability Fee by 8.84% from 6.91% to 15.75%
+        DssExecLib.setIlkStabilityFee("ETH-B", FIFTEEN_PT_SEVEN_FIVE_PCT_RATE, /* doDrip = */ true);
 
+        // Increase the ETH-C Stability Fee by 8.84% from 6.16% to 15%
+        DssExecLib.setIlkStabilityFee("ETH-C", FIFTEEN_PCT_RATE, /* doDrip = */ true);
 
-        // ---------- Launch Project Funding ----------
-        // Forum: https://forum.makerdao.com/t/utilization-of-the-launch-project-under-the-accessibility-scope/21468/12
-        // MIP: https://mips.makerdao.com/mips/details/MIP108#9-launch-project
-        // Note: payments are skipped on goerli
+        // Increase the WSTETH-A Stability Fee by 9.6% from 6.65% to 16.25%
+        DssExecLib.setIlkStabilityFee("WSTETH-A", SIXTEEN_PT_TWO_FIVE_PCT_RATE, /* doDrip = */ true);
 
-        // Transfer 3,000,000 DAI to the Launch Project at 0x3C5142F28567E6a0F172fd0BaaF1f2847f49D02F
-        // Transfer 500 MKR to the Launch Project at 0x3C5142F28567E6a0F172fd0BaaF1f2847f49D02F
+        // Increase the WSTETH-B Stability Fee by 9.6% from 6.4% to 16%
+        DssExecLib.setIlkStabilityFee("WSTETH-B", SIXTEEN_PCT_RATE, /* doDrip = */ true);
 
+        // Increase the WBTC-A Stability Fee by 10.07% from 6.68% to 16.75%
+        DssExecLib.setIlkStabilityFee("WBTC-A", SIXTEEN_PT_SEVEN_FIVE_PCT_RATE, /* doDrip = */ true);
 
-        // ---------- Whistleblower Bounty Payment ----------
-        // Forum: https://forum.makerdao.com/t/ad-derecognition-due-to-operational-security-breach-02-02-2024/23619/10
-        // Note: payments are skipped on goerli
+        // Increase the WBTC-B Stability Fee by 10.07% from 7.18% to 17.25%
+        DssExecLib.setIlkStabilityFee("WBTC-B", SEVENTEEN_PT_TWO_FIVE_PCT_RATE, /* doDrip = */ true);
 
-        // Transfer 20.84 MKR to whistleblower at 0xCDDd2A697d472d1e8a0B1B188646c756d097b058
+        // Increase the WBTC-C Stability Fee by 10.07% from 6.43% to 16.5%
+        DssExecLib.setIlkStabilityFee("WBTC-C", SIXTEEN_PT_FIVE_PCT_RATE, /* doDrip = */ true);
 
+        // ---------- GSM Change ----------
+        // Forum: https://forum.makerdao.com/t/accelerated-proposal-rate-system-gsm-delay-psm-usdc-a-ttl-changes/23824
+        // Note: skipped on goerli since GSM delay here has to be 60 seconds
 
-        // ---------- WBTC vault gap Changes ----------
-        // Forum: https://forum.makerdao.com/t/stability-scope-parameter-changes-10-wbtc-a-c-dc-iam-gap/23765
+        // ---------- USDC PSM ttl Change ----------
+        // Forum: https://forum.makerdao.com/t/accelerated-proposal-rate-system-gsm-delay-psm-usdc-a-ttl-changes/23824
 
-        // Increase the WBTC-A gap by 2 million DAI from 2 million DAI to 4 million DAI
-        DssExecLib.setIlkAutoLineParameters("WBTC-A", /* line = */ 500 * MILLION, /* gap = */ 4 * MILLION, /* ttl = */ 24 hours);
+        // Decrease the ttl by 12 hours from 24 hours to 12 hours
+        DssExecLib.setIlkAutoLineParameters("PSM-USDC-A", 10 * BILLION, 400 * MILLION, 12 hours);
 
-        // Increase the WBTC-C gap by 6 million DAI from 2 million DAI to 8 million DAI
-        DssExecLib.setIlkAutoLineParameters("WBTC-C", /* line = */ 500 * MILLION, /* gap = */ 8 * MILLION, /* ttl = */ 24 hours);
-
-
-        // ---------- Spark Proxy Spell ----------
-        // Forum: https://forum.makerdao.com/t/feb-22-2024-proposed-changes-to-sparklend-for-upcoming-spell/23739
-        // Poll: https://vote.makerdao.com/polling/QmUE5xr8
-        // Poll: https://vote.makerdao.com/polling/QmRU6mmi
+        // ---------- Trigger Spark Proxy Spell ----------
+        // Forum: https://forum.makerdao.com/t/accelerated-proposal-rate-system-gsm-delay-psm-usdc-a-ttl-changes/23824
         // Note: skipped on goerli as spark spell is only deployed to mainnet
     }
 }
